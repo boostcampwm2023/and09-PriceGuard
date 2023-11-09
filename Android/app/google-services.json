@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:640871134695:android:3f732a9f57552c5a447942",
+        "mobilesdk_app_id": "1:640871134695:android:c3d76bc161053d8f447942",
         "android_client_info": {
-          "package_name": "com.catcake.priceguard"
+          "package_name": "app.priceguard"
         }
       },
       "oauth_client": [],

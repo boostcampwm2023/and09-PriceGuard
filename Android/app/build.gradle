@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.catcake.priceguard'
+    namespace 'app.priceguard'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.catcake.priceguard"
+        applicationId "app.priceguard"
         minSdk 29
         targetSdk 33
         versionCode 1
@@ -37,7 +37,7 @@ dependencies {
     //firebase
     implementation platform('com.google.firebase:firebase-bom:32.5.0')
     implementation 'com.google.firebase:firebase-analytics'
-    
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
