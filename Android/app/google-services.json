@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "640871134695",
+    "project_id": "priceguard-e5250",
+    "storage_bucket": "priceguard-e5250.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640871134695:android:3f732a9f57552c5a447942",
+        "android_client_info": {
+          "package_name": "com.catcake.priceguard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Gkf9OD1XUKO4s8vzzX7EEoR5637hIjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
