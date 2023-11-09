@@ -1,4 +1,4 @@
-package com.catcake.priceguard
+package app.priceguard
 
 import org.junit.Test
 

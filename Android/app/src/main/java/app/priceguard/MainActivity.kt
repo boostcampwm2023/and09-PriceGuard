@@ -1,4 +1,4 @@
-package com.catcake.priceguard
+package app.priceguard
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
