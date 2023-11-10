@@ -1,4 +1,5 @@
 # Price Guard
+<img width="275" alt="priceguard_icon_web" src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b3fd42cf-f075-4cc7-a263-8195f28ab6ac">
 
 ## 👨‍👨‍👦 팀원 소개
 
