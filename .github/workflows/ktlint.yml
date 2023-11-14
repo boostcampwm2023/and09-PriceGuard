@@ -1,0 +1,19 @@
+name: reviewdog_kotlin
+on:
+  pull_request:
+    paths:
+      - android/**
+
+jobs:
+  ktlint:
+    name: Check Kotlin Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+      - name: ktlint
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review

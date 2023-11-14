@@ -1,0 +1,39 @@
+name: 🔥 Deploy to Firebase App Distribution
+
+on:
+  push:
+    branches:
+      - release # Only in release branch
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: android
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'oracle'
+        java-version: '17'
+    - name: Generate Keystore
+      env:
+        KEYSTORE_B64: ${{ secrets.APP_KEYSTORE }}
+      run: |
+        echo $KEYSTORE_B64 > keystore_b64.txt
+        base64 -d keystore_b64.txt > keystore.jks
+      
+    - name: Build Release APK
+      env:
+        SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        SIGNING_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: ./gradlew assembleRelease
+      
+    - name: Upload to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{ secrets.FIREBASE_APP_ID }}
+        serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+        groups: testers
+        file: app/release/app-release.apk
