@@ -6,7 +6,7 @@ on:
       - release # Only in release branch
     
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
