@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-        with:
-          path: android
       - name: ktlint
         uses: ScaCap/action-ktlint@master
         with:
