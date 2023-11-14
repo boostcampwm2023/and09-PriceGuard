@@ -10,30 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        path: android
     - name: Setup JDK
       uses: actions/setup-java@v3
       with:
         distribution: 'oracle'
         java-version: '17'
+        cache: 'gradle'
     - name: Generate Keystore
       env:
         KEYSTORE_B64: ${{ secrets.APP_KEYSTORE }}
       run: |
         echo $KEYSTORE_B64 > keystore_b64.txt
         base64 --decode --ignore-garbage keystore_b64.txt > keystore.jks
-      
+      working-directory: ./android/app      
+
     - name: Build Release APK
       env:
         SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         SIGNING_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       run: ./gradlew assembleRelease
+      working-directory: ./android
       
     - name: Upload to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1
       with:
         appId: ${{ secrets.FIREBASE_APP_ID }}
-        serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-        groups: testers
-        file: app/release/app-release.apk
+        serviceCredentialsFileContent: ${{ secrets.FIREBASE_APP_DISTRIBUTION }}
+        groups: tester
+        releaseNotesFile: android/release_notes.txt
+        file: android/app/build/outputs/apk/release/app-release.apk
