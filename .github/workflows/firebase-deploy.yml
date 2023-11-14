@@ -22,7 +22,7 @@ jobs:
         KEYSTORE_B64: ${{ secrets.APP_KEYSTORE }}
       run: |
         echo $KEYSTORE_B64 > keystore_b64.txt
-        base64 -d keystore_b64.txt > keystore.jks
+        base64 --decode --ignore-garbage keystore_b64.txt > keystore.jks
       
     - name: Build Release APK
       env:
