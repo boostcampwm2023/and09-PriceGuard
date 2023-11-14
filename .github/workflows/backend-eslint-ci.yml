@@ -1,5 +1,8 @@
 name: backend-eslint-ci
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - backend/** 
 jobs:
   eslint:
     name: runner / eslint
