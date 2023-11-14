@@ -1,4 +1,4 @@
-name: reviewdog_kotlin
+name: Kotlin Lint Check
 on:
   pull_request:
     paths:
