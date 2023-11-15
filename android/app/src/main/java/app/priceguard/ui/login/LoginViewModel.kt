@@ -16,14 +16,6 @@ class LoginViewModel : ViewModel() {
         val password: String = ""
     )
 
-    sealed interface LoginEvent {
-        object GoToSignUp : LoginEvent
-        object LoginFailed : LoginEvent
-    }
-
-    private var _event = MutableSharedFlow<LoginEvent>()
-    val event: SharedFlow<LoginEvent> = _event.asSharedFlow()
-
     private val _state = MutableStateFlow(State())
     var state: StateFlow<State> = _state.asStateFlow()
 
@@ -35,21 +27,13 @@ class LoginViewModel : ViewModel() {
         _state.value = _state.value.copy(password = s.toString())
     }
 
-    fun logIn() {
+    fun logIn(onSuccess: (Unit) -> Unit) {
         val emailPattern = Regex("""^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}${'$'}""")
         val passwordPattern = Regex("""(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#${'$'}%^&*]).{8,16}""")
         if (emailPattern.matches(_state.value.id) && passwordPattern.matches(_state.value.password)) {
             // TODO: 서버에 정보 전송
         } else {
-            viewModelScope.launch {
-                _event.emit(LoginEvent.LoginFailed)
-            }
-        }
-    }
-
-    fun signUp() {
-        viewModelScope.launch {
-            _event.emit(LoginEvent.GoToSignUp)
+            onSuccess.invoke(Unit)
         }
     }
 }
