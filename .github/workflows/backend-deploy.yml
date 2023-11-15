@@ -24,7 +24,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./cd-test-nest/Dockerfile
+          file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/server:latest
           cache-from: type=registry,ref=${{ secrets.PRODUCTION_CONTAINER_REGISTRY }}/server:latest
