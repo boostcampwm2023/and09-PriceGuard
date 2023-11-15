@@ -21,11 +21,12 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val loginFailDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle("로그인 실패")
-            .setMessage("다시 시도해 주세요.")
-            .setPositiveButton("확인") { _, _ -> }
-            .create()
+        val loginFailDialog =
+            MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+                .setTitle("로그인 실패")
+                .setMessage("다시 시도해 주세요.")
+                .setPositiveButton("확인") { _, _ -> }
+                .create()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 loginViewModel.event.collect {
@@ -39,6 +40,8 @@ class LoginActivity : AppCompatActivity() {
 
         _binding = DataBindingUtil.setContentView<ActivityLoginBinding>(this, R.layout.activity_login).apply {
             viewModel = loginViewModel
+            btnLoginLogin.setOnClickListener { loginViewModel.logIn() }
+            btnLoginSignup.setOnClickListener { loginViewModel.signUp() }
         }
         setContentView(binding.root)
     }

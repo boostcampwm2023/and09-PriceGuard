@@ -71,6 +71,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="emailAddress"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
                 android:onTextChanged="@{viewModel::setID}"
                 android:text="@{viewModel.state.id.toString()}" />
 
@@ -94,7 +97,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="password"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword"
+                android:maxLines="1"
                 android:onTextChanged="@{viewModel::setPassword}"
                 android:text="@{viewModel.state.password.toString()}" />
 
@@ -106,7 +111,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:onClick="@{() -> viewModel.logIn()}"
             android:text="@string/login"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -129,7 +133,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:onClick="@{() -> viewModel.signUp()}"
             android:text="@string/sign_up"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
