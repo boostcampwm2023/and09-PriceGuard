@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique } from 'typeorm';
+import { IsNotEmpty } from 'class-validator';
 
 @Entity()
 @Unique(['email'])
@@ -7,11 +8,14 @@ export class User extends BaseEntity {
     id: number;
 
     @Column()
+    @IsNotEmpty()
     email: string;
 
     @Column()
-    username: string;
+    @IsNotEmpty()
+    userName: string;
 
     @Column()
+    @IsNotEmpty()
     password: string;
 }

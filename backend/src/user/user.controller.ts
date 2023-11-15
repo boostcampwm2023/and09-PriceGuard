@@ -1,8 +1,10 @@
-import { Body, Controller, Post, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserDto } from './dto/user.dto';
+import { DuplicateEmailExceptionFilter } from 'src/exceptions/exception.fillter';
 
 @Controller('user')
+@UseFilters(DuplicateEmailExceptionFilter)
 export class UsersController {
     constructor(private userService: UsersService) {}
 
