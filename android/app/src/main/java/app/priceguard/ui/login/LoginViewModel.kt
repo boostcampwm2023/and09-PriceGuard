@@ -1,6 +1,5 @@
 package app.priceguard.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +17,8 @@ class LoginViewModel : ViewModel() {
     )
 
     sealed interface LoginEvent {
-        object SignUp : LoginEvent
+        object GoToSignUp : LoginEvent
+        object LoginFailed : LoginEvent
     }
 
     private var _event = MutableSharedFlow<LoginEvent>()
@@ -28,7 +28,6 @@ class LoginViewModel : ViewModel() {
     var state: StateFlow<State> = _state.asStateFlow()
 
     fun setID(s: CharSequence, start: Int, before: Int, count: Int) {
-        Log.d("TEST", s.toString())
         _state.value = _state.value.copy(id = s.toString())
     }
 
@@ -37,13 +36,14 @@ class LoginViewModel : ViewModel() {
     }
 
     fun logIn() {
-        // TODO: 로그인 정보 서버로 전송
+        viewModelScope.launch {
+            _event.emit(LoginEvent.LoginFailed)
+        }
     }
 
     fun signUp() {
-        // TODO: 회원가입 창으로 이동
         viewModelScope.launch {
-            _event.emit(LoginEvent.SignUp)
+            _event.emit(LoginEvent.GoToSignUp)
         }
     }
 }
