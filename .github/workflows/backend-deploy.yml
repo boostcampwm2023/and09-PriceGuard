@@ -1,9 +1,8 @@
-name: auto deploy
-
+name: 🍀 Deploy to Naver Cloud Platform
 on:
   push:
     branches:
-      - release
+      - release # Only in release branch
       
 jobs:
   push_to_registry:
