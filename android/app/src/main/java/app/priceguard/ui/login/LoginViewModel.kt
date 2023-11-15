@@ -34,6 +34,6 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun checkEmailAndPassword(): Boolean {
-        return emailPattern.matches(_state.value.email) && passwordPattern.matches(_state.value.password)
+        return emailPattern.matchEntire(_state.value.email) != null && passwordPattern.matchEntire(_state.value.password) != null
     }
 }
