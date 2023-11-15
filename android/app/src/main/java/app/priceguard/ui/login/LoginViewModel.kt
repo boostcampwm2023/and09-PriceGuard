@@ -36,8 +36,14 @@ class LoginViewModel : ViewModel() {
     }
 
     fun logIn() {
-        viewModelScope.launch {
-            _event.emit(LoginEvent.LoginFailed)
+        val emailPattern = Regex("""^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}${'$'}""")
+        val passwordPattern = Regex("""(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#${'$'}%^&*]).{8,16}""")
+        if (emailPattern.matches(_state.value.id) && passwordPattern.matches(_state.value.password)) {
+            // TODO: 서버에 정보 전송
+        } else {
+            viewModelScope.launch {
+                _event.emit(LoginEvent.LoginFailed)
+            }
         }
     }
 
