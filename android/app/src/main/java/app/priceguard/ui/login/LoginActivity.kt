@@ -15,8 +15,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater).apply {
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        with(binding) {
             viewModel = loginViewModel
+        }
+        initListener()
+        setContentView(binding.root)
+    }
+
+    private fun initListener() {
+        with(binding) {
             btnLoginLogin.setOnClickListener {
                 loginViewModel.logIn {
                     showDialog()
@@ -26,7 +34,6 @@ class LoginActivity : AppCompatActivity() {
                 gotoSignUp()
             }
         }
-        setContentView(binding.root)
     }
 
     private fun showDialog() {
