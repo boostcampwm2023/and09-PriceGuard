@@ -38,9 +38,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showDialog() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle("로그인 실패")
-            .setMessage("다시 시도해 주세요.")
-            .setPositiveButton("확인") { _, _ -> }.create().show()
+            .setTitle(getString(R.string.login_fail))
+            .setMessage(getString(R.string.login_fail_message))
+            .setPositiveButton(getString(R.string.login_fail_accept)) { _, _ -> }.create().show()
     }
 
     private fun gotoSignUp() {
