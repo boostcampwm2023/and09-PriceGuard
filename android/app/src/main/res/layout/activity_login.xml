@@ -75,7 +75,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:onTextChanged="@{viewModel::setID}"
-                android:text="@{viewModel.state.id.toString()}" />
+                android:text="@{viewModel.state.email.toString()}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
