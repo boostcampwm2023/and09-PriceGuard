@@ -1,6 +1,5 @@
 package app.priceguard.ui.login
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -12,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.signup.SignupActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -21,12 +21,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val loginFailDialog = AlertDialog.Builder(this)
+        val loginFailDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle("로그인 실패")
             .setMessage("다시 시도해 주세요.")
             .setPositiveButton("확인") { _, _ -> }
             .create()
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 loginViewModel.event.collect {
