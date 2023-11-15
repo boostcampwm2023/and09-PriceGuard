@@ -2,11 +2,11 @@ FROM node:lts-alpine
 
 WORKDIR /usr/src/app
 
-COPY ./cd-test-nest/package*.json ./
+COPY ./backend/package*.json ./
 
 RUN npm install
 
-COPY ./cd-test-nest/. .
+COPY ./backend/. .
 
 RUN npm run build
 
