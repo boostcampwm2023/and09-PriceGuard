@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                loginViewModel.logIn {
+                loginViewModel.login {
                     showDialog()
                 }
             }

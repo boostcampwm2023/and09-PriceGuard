@@ -25,7 +25,7 @@ class LoginViewModel : ViewModel() {
         _state.value = _state.value.copy(password = s.toString())
     }
 
-    fun logIn(onSuccess: (Unit) -> Unit) {
+    fun login(onSuccess: (Unit) -> Unit) {
         if (checkEmailAndPassword()) {
             // TODO: 서버에 정보 전송
         } else {
