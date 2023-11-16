@@ -24,4 +24,8 @@
     <string name="confirm">확인</string>
     <string name="login_invalid">유효하지 않은 입력입니다.</string>
     <string name="login_invalid_message">이메일과 비밀번호를 다시 확인해주세요.</string>
+    <string name="error">오류</string>
+    <string name="invalid_parameter">입력값이 유효하지 않습니다.</string>
+    <string name="duplicate_email">이미 가입된 계정입니다.</string>
+    <string name="undefined_error">오류가 발생했습니다. 다시 시도해 주세요.</string>
 </resources>

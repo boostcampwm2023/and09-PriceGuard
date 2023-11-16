@@ -3,7 +3,9 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import app.priceguard.data.dto.SignUpResponse
+import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.repository.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,6 +34,8 @@ class SignupViewModel : ViewModel() {
     private val passwordPattern =
         """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
 
+    lateinit var userRepository: UserRepositoryImpl
+
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
 
@@ -46,15 +50,21 @@ class SignupViewModel : ViewModel() {
             }
 
             sendEvent(SignupEvent.SignupStart)
-            updateSignupStarted(true)
             Log.d("ViewModel", "Event Start Sent")
-            delay(3000L)
-            // TODO: 제거하고 Signup 네트워크 로직 넣기
-            // TODO: 회원가입 성공시 로그인 정보 저장하기
-            // TODO: 회원가입 실패시 메세지 표시하기
-            sendEvent(SignupEvent.SignupFinish)
+            updateSignupStarted(true)
+            val result = userRepository.signUp(_state.value.email, _state.value.password)
+
+            when (result.signUpState) {
+                SignUpState.SUCCESS -> {
+                    sendEvent(SignupEvent.SignupFinish(result.signUpResponse))
+                    Log.d("ViewModel", "Event Finish Sent")
+                }
+
+                else -> {
+                    sendEvent(SignupEvent.SignupError(result.signUpState))
+                }
+            }
             updateSignupStarted(false)
-            Log.d("ViewModel", "Event Finish Sent")
         }
     }
 
@@ -183,8 +193,8 @@ class SignupViewModel : ViewModel() {
     }
 
     sealed class SignupEvent {
-        object SignupStart : SignupEvent()
-        object SignupFinish : SignupEvent()
-        object SignupError : SignupEvent()
+        data object SignupStart : SignupEvent()
+        data class SignupFinish(val response: SignUpResponse?) : SignupEvent()
+        data class SignupError(val errorState: SignUpState) : SignupEvent()
     }
 }
