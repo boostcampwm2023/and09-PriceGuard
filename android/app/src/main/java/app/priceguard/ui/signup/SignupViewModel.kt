@@ -60,6 +60,7 @@ class SignupViewModel : ViewModel() {
         _state.value = _state.value.copy(password = password)
 
         updatePasswordError()
+        updateRetypePasswordError()
         updateIsSignupReady()
     }
 
