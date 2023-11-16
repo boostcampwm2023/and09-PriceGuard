@@ -34,7 +34,13 @@ module.exports = {
             {
                 'selector': ['class', 'enum', 'interface', 'typeAlias'],
                 'format': ['PascalCase']
-            }
-        ]
+            },
+        ],
+        'prettier/prettier': [
+            'error',
+            {
+                endOfLine: 'auto',
+            },
+        ],
     },
 };
