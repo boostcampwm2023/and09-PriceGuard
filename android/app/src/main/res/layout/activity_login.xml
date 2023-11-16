@@ -103,7 +103,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login_login"
             style="@style/Theme.PriceGuard"
             android:layout_width="0dp"
@@ -126,7 +126,7 @@
             app:layout_constraintEnd_toEndOf="@+id/btn_login_signup"
             app:layout_constraintStart_toStartOf="@+id/btn_login_signup" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login_signup"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
