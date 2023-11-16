@@ -33,12 +33,12 @@ class LoginViewModel : ViewModel() {
     var state: StateFlow<State> = _state.asStateFlow()
 
     fun setID(s: CharSequence, start: Int, before: Int, count: Int) {
-        if(_state.value.isLoading) return
+        if (_state.value.isLoading) return
         _state.value = _state.value.copy(email = s.toString())
     }
 
     fun setPassword(s: CharSequence, start: Int, before: Int, count: Int) {
-        if(_state.value.isLoading) return
+        if (_state.value.isLoading) return
         _state.value = _state.value.copy(password = s.toString())
     }
 
