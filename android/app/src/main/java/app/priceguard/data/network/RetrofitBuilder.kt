@@ -11,7 +11,7 @@ object RetrofitBuilder {
 
     fun getUserRetrofit(): UserAPI {
         return Retrofit.Builder()
-            .baseUrl("$BASE_URL/user")
+            .baseUrl("$BASE_URL/user/")
             .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
             .build()
             .create(UserAPI::class.java)
