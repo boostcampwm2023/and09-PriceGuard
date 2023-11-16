@@ -40,18 +40,8 @@ class SignupActivity : AppCompatActivity() {
         val clLayoutParams = binding.ablSignupTopbar.layoutParams as CoordinatorLayout.LayoutParams
         val scrollView: NestedScrollView = binding.nsvSignupContent
         val viewTreeObserver = scrollView.viewTreeObserver
-        val disabledAblBehavior = AppBarLayout.Behavior()
-        disabledAblBehavior.setDragCallback(object : DragCallback() {
-            override fun canDrag(appBarLayout: AppBarLayout): Boolean {
-                return false
-            }
-        })
-        val enabledAblBehavior = AppBarLayout.Behavior()
-        enabledAblBehavior.setDragCallback(object : DragCallback() {
-            override fun canDrag(appBarLayout: AppBarLayout): Boolean {
-                return true
-            }
-        })
+        val disabledAblBehavior = getAblBehavior(false)
+        val enabledAblBehavior = getAblBehavior(true)
 
         viewTreeObserver.addOnGlobalLayoutListener {
             if (scrollView.measuredHeight - scrollView.getChildAt(0).height >= 0) {
@@ -60,6 +50,16 @@ class SignupActivity : AppCompatActivity() {
                 clLayoutParams.behavior = enabledAblBehavior
             }
         }
+    }
+
+    private fun getAblBehavior(canDrag: Boolean): AppBarLayout.Behavior {
+        val ablBehavior = AppBarLayout.Behavior()
+        ablBehavior.setDragCallback(object : DragCallback() {
+            override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                return canDrag
+            }
+        })
+        return ablBehavior
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
