@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SignupViewModel : ViewModel() {
+
     data class SignupUIState(
         val name: String = "",
         val email: String = "",
