@@ -1,11 +1,11 @@
 import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserDto } from './dto/user.dto';
-import { DuplicateEmailExceptionFilter } from 'src/exceptions/exception.fillter';
+import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { UserValidationPipe } from 'src/exceptions/validation.user.pipe';
 
 @Controller('user')
-@UseFilters(DuplicateEmailExceptionFilter)
+@UseFilters(UserExceptionFilter)
 export class UsersController {
     constructor(private userService: UsersService) {}
 

@@ -5,7 +5,7 @@ import { UsersService } from './user.service';
 import { User } from './user.entity';
 import { UsersRepository } from './user.repository';
 import { APP_FILTER } from '@nestjs/core';
-import { DuplicateEmailExceptionFilter } from 'src/exceptions/exception.fillter';
+import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User])],
@@ -13,7 +13,7 @@ import { DuplicateEmailExceptionFilter } from 'src/exceptions/exception.fillter'
     providers: [
         {
             provide: APP_FILTER,
-            useClass: DuplicateEmailExceptionFilter,
+            useClass: UserExceptionFilter,
         },
         UsersService,
         UsersRepository,
