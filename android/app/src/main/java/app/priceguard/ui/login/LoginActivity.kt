@@ -53,16 +53,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun collectEvent() {
         repeatOnStarted {
-            loginViewModel.event.collect {
-                when (it) {
+            loginViewModel.event.collect { eventType ->
+                when (eventType) {
                     LoginViewModel.LoginEvent.Invalid -> showDialog(
                         getString(R.string.login_fail),
                         getString(R.string.login_fail_message),
                         getString(R.string.login_fail_accept)
                     )
 
-                    LoginViewModel.LoginEvent.LoginFailed -> TODO()
-                    LoginViewModel.LoginEvent.LoginSuccess -> TODO()
+                    LoginViewModel.LoginEvent.LoginFailed -> TODO("로그인 실패 시 처리")
+                    LoginViewModel.LoginEvent.LoginSuccess -> TODO("로그인 성공 시 처리")
                 }
             }
         }
