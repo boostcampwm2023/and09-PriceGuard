@@ -86,7 +86,7 @@
                         android:id="@+id/tiet_signup_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:afterTextChanged="@{(editable) -> vm.updateName(editable.toString())}"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateName(content.toString())}"
                         android:autofillHints="name"
                         android:imeOptions="actionNext"
                         android:inputType="text"
@@ -109,7 +109,7 @@
                         android:id="@+id/tiet_signup_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:afterTextChanged="@{(editable) -> vm.updateEmail(editable.toString())}"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateEmail(content.toString())}"
                         android:autofillHints="emailAddress"
                         android:inputType="textEmailAddress" />
 
@@ -131,7 +131,7 @@
                         android:id="@+id/tiet_signup_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:afterTextChanged="@{(editable) -> vm.updatePassword(editable.toString())}"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updatePassword(content.toString())}"
                         android:autofillHints="password"
                         android:inputType="textPassword" />
 
@@ -153,7 +153,7 @@
                         android:id="@+id/tiet_signup_retype_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:afterTextChanged="@{(editable) -> vm.updateRetypePassword(editable.toString())}"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateRetypePassword(content.toString())}"
                         android:autofillHints="password"
                         android:imeOptions="actionDone"
                         android:inputType="textPassword" />
