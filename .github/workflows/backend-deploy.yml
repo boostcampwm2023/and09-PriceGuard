@@ -47,5 +47,5 @@ jobs:
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
             docker stop $(docker ps -a -q)
             docker rm $(docker ps -a -q)
-            docker run -d -p 80:3000 --env-file ${{ secrets.ENV_FILE }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
+            docker run -d -p 3000:3000 --env-file ${{ secrets.ENV_FILE }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
             docker image prune -f
