@@ -2,6 +2,7 @@ package app.priceguard.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,6 +20,7 @@ class LoginViewModel : ViewModel() {
     )
 
     sealed interface LoginEvent {
+        object StartLoading : LoginEvent
         object Invalid : LoginEvent
         object LoginFailed : LoginEvent
         object LoginSuccess : LoginEvent
@@ -48,6 +50,8 @@ class LoginViewModel : ViewModel() {
             // TODO: 서버에 정보 전송
         } else {
             viewModelScope.launch {
+                _event.emit(LoginEvent.StartLoading)
+                delay(2000)
                 _event.emit(LoginEvent.Invalid)
             }
         }

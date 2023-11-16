@@ -31,9 +31,7 @@ class LoginActivity : AppCompatActivity() {
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                loginViewModel.login()
-                (btnLoginLogin as MaterialButton).icon = getProgressIndicatorDrawable()
-                btnLoginLogin.isEnabled = false
+                setLoginButtonActive(false, getProgressIndicatorDrawable())
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -55,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
         repeatOnStarted {
             loginViewModel.event.collect { eventType ->
                 when (eventType) {
+                    LoginViewModel.LoginEvent.StartLoading -> setLoginButtonActive(false, getProgressIndicatorDrawable())
                     LoginViewModel.LoginEvent.Invalid -> showDialog(
                         getString(R.string.login_invalid),
                         getString(R.string.login_invalid_message),
@@ -66,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
                         getString(R.string.login_fail_message),
                         getString(R.string.login_fail_accept)
                     )
+
                     LoginViewModel.LoginEvent.LoginSuccess -> TODO("로그인 성공 시 처리")
                 }
             }
@@ -76,14 +76,17 @@ class LoginActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(buttonText) { _, _ -> enableLoginButton() }
+            .setPositiveButton(buttonText) { _, _ -> setLoginButtonActive(true, null) }
             .create()
             .show()
     }
 
-    private fun enableLoginButton() {
-        (binding.btnLoginLogin as MaterialButton).icon = null
-        binding.btnLoginLogin.isEnabled = true
+    private fun setLoginButtonActive(
+        active: Boolean,
+        icon: IndeterminateDrawable<CircularProgressIndicatorSpec>?
+    ) {
+        (binding.btnLoginLogin as MaterialButton).icon = icon
+        binding.btnLoginLogin.isEnabled = active
     }
 
     private fun gotoSignUp() {
