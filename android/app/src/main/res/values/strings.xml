@@ -8,6 +8,10 @@
     <string name="name">이름</string>
     <string name="retype_password">비밀번호 재입력</string>
     <string name="register">가입하기</string>
+    <string name="my_page">내 정보</string>
+    <string name="notification_setting">알림 설정</string>
+    <string name="theme_setting">테마 설정</string>
+    <string name="logout">로그아웃</string>
     <string name="name_required">이름은 필수 입력 사항입니다.</string>
     <string name="invalid_email">유효하지 않은 이메일입니다.</string>
     <string name="valid_email">유효한 이메일입니다.</string>
