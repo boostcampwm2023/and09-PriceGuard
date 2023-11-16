@@ -7,3 +7,15 @@ data class SignUpResponse(
     val statusCode: Int,
     val message: String
 )
+
+data class SignUpResult(
+    val signUpState: SignUpState,
+    val signUpResponse: SignUpResponse? = null
+)
+
+enum class SignUpState {
+    SUCCESS,
+    INVALID_PARAMETER,
+    DUPLICATE_EMAIL,
+    UNDEFINED_ERROR
+}
