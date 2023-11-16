@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { DuplicateEmailExceptionFilter } from 'src/exceptions/exception.fillter';
@@ -11,7 +11,7 @@ export class UsersController {
 
     @Post('register')
     @UsePipes(new UserValidationPipe())
-    async registerUser(@Body() userDto: UserDto): Promise<{ statusCode: number, message: string }> {
+    async registerUser(@Body() userDto: UserDto): Promise<{ statusCode: number; message: string }> {
         await this.userService.registerUser(userDto);
         return { statusCode: HttpStatus.OK, message: '회원가입 성공' };
     }

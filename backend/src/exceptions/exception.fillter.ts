@@ -14,7 +14,7 @@ export class DuplicateEmailExceptionFilter implements ExceptionFilter {
                 message: '이메일 중복',
             });
             return;
-        } 
+        }
         if (exception instanceof ValidationException) {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 statusCode: exception.getStatus(),
