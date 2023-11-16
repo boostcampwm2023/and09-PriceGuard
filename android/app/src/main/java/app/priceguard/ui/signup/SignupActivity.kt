@@ -3,6 +3,8 @@ package app.priceguard.ui.signup
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +12,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
@@ -24,7 +28,34 @@ class SignupActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         setNavigationButton()
+        disableAppBarScroll()
         observeState()
+    }
+
+    private fun disableAppBarScroll() {
+        val clLayoutParams = binding.ablSignupTopbar.layoutParams as CoordinatorLayout.LayoutParams
+        val scrollView: NestedScrollView = binding.nsvSignupContent
+        val viewTreeObserver = scrollView.viewTreeObserver
+        val disabledAblBehavior = AppBarLayout.Behavior()
+        disabledAblBehavior.setDragCallback(object : DragCallback() {
+            override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                return false
+            }
+        })
+        val enabledAblBehavior = AppBarLayout.Behavior()
+        enabledAblBehavior.setDragCallback(object : DragCallback() {
+            override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                return true
+            }
+        })
+
+        viewTreeObserver.addOnGlobalLayoutListener {
+            if (scrollView.measuredHeight - scrollView.getChildAt(0).height >= 0) {
+                clLayoutParams.behavior = disabledAblBehavior
+            } else {
+                clLayoutParams.behavior = enabledAblBehavior
+            }
+        }
     }
 
     private fun setNavigationButton() {
