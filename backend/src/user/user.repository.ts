@@ -17,14 +17,11 @@ export class UsersRepository extends Repository<User> {
             return user;
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {
-                console.error('Email already exists.');
                 throw new HttpException('Duplicate entry', HttpStatus.CONFLICT);
             }
             if (error.code === 'ER_NO_DEFAULT_FOR_FIELD') {
-                console.error(error.message);
-                throw new ValidationException({ message: '입력 값이 유효하지 않습니다' });
+                throw new ValidationException('입력 값이 유효하지 않습니다');
             }
-            console.error(error.message);
             throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

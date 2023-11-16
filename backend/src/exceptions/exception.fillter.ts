@@ -1,8 +1,8 @@
 import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { QueryFailedError } from 'typeorm';
+import { ValidationException } from './validation.exception';
 
-@Catch(QueryFailedError)
+@Catch(HttpException)
 export class DuplicateEmailExceptionFilter implements ExceptionFilter {
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
@@ -13,11 +13,18 @@ export class DuplicateEmailExceptionFilter implements ExceptionFilter {
                 statusCode: HttpStatus.CONFLICT,
                 message: '이메일 중복',
             });
-        } else {
+            return;
+        } 
+        if (exception instanceof ValidationException) {
             response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: '서버 내부 에러',
+                statusCode: exception.getStatus(),
+                message: exception.getMessage(),
             });
+            return;
         }
+        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: '서버 내부 에러',
+        });
     }
 }
