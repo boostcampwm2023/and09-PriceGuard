@@ -1,11 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { config } from 'dotenv';
+import 'dotenv/config';
 
-if (process.env.NODE_ENV === 'dev') {
-    config();
-}
-
-export const typeORMConfig: TypeOrmModuleOptions = {
+export const TypeORMConfig: TypeOrmModuleOptions = {
     type: 'mysql',
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306'),
