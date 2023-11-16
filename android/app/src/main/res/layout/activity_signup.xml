@@ -46,6 +46,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv_signup_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -86,11 +87,12 @@
                         android:id="@+id/tiet_signup_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onTextChanged="@{(content, s, b, c) -> vm.updateName(content.toString())}"
                         android:autofillHints="name"
+                        android:enabled="@{!vm.state.signupStarted}"
                         android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:maxLines="1" />
+                        android:maxLines="1"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateName(content.toString())}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,9 +111,10 @@
                         android:id="@+id/tiet_signup_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onTextChanged="@{(content, s, b, c) -> vm.updateEmail(content.toString())}"
                         android:autofillHints="emailAddress"
-                        android:inputType="textEmailAddress" />
+                        android:enabled="@{!vm.state.signupStarted}"
+                        android:inputType="textEmailAddress"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateEmail(content.toString())}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,9 +134,10 @@
                         android:id="@+id/tiet_signup_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onTextChanged="@{(content, s, b, c) -> vm.updatePassword(content.toString())}"
                         android:autofillHints="password"
-                        android:inputType="textPassword" />
+                        android:enabled="@{!vm.state.signupStarted}"
+                        android:inputType="textPassword"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updatePassword(content.toString())}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -153,10 +157,11 @@
                         android:id="@+id/tiet_signup_retype_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onTextChanged="@{(content, s, b, c) -> vm.updateRetypePassword(content.toString())}"
                         android:autofillHints="password"
+                        android:enabled="@{!vm.state.signupStarted}"
                         android:imeOptions="actionDone"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:onTextChanged="@{(content, s, b, c) -> vm.updateRetypePassword(content.toString())}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,7 +171,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="36dp"
                     android:enabled="@{vm.state.signupReady}"
+                    android:onClick="@{() -> vm.signup()}"
                     android:text="@string/register"
+                    app:iconGravity="textStart"
                     app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
                     app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
                     app:layout_constraintTop_toBottomOf="@+id/til_signup_retype_password" />

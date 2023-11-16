@@ -1,9 +1,16 @@
 package app.priceguard.ui.signup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SignupViewModel : ViewModel() {
 
@@ -13,11 +20,11 @@ class SignupViewModel : ViewModel() {
         val password: String = "",
         val retypePassword: String = "",
         val isSignupReady: Boolean = false,
-        val isSignupComplete: Boolean = false,
         val isNameError: Boolean? = null,
         val isEmailError: Boolean? = null,
         val isPasswordError: Boolean? = null,
-        val isRetypePasswordError: Boolean? = null
+        val isRetypePasswordError: Boolean? = null,
+        val isSignupStarted: Boolean = false
     )
 
     private val emailPattern =
@@ -27,6 +34,29 @@ class SignupViewModel : ViewModel() {
 
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
+
+    private val _eventFlow: MutableSharedFlow<SignupEvent> = MutableSharedFlow(replay = 0)
+    val eventFlow: SharedFlow<SignupEvent> = _eventFlow.asSharedFlow()
+
+    fun signup() {
+        viewModelScope.launch {
+            if (_state.value.isSignupStarted) {
+                Log.d("Signup", "Signup already requested. Skipping")
+                return@launch
+            }
+
+            sendEvent(SignupEvent.SignupStart)
+            updateSignupStarted(true)
+            Log.d("ViewModel", "Event Start Sent")
+            delay(3000L)
+            // TODO: 제거하고 Signup 네트워크 로직 넣기
+            // TODO: 회원가입 성공시 로그인 정보 저장하기
+            // TODO: 회원가입 실패시 메세지 표시하기
+            sendEvent(SignupEvent.SignupFinish)
+            updateSignupStarted(false)
+            Log.d("ViewModel", "Event Finish Sent")
+        }
+    }
 
     fun updateName(name: String) {
         _state.value = _state.value.copy(name = name)
@@ -71,6 +101,12 @@ class SignupViewModel : ViewModel() {
 
     private fun isValidRetypePassword(): Boolean {
         return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
+    }
+
+    private fun sendEvent(event: SignupEvent) {
+        viewModelScope.launch {
+            _eventFlow.emit(event)
+        }
     }
 
     private fun updateIsSignupReady() {
@@ -140,5 +176,15 @@ class SignupViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun updateSignupStarted(started: Boolean) {
+        _state.value = _state.value.copy(isSignupStarted = started)
+    }
+
+    sealed class SignupEvent {
+        object SignupStart : SignupEvent()
+        object SignupFinish : SignupEvent()
+        object SignupError : SignupEvent()
     }
 }

@@ -11,9 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.databinding.ActivitySignupBinding
+import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
@@ -58,6 +62,33 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleSignupEvent(event: SignupEvent) {
+        val spec =
+            CircularProgressIndicatorSpec(
+                this,
+                null,
+                0,
+                R.style.Theme_PriceGuard_CircularProgressIndicator
+            )
+
+        val progressIndicatorDrawable =
+            IndeterminateDrawable.createCircularDrawable(this, spec).apply {
+                setVisible(true, true)
+            }
+
+        when (event) {
+            is SignupEvent.SignupStart -> {
+                (binding.btnSignupSignup as MaterialButton).icon = progressIndicatorDrawable
+            }
+
+            is SignupEvent.SignupFinish -> {
+                (binding.btnSignupSignup as MaterialButton).icon = null
+            }
+
+            is SignupEvent.SignupError -> {}
+        }
+    }
+
     private fun setNavigationButton() {
         binding.mtSignupTopbar.setNavigationOnClickListener {
             finish()
@@ -72,6 +103,14 @@ class SignupActivity : AppCompatActivity() {
                     updateEmailTextFieldUI(state)
                     updatePasswordTextFieldUI(state)
                     updateRetypePasswordTextFieldUI(state)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                signupViewModel.eventFlow.collect { event ->
+                    handleSignupEvent(event)
                 }
             }
         }

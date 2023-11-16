@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PriceGuard.CircularProgressIndicator" parent="Widget.Material3.CircularProgressIndicator.ExtraSmall">
+        <item name="indicatorColor">?attr/colorSurface</item>
+    </style>
+
+</resources>
