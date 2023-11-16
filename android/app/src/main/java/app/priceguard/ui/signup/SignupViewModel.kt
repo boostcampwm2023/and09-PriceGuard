@@ -52,7 +52,7 @@ class SignupViewModel : ViewModel() {
             sendEvent(SignupEvent.SignupStart)
             Log.d("ViewModel", "Event Start Sent")
             updateSignupStarted(true)
-            val result = userRepository.signUp(_state.value.email, _state.value.password)
+            val result = userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
             when (result.signUpState) {
                 SignUpState.SUCCESS -> {

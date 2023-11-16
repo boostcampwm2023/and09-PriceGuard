@@ -14,9 +14,9 @@ class UserRepositoryImpl : UserRepository {
 
     private val userAPI = RetrofitBuilder.getUserRetrofit()
 
-    override suspend fun signUp(email: String, password: String): SignUpResult {
+    override suspend fun signUp(email: String, userName: String, password: String): SignUpResult {
         val response = getApiResult {
-            userAPI.register(SignUpRequest(email, password))
+            userAPI.register(SignUpRequest(email, userName, password))
         }
         when (response) {
             is APIResult.Success -> {
@@ -41,9 +41,9 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun login(email: String, userName: String, password: String): LoginResult {
+    override suspend fun login(email: String, password: String): LoginResult {
         val response = getApiResult {
-            userAPI.login(LoginRequest(email, userName, password))
+            userAPI.login(LoginRequest(email, password))
         }
         when (response) {
             is APIResult.Success -> {
