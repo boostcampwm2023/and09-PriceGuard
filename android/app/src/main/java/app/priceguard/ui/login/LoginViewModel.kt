@@ -14,7 +14,8 @@ class LoginViewModel : ViewModel() {
 
     data class State(
         val email: String = "",
-        val password: String = ""
+        val password: String = "",
+        val isLoading: Boolean = false
     )
 
     sealed interface LoginEvent {
@@ -32,14 +33,17 @@ class LoginViewModel : ViewModel() {
     var state: StateFlow<State> = _state.asStateFlow()
 
     fun setID(s: CharSequence, start: Int, before: Int, count: Int) {
+        if(_state.value.isLoading) return
         _state.value = _state.value.copy(email = s.toString())
     }
 
     fun setPassword(s: CharSequence, start: Int, before: Int, count: Int) {
+        if(_state.value.isLoading) return
         _state.value = _state.value.copy(password = s.toString())
     }
 
     fun login() {
+        _state.value = _state.value.copy(isLoading = true)
         if (checkEmailAndPassword()) {
             // TODO: 서버에 정보 전송
         } else {
@@ -47,6 +51,7 @@ class LoginViewModel : ViewModel() {
                 _event.emit(LoginEvent.Invalid)
             }
         }
+        _state.value = _state.value.copy(isLoading = false)
     }
 
     private fun checkEmailAndPassword(): Boolean {
