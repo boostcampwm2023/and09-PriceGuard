@@ -1,13 +1,13 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import 'dotenv/config';
+import { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, NODE_ENV } from 'src/constants';
 
 export const TypeOrmConfig: TypeOrmModuleOptions = {
     type: 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '3306'),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: DB_HOST,
+    port: DB_PORT,
+    username: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME,
     entities: ['dist/**/*.entity{.ts,.js}'],
-    synchronize: process.env.NODE_ENV === 'dev',
+    synchronize: NODE_ENV === 'dev',
 };

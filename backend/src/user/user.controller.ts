@@ -24,9 +24,11 @@ export class UsersController {
 
     @Post('login')
     @UsePipes(new UserValidationPipe())
-    async loginUser(@Body() loginDto: LoginDto): Promise<{ statusCode: number; message: string; email: string }> {
+    async loginUser(
+        @Body() loginDto: LoginDto,
+    ): Promise<{ statusCode: number; message: string; accessToken: string; refreshToken: string }> {
         const { email, password } = loginDto;
-        const user = await this.authService.validateUser(email, password);
-        return { statusCode: HttpStatus.OK, message: '로그인 성공', email: user.email };
+        const { accessToken, refreshToken } = await this.authService.validateUser(email, password);
+        return { statusCode: HttpStatus.OK, message: '로그인 성공', accessToken, refreshToken };
     }
 }
