@@ -25,4 +25,9 @@ export class UsersService {
             throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async findOne(email: string): Promise<User | null> {
+        const user = await this.usersRepository.findOne({ where: { email } });
+        return user;
+    }
 }
