@@ -29,9 +29,9 @@ class MyPageFragment : Fragment() {
 
     private fun initSettingAdapter() {
         val items = mutableListOf(
-            SettingItem(R.drawable.ic_notification, getString(R.string.notification_setting)),
-            SettingItem(R.drawable.ic_light_mode, getString(R.string.theme_setting)),
-            SettingItem(R.drawable.ic_logout, getString(R.string.logout))
+            SettingInfo(R.drawable.ic_notification, getString(R.string.notification_setting)),
+            SettingInfo(R.drawable.ic_light_mode, getString(R.string.theme_setting)),
+            SettingInfo(R.drawable.ic_logout, getString(R.string.logout))
         )
         binding.rvMyPageSetting.adapter = MyPageSettingAdapter(items)
     }
