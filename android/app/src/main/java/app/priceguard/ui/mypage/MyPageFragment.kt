@@ -10,14 +10,15 @@ import app.priceguard.databinding.FragmentMyPageBinding
 
 class MyPageFragment : Fragment() {
 
-    private lateinit var binding: FragmentMyPageBinding
+    private var _binding: FragmentMyPageBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyPageBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentMyPageBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -34,5 +35,10 @@ class MyPageFragment : Fragment() {
             SettingInfo(R.drawable.ic_logout, getString(R.string.logout))
         )
         binding.rvMyPageSetting.adapter = MyPageSettingAdapter(items)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
