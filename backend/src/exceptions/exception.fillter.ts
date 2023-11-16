@@ -9,22 +9,20 @@ export class DuplicateEmailExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
 
         if (exception.message.includes('Duplicate entry')) {
-            response.status(HttpStatus.CONFLICT).json({
-                statusCode: HttpStatus.CONFLICT,
-                message: '이메일 중복',
-            });
+            this.setResposne(response, HttpStatus.CONFLICT, '이메일 중복');
             return;
         }
         if (exception instanceof ValidationException) {
-            response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                statusCode: exception.getStatus(),
-                message: exception.getMessage(),
-            });
+            this.setResposne(response, exception.getStatus(), exception.getMessage());
             return;
         }
-        response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: '서버 내부 에러',
+        this.setResposne(response, HttpStatus.CONFLICT, '서버 내부 에러');
+    }
+
+    private setResposne(response: Response, statusCode: number, msg: string) {
+        response.status(statusCode).json({
+            statusCode: statusCode,
+            message: msg,
         });
     }
 }
