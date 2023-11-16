@@ -29,19 +29,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
-        val spec =
-            CircularProgressIndicatorSpec(
-                this,
-                null,
-                0,
-                com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
-            )
-        val progressIndicatorDrawable =
-            IndeterminateDrawable.createCircularDrawable(this, spec)
         with(binding) {
             btnLoginLogin.setOnClickListener {
                 loginViewModel.login()
-                (btnLoginLogin as MaterialButton).icon = progressIndicatorDrawable
+                (btnLoginLogin as MaterialButton).icon = getProgressIndicatorDrawable()
                 btnLoginLogin.isEnabled = false
             }
             btnLoginSignup.setOnClickListener {
@@ -50,11 +41,26 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun getProgressIndicatorDrawable(): IndeterminateDrawable<CircularProgressIndicatorSpec> {
+        val spec = CircularProgressIndicatorSpec(
+            this,
+            null,
+            0,
+            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+        )
+        return IndeterminateDrawable.createCircularDrawable(this, spec)
+    }
+
     private fun collectEvent() {
         repeatOnStarted {
             loginViewModel.event.collect {
                 when (it) {
-                    LoginViewModel.LoginEvent.Invalid -> showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message), getString(R.string.login_fail_accept))
+                    LoginViewModel.LoginEvent.Invalid -> showDialog(
+                        getString(R.string.login_fail),
+                        getString(R.string.login_fail_message),
+                        getString(R.string.login_fail_accept)
+                    )
+
                     LoginViewModel.LoginEvent.LoginFailed -> TODO()
                     LoginViewModel.LoginEvent.LoginSuccess -> TODO()
                 }
