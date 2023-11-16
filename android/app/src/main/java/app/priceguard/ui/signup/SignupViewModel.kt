@@ -26,22 +26,6 @@ class SignupViewModel : ViewModel() {
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
 
-    private fun isValidName(): Boolean {
-        return _state.value.name.isNotBlank()
-    }
-
-    private fun isValidEmail(): Boolean {
-        return emailPattern.matchEntire(_state.value.email) != null
-    }
-
-    private fun isValidPassword(): Boolean {
-        return passwordPattern.matchEntire(_state.value.password) != null
-    }
-
-    private fun isValidRetypePassword(): Boolean {
-        return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
-    }
-
     fun updateName(name: String) {
         _state.value = _state.value.copy(name = name)
 
@@ -69,6 +53,22 @@ class SignupViewModel : ViewModel() {
 
         updateRetypePasswordError()
         updateIsSignupReady()
+    }
+
+    private fun isValidName(): Boolean {
+        return _state.value.name.isNotBlank()
+    }
+
+    private fun isValidEmail(): Boolean {
+        return emailPattern.matchEntire(_state.value.email) != null
+    }
+
+    private fun isValidPassword(): Boolean {
+        return passwordPattern.matchEntire(_state.value.password) != null
+    }
+
+    private fun isValidRetypePassword(): Boolean {
+        return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
     }
 
     private fun updateIsSignupReady() {
