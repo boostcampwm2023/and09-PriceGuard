@@ -17,9 +17,13 @@ export class UsersController {
 
     @Post('register')
     @UsePipes(new UserValidationPipe())
-    async registerUser(@Body() userDto: UserDto): Promise<{ statusCode: number; message: string }> {
-        await this.userService.registerUser(userDto);
-        return { statusCode: HttpStatus.OK, message: '회원가입 성공' };
+    async registerUser(
+        @Body() userDto: UserDto,
+    ): Promise<{ statusCode: number; message: string; accessToken: string; refreshToken: string }> {
+        const user = await this.userService.registerUser(userDto);
+        const accessToken = await this.authService.getAccessToken(user);
+        const refreshToken = await this.authService.getRefreshToken(user);
+        return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
     }
 
     @Post('login')
