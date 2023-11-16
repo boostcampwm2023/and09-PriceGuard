@@ -57,13 +57,13 @@ class LoginActivity : AppCompatActivity() {
                     LoginViewModel.LoginEvent.Invalid -> showDialog(
                         getString(R.string.login_invalid),
                         getString(R.string.login_invalid_message),
-                        getString(R.string.login_fail_accept)
+                        getString(R.string.confirm)
                     )
 
                     LoginViewModel.LoginEvent.LoginFailed -> showDialog(
                         getString(R.string.login_fail),
                         getString(R.string.login_fail_message),
-                        getString(R.string.login_fail_accept)
+                        getString(R.string.confirm)
                     )
 
                     LoginViewModel.LoginEvent.LoginSuccess -> TODO("로그인 성공 시 처리")
