@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.databinding.ActivitySignupBinding
+import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class SignupActivity : AppCompatActivity() {
 
     private fun observeState() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 signupViewModel.state.collect { state ->
                     updateNameTextFieldUI(state)
                     updateEmailTextFieldUI(state)
@@ -45,7 +46,7 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateNameTextFieldUI(state: SignupViewModel.SignupUIState) {
+    private fun updateNameTextFieldUI(state: SignupUIState) {
         when (state.isNameError) {
             true -> {
                 binding.tilSignupName.error = getString(R.string.name_required)
@@ -57,7 +58,7 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateEmailTextFieldUI(state: SignupViewModel.SignupUIState) {
+    private fun updateEmailTextFieldUI(state: SignupUIState) {
         when (state.isEmailError) {
             null -> {
                 binding.tilSignupEmail.error = null
@@ -75,7 +76,7 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePasswordTextFieldUI(state: SignupViewModel.SignupUIState) {
+    private fun updatePasswordTextFieldUI(state: SignupUIState) {
         when (state.isPasswordError) {
             null -> {
                 binding.tilSignupPassword.error = null
@@ -93,7 +94,7 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateRetypePasswordTextFieldUI(state: SignupViewModel.SignupUIState) {
+    private fun updateRetypePasswordTextFieldUI(state: SignupUIState) {
         when (state.isRetypePasswordError) {
             null -> {
                 binding.tilSignupRetypePassword.error = null
