@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class LoginActivity : AppCompatActivity() {
@@ -20,15 +21,14 @@ class LoginActivity : AppCompatActivity() {
             viewModel = loginViewModel
         }
         initListener()
+        collectEvent()
         setContentView(binding.root)
     }
 
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                loginViewModel.login {
-                    showDialog()
-                }
+                loginViewModel.login()
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -36,11 +36,23 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialog() {
+    private fun collectEvent() {
+        repeatOnStarted {
+            loginViewModel.event.collect {
+                when (it) {
+                    LoginViewModel.LoginEvent.Invalid -> showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message), getString(R.string.login_fail_accept))
+                    LoginViewModel.LoginEvent.LoginFailed -> TODO()
+                    LoginViewModel.LoginEvent.LoginSuccess -> TODO()
+                }
+            }
+        }
+    }
+
+    private fun showDialog(title: String, message: String, buttonText: String) {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(getString(R.string.login_fail))
-            .setMessage(getString(R.string.login_fail_message))
-            .setPositiveButton(getString(R.string.login_fail_accept)) { _, _ -> }.create().show()
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(buttonText) { _, _ -> }.create().show()
     }
 
     private fun gotoSignUp() {
