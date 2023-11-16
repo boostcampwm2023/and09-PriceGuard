@@ -44,8 +44,8 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
-            docker run -d -p 3000:3000 --env-file ${{ secrets.ENV_FILE }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
-            docker image prune -f
+            sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
+            sudo docker stop $(docker ps -a -q)
+            sudo docker rm $(docker ps -a -q)
+            sudo docker run -d -p 3000:3000 --env-file ${{ secrets.ENV_FILE }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/server
+            sudo docker image prune -f
