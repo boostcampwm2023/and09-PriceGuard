@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.9.20"
 }
 
 android {
@@ -60,6 +61,9 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.activity:activity-ktx:1.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

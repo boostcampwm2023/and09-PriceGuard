@@ -1,5 +1,6 @@
 package app.priceguard.ui.signup
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -9,13 +10,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import app.priceguard.MainActivity
 import app.priceguard.R
+import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.repository.UserRepositoryImpl
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlinx.coroutines.launch
@@ -30,7 +35,7 @@ class SignupActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
-
+        signupViewModel.userRepository = UserRepositoryImpl()
         setNavigationButton()
         disableAppBarScroll()
         observeState()
@@ -83,9 +88,39 @@ class SignupActivity : AppCompatActivity() {
 
             is SignupEvent.SignupFinish -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
+                val response = event.response
+
+                if (response == null) {
+                    showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                } else {
+                    // TODO: DataStore에 저장하기
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+
+                    // TODO: 뒤에 액티비티 스택 다 날리기
+                    finish()
+                }
             }
 
-            is SignupEvent.SignupError -> {}
+            is SignupEvent.SignupError -> {
+                (binding.btnSignupSignup as MaterialButton).icon = null
+                when (event.errorState) {
+                    SignUpState.INVALID_PARAMETER -> {
+                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                    }
+
+                    SignUpState.DUPLICATE_EMAIL -> {
+                        showDialog(getString(R.string.error), getString(R.string.duplicate_email))
+                    }
+
+                    SignUpState.UNDEFINED_ERROR -> {
+                        showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                    }
+
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -93,6 +128,15 @@ class SignupActivity : AppCompatActivity() {
         binding.mtSignupTopbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun showDialog(title: String, message: String) {
+        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
+            .create()
+            .show()
     }
 
     private fun observeState() {
