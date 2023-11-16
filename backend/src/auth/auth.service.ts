@@ -13,11 +13,14 @@ export class AuthService {
     ) {}
 
     async getAccessToken(user: User): Promise<string> {
-        return this.jwtService.sign({ email: user.email }, { secret: ACCESS_TOKEN_SECRETS, expiresIn: '5m' });
+        return this.jwtService.sign(
+            { email: user.email, name: user.userName },
+            { secret: ACCESS_TOKEN_SECRETS, expiresIn: '5m' },
+        );
     }
 
     async getRefreshToken(user: User): Promise<string> {
-        return this.jwtService.sign({ email: user.email }, { secret: REFRESH_TOKEN_SECRETS, expiresIn: '2w' });
+        return this.jwtService.sign({ id: user.id }, { secret: REFRESH_TOKEN_SECRETS, expiresIn: '2w' });
     }
     async validateUser(email: string, password: string): Promise<Record<string, string>> {
         const user = await this.usersService.findOne(email);

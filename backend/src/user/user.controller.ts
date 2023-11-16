@@ -4,7 +4,7 @@ import { UserDto } from './dto/user.dto';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { UserValidationPipe } from 'src/exceptions/validation.user.pipe';
 import { AuthService } from '../auth/auth.service';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from '../auth/dto/login.dto';
 
 @Controller('user')
 @UseFilters(UserExceptionFilter)
