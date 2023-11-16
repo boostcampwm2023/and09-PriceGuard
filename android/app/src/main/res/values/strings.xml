@@ -8,4 +8,9 @@
     <string name="name">이름</string>
     <string name="retype_password">비밀번호 재입력</string>
     <string name="register">가입하기</string>
+    <string name="login_fail">로그인 실패</string>
+    <string name="login_fail_message">다시 시도해 주세요.</string>
+    <string name="login_fail_accept">확인</string>
+    <string name="login_invalid">유효하지 않은 입력입니다.</string>
+    <string name="login_invalid_message">이메일과 비밀번호를 다시 확인해주세요.</string>
 </resources>
