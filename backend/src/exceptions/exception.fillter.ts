@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ValidationException } from './validation.exception';
 
 @Catch(HttpException)
-export class DuplicateEmailExceptionFilter implements ExceptionFilter {
+export class UserExceptionFilter implements ExceptionFilter {
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
@@ -16,7 +16,7 @@ export class DuplicateEmailExceptionFilter implements ExceptionFilter {
             this.setResposne(response, exception.getStatus(), exception.getMessage());
             return;
         }
-        this.setResposne(response, HttpStatus.CONFLICT, '서버 내부 에러');
+        this.setResposne(response, HttpStatus.INTERNAL_SERVER_ERROR, '서버 내부 에러');
     }
 
     private setResposne(response: Response, statusCode: number, msg: string) {
