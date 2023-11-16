@@ -8,7 +8,10 @@ import app.priceguard.R
 import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.signup.SignupActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 
 class LoginActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModels()
@@ -26,9 +29,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initListener() {
+        val spec =
+            CircularProgressIndicatorSpec(
+                this,
+                null,
+                0,
+                com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+            )
+        val progressIndicatorDrawable =
+            IndeterminateDrawable.createCircularDrawable(this, spec)
         with(binding) {
             btnLoginLogin.setOnClickListener {
                 loginViewModel.login()
+                (btnLoginLogin as MaterialButton).icon = progressIndicatorDrawable
+                btnLoginLogin.isEnabled = false
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -52,7 +66,14 @@ class LoginActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(buttonText) { _, _ -> }.create().show()
+            .setPositiveButton(buttonText) { _, _ -> enableLoginButton() }
+            .create()
+            .show()
+    }
+
+    private fun enableLoginButton() {
+        (binding.btnLoginLogin as MaterialButton).icon = null
+        binding.btnLoginLogin.isEnabled = true
     }
 
     private fun gotoSignUp() {

@@ -74,7 +74,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:onTextChanged="@{viewModel::setID}"/>
+                android:onTextChanged="@{viewModel::setID}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -99,7 +99,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:onTextChanged="@{viewModel::setPassword}"/>
+                android:onTextChanged="@{viewModel::setPassword}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,6 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/login"
+            app:iconGravity="textStart"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
