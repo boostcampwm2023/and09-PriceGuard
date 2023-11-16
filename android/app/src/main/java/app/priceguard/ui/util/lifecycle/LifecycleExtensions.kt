@@ -9,6 +9,6 @@ import kotlinx.coroutines.launch
 
 fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
     lifecycleScope.launch {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED, block)
+        repeatOnLifecycle(Lifecycle.State.STARTED, block)
     }
 }

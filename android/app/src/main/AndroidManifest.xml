@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_priceguard_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PriceGuard"
-        tools:targetApi="31">
+        tools:targetApi="34">
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="false" />
