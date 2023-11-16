@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.SignUpResponse
 import app.priceguard.data.dto.SignUpState
-import app.priceguard.data.repository.UserRepositoryImpl
+import app.priceguard.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,7 +34,7 @@ class SignupViewModel : ViewModel() {
     private val passwordPattern =
         """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
 
-    lateinit var userRepository: UserRepositoryImpl
+    lateinit var userRepository: UserRepository
 
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
