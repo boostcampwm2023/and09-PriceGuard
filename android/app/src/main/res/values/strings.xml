@@ -8,4 +8,24 @@
     <string name="name">이름</string>
     <string name="retype_password">비밀번호 재입력</string>
     <string name="register">가입하기</string>
+    <string name="my_page">내 정보</string>
+    <string name="notification_setting">알림 설정</string>
+    <string name="theme_setting">테마 설정</string>
+    <string name="logout">로그아웃</string>
+    <string name="name_required">이름은 필수 입력 사항입니다.</string>
+    <string name="invalid_email">유효하지 않은 이메일입니다.</string>
+    <string name="valid_email">유효한 이메일입니다.</string>
+    <string name="invalid_password">비밀번호는 8~16자 사이어야 합니다.</string>
+    <string name="valid_password">적합한 비밀번호입니다.</string>
+    <string name="password_mismatch">비밀번호가 일치하지 않습니다.</string>
+    <string name="password_match">비밀번호가 일치합니다.</string>
+    <string name="login_fail">로그인 실패</string>
+    <string name="login_fail_message">다시 시도해 주세요.</string>
+    <string name="confirm">확인</string>
+    <string name="login_invalid">유효하지 않은 입력입니다.</string>
+    <string name="login_invalid_message">이메일과 비밀번호를 다시 확인해주세요.</string>
+    <string name="error">오류</string>
+    <string name="invalid_parameter">입력값이 유효하지 않습니다.</string>
+    <string name="duplicate_email">이미 가입된 계정입니다.</string>
+    <string name="undefined_error">오류가 발생했습니다. 다시 시도해 주세요.</string>
 </resources>
