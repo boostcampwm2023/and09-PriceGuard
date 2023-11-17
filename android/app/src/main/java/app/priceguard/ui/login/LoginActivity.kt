@@ -59,17 +59,30 @@ class LoginActivity : AppCompatActivity() {
                     LoginEvent.StartLoading -> {
                         setLoginButtonActive(false, getProgressIndicatorDrawable())
                     }
-                    LoginEvent.Invalid -> {
-                        showDialog(getString(R.string.login_invalid), getString(R.string.login_invalid_message))
-                    }
-                    is LoginEvent.LoginFailed -> {
-                        showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
-                    }
-                    is LoginEvent.LoginSuccess -> {
-                        gotoHome()
+                    else -> {
+                        setLoginButtonActive(true, null)
+                        setDialogMessageAndShow(eventType)
                     }
                 }
             }
+        }
+    }
+
+    private fun setDialogMessageAndShow(eventType: LoginEvent) {
+        when (eventType) {
+            LoginEvent.Invalid -> {
+                showDialog(getString(R.string.login_invalid), getString(R.string.login_invalid_message))
+            }
+
+            is LoginEvent.LoginFailed -> {
+                showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
+            }
+
+            is LoginEvent.LoginSuccess -> {
+                gotoHome()
+            }
+
+            else -> {}
         }
     }
 
@@ -77,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> setLoginButtonActive(true, null) }
+            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
             .create()
             .show()
     }
