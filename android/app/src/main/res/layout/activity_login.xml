@@ -31,9 +31,10 @@
 
         <ImageView
             android:id="@+id/iv_login_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_priceguard_foreground"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_priceguard_original"
             app:layout_constraintBottom_toBottomOf="@+id/tv_login_title"
             app:layout_constraintEnd_toStartOf="@+id/tv_login_title"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -109,8 +110,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/login"
             android:onClick="@{() -> viewModel.login()}"
+            android:text="@string/login"
             app:iconGravity="textStart"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintHorizontal_chainStyle="packed"
