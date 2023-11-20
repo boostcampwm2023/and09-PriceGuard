@@ -33,9 +33,10 @@ class LoginViewModel @Inject constructor(
         data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent
     }
 
-    private val emailPattern = """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
-    private val passwordPattern = """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
-
+    private val emailPattern =
+        """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
+    private val passwordPattern =
+        """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
 
     private var _event = MutableSharedFlow<LoginEvent>()
     val event: SharedFlow<LoginEvent> = _event.asSharedFlow()
@@ -72,7 +73,12 @@ class LoginViewModel @Inject constructor(
                 if (result.loginResponse == null) {
                     _event.emit(LoginEvent.LoginFailed(LoginState.UNDEFINED_ERROR))
                 } else {
-                    _event.emit(LoginEvent.LoginSuccess(result.loginResponse.accessToken, result.loginResponse.refreshToken))
+                    _event.emit(
+                        LoginEvent.LoginSuccess(
+                            result.loginResponse.accessToken,
+                            result.loginResponse.refreshToken
+                        )
+                    )
                 }
             }
 
@@ -83,6 +89,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkEmailAndPassword(): Boolean {
-        return emailPattern.matchEntire(_state.value.email) != null && passwordPattern.matchEntire(_state.value.password) != null
+        return emailPattern.matchEntire(_state.value.email) != null && passwordPattern.matchEntire(
+            _state.value.password
+        ) != null
     }
 }
