@@ -2,10 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,8 +36,9 @@
             android:id="@+id/et_register_item_link"
             android:layout_width="0dp"
             android:layout_height="64dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:background="#00000000"
+            android:hint="@string/register_link"
             app:layout_constraintBottom_toBottomOf="@id/view_edit_text_background"
             app:layout_constraintEnd_toStartOf="@id/btn_register_item_next"
             app:layout_constraintStart_toStartOf="@id/view_edit_text_background"
@@ -65,11 +62,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="상품 링크는 어떻게 얻나요?"
+            android:text="@string/how_get_product_link"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintStart_toStartOf="@+id/gl_vertical_start" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

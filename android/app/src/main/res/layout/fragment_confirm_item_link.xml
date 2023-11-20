@@ -53,7 +53,6 @@
                         android:id="@+id/iv_confirm_item"
                         android:layout_width="0dp"
                         android:layout_height="248dp"
-                        android:background="#0000ff"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -80,11 +79,10 @@
                         app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_title" />
 
                     <ImageView
-                        android:id="@+id/iv_comfirm_item_shop_logo"
+                        android:id="@+id/iv_confirm_item_shop_logo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="36dp"
-                        android:src="@drawable/ic_11st_logo"
                         app:layout_constraintStart_toStartOf="@id/tv_confirm_item_brand"
                         app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_brand" />
 
@@ -96,7 +94,7 @@
                         android:layout_marginEnd="16dp"
                         android:text="@{viewModel.flow.price}"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/iv_comfirm_item_shop_logo" />
+                        app:layout_constraintTop_toTopOf="@id/iv_confirm_item_shop_logo" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
