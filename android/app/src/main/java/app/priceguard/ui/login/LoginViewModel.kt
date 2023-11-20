@@ -80,7 +80,6 @@ class LoginViewModel @Inject constructor(
                         sendLoginEvent(LoginEvent.LoginError(result.loginState))
                     }
                 }
-
             } else {
                 sendLoginEvent(LoginEvent.Invalid)
             }
