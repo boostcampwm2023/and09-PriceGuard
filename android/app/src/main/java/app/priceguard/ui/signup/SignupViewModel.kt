@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.SignUpResponse
 import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     data class SignupUIState(
@@ -39,6 +41,7 @@ class SignupViewModel @Inject constructor(
         data object SignupStart : SignupEvent()
         data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
         data class SignupFailure(val errorState: SignUpState) : SignupEvent()
+        data object SignupInfoSaved : SignupEvent()
     }
 
     private val emailPattern =
@@ -51,6 +54,13 @@ class SignupViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<SignupEvent> = MutableSharedFlow(replay = 0)
     val eventFlow: SharedFlow<SignupEvent> = _eventFlow.asSharedFlow()
+
+    fun saveTokens(accessToken: String, refreshToken: String) {
+        viewModelScope.launch {
+            tokenRepository.storeTokens(accessToken, refreshToken)
+            sendSignupEvent(SignupEvent.SignupInfoSaved)
+        }
+    }
 
     fun signup() {
         if (_state.value.isSignupStarted || _state.value.isSignupFinished) {
