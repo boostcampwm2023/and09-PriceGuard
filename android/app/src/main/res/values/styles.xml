@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.PriceGuard.CircularProgressIndicator" parent="Widget.Material3.CircularProgressIndicator.ExtraSmall">
-        <item name="indicatorColor">?attr/colorSurface</item>
+        <item name="indicatorColor">?attr/colorOnPrimary</item>
     </style>
 
     <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
