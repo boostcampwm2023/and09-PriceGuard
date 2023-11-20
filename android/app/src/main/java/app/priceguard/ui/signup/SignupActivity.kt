@@ -16,12 +16,11 @@ import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.main.MainActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
-import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -68,25 +67,14 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
-        val spec =
-            CircularProgressIndicatorSpec(
-                this,
-                null,
-                0,
-                R.style.Theme_PriceGuard_CircularProgressIndicator
-            )
-
-        val progressIndicatorDrawable =
-            IndeterminateDrawable.createCircularDrawable(this, spec).apply {
-                setVisible(true, true)
-            }
+        val circularProgressIndicator = getCircularProgressIndicatorDrawable(this)
 
         when (event) {
             is SignupEvent.SignupStart -> {
-                (binding.btnSignupSignup as MaterialButton).icon = progressIndicatorDrawable
+                (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
             }
 
-            is SignupEvent.SignupFinish -> {
+            is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 val response = event.response
 
@@ -103,7 +91,7 @@ class SignupActivity : AppCompatActivity() {
                 }
             }
 
-            is SignupEvent.SignupError -> {
+            is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
                     SignUpState.INVALID_PARAMETER -> {
