@@ -73,7 +73,20 @@ class LoginActivity : AppCompatActivity() {
             }
 
             is LoginEvent.LoginSuccess -> {
-                gotoHome()
+                val response = eventType.response
+
+                if (response == null) {
+                    showDialog(
+                        getString(R.string.login_fail),
+                        getString(R.string.login_fail_message)
+                    )
+                } else {
+                    loginViewModel.saveTokens(response.accessToken, response.refreshToken)
+                }
+            }
+
+            is LoginEvent.LoginInfoSaved -> {
+                gotoHomeActivity()
             }
 
             else -> {}
@@ -93,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, SignupActivity::class.java))
     }
 
-    private fun gotoHome() {
+    private fun gotoHomeActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

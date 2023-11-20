@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.LoginResponse
 import app.priceguard.data.dto.LoginState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     data class State(
@@ -33,6 +35,7 @@ class LoginViewModel @Inject constructor(
         data object Invalid : LoginEvent()
         data class LoginSuccess(val response: LoginResponse?) : LoginEvent()
         data class LoginFailure(val status: LoginState) : LoginEvent()
+        data object LoginInfoSaved : LoginEvent()
     }
 
     private val emailPattern =
@@ -84,6 +87,13 @@ class LoginViewModel @Inject constructor(
                 sendLoginEvent(LoginEvent.Invalid)
             }
             _state.value = _state.value.copy(isLoading = false)
+        }
+    }
+
+    fun saveTokens(accessToken: String, refreshToken: String) {
+        viewModelScope.launch {
+            tokenRepository.storeTokens(accessToken, refreshToken)
+            sendLoginEvent(LoginEvent.LoginInfoSaved)
         }
     }
 
