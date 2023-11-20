@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
             this,
             null,
             0,
-            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+            R.style.Theme_PriceGuard_CircularProgressIndicator
         )
         return IndeterminateDrawable.createCircularDrawable(this, spec)
     }
@@ -60,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
                     LoginEvent.StartLoading -> {
                         setLoginButtonActive(false, getProgressIndicatorDrawable())
                     }
+
                     else -> {
                         setLoginButtonActive(true, null)
                         setDialogMessageAndShow(eventType)
@@ -72,7 +73,10 @@ class LoginActivity : AppCompatActivity() {
     private fun setDialogMessageAndShow(eventType: LoginEvent) {
         when (eventType) {
             LoginEvent.Invalid -> {
-                showDialog(getString(R.string.login_invalid), getString(R.string.login_invalid_message))
+                showDialog(
+                    getString(R.string.login_invalid),
+                    getString(R.string.login_invalid_message)
+                )
             }
 
             is LoginEvent.LoginFailed -> {

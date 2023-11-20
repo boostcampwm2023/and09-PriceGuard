@@ -76,10 +76,7 @@ class SignupActivity : AppCompatActivity() {
                 R.style.Theme_PriceGuard_CircularProgressIndicator
             )
 
-        val progressIndicatorDrawable =
-            IndeterminateDrawable.createCircularDrawable(this, spec).apply {
-                setVisible(true, true)
-            }
+        val progressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(this, spec)
 
         when (event) {
             is SignupEvent.SignupStart -> {
