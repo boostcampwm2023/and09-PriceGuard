@@ -33,4 +33,5 @@
     <string name="menu_my_page">내 설정</string>
     <string name="fragment_recommend_title">인기 상품</string>
     <string name="fragment_list_title">상품 목록</string>
+    <string name="menu_refresh">refresh</string>
 </resources>
