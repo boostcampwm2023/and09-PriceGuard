@@ -5,7 +5,16 @@ import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { UserValidationPipe } from 'src/exceptions/validation.user.pipe';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../auth/dto/login.dto';
+import {
+    ApiBadRequestResponse,
+    ApiBody,
+    ApiConflictResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('사용자 API')
 @Controller('user')
 @UseFilters(UserExceptionFilter)
 export class UsersController {
@@ -15,6 +24,11 @@ export class UsersController {
         private authService: AuthService,
     ) {}
 
+    @ApiOperation({ summary: '회원가입 API', description: '서버에게 회원가입 요청을 보낸다.' })
+    @ApiBody({ type: UserDto })
+    @ApiOkResponse({ description: '회원가입 성공' })
+    @ApiBadRequestResponse({ description: '유효하지 않은 입력 값' })
+    @ApiConflictResponse({ description: '이메일 중복' })
     @Post('register')
     @UsePipes(new UserValidationPipe())
     async registerUser(
@@ -26,6 +40,10 @@ export class UsersController {
         return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
     }
 
+    @ApiOperation({ summary: '로그인 API', description: '서버에게 로그인 요청을 보낸다.' })
+    @ApiBody({ type: LoginDto })
+    @ApiOkResponse({ description: '로그인 성공' })
+    @ApiBadRequestResponse({ description: '로그인 실패' })
     @Post('login')
     @UsePipes(new UserValidationPipe())
     async loginUser(
