@@ -1,4 +1,4 @@
-import { utilities, WinstonModule } from 'nest-winston';
+import { utilities } from 'nest-winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 import { NODE_ENV } from 'src/constants';
@@ -18,10 +18,13 @@ const logFormat = winston.format.printf(({ level, message, label, timestamp }) =
     return `${timestamp} [${label}] ${level}: ${message}`;
 });
 
-export const winstonLogger = WinstonModule.createLogger({
+export const winstonConfig = {
     format: winston.format.combine(
+        winston.format.colorize(),
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        winston.format.json(),
+        winston.format.label({
+            label: 'LOGGER',
+        }),
         logFormat,
     ),
     transports: [
@@ -49,4 +52,4 @@ export const winstonLogger = WinstonModule.createLogger({
             zippedArchive: true,
         }),
     ],
-});
+};
