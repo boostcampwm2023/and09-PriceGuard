@@ -7,12 +7,11 @@ import app.priceguard.data.dto.SignUpRequest
 import app.priceguard.data.dto.SignUpResult
 import app.priceguard.data.dto.SignUpState
 import app.priceguard.data.network.APIResult
-import app.priceguard.data.network.RetrofitBuilder
+import app.priceguard.data.network.UserAPI
 import app.priceguard.data.network.getApiResult
+import javax.inject.Inject
 
-class UserRepositoryImpl : UserRepository {
-
-    private val userAPI = RetrofitBuilder.getUserRetrofit()
+class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : UserRepository {
 
     override suspend fun signUp(email: String, userName: String, password: String): SignUpResult {
         val response = getApiResult {

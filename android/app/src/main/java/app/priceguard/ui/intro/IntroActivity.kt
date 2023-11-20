@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.databinding.ActivityIntroBinding
 import app.priceguard.ui.login.LoginActivity
 import app.priceguard.ui.signup.SignupActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class IntroActivity : AppCompatActivity() {
     private lateinit var binding: ActivityIntroBinding
 
