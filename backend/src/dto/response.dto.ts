@@ -6,7 +6,7 @@ export class OkResponse {
         description: 'Http Status Code',
         required: true,
     })
-    code: number;
+    statusCode: number;
     @ApiProperty({
         example: '성공',
         description: '응답 메시지',

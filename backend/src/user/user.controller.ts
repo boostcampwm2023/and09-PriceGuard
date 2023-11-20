@@ -13,7 +13,7 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger';
-import { JwtResponse } from 'src/entities/response.entity';
+import { JwtResponse } from 'src/dto/response.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
