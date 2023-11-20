@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vertical_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vertical_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <View
+            android:id="@+id/view_edit_text_background"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_round_corner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+            app:layout_constraintStart_toStartOf="@+id/gl_vertical_start"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
+
+        <EditText
+            android:id="@+id/et_register_item_link"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="8dp"
+            android:background="#00000000"
+            app:layout_constraintBottom_toBottomOf="@id/view_edit_text_background"
+            app:layout_constraintEnd_toStartOf="@id/btn_register_item_next"
+            app:layout_constraintStart_toStartOf="@id/view_edit_text_background"
+            app:layout_constraintTop_toTopOf="@id/view_edit_text_background" />
+
+        <ImageButton
+            android:id="@+id/btn_register_item_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="?attr/colorSurfaceContainerHighest"
+            android:src="@drawable/ic_next"
+            app:layout_constraintBottom_toBottomOf="@id/et_register_item_link"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+            app:layout_constraintTop_toTopOf="@id/et_register_item_link" />
+
+        <TextView
+            android:id="@+id/textView"
+            style="?attr/textAppearanceLabelSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="상품 링크는 어떻게 얻나요?"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+            app:layout_constraintStart_toStartOf="@+id/gl_vertical_start" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
