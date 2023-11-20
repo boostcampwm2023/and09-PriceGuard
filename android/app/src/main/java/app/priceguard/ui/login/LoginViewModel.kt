@@ -63,7 +63,7 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            _event.emit(LoginEvent.LoginStart)
+            sendLoginEvent(LoginEvent.LoginStart)
 
             if (checkEmailAndPassword()) {
                 val result = userRepository.login(_state.value.email, _state.value.password)
