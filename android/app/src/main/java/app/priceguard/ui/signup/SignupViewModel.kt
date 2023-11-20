@@ -125,10 +125,8 @@ class SignupViewModel @Inject constructor(
         return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
     }
 
-    private fun sendSignupEvent(event: SignupEvent) {
-        viewModelScope.launch {
-            _eventFlow.emit(event)
-        }
+    private suspend fun sendSignupEvent(event: SignupEvent) {
+        _eventFlow.emit(event)
     }
 
     private fun updateIsSignupReady() {

@@ -87,10 +87,8 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun sendLoginEvent(event: LoginEvent) {
-        viewModelScope.launch {
-            _event.emit(event)
-        }
+    private suspend fun sendLoginEvent(event: LoginEvent) {
+        _event.emit(event)
     }
 
     private fun checkEmailAndPassword(): Boolean {
