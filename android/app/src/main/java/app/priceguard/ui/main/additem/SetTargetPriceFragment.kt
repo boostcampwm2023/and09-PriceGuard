@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
+import com.google.android.material.appbar.CollapsingToolbarLayout
 
 class SetTargetPriceFragment : Fragment() {
 
@@ -25,6 +28,10 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.initListener()
+
+        val toolbar =
+            (activity as AppCompatActivity).findViewById<CollapsingToolbarLayout>(R.id.ctl_add_item_topbar)
+        toolbar?.title = getString(R.string.set_price_title)
     }
 
     override fun onDestroyView() {

@@ -20,7 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
                 android:background="?attr/colorSurface"
-                app:expandedTitleTextAppearance="?attr/textAppearanceHeadlineMedium">
+                app:expandedTitleTextAppearance="?attr/textAppearanceHeadlineMedium"
+                app:maxLines="2">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/mt_add_item_topbar"
