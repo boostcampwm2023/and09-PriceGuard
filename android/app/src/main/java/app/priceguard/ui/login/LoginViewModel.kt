@@ -28,11 +28,11 @@ class LoginViewModel @Inject constructor(
         val isLoginFinished: Boolean = false
     )
 
-    sealed interface LoginEvent {
-        data object LoginStart : LoginEvent
-        data object Invalid : LoginEvent
-        data class LoginSuccess(val response: LoginResponse?) : LoginEvent
-        data class LoginFailure(val status: LoginState) : LoginEvent
+    sealed class LoginEvent {
+        data object LoginStart : LoginEvent()
+        data object Invalid : LoginEvent()
+        data class LoginSuccess(val response: LoginResponse?) : LoginEvent()
+        data class LoginFailure(val status: LoginState) : LoginEvent()
     }
 
     private val emailPattern =
