@@ -28,4 +28,9 @@
     <string name="invalid_parameter">입력값이 유효하지 않습니다.</string>
     <string name="duplicate_email">이미 가입된 계정입니다.</string>
     <string name="undefined_error">오류가 발생했습니다. 다시 시도해 주세요.</string>
+    <string name="menu_home">홈</string>
+    <string name="menu_recommend">인기 상품</string>
+    <string name="menu_my_page">내 설정</string>
+    <string name="fragment_recommend_title">인기 상품</string>
+    <string name="fragment_list_title">상품 목록</string>
 </resources>
