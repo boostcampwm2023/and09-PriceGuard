@@ -1,8 +1,9 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.datastore.TokenDataSource
+import javax.inject.Inject
 
-class TokenRepositoryImpl(private val tokenDataSource: TokenDataSource) : TokenRepository {
+class TokenRepositoryImpl @Inject constructor(private val tokenDataSource: TokenDataSource) : TokenRepository {
 
     override suspend fun storeTokens(accessToken: String, refreshToken: String) {
         tokenDataSource.saveTokens(accessToken, refreshToken)

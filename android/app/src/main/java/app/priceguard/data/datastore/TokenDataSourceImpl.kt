@@ -4,10 +4,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-class TokenDataSourceImpl(private val dataStore: DataStore<Preferences>) : TokenDataSource {
+class TokenDataSourceImpl @Inject constructor(private val dataStore: DataStore<Preferences>) : TokenDataSource {
 
     private val accessTokenKey = stringPreferencesKey("access_token")
     private val refreshTokenKey = stringPreferencesKey("refresh_token")

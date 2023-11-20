@@ -10,11 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import app.priceguard.MainActivity
 import app.priceguard.R
 import app.priceguard.data.dto.SignUpState
-import app.priceguard.data.repository.UserRepositoryImpl
 import app.priceguard.databinding.ActivitySignupBinding
+import app.priceguard.ui.main.MainActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import com.google.android.material.appbar.AppBarLayout
@@ -23,8 +22,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
@@ -35,7 +36,6 @@ class SignupActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
-        signupViewModel.userRepository = UserRepositoryImpl()
         setNavigationButton()
         disableAppBarScroll()
         observeState()

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.LoginResult
 import app.priceguard.data.dto.LoginState
 import app.priceguard.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,7 +15,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     data class State(
         val email: String = "",
@@ -31,7 +36,6 @@ class LoginViewModel : ViewModel() {
     private val emailPattern = """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
     private val passwordPattern = """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
 
-    lateinit var userRepository: UserRepository
 
     private var _event = MutableSharedFlow<LoginEvent>()
     val event: SharedFlow<LoginEvent> = _event.asSharedFlow()

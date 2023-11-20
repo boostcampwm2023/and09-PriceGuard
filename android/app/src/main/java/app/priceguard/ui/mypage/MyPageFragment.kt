@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import app.priceguard.R
 import app.priceguard.databinding.FragmentMyPageBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyPageFragment : Fragment() {
 
     private var _binding: FragmentMyPageBinding? = null

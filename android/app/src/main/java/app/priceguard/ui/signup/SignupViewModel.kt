@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.SignUpResponse
 import app.priceguard.data.dto.SignUpState
 import app.priceguard.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -14,7 +16,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignupViewModel : ViewModel() {
+@HiltViewModel
+class SignupViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     data class SignupUIState(
         val name: String = "",
@@ -34,8 +39,6 @@ class SignupViewModel : ViewModel() {
     private val passwordPattern =
         """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
 
-    lateinit var userRepository: UserRepository
-
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
 
@@ -52,7 +55,8 @@ class SignupViewModel : ViewModel() {
             sendEvent(SignupEvent.SignupStart)
             Log.d("ViewModel", "Event Start Sent")
             updateSignupStarted(true)
-            val result = userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
+            val result =
+                userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
             when (result.signUpState) {
                 SignUpState.SUCCESS -> {
