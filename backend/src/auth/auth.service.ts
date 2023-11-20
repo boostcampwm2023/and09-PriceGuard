@@ -1,7 +1,7 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
