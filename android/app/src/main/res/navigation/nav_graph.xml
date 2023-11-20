@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/registerItemLinkFragment">
+    <fragment
+        android:id="@+id/confirmItemLinkFragment"
+        android:name="app.priceguard.ui.main.additem.ConfirmItemLinkFragment"
+        android:label="ConfirmItemLinkFragment" >
+        <action
+            android:id="@+id/action_confirmItemLinkFragment_to_setTargetPriceFragment"
+            app:destination="@id/setTargetPriceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/setTargetPriceFragment"
+        android:name="app.priceguard.ui.main.additem.SetTargetPriceFragment"
+        android:label="SetTargetPriceFragment" />
+    <fragment
+        android:id="@+id/registerItemLinkFragment"
+        android:name="app.priceguard.ui.main.additem.RegisterItemLinkFragment"
+        android:label="RegisterItemLinkFragment" >
+        <action
+            android:id="@+id/action_registerItemLinkFragment_to_confirmItemLinkFragment"
+            app:destination="@id/confirmItemLinkFragment" />
+    </fragment>
+</navigation>
