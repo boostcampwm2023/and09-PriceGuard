@@ -9,11 +9,10 @@ import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
 import app.priceguard.ui.main.MainActivity
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
-import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                setLoginButtonActive(false, getProgressIndicatorDrawable())
+                (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -43,25 +42,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun getProgressIndicatorDrawable(): IndeterminateDrawable<CircularProgressIndicatorSpec> {
-        val spec = CircularProgressIndicatorSpec(
-            this,
-            null,
-            0,
-            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
-        )
-        return IndeterminateDrawable.createCircularDrawable(this, spec)
-    }
-
     private fun collectEvent() {
         repeatOnStarted {
             loginViewModel.event.collect { eventType ->
                 when (eventType) {
-                    LoginEvent.StartLoading -> {
-                        setLoginButtonActive(false, getProgressIndicatorDrawable())
+                    LoginEvent.LoginStart -> {
+                        (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
                     }
+
                     else -> {
-                        setLoginButtonActive(true, null)
+                        (binding.btnLoginLogin as MaterialButton).icon = null
                         setDialogMessageAndShow(eventType)
                     }
                 }
@@ -72,10 +62,13 @@ class LoginActivity : AppCompatActivity() {
     private fun setDialogMessageAndShow(eventType: LoginEvent) {
         when (eventType) {
             LoginEvent.Invalid -> {
-                showDialog(getString(R.string.login_invalid), getString(R.string.login_invalid_message))
+                showDialog(
+                    getString(R.string.login_invalid),
+                    getString(R.string.login_invalid_message)
+                )
             }
 
-            is LoginEvent.LoginFailed -> {
+            is LoginEvent.LoginFailure -> {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 
@@ -94,14 +87,6 @@ class LoginActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
             .create()
             .show()
-    }
-
-    private fun setLoginButtonActive(
-        active: Boolean,
-        icon: IndeterminateDrawable<CircularProgressIndicatorSpec>?
-    ) {
-        (binding.btnLoginLogin as MaterialButton).icon = icon
-        binding.btnLoginLogin.isEnabled = active
     }
 
     private fun gotoSignUp() {
