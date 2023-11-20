@@ -28,4 +28,12 @@
     <string name="invalid_parameter">입력값이 유효하지 않습니다.</string>
     <string name="duplicate_email">이미 가입된 계정입니다.</string>
     <string name="undefined_error">오류가 발생했습니다. 다시 시도해 주세요.</string>
+    <string name="back">뒤로</string>
+    <string name="next">다음</string>
+    <string name="add_link_title">상품 링크\n입력해 주세요</string>
+    <string name="confirm_product_title">선택하신 상품을\n확인해 주세요</string>
+    <string name="set_price_title">알림받을 목표가격을\n설정해 주세요</string>
+    <string name="register_link">링크를 입력하세요.</string>
+    <string name="how_get_product_link">상품 링크는 어떻게 얻나요?</string>
+    <string name="want_notification">에 알람을 받고 싶습니다.</string>
 </resources>
