@@ -17,7 +17,7 @@
         android:layout_marginBottom="8dp">
 
         <ImageView
-            android:id="@+id/iv_my_page_item_icon"
+            android:id="@+id/iv_item_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -34,7 +34,7 @@
             android:textAppearance="?attr/textAppearanceHeadline5"
             android:text="@{summary.title}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iv_my_page_item_icon"
+            app:layout_constraintStart_toEndOf="@id/iv_item_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title"/>
 
@@ -45,7 +45,7 @@
             android:layout_margin="16dp"
             android:text="@{summary.price}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_my_page_item_icon"
+            app:layout_constraintTop_toBottomOf="@+id/iv_item_icon"
             tools:text="000000원" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:textColor="?attr/colorError"
             android:text="@{summary.discountPercent}"
             app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/iv_my_page_item_icon"
+            app:layout_constraintTop_toBottomOf="@+id/iv_item_icon"
             tools:text="-99%" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
