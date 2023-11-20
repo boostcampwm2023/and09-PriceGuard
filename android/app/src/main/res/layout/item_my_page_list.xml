@@ -6,7 +6,7 @@
 
         <variable
             name="settingInfo"
-            type="app.priceguard.ui.mypage.SettingInfo" />
+            type="app.priceguard.ui.home.mypage.SettingInfo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

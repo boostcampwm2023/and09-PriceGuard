@@ -14,8 +14,11 @@
         android:theme="@style/Theme.PriceGuard"
         tools:targetApi="34">
         <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.intro.IntroActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,9 +30,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.signup.SignupActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.main.MainActivity"
             android:exported="false" />
     </application>
 

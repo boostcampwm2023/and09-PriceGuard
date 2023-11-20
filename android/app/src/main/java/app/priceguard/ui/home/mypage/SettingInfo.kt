@@ -1,4 +1,4 @@
-package app.priceguard.ui.mypage
+package app.priceguard.ui.home.mypage
 
 data class SettingInfo(
     val icon: Int,

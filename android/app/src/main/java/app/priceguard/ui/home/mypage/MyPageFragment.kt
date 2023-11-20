@@ -1,4 +1,4 @@
-package app.priceguard.ui.mypage
+package app.priceguard.ui.home.mypage
 
 import android.os.Bundle
 import android.view.LayoutInflater
