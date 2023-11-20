@@ -38,7 +38,7 @@ class SignupViewModel @Inject constructor(
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
         data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
-        data class SignupError(val errorState: SignUpState) : SignupEvent()
+        data class SignupFailure(val errorState: SignUpState) : SignupEvent()
     }
 
     private val emailPattern =
@@ -73,7 +73,7 @@ class SignupViewModel @Inject constructor(
                 }
 
                 else -> {
-                    sendSignupEvent(SignupEvent.SignupError(result.signUpState))
+                    sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
                 }
             }
             updateSignupStarted(false)

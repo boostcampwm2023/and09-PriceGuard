@@ -32,7 +32,7 @@ class LoginViewModel @Inject constructor(
         data object LoginStart : LoginEvent
         data object Invalid : LoginEvent
         data class LoginSuccess(val response: LoginResponse?) : LoginEvent
-        data class LoginError(val status: LoginState) : LoginEvent
+        data class LoginFailure(val status: LoginState) : LoginEvent
     }
 
     private val emailPattern =
@@ -77,7 +77,7 @@ class LoginViewModel @Inject constructor(
                     }
 
                     else -> {
-                        sendLoginEvent(LoginEvent.LoginError(result.loginState))
+                        sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
                     }
                 }
             } else {

@@ -68,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-            is LoginEvent.LoginError -> {
+            is LoginEvent.LoginFailure -> {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 

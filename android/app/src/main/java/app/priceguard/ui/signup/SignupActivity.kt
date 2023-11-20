@@ -91,7 +91,7 @@ class SignupActivity : AppCompatActivity() {
                 }
             }
 
-            is SignupEvent.SignupError -> {
+            is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
                     SignUpState.INVALID_PARAMETER -> {
