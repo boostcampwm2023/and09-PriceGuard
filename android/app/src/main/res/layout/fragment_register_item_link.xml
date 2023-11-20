@@ -42,7 +42,8 @@
             app:layout_constraintBottom_toBottomOf="@id/view_edit_text_background"
             app:layout_constraintEnd_toStartOf="@id/btn_register_item_next"
             app:layout_constraintStart_toStartOf="@id/view_edit_text_background"
-            app:layout_constraintTop_toTopOf="@id/view_edit_text_background" />
+            app:layout_constraintTop_toTopOf="@id/view_edit_text_background"
+            android:inputType="textUri"/>
 
         <ImageButton
             android:id="@+id/btn_register_item_next"
