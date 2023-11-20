@@ -57,8 +57,8 @@ class LoginActivity : AppCompatActivity() {
         repeatOnStarted {
             loginViewModel.event.collect { eventType ->
                 when (eventType) {
-                    LoginEvent.StartLoading -> {
                         setLoginButtonActive(false, getProgressIndicatorDrawable())
+                    LoginEvent.LoginStart -> {
                     }
 
                     else -> {
@@ -79,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-            is LoginEvent.LoginFailed -> {
+            is LoginEvent.LoginError -> {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 

@@ -31,7 +31,8 @@ class SignupViewModel @Inject constructor(
         val isEmailError: Boolean? = null,
         val isPasswordError: Boolean? = null,
         val isRetypePasswordError: Boolean? = null,
-        val isSignupStarted: Boolean = false
+        val isSignupStarted: Boolean = false,
+        val isSignupFinished: Boolean = false
     )
 
     private val emailPattern =
@@ -46,13 +47,13 @@ class SignupViewModel @Inject constructor(
     val eventFlow: SharedFlow<SignupEvent> = _eventFlow.asSharedFlow()
 
     fun signup() {
-        viewModelScope.launch {
-            if (_state.value.isSignupStarted) {
-                Log.d("Signup", "Signup already requested. Skipping")
-                return@launch
-            }
+        if (_state.value.isSignupStarted || _state.value.isSignupFinished) {
+            Log.d("Signup", "Signup already requested. Skipping")
+            return
+        }
 
-            sendEvent(SignupEvent.SignupStart)
+        viewModelScope.launch {
+            sendSignupEvent(SignupEvent.SignupStart)
             Log.d("ViewModel", "Event Start Sent")
             updateSignupStarted(true)
             val result =
@@ -60,12 +61,13 @@ class SignupViewModel @Inject constructor(
 
             when (result.signUpState) {
                 SignUpState.SUCCESS -> {
-                    sendEvent(SignupEvent.SignupFinish(result.signUpResponse))
+                    updateSignupFinished(true)
+                    sendSignupEvent(SignupEvent.SignupSuccess(result.signUpResponse))
                     Log.d("ViewModel", "Event Finish Sent")
                 }
 
                 else -> {
-                    sendEvent(SignupEvent.SignupError(result.signUpState))
+                    sendSignupEvent(SignupEvent.SignupError(result.signUpState))
                 }
             }
             updateSignupStarted(false)
@@ -117,7 +119,7 @@ class SignupViewModel @Inject constructor(
         return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
     }
 
-    private fun sendEvent(event: SignupEvent) {
+    private fun sendSignupEvent(event: SignupEvent) {
         viewModelScope.launch {
             _eventFlow.emit(event)
         }
@@ -196,9 +198,13 @@ class SignupViewModel @Inject constructor(
         _state.value = _state.value.copy(isSignupStarted = started)
     }
 
+    private fun updateSignupFinished(finished: Boolean) {
+        _state.value = _state.value.copy(isSignupFinished = finished)
+    }
+
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
-        data class SignupFinish(val response: SignUpResponse?) : SignupEvent()
+        data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
         data class SignupError(val errorState: SignUpState) : SignupEvent()
     }
 }

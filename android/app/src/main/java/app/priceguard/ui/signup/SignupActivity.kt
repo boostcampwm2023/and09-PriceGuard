@@ -83,7 +83,7 @@ class SignupActivity : AppCompatActivity() {
                 (binding.btnSignupSignup as MaterialButton).icon = progressIndicatorDrawable
             }
 
-            is SignupEvent.SignupFinish -> {
+            is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 val response = event.response
 
