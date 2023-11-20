@@ -7,9 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.data.dto.SignUpState
 import app.priceguard.databinding.ActivitySignupBinding
@@ -17,12 +14,12 @@ import app.priceguard.ui.main.MainActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignupActivity : AppCompatActivity() {
@@ -128,22 +125,18 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.state.collect { state ->
-                    updateNameTextFieldUI(state)
-                    updateEmailTextFieldUI(state)
-                    updatePasswordTextFieldUI(state)
-                    updateRetypePasswordTextFieldUI(state)
-                }
+        repeatOnStarted {
+            signupViewModel.state.collect { state ->
+                updateNameTextFieldUI(state)
+                updateEmailTextFieldUI(state)
+                updatePasswordTextFieldUI(state)
+                updateRetypePasswordTextFieldUI(state)
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.eventFlow.collect { event ->
-                    handleSignupEvent(event)
-                }
+        repeatOnStarted {
+            signupViewModel.eventFlow.collect { event ->
+                handleSignupEvent(event)
             }
         }
     }
