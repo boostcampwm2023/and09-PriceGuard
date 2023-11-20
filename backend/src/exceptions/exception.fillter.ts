@@ -1,13 +1,16 @@
-import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import { ValidationException } from './validation.exception';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Catch(HttpException)
 export class UserExceptionFilter implements ExceptionFilter {
+    constructor(@Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger) {}
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
-
+        this.logger.error(exception.message);
         if (exception.message.includes('Duplicate entry')) {
             this.setResposne(response, HttpStatus.CONFLICT, '이메일 중복');
             return;
