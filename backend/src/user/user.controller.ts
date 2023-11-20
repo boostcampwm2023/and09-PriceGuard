@@ -1,10 +1,10 @@
 import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes, forwardRef, Inject } from '@nestjs/common';
 import { UsersService } from './user.service';
-import { UserDto } from './dto/user.dto';
+import { UserDto } from '../dto/user.dto';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { UserValidationPipe } from 'src/exceptions/validation.user.pipe';
 import { AuthService } from '../auth/auth.service';
-import { LoginDto } from '../auth/dto/login.dto';
+import { LoginDto } from '../dto/login.dto';
 import {
     ApiBadRequestResponse,
     ApiBody,
@@ -13,6 +13,7 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger';
+import { JwtResponse } from 'src/entities/response.entity';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -26,7 +27,7 @@ export class UsersController {
 
     @ApiOperation({ summary: '회원가입 API', description: '서버에게 회원가입 요청을 보낸다.' })
     @ApiBody({ type: UserDto })
-    @ApiOkResponse({ description: '회원가입 성공' })
+    @ApiOkResponse({ type: JwtResponse, description: '회원가입 성공' })
     @ApiBadRequestResponse({ description: '유효하지 않은 입력 값' })
     @ApiConflictResponse({ description: '이메일 중복' })
     @Post('register')
@@ -42,7 +43,7 @@ export class UsersController {
 
     @ApiOperation({ summary: '로그인 API', description: '서버에게 로그인 요청을 보낸다.' })
     @ApiBody({ type: LoginDto })
-    @ApiOkResponse({ description: '로그인 성공' })
+    @ApiOkResponse({ type: JwtResponse, description: '로그인 성공' })
     @ApiBadRequestResponse({ description: '로그인 실패' })
     @Post('login')
     @UsePipes(new UserValidationPipe())
