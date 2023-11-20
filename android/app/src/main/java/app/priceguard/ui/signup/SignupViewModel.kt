@@ -35,6 +35,12 @@ class SignupViewModel @Inject constructor(
         val isSignupFinished: Boolean = false
     )
 
+    sealed class SignupEvent {
+        data object SignupStart : SignupEvent()
+        data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
+        data class SignupError(val errorState: SignUpState) : SignupEvent()
+    }
+
     private val emailPattern =
         """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
     private val passwordPattern =
@@ -200,11 +206,5 @@ class SignupViewModel @Inject constructor(
 
     private fun updateSignupFinished(finished: Boolean) {
         _state.value = _state.value.copy(isSignupFinished = finished)
-    }
-
-    sealed class SignupEvent {
-        data object SignupStart : SignupEvent()
-        data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
-        data class SignupError(val errorState: SignUpState) : SignupEvent()
     }
 }
