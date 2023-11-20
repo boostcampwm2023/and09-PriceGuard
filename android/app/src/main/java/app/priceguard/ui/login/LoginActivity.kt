@@ -34,7 +34,8 @@ class LoginActivity : AppCompatActivity() {
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
+                (binding.btnLoginLogin as MaterialButton).icon =
+                    getCircularProgressIndicatorDrawable(this@LoginActivity)
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -47,7 +48,8 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.event.collect { eventType ->
                 when (eventType) {
                     LoginEvent.LoginStart -> {
-                        (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
+                        (binding.btnLoginLogin as MaterialButton).icon =
+                            getCircularProgressIndicatorDrawable(this@LoginActivity)
                     }
 
                     else -> {
