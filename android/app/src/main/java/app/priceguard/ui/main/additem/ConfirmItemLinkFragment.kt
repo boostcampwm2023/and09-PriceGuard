@@ -9,14 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
-import com.google.android.material.appbar.MaterialToolbar
 
 class ConfirmItemLinkFragment : Fragment() {
 
     private var _binding: FragmentConfirmItemLinkBinding? = null
     private val binding get() = _binding!!
-
-//    private val navController = findNavController()
     private val viewModel: ConfirmItemLinkViewModel by viewModels()
 
     override fun onCreateView(
@@ -32,19 +29,20 @@ class ConfirmItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        requireActivity().findViewById<MaterialToolbar>(R.id.mt_add_item_topbar).setTitle(R.string.confirm)
-
-        binding.btnConfirmItemNext.setOnClickListener {
-            findNavController().navigate(R.id.action_confirmItemLinkFragment_to_setTargetPriceFragment)
-        }
-        binding.btnConfirmItemBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.initListener()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun FragmentConfirmItemLinkBinding.initListener() {
+        btnConfirmItemNext.setOnClickListener {
+            findNavController().navigate(R.id.action_confirmItemLinkFragment_to_setTargetPriceFragment)
+        }
+        btnConfirmItemBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 }

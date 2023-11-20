@@ -25,14 +25,17 @@ class RegisterItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.btnRegisterItemNext.setOnClickListener {
-            findNavController().navigate(R.id.action_registerItemLinkFragment_to_confirmItemLinkFragment)
-        }
+        binding.initListener()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun FragmentRegisterItemLinkBinding.initListener() {
+        btnRegisterItemNext.setOnClickListener {
+            findNavController().navigate(R.id.action_registerItemLinkFragment_to_confirmItemLinkFragment)
+        }
     }
 }
