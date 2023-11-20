@@ -1,8 +1,9 @@
 package app.priceguard.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.LoginResult
+import app.priceguard.data.dto.LoginResponse
 import app.priceguard.data.dto.LoginState
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,14 +24,15 @@ class LoginViewModel @Inject constructor(
     data class State(
         val email: String = "",
         val password: String = "",
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val isLoginFinished: Boolean = false
     )
 
-    sealed interface LoginEvent {
-        data object StartLoading : LoginEvent
-        data object Invalid : LoginEvent
-        data class LoginFailed(val status: LoginState) : LoginEvent
-        data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent
+    sealed class LoginEvent {
+        data object LoginStart : LoginEvent()
+        data object Invalid : LoginEvent()
+        data class LoginSuccess(val response: LoginResponse?) : LoginEvent()
+        data class LoginFailure(val status: LoginState) : LoginEvent()
     }
 
     private val emailPattern =
@@ -54,38 +56,39 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login() {
-        _state.value = _state.value.copy(isLoading = true)
+        if (_state.value.isLoading || _state.value.isLoginFinished) {
+            Log.d("Login", "Login already requested. Skipping")
+            return
+        }
+
         viewModelScope.launch {
-            _event.emit(LoginEvent.StartLoading)
+            _state.value = _state.value.copy(isLoading = true)
+            sendLoginEvent(LoginEvent.LoginStart)
+
             if (checkEmailAndPassword()) {
                 val result = userRepository.login(_state.value.email, _state.value.password)
-                sendEvent(result)
+
+                when (result.loginState) {
+                    LoginState.SUCCESS -> {
+                        _state.value = _state.value.copy(isLoginFinished = true)
+                        sendLoginEvent(
+                            LoginEvent.LoginSuccess(result.loginResponse)
+                        )
+                    }
+
+                    else -> {
+                        sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
+                    }
+                }
             } else {
-                _event.emit(LoginEvent.Invalid)
+                sendLoginEvent(LoginEvent.Invalid)
             }
             _state.value = _state.value.copy(isLoading = false)
         }
     }
 
-    private suspend fun sendEvent(result: LoginResult) {
-        when (result.loginState) {
-            LoginState.SUCCESS -> {
-                if (result.loginResponse == null) {
-                    _event.emit(LoginEvent.LoginFailed(LoginState.UNDEFINED_ERROR))
-                } else {
-                    _event.emit(
-                        LoginEvent.LoginSuccess(
-                            result.loginResponse.accessToken,
-                            result.loginResponse.refreshToken
-                        )
-                    )
-                }
-            }
-
-            else -> {
-                _event.emit(LoginEvent.LoginFailed(result.loginState))
-            }
-        }
+    private suspend fun sendLoginEvent(event: LoginEvent) {
+        _event.emit(event)
     }
 
     private fun checkEmailAndPassword(): Boolean {

@@ -7,23 +7,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.R
 import app.priceguard.data.dto.SignUpState
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
-import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignupActivity : AppCompatActivity() {
@@ -68,25 +64,14 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
-        val spec =
-            CircularProgressIndicatorSpec(
-                this,
-                null,
-                0,
-                R.style.Theme_PriceGuard_CircularProgressIndicator
-            )
-
-        val progressIndicatorDrawable =
-            IndeterminateDrawable.createCircularDrawable(this, spec).apply {
-                setVisible(true, true)
-            }
+        val circularProgressIndicator = getCircularProgressIndicatorDrawable(this)
 
         when (event) {
             is SignupEvent.SignupStart -> {
-                (binding.btnSignupSignup as MaterialButton).icon = progressIndicatorDrawable
+                (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
             }
 
-            is SignupEvent.SignupFinish -> {
+            is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 val response = event.response
 
@@ -103,7 +88,7 @@ class SignupActivity : AppCompatActivity() {
                 }
             }
 
-            is SignupEvent.SignupError -> {
+            is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
                     SignUpState.INVALID_PARAMETER -> {
@@ -140,22 +125,18 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.state.collect { state ->
-                    updateNameTextFieldUI(state)
-                    updateEmailTextFieldUI(state)
-                    updatePasswordTextFieldUI(state)
-                    updateRetypePasswordTextFieldUI(state)
-                }
+        repeatOnStarted {
+            signupViewModel.state.collect { state ->
+                updateNameTextFieldUI(state)
+                updateEmailTextFieldUI(state)
+                updatePasswordTextFieldUI(state)
+                updateRetypePasswordTextFieldUI(state)
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.eventFlow.collect { event ->
-                    handleSignupEvent(event)
-                }
+        repeatOnStarted {
+            signupViewModel.eventFlow.collect { event ->
+                handleSignupEvent(event)
             }
         }
     }
