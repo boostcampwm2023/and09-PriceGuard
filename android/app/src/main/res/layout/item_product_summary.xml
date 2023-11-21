@@ -16,56 +16,78 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vertical_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="80dp" />
+
         <ImageView
             android:id="@+id/iv_item_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_11st"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_11st"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_my_page_item_setting"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_product_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@{summary.readTitle()}"
             android:textAppearance="?attr/textAppearanceHeadline5"
-            android:text="@{summary.title}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/gl_vertical_end"
             app:layout_constraintStart_toEndOf="@id/iv_item_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Title"/>
+            app:layout_constraintTop_toTopOf="@+id/iv_item_icon"
+            tools:text="오뚜기 진라면, 120g, 40개" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@{summary.price}"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginVertical="16dp"
+            android:text="@{summary.readPrice()}"
+            app:layout_constraintStart_toStartOf="@+id/iv_item_icon"
             app:layout_constraintTop_toBottomOf="@+id/iv_item_icon"
             tools:text="000000원" />
 
         <TextView
+            android:id="@+id/tv_product_discount_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="@{summary.readDiscountPercent()}"
             android:textColor="?attr/colorError"
-            android:text="@{summary.discountPercent}"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/iv_item_icon"
+            app:layout_constraintStart_toEndOf="@+id/tv_product_price"
+            app:layout_constraintTop_toTopOf="@+id/tv_product_price"
             tools:text="-99%" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/ms_product"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
-            app:thumbIcon="@drawable/ic_notifications_active"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:thumbIcon="@drawable/ic_notifications_active" />
+
+        <TextView
+            android:id="@+id/tv_product_recommend_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:visibility="gone"
+            app:drawableLeftCompat="@drawable/ic_trending_up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="#1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
