@@ -26,4 +26,12 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
+    
+    <style name="Widget.Material3.Button.ElevatedButton.Primary" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="elevation">2dp</item>
+        <item name="rippleColor">@color/primary_elevated_button_ripple_color_selector</item>
+    </style>
 </resources>
