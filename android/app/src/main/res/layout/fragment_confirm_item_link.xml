@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/tv_confirm_item_title"
-            style="?attr/textAppearanceHeadlineMedium"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
@@ -65,7 +65,7 @@
 
                 <TextView
                     android:id="@+id/tv_confirm_item_item_title"
-                    style="?attr/textAppearanceBodyLarge"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -76,7 +76,7 @@
 
                 <TextView
                     android:id="@+id/tv_confirm_item_brand"
-                    style="?attr/textAppearanceBodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -94,7 +94,7 @@
 
                 <TextView
                     android:id="@+id/tv_confirm_item_price"
-                    style="?attr/textAppearanceTitleMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
