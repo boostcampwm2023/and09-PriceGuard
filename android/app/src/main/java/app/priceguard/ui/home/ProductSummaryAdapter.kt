@@ -48,7 +48,7 @@ class ProductSummaryAdapter :
         }
 
         private fun ItemProductSummaryBinding.setSwitchListener() {
-            msProduct.setOnCheckedChangeListener { buttonView, isChecked ->
+            msProduct.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     // TODO: 푸쉬 알람 설정 추가
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
