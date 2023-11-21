@@ -19,21 +19,21 @@ class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Use
         }
         when (response) {
             is APIResult.Success -> {
-                return SignUpResult(SignUpState.SUCCESS, response.data)
+                return SignUpResult(SignUpState.SUCCESS, response.data.accessToken, response.data.refreshToken)
             }
 
             is APIResult.Error -> {
                 return when (response.code) {
                     400 -> {
-                        SignUpResult(SignUpState.INVALID_PARAMETER)
+                        SignUpResult(SignUpState.INVALID_PARAMETER, null, null)
                     }
 
                     409 -> {
-                        SignUpResult(SignUpState.DUPLICATE_EMAIL)
+                        SignUpResult(SignUpState.DUPLICATE_EMAIL, null, null)
                     }
 
                     else -> {
-                        SignUpResult(SignUpState.UNDEFINED_ERROR)
+                        SignUpResult(SignUpState.UNDEFINED_ERROR, null, null)
                     }
                 }
             }

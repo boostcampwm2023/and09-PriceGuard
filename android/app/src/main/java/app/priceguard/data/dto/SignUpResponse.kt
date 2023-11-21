@@ -12,7 +12,8 @@ data class SignUpResponse(
 
 data class SignUpResult(
     val signUpState: SignUpState,
-    val signUpResponse: SignUpResponse? = null
+    val accessToken: String?,
+    val refreshToken: String?
 )
 
 enum class SignUpState {

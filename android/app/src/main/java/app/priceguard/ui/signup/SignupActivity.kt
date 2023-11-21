@@ -73,13 +73,6 @@ class SignupActivity : AppCompatActivity() {
 
             is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
-                val response = event.response
-
-                if (response == null) {
-                    showDialog(getString(R.string.error), getString(R.string.undefined_error))
-                } else {
-                    signupViewModel.saveTokens(response.accessToken, response.refreshToken)
-                }
             }
 
             is SignupEvent.SignupFailure -> {
