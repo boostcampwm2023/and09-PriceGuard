@@ -35,7 +35,7 @@ class RecommendedProductFragment : Fragment() {
     }
 
     private fun initSettingAdapter() {
-        binding.rvMyPageSetting.adapter = ProductSummaryAdapter(listOf())
+        binding.rvMyPageSetting.adapter = ProductSummaryAdapter(recommendedProductViewModel.list.value)
     }
 
     private fun initListener() {

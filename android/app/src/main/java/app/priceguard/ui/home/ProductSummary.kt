@@ -9,5 +9,6 @@ data class ProductSummary(
     val title: String,
     val price: String,
     val discountPercent: String,
+    val isAddedToList: Boolean,
     val isAlarmOn: Boolean
 )
