@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductDetailsDto } from './product.detatils.dto';
+import { ProductDetailsDto } from './product.details.dto';
 
 export class VerifyUrlSuccess {
     @ApiProperty({
