@@ -13,9 +13,5 @@ class AddItemActivity : AppCompatActivity() {
 
         binding = ActivityAddItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.mtAddItemTopbar.setNavigationOnClickListener {
-            finish()
-        }
     }
 }

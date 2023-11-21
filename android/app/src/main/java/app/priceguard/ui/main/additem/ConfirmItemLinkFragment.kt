@@ -30,8 +30,6 @@ class ConfirmItemLinkFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.initListener()
-
-        (requireActivity() as AddItemActivity).binding.ctlAddItemTopbar.title = getString(R.string.confirm_product_title)
     }
 
     override fun onDestroyView() {

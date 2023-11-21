@@ -21,6 +21,16 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="16dp" />
 
+        <TextView
+            android:id="@+id/tv_register_item_title"
+            style="?attr/textAppearanceHeadlineMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="96dp"
+            android:text="@string/add_link_title"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <View
             android:id="@+id/view_edit_text_background"
             android:layout_width="0dp"
@@ -29,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
             app:layout_constraintStart_toStartOf="@+id/gl_vertical_start"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_register_item_title"
             app:layout_constraintVertical_bias="0.3" />
 
         <EditText
@@ -39,11 +49,11 @@
             android:layout_marginStart="16dp"
             android:background="#00000000"
             android:hint="@string/register_link"
+            android:inputType="textUri"
             app:layout_constraintBottom_toBottomOf="@id/view_edit_text_background"
             app:layout_constraintEnd_toStartOf="@id/btn_register_item_next"
             app:layout_constraintStart_toStartOf="@id/view_edit_text_background"
-            app:layout_constraintTop_toTopOf="@id/view_edit_text_background"
-            android:inputType="textUri"/>
+            app:layout_constraintTop_toTopOf="@id/view_edit_text_background" />
 
         <ImageButton
             android:id="@+id/btn_register_item_next"
@@ -58,15 +68,19 @@
             app:layout_constraintTop_toTopOf="@id/et_register_item_link" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_register_item_helper"
             style="?attr/textAppearanceLabelSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="20dp"
             android:text="@string/how_get_product_link"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-            app:layout_constraintStart_toStartOf="@+id/gl_vertical_start" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="@+id/gl_vertical_start"
+            app:layout_constraintTop_toBottomOf="@+id/et_register_item_link"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

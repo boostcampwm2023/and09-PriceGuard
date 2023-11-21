@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 
 class SetTargetPriceFragment : Fragment() {
@@ -26,8 +25,6 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.initListener()
-
-        (requireActivity() as AddItemActivity).binding.ctlAddItemTopbar.title = getString(R.string.set_price_title)
     }
 
     override fun onDestroyView() {

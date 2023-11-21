@@ -4,7 +4,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_vertical_start"
@@ -21,6 +22,16 @@
             app:layout_constraintGuide_end="16dp" />
 
         <TextView
+            android:id="@+id/tv_confirm_item_title"
+            style="?attr/textAppearanceHeadlineMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="96dp"
+            android:text="@string/set_price_title"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_set_price_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,6 +40,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tv_set_price_current_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
