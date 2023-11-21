@@ -6,15 +6,18 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Controller, Get, HttpStatus, UseFilters, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { AuthExceptionFilter } from 'src/exceptions/auth.excetion';
 import { AuthSuccess, ExpiredTokenError, InvalidTokenError, RefreshJWTSuccess } from 'src/dto/swagger.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth.service';
 
 @ApiTags('auth api')
 @Controller('auth')
 @UseFilters(AuthExceptionFilter)
 export class AuthController {
+    constructor(private authService: AuthService) {}
+
     @ApiOperation({ summary: '인증 test API', description: '사용자가 인증 되어있는지 확인한다.' })
     @ApiHeader({
         name: 'Authorization Bearer Token',
@@ -39,8 +42,8 @@ export class AuthController {
     @ApiUnauthorizedResponse({ type: InvalidTokenError, description: '유효하지 않은 refreshToken' })
     @Get('/refreshJWT')
     @UseGuards(AuthGuard('refresh'))
-    async refreshJWT() {
-        //TODO: accessToken, refreshToken 재발급
-        return { statusCode: HttpStatus.OK, message: '토큰 재발급 성공' };
+    async refreshJWT(@Req() req: any) {
+        const { accessToken, refreshToken } = await this.authService.refreshJWT(req.user.id);
+        return { statusCode: HttpStatus.OK, message: '토큰 재발급 성공', accessToken, refreshToken };
     }
 }
