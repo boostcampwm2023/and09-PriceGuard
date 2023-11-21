@@ -46,7 +46,7 @@
             android:id="@+id/et_register_item_link"
             android:layout_width="0dp"
             android:layout_height="64dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginHorizontal="24dp"
             android:background="#00000000"
             android:hint="@string/register_link"
             android:inputType="textUri"
@@ -55,14 +55,15 @@
             app:layout_constraintStart_toStartOf="@id/view_edit_text_background"
             app:layout_constraintTop_toTopOf="@id/view_edit_text_background" />
 
-        <ImageButton
+        <Button
+            style="?attr/materialIconButtonFilledStyle"
             android:id="@+id/btn_register_item_next"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_circle"
             android:backgroundTint="?attr/colorSurfaceContainerHighest"
-            android:src="@drawable/ic_next"
+            app:icon="@drawable/ic_next"
+            app:iconTint="?attr/colorOnSurface"
             app:layout_constraintBottom_toBottomOf="@id/et_register_item_link"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintTop_toTopOf="@id/et_register_item_link" />
