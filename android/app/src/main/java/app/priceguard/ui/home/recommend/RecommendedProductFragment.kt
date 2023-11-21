@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import app.priceguard.R
 import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,27 +30,31 @@ class RecommendedProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initSettingAdapter()
-        initListener()
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.initSettingAdapter()
+        binding.initListener()
     }
 
-    private fun initSettingAdapter() {
-        binding.rvMyPageSetting.adapter = ProductSummaryAdapter(recommendedProductViewModel.list.value)
+    private fun FragmentRecommendedProductBinding.initSettingAdapter() {
+        val adapter = ProductSummaryAdapter()
+        rvMyPageSetting.adapter = adapter
+        lifecycleOwner?.repeatOnStarted {
+            recommendedProductViewModel.list.collect { list ->
+                adapter.submitList(list)
+            }
+        }
     }
 
-    private fun initListener() {
-        with(binding) {
-            mtbRecommendedProduct.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.refresh -> {
-                        recommendedProductViewModel.refreshScreen()
-                        true
-                    }
+    private fun FragmentRecommendedProductBinding.initListener() {
+        mtbRecommendedProduct.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.refresh -> {
+                    recommendedProductViewModel.getProductList()
+                    true
+                }
 
-                    else -> {
-                        true
-                    }
+                else -> {
+                    true
                 }
             }
         }

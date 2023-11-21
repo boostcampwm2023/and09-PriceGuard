@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import app.priceguard.R
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,32 +31,37 @@ class ProductListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initSettingAdapter()
-        initListener()
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.initSettingAdapter()
+        binding.initListener()
     }
 
-    private fun initSettingAdapter() {
-        binding.rvMyPageSetting.adapter = ProductSummaryAdapter(productListViewModel.list.value)
+    private fun FragmentProductListBinding.initSettingAdapter() {
+        val adapter = ProductSummaryAdapter()
+        rvMyPageSetting.adapter = adapter
+        lifecycleOwner?.repeatOnStarted {
+            productListViewModel.list.collect { list ->
+                adapter.submitList(list)
+            }
+        }
     }
 
-    private fun initListener() {
-        with(binding) {
-            mtbProductList.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.refresh -> {
-                        productListViewModel.refreshScreen()
-                        true
-                    }
+    private fun FragmentProductListBinding.initListener() {
+        mtbProductList.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.refresh -> {
+                    productListViewModel.getProductList()
+                    true
+                }
 
-                    else -> {
-                        true
-                    }
+                else -> {
+                    true
                 }
             }
-            fabProductList.setOnClickListener {
-                Log.d("TEST", "add")
-            }
+        }
+        fabProductList.setOnClickListener {
+            // TODO: 상품 추가 화면 이동
+            Log.d("TEST", "add")
         }
     }
 
