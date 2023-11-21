@@ -1,7 +1,7 @@
 package app.priceguard.ui.home.list
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import app.priceguard.R
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.main.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,9 +61,13 @@ class ProductListFragment : Fragment() {
             }
         }
         fabProductList.setOnClickListener {
-            // TODO: 상품 추가 화면 이동
-            Log.d("TEST", "add")
+            gotoProductAddActivity()
         }
+    }
+
+    private fun gotoProductAddActivity() {
+        val intent = Intent(activity, AddItemActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
