@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
-            app:thumbIcon="@{summary.isAlarmOn ? @drawable/ic_notifications_active : @drawable/ic_notifications_off}"
+            app:thumbIcon="@drawable/ic_notifications_active"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

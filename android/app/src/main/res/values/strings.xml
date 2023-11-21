@@ -34,4 +34,5 @@
     <string name="fragment_recommend_title">인기 상품</string>
     <string name="fragment_list_title">상품 목록</string>
     <string name="menu_refresh">refresh</string>
+    <string name="product_list_add_product">add product</string>
 </resources>
