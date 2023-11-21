@@ -74,7 +74,7 @@ class ProductSummaryAdapter :
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem.readId() == newItem.readId()
+                oldItem.hashCode() == newItem.hashCode()
         }
     }
 }

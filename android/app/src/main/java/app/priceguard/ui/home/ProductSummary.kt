@@ -1,10 +1,6 @@
 package app.priceguard.ui.home
 
-import java.util.UUID
-
 sealed interface ProductSummary {
-
-    fun readId(): UUID
 
     fun readTitle(): String
 
@@ -17,10 +13,8 @@ sealed interface ProductSummary {
         val title: String,
         val price: String,
         val discountPercent: String,
-        val isAlarmOn: Boolean,
-        val id: UUID = UUID.randomUUID()
+        val isAlarmOn: Boolean
     ) : ProductSummary {
-        override fun readId(): UUID = id
 
         override fun readTitle(): String = title
 
@@ -34,10 +28,8 @@ sealed interface ProductSummary {
         val title: String,
         val price: String,
         val discountPercent: String,
-        val recommendRank: Int,
-        val id: UUID = UUID.randomUUID()
+        val recommendRank: Int
     ) : ProductSummary {
-        override fun readId(): UUID = id
 
         override fun readTitle(): String = title
 
