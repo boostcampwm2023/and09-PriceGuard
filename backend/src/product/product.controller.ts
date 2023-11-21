@@ -6,6 +6,7 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
     ApiBody,
+    ApiHeader,
     ApiNotFoundResponse,
     ApiOkResponse,
     ApiOperation,
@@ -26,6 +27,10 @@ import {
 } from 'src/dto/product.swagger.dto';
 
 @ApiBearerAuth()
+@ApiHeader({
+    name: 'Authorization',
+    description: '사용자 인증을 위한 AccessToken이다. ex) Bearer [token]',
+})
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
 @Controller('product')
