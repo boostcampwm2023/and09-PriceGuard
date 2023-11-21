@@ -6,7 +6,7 @@ import app.priceguard.databinding.ActivityAddItemBinding
 
 class AddItemActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddItemBinding
+    lateinit var binding: ActivityAddItemBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
