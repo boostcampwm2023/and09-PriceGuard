@@ -33,10 +33,10 @@
 
             <ImageView
                 android:id="@+id/iv_item_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
                 android:layout_margin="16dp"
-                android:src="@drawable/ic_11st"
+                android:src="@drawable/ic_11st_logo"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
