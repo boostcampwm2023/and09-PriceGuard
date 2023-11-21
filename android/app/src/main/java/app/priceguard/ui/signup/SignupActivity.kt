@@ -8,7 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import app.priceguard.R
-import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.dto.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
@@ -73,40 +73,38 @@ class SignupActivity : AppCompatActivity() {
 
             is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
-                val response = event.response
-
-                if (response == null) {
-                    showDialog(getString(R.string.error), getString(R.string.undefined_error))
-                } else {
-                    // TODO: DataStore에 저장하기
-                    val intent = Intent(this, HomeActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-
-                    // TODO: 뒤에 액티비티 스택 다 날리기
-                    finish()
-                }
             }
 
             is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
-                    SignUpState.INVALID_PARAMETER -> {
+                    SignupState.INVALID_PARAMETER -> {
                         showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
                     }
 
-                    SignUpState.DUPLICATE_EMAIL -> {
+                    SignupState.DUPLICATE_EMAIL -> {
                         showDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
-                    SignUpState.UNDEFINED_ERROR -> {
+                    SignupState.UNDEFINED_ERROR -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
                     }
 
                     else -> {}
                 }
             }
+
+            SignupEvent.SignupInfoSaved -> {
+                gotoHomeActivity()
+            }
         }
+    }
+
+    private fun gotoHomeActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun setNavigationButton() {

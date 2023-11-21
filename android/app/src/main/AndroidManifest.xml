@@ -14,10 +14,7 @@
         android:theme="@style/Theme.PriceGuard"
         tools:targetApi="34">
         <activity
-            android:name=".ui.home.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.intro.IntroActivity"
+            android:name=".ui.splash.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +23,19 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.intro.IntroActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ui.signup.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.main.additem.AddItemActivity"
             android:exported="false" />
     </application>
 
