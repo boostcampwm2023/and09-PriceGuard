@@ -59,3 +59,16 @@ export class UrlError {
     })
     message: string;
 }
+
+export class AddProductError {
+    @ApiProperty({
+        example: HttpStatus.BAD_REQUEST,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '잘못된 요청입니다.',
+        description: '메시지',
+    })
+    message: string;
+}
