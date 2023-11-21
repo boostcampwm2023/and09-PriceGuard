@@ -3,7 +3,7 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.dto.SignupState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +39,7 @@ class SignupViewModel @Inject constructor(
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
         data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
-        data class SignupFailure(val errorState: SignUpState) : SignupEvent()
+        data class SignupFailure(val errorState: SignupState) : SignupEvent()
         data object SignupInfoSaved : SignupEvent()
     }
 
@@ -74,7 +74,7 @@ class SignupViewModel @Inject constructor(
             }
 
             when (result.signUpState) {
-                SignUpState.SUCCESS -> {
+                SignupState.SUCCESS -> {
                     updateSignupFinished(true)
                     sendSignupEvent(
                         SignupEvent.SignupSuccess(

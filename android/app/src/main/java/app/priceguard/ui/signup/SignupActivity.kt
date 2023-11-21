@@ -8,7 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import app.priceguard.R
-import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.dto.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.main.MainActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
@@ -78,15 +78,15 @@ class SignupActivity : AppCompatActivity() {
             is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
-                    SignUpState.INVALID_PARAMETER -> {
+                    SignupState.INVALID_PARAMETER -> {
                         showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
                     }
 
-                    SignUpState.DUPLICATE_EMAIL -> {
+                    SignupState.DUPLICATE_EMAIL -> {
                         showDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
-                    SignUpState.UNDEFINED_ERROR -> {
+                    SignupState.UNDEFINED_ERROR -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
                     }
 
