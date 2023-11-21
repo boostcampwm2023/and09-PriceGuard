@@ -48,6 +48,7 @@ class ProductSummaryAdapter :
         }
 
         private fun ItemProductSummaryBinding.setSwitchListener() {
+            msProduct.setThumbIconResource(if (msProduct.isChecked) R.drawable.ic_notifications_active else R.drawable.ic_notifications_off)
             msProduct.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     // TODO: 푸쉬 알람 설정 추가
@@ -60,11 +61,9 @@ class ProductSummaryAdapter :
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
-            tvProductRecommendRank.text =
-                tvProductRecommendRank.context.getString(
-                    R.string.recommand_rank,
-                    item.recommendRank
-                )
+            tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
+                R.string.recommand_rank, item.recommendRank
+            )
         }
     }
 
