@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddProductDto {
+export class ProductDto {
     @ApiProperty({
         example: '5897533626',
         description: '상품 코드',

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
-import { UpdateProductDto } from '../dto/update.product.dto';
-import { AddProductDto } from '../dto/add.product.dto';
+import { ProductDto } from '../dto/product.dto';
 
 @Injectable()
 export class ProductService {
@@ -9,8 +8,8 @@ export class ProductService {
         console.log(productUrlDto);
     }
 
-    addProduct(addProductDto: AddProductDto) {
-        console.log(addProductDto);
+    addProduct(productDto: ProductDto) {
+        console.log(productDto);
     }
 
     getTrackingList() {}
@@ -21,8 +20,8 @@ export class ProductService {
         console.log(productCode);
     }
 
-    updateTargetPrice(updateProductDto: UpdateProductDto) {
-        console.log(updateProductDto);
+    updateTargetPrice(productDto: ProductDto) {
+        console.log(productDto);
     }
 
     deleteProduct(productCode: string) {
