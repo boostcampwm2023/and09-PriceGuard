@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProductListViewModel @Inject constructor() : ViewModel() {
 
-    private var _list = MutableStateFlow<List<UserProductSummary>>(listOf())
-    val list: StateFlow<List<UserProductSummary>> = _list.asStateFlow()
+    private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
+    val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -24,7 +24,7 @@ class ProductListViewModel @Inject constructor() : ViewModel() {
 
     fun getProductList() {
         // TODO: repository 구현 후 연결
-        _list.value = listOf(
+        _productList.value = listOf(
             UserProductSummary(
                 "11번가",
                 "오뚜기 진라면, 120g, 40개",
