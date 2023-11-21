@@ -1,15 +1,4 @@
-import {
-    Body,
-    Controller,
-    Post,
-    HttpStatus,
-    UseFilters,
-    UsePipes,
-    forwardRef,
-    Inject,
-    Get,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes, forwardRef, Inject } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserDto } from '../dto/user.dto';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
@@ -25,7 +14,6 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { BadRequestError, DupEmailError, LoginFailError, LoginSuccess, RegisterSuccess } from 'src/dto/swagger.dto';
-import { JwtGuard } from 'src/auth/jwt/jwt.guard';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -61,11 +49,5 @@ export class UsersController {
         const { email, password } = loginDto;
         const { accessToken, refreshToken } = await this.authService.validateUser(email, password);
         return { statusCode: HttpStatus.OK, message: '로그인 성공', accessToken, refreshToken };
-    }
-
-    @Get('/authTest')
-    @UseGuards(JwtGuard)
-    async isAuthenticated() {
-        return { statusCode: HttpStatus.OK, message: '사용자 인증 성공' };
     }
 }

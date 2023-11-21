@@ -1,0 +1,46 @@
+import {
+    ApiGoneResponse,
+    ApiHeader,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Controller, Get, HttpStatus, UseFilters, UseGuards } from '@nestjs/common';
+import { AuthExceptionFilter } from 'src/exceptions/auth.excetion';
+import { AuthSuccess, ExpiredTokenError, InvalidTokenError, RefreshJWTSuccess } from 'src/dto/swagger.dto';
+import { AuthGuard } from '@nestjs/passport';
+
+@ApiTags('auth api')
+@Controller('auth')
+@UseFilters(AuthExceptionFilter)
+export class AuthController {
+    @ApiOperation({ summary: '인증 test API', description: '사용자가 인증 되어있는지 확인한다.' })
+    @ApiHeader({
+        name: 'Authorization Bearer Token',
+        description: 'accessToken',
+    })
+    @ApiOkResponse({ type: AuthSuccess, description: '사용자 인증 성공' })
+    @ApiGoneResponse({ type: ExpiredTokenError, description: 'accessToken 만료' })
+    @ApiUnauthorizedResponse({ type: InvalidTokenError, description: '유효하지 않은 accessToken' })
+    @Get('/authTest')
+    @UseGuards(AuthGuard('access'))
+    async isAuthenticated() {
+        return { statusCode: HttpStatus.OK, message: '사용자 인증 성공' };
+    }
+
+    @ApiOperation({ summary: 'accessToken 재발급 API', description: 'accessTokend을 재발급한다.' })
+    @ApiHeader({
+        name: 'Authorization Bearer Token',
+        description: 'refreshToken',
+    })
+    @ApiOkResponse({ type: RefreshJWTSuccess, description: 'JWT refresh 성공' })
+    @ApiGoneResponse({ type: ExpiredTokenError, description: 'refreshToken 만료' })
+    @ApiUnauthorizedResponse({ type: InvalidTokenError, description: '유효하지 않은 refreshToken' })
+    @Get('/refreshJWT')
+    @UseGuards(AuthGuard('refresh'))
+    async refreshJWT() {
+        //TODO: accessToken, refreshToken 재발급
+        return { statusCode: HttpStatus.OK, message: '토큰 재발급 성공' };
+    }
+}
