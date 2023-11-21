@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
@@ -27,7 +25,8 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash_screen)
+        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         lifecycleScope.launch {
             val accessToken = tokenRepository.getAccessToken()
