@@ -44,4 +44,8 @@
     <string name="register_link">링크를 입력하세요.</string>
     <string name="how_get_product_link">상품 링크는 어떻게 얻나요?</string>
     <string name="want_notification">에 알람을 받고 싶습니다.</string>
+    <string name="logout_confirm_title">로그아웃 확인</string>
+    <string name="logout_confirm_message">정말로 로그아웃 하시겠습니까?</string>
+    <string name="yes">네</string>
+    <string name="no">아니오</string>
 </resources>
