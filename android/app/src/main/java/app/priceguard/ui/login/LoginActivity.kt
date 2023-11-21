@@ -74,19 +74,6 @@ class LoginActivity : AppCompatActivity() {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 
-            is LoginEvent.LoginSuccess -> {
-                val response = eventType.response
-
-                if (response == null) {
-                    showDialog(
-                        getString(R.string.login_fail),
-                        getString(R.string.login_fail_message)
-                    )
-                } else {
-                    loginViewModel.saveTokens(response.accessToken, response.refreshToken)
-                }
-            }
-
             is LoginEvent.LoginInfoSaved -> {
                 gotoHomeActivity()
             }

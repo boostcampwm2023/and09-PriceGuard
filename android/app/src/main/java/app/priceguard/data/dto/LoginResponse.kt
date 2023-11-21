@@ -12,7 +12,8 @@ data class LoginResponse(
 
 data class LoginResult(
     val loginState: LoginState,
-    val loginResponse: LoginResponse? = null
+    val accessToken: String?,
+    val refreshToken: String?
 )
 
 enum class LoginState {

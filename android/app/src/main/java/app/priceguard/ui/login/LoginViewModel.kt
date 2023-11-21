@@ -3,7 +3,6 @@ package app.priceguard.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.LoginResponse
 import app.priceguard.data.dto.LoginState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
@@ -19,8 +18,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val tokenRepository: TokenRepository
+    private val userRepository: UserRepository, private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     data class State(
@@ -33,7 +31,7 @@ class LoginViewModel @Inject constructor(
     sealed class LoginEvent {
         data object LoginStart : LoginEvent()
         data object Invalid : LoginEvent()
-        data class LoginSuccess(val response: LoginResponse?) : LoginEvent()
+        data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent()
         data class LoginFailure(val status: LoginState) : LoginEvent()
         data object LoginInfoSaved : LoginEvent()
     }
@@ -65,40 +63,53 @@ class LoginViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
+            setLoading(true)
             sendLoginEvent(LoginEvent.LoginStart)
 
-            if (checkEmailAndPassword()) {
-                val result = userRepository.login(_state.value.email, _state.value.password)
-
-                when (result.loginState) {
-                    LoginState.SUCCESS -> {
-                        _state.value = _state.value.copy(isLoginFinished = true)
-                        sendLoginEvent(
-                            LoginEvent.LoginSuccess(result.loginResponse)
-                        )
-                    }
-
-                    else -> {
-                        sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
-                    }
-                }
-            } else {
+            if (!checkEmailAndPassword()) {
                 sendLoginEvent(LoginEvent.Invalid)
+                setLoading(false)
+                return@launch
             }
-            _state.value = _state.value.copy(isLoading = false)
+
+            val result = userRepository.login(_state.value.email, _state.value.password)
+
+            if (result.accessToken == null || result.refreshToken == null) {
+                sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
+                setLoading(false)
+                return@launch
+            }
+
+            when (result.loginState) {
+                LoginState.SUCCESS -> {
+                    setLoginFinished(true)
+                    sendLoginEvent(LoginEvent.LoginSuccess(result.accessToken, result.refreshToken))
+                    saveTokens(result.accessToken, result.refreshToken)
+                    sendLoginEvent(LoginEvent.LoginInfoSaved)
+                }
+
+                else -> {
+                    sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
+                }
+            }
+            setLoading(false)
         }
     }
 
-    fun saveTokens(accessToken: String, refreshToken: String) {
-        viewModelScope.launch {
-            tokenRepository.storeTokens(accessToken, refreshToken)
-            sendLoginEvent(LoginEvent.LoginInfoSaved)
-        }
+    private suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        tokenRepository.storeTokens(accessToken, refreshToken)
     }
 
     private suspend fun sendLoginEvent(event: LoginEvent) {
         _event.emit(event)
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        _state.value = _state.value.copy(isLoading = isLoading)
+    }
+
+    private fun setLoginFinished(finished: Boolean) {
+        _state.value = _state.value.copy(isLoginFinished = finished)
     }
 
     private fun checkEmailAndPassword(): Boolean {

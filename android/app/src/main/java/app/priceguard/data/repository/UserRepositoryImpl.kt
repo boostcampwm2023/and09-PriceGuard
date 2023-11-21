@@ -46,17 +46,17 @@ class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Use
         }
         when (response) {
             is APIResult.Success -> {
-                return LoginResult(LoginState.SUCCESS, response.data)
+                return LoginResult(LoginState.SUCCESS, response.data.accessToken, response.data.refreshToken)
             }
 
             is APIResult.Error -> {
                 return when (response.code) {
                     400 -> {
-                        LoginResult(LoginState.INVALID_PARAMETER)
+                        LoginResult(LoginState.INVALID_PARAMETER, null, null)
                     }
 
                     else -> {
-                        LoginResult(LoginState.UNDEFINED_ERROR)
+                        LoginResult(LoginState.UNDEFINED_ERROR, null, null)
                     }
                 }
             }
