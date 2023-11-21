@@ -4,6 +4,8 @@ WORKDIR /usr/src/app
 
 COPY ./backend/package*.json ./
 
+RUN mkdir logs
+
 RUN npm install
 
 COPY ./backend/. .
