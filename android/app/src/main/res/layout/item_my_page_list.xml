@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_product_title"
+            android:id="@+id/tv_my_page_item_title"
             style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
