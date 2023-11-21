@@ -13,7 +13,13 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger';
-import { BadRequestError, DupEmailError, LoginFailError, LoginSuccess, RegisterSuccess } from 'src/dto/swagger.dto';
+import {
+    BadRequestError,
+    DupEmailError,
+    LoginFailError,
+    LoginSuccess,
+    RegisterSuccess,
+} from 'src/dto/user.swagger.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
