@@ -3,8 +3,8 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.SignUpResponse
-import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.dto.SignupState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     data class SignupUIState(
@@ -37,8 +38,9 @@ class SignupViewModel @Inject constructor(
 
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
-        data class SignupSuccess(val response: SignUpResponse?) : SignupEvent()
-        data class SignupFailure(val errorState: SignUpState) : SignupEvent()
+        data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
+        data class SignupFailure(val errorState: SignupState) : SignupEvent()
+        data object SignupInfoSaved : SignupEvent()
     }
 
     private val emailPattern =
@@ -65,10 +67,23 @@ class SignupViewModel @Inject constructor(
             val result =
                 userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
+            if (result.accessToken == null || result.refreshToken == null) {
+                sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
+                updateSignupStarted(false)
+                return@launch
+            }
+
             when (result.signUpState) {
-                SignUpState.SUCCESS -> {
+                SignupState.SUCCESS -> {
                     updateSignupFinished(true)
-                    sendSignupEvent(SignupEvent.SignupSuccess(result.signUpResponse))
+                    sendSignupEvent(
+                        SignupEvent.SignupSuccess(
+                            result.accessToken,
+                            result.refreshToken
+                        )
+                    )
+                    saveTokens(result.accessToken, result.refreshToken)
+                    sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")
                 }
 
@@ -123,6 +138,10 @@ class SignupViewModel @Inject constructor(
 
     private fun isValidRetypePassword(): Boolean {
         return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
+    }
+
+    private suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        tokenRepository.storeTokens(accessToken, refreshToken)
     }
 
     private suspend fun sendSignupEvent(event: SignupEvent) {

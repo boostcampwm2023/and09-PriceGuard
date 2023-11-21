@@ -34,7 +34,8 @@ class LoginActivity : AppCompatActivity() {
     private fun initListener() {
         with(binding) {
             btnLoginLogin.setOnClickListener {
-                (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
+                (binding.btnLoginLogin as MaterialButton).icon =
+                    getCircularProgressIndicatorDrawable(this@LoginActivity)
             }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
@@ -47,7 +48,8 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.event.collect { eventType ->
                 when (eventType) {
                     LoginEvent.LoginStart -> {
-                        (binding.btnLoginLogin as MaterialButton).icon = getCircularProgressIndicatorDrawable(this@LoginActivity)
+                        (binding.btnLoginLogin as MaterialButton).icon =
+                            getCircularProgressIndicatorDrawable(this@LoginActivity)
                     }
 
                     else -> {
@@ -72,8 +74,8 @@ class LoginActivity : AppCompatActivity() {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 
-            is LoginEvent.LoginSuccess -> {
-                gotoHome()
+            is LoginEvent.LoginInfoSaved -> {
+                gotoHomeActivity()
             }
 
             else -> {}
@@ -93,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, SignupActivity::class.java))
     }
 
-    private fun gotoHome() {
+    private fun gotoHomeActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
