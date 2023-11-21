@@ -1,18 +1,14 @@
 package app.priceguard.ui.main.additem
 
 import androidx.lifecycle.ViewModel
+import app.priceguard.data.dto.ProductInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ConfirmItemLinkViewModel : ViewModel() {
-    data class ProductInfo(
-        val title: String = "",
-        val brand: String = "",
-        val logo: Int = 0,
-        val price: String = ""
-    )
 
     private val _flow = MutableStateFlow(
+        // 더미 데이터 추후 제거 필요함
         ProductInfo(
             title = "[농심]신라면 멀티팩 40봉",
             brand = "롯데아이몰",
