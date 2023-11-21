@@ -5,28 +5,33 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import app.priceguard.databinding.ItemMyPageListBinding
 
-class MyPageSettingAdapter(private val items: List<SettingInfo>) : RecyclerView.Adapter<MyPageSettingAdapter.ViewHolder>() {
+class MyPageSettingAdapter(
+    private val items: List<SettingItemInfo>,
+    private val listener: MyPageSettingItemClickListener
+) : RecyclerView.Adapter<MyPageSettingAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int {
         return items.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemMyPageListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemMyPageListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item)
+        holder.bind(item, listener)
     }
 
-    class ViewHolder(private val binding: ItemMyPageListBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemMyPageListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: SettingInfo) {
+        fun bind(item: SettingItemInfo, clickListener: MyPageSettingItemClickListener) {
             with(binding) {
-                ivMyPageItemIcon.setImageResource(item.icon)
-                settingInfo = item
+                settingItemInfo = item
+                listener = clickListener
             }
         }
     }
