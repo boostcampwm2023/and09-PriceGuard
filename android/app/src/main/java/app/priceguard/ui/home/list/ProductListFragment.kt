@@ -1,10 +1,13 @@
 package app.priceguard.ui.home.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import app.priceguard.R
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,6 +17,7 @@ class ProductListFragment : Fragment() {
 
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
+    private val productListViewModel: ProductListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,10 +32,31 @@ class ProductListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initSettingAdapter()
+        initListener()
     }
 
     private fun initSettingAdapter() {
         binding.rvMyPageSetting.adapter = ProductSummaryAdapter(listOf())
+    }
+
+    private fun initListener() {
+        with(binding) {
+            mtbProductList.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.refresh -> {
+                        productListViewModel.refreshScreen()
+                        true
+                    }
+
+                    else -> {
+                        true
+                    }
+                }
+            }
+            fabProductList.setOnClickListener {
+                Log.d("TEST", "add")
+            }
+        }
     }
 
     override fun onDestroyView() {

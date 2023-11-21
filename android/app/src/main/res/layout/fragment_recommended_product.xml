@@ -26,6 +26,7 @@
                 app:title="@string/fragment_recommend_title">
 
                 <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/mtb_recommended_product"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:elevation="0dp"
