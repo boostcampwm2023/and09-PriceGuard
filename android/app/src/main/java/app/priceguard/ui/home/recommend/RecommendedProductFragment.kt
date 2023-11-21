@@ -47,16 +47,10 @@ class RecommendedProductFragment : Fragment() {
 
     private fun FragmentRecommendedProductBinding.initListener() {
         mtbRecommendedProduct.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.refresh -> {
-                    recommendedProductViewModel.getProductList()
-                    true
-                }
-
-                else -> {
-                    true
-                }
+            if (menuItem.itemId == R.id.refresh) {
+                recommendedProductViewModel.getProductList()
             }
+            true
         }
     }
 

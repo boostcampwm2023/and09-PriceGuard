@@ -49,16 +49,10 @@ class ProductListFragment : Fragment() {
 
     private fun FragmentProductListBinding.initListener() {
         mtbProductList.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.refresh -> {
-                    productListViewModel.getProductList()
-                    true
-                }
-
-                else -> {
-                    true
-                }
+            if (menuItem.itemId == R.id.refresh) {
+                productListViewModel.getProductList()
             }
+            true
         }
         fabProductList.setOnClickListener {
             gotoProductAddActivity()
