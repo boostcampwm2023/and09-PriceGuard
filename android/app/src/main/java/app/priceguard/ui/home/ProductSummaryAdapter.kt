@@ -27,11 +27,13 @@ class ProductSummaryAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ProductSummary) {
-            binding.setBinding(item)
+            with(binding) {
+                summary = item
+                setViewType(item)
+            }
         }
 
-        private fun ItemProductSummaryBinding.setBinding(item: ProductSummary) {
-            summary = item
+        private fun ItemProductSummaryBinding.setViewType(item: ProductSummary) {
             when (item) {
                 is ProductSummary.RecommendedProductSummary -> {
                     tvProductRecommendRank.visibility = View.VISIBLE
