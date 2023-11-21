@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="app.priceguard.ui.home.list.ProductListViewModel" />
@@ -27,7 +28,7 @@
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 style="?attr/collapsingToolbarLayoutLargeStyle"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
+                android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
                 android:background="?attr/colorSurface"
                 app:title="@string/fragment_list_title">
 
@@ -46,6 +47,7 @@
             android:id="@+id/rv_my_page_setting"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
