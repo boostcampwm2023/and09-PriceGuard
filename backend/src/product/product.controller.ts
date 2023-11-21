@@ -3,12 +3,29 @@ import { ProductService } from './product.service';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { UpdateProductDto } from '../dto/update.product.dto';
 import { AddProductDto } from 'src/dto/add.product.dto';
+import {
+    ApiBadRequestResponse,
+    ApiBearerAuth,
+    ApiBody,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { VerifyUrlSuccess, UrlError, UnauthorizedRequest } from 'src/dto/product.swagger.dto';
 
+@ApiBearerAuth()
+@ApiTags('상품 API')
 @Controller('product')
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
-    @Post()
+    @ApiOperation({ summary: '상품 URL 검증 API', description: '상품 URL을 검증한다' })
+    @ApiBody({ type: ProductUrlDto })
+    @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 URL 검증 성공' })
+    @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+    @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
+    @Post('/verify')
     verifyUrl(@Body() productUrlDto: ProductUrlDto) {
         return this.productService.verifyUrl(productUrlDto);
     }
