@@ -17,11 +17,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository) : ViewModel() {
 
-    data class Tokens(
-        val accessToken: String? = null,
-        val refreshToken: String? = null
-    )
-
     sealed class SplashEvent {
         data object OpenIntro : SplashEvent()
         data object OpenHome : SplashEvent()
@@ -32,7 +27,6 @@ class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository
             val accessToken = tokenRepository.getAccessToken()
             val refreshToken = tokenRepository.getRefreshToken()
 
-            updateTokens(accessToken, refreshToken)
 
             if (accessToken == null || refreshToken == null) {
                 // Send Intro Event
@@ -57,9 +51,6 @@ class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository
         }
     }
 
-    private val _tokens: MutableStateFlow<Tokens> = MutableStateFlow(Tokens())
-    val tokens: StateFlow<Tokens> = _tokens.asStateFlow()
-
     private val _isReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
 
@@ -72,9 +63,5 @@ class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository
 
     private fun setAsReady() {
         _isReady.value = true
-    }
-
-    private fun updateTokens(accessToken: String?, refreshToken: String?) {
-        _tokens.value = _tokens.value.copy(accessToken = accessToken, refreshToken = refreshToken)
     }
 }
