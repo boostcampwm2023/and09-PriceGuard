@@ -24,6 +24,7 @@ export class ProductService {
             return {
                 productCode: productDetails['ProductCode']['text'],
                 productName: productDetails['ProductName']['text'],
+                productPrice: productDetails['ProductPrice']['Price']['text'],
                 shop: '11번가',
                 imageUrl: productDetails['BasicImage']['text'],
             };

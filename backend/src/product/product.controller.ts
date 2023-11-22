@@ -45,12 +45,14 @@ export class ProductController {
     @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
     @Post('/verify')
     async verifyUrl(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
-        const { productName, productCode, shop, imageUrl } = await this.productService.verifyUrl(productUrlDto);
+        const { productName, productCode, productPrice, shop, imageUrl } =
+            await this.productService.verifyUrl(productUrlDto);
         return {
             statusCode: HttpStatus.OK,
             message: '상품 URL 검증 성공',
             productCode,
             productName,
+            productPrice,
             shop,
             imageUrl,
         };
