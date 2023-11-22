@@ -5,18 +5,17 @@ import { ProductDetailsDto } from 'src/dto/product.details.dto';
 import axios from 'axios';
 import { productInfo11st, xmlConvert11st } from 'src/utils/openapi.11st';
 
-const REGEXP_11ST = /(?:http:\/\/|https:\/\/)?www\.11st\.co\.kr\/products\/[1-9]\d*(?:\/share)?/g;
-
+const REGEXP_11ST = /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductDetailsDto> {
         const { productUrl } = productUrlDto;
-        if (!REGEXP_11ST.test(productUrl)) {
+        const matchList = productUrl.match(REGEXP_11ST);
+        if (matchList === null) {
             throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
         try {
-            const { pathname } = new URL(productUrl);
-            const code = pathname.split('/')[2];
+            const [, code] = matchList;
             const openApiUrl = productInfo11st(code);
             const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
             const productDetails = xmlConvert11st(xml.data);
