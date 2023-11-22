@@ -35,7 +35,6 @@
                     android:id="@+id/mt_signup_topbar"
                     android:layout_width="wrap_content"
                     android:layout_height="?attr/actionBarSize"
-                    android:elevation="0dp"
                     app:title="@string/my_page" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
