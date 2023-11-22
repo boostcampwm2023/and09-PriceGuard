@@ -17,7 +17,6 @@ import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("CustomSplashScreen")
@@ -30,7 +29,6 @@ class SplashScreenActivity : AppCompatActivity() {
     private var isReady = false
     var accessToken: String? = null
     var refreshToken: String? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
