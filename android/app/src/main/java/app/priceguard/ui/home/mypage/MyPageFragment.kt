@@ -43,7 +43,7 @@ class MyPageFragment : Fragment() {
 
         initSettingAdapter()
 
-        this@MyPageFragment.repeatOnStarted {
+        this.repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
