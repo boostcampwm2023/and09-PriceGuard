@@ -3,7 +3,7 @@ import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductDto } from '../dto/product.dto';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
 import axios from 'axios';
-import { openApiUrl11st, xmlParse11st } from 'src/utils/openapi.11st';
+import { productInfo11st, xmlConvert11st } from 'src/utils/openapi.11st';
 
 const REGEXP_11ST = /(?:http:\/\/|https:\/\/)?www\.11st\.co\.kr\/products\/[1-9]\d*(?:\/share)?/g;
 
@@ -17,10 +17,9 @@ export class ProductService {
         try {
             const { pathname } = new URL(productUrl);
             const code = pathname.split('/')[2];
-            const openApiUrl = openApiUrl11st(code);
+            const openApiUrl = productInfo11st(code);
             const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
-            const productDetails = xmlParse11st(xml.data);
-            console.log(productDetails);
+            const productDetails = xmlConvert11st(xml.data);
             return {
                 productCode: productDetails['ProductCode']['text'],
                 productName: productDetails['ProductName']['text'],

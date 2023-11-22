@@ -2,7 +2,7 @@ import { BASE_URL_11ST, OPEN_API_KEY_11ST } from 'src/constants';
 import * as convert from 'xml-js';
 import * as iconv from 'iconv-lite';
 
-export function xmlParse11st(xml: Buffer) {
+export function xmlConvert11st(xml: Buffer) {
     const xmlUtf8 = iconv.decode(xml, 'EUC-KR').toString();
     const {
         ProductInfoResponse: { Product },
@@ -14,7 +14,7 @@ export function xmlParse11st(xml: Buffer) {
     return Product;
 }
 
-export function openApiUrl11st(productCode: string) {
+export function productInfo11st(productCode: string) {
     const shopUrl = new URL(BASE_URL_11ST);
     shopUrl.searchParams.append('key', OPEN_API_KEY_11ST);
     shopUrl.searchParams.append('productCode', productCode);
