@@ -25,9 +25,6 @@ class SplashScreenActivity : AppCompatActivity() {
     lateinit var tokenRepository: TokenRepository
     private lateinit var binding: ActivitySplashScreenBinding
     private val splashViewModel: SplashScreenViewModel by viewModels()
-    private var isReady = false
-    var accessToken: String? = null
-    var refreshToken: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +34,14 @@ class SplashScreenActivity : AppCompatActivity() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             // Use SplashScreen API
-            val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { isReady }
-            val content: View = findViewById(android.R.id.content)
-            content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
+            useSplashScreenAPI()
         }
+    }
+
+    private fun useSplashScreenAPI() {
+        val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { splashViewModel.isReady.value }
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
     }
 
     private fun observeState() {
@@ -61,12 +62,6 @@ class SplashScreenActivity : AppCompatActivity() {
                         )
                     }
                 }
-            }
-        }
-
-        repeatOnStarted {
-            splashViewModel.isReady.collect { isReady ->
-                this@SplashScreenActivity.isReady = isReady
             }
         }
     }
