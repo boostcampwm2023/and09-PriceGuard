@@ -32,6 +32,7 @@ class ProductListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.viewModel = productListViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initSettingAdapter()
         binding.initListener()

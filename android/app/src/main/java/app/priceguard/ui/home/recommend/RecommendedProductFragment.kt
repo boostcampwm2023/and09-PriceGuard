@@ -30,6 +30,7 @@ class RecommendedProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.viewModel = recommendedProductViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initSettingAdapter()
         binding.initListener()
