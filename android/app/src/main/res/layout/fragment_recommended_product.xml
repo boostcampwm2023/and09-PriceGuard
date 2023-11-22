@@ -29,6 +29,7 @@
                 android:background="?attr/colorSurface"
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorSurface"
+                app:expandedTitleMarginBottom="32dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
                 app:title="@string/fragment_recommend_title">
 
@@ -37,7 +38,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_marginBottom="16dp"
-                    android:elevation="0dp"
                     app:layout_collapseMode="pin"
                     app:menu="@menu/list_top_app_bar_menu" />
 
