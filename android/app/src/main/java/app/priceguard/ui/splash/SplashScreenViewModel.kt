@@ -2,6 +2,7 @@ package app.priceguard.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.RenewResult
 import app.priceguard.data.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -41,8 +42,17 @@ class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository
                 return@launch
             }
 
-            // TODO: Revalidate Token
-            sendSplashEvent(SplashEvent.OpenHome)
+            // Renew Token
+            val renewResult = tokenRepository.renewTokens(refreshToken)
+            if (renewResult == RenewResult.SUCCESS) {
+                sendSplashEvent(SplashEvent.OpenHome)
+                setAsReady()
+                return@launch
+            }
+
+            // Renew Failed
+            tokenRepository.clearTokens()
+            sendSplashEvent(SplashEvent.OpenIntro)
             setAsReady()
         }
     }
