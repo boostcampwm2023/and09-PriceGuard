@@ -11,5 +11,6 @@ data class SettingItemInfo(
 enum class Setting {
     NOTIFICATION,
     THEME,
+    LICENSE,
     LOGOUT
 }
