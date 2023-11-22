@@ -1,6 +1,7 @@
 package app.priceguard.di
 
 import app.priceguard.data.datastore.TokenDataSource
+import app.priceguard.data.network.AuthAPI
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.TokenRepositoryImpl
 import dagger.Module
@@ -15,6 +16,9 @@ object TokenRepositoryModule {
 
     @Provides
     @Singleton
-    fun provideTokenRepository(tokenDataSource: TokenDataSource): TokenRepository =
-        TokenRepositoryImpl(tokenDataSource)
+    fun provideTokenRepository(
+        tokenDataSource: TokenDataSource,
+        authAPI: AuthAPI
+    ): TokenRepository =
+        TokenRepositoryImpl(tokenDataSource, authAPI)
 }
