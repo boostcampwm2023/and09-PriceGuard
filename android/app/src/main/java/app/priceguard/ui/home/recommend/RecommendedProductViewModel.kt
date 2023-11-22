@@ -38,6 +38,27 @@ class RecommendedProductViewModel @Inject constructor() : ViewModel() {
                 "28080원",
                 "-12.6%",
                 2
+            ),
+            RecommendedProductSummary(
+                "11번가",
+                "오뚜기 진라면, 120g, 40개",
+                "28080원",
+                "-12.6%",
+                3
+            ),
+            RecommendedProductSummary(
+                "11번가",
+                "오뚜기 진라면, 120g, 40개",
+                "28080원",
+                "-12.6%",
+                4
+            ),
+            RecommendedProductSummary(
+                "11번가",
+                "오뚜기 진라면, 120g, 40개",
+                "28080원",
+                "-12.6%",
+                5
             )
         )
     }
