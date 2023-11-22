@@ -48,7 +48,6 @@ import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 })
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
-@UseGuards(AuthGuard('access'))
 @Controller('product')
 @UseFilters(HttpExceptionFilter)
 @UseGuards(AuthGuard('access'))

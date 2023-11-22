@@ -51,15 +51,15 @@ export class ProductService {
         if (trackingProductList.length === 0) {
             throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
-        const trackingListInfo = trackingProductList.map((product) => {
-            const { productName, productCode, shop, shopUrl, imageUrl } = product.product;
+        const trackingListInfo = trackingProductList.map(({ product, targetPrice }) => {
+            const { productName, productCode, shop, shopUrl, imageUrl } = product;
             return {
                 productName,
                 productCode,
                 shop,
                 shopUrl,
                 imageUrl,
-                targetPrice: product.targetPrice,
+                targetPrice: targetPrice,
                 price: 1234, // 임시 더미 가격 데이터
             };
         });
