@@ -9,20 +9,16 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashScreenActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var tokenRepository: TokenRepository
     private lateinit var binding: ActivitySplashScreenBinding
     private val splashViewModel: SplashScreenViewModel by viewModels()
 
