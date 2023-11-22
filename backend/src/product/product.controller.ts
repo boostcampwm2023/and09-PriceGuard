@@ -76,7 +76,7 @@ export class ProductController {
     @ApiOkResponse({ type: GetTrackingListSuccess, description: '상품 목록 조회 성공' })
     @ApiNotFoundResponse({ type: ProductNotFound, description: '추가한 상품이 없어서 상품 목록을 조회할 수 없습니다.' })
     @Get('/tracking')
-    async getTrackingList(@Req() req: Request & { user: User }) {
+    async getTrackingList(@Req() req: Request & { user: User }): Promise<GetTrackingListSuccess> {
         const trackingList = await this.productService.getTrackingList(req.user.id);
         return { statusCode: HttpStatus.OK, message: '상품 목록 조회 성공', trackingList: trackingList };
     }
