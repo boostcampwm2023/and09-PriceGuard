@@ -1,9 +1,7 @@
 package app.priceguard.ui.detail
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import app.priceguard.R
+import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.databinding.ActivityDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 
