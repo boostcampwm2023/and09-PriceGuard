@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterItemLinkFragment : Fragment() {
 
     private var _binding: FragmentRegisterItemLinkBinding? = null
