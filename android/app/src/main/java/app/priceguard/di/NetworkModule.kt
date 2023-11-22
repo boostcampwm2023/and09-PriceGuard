@@ -1,21 +1,17 @@
 package app.priceguard.di
 
 import app.priceguard.data.network.ProductAPI
+import app.priceguard.data.network.RequestInterceptor
 import app.priceguard.data.network.UserAPI
-import app.priceguard.data.repository.TokenRepository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import retrofit2.Retrofit
 
 @Module
@@ -46,18 +42,5 @@ object NetworkModule {
             .client(interceptorClient)
             .build()
             .create(ProductAPI::class.java)
-    }
-}
-
-class RequestInterceptor @Inject constructor(private val tokenRepository: TokenRepository) :
-    Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val builder = chain.request().newBuilder()
-
-        runBlocking {
-            builder.addHeader("Authorization", "Bearer ${tokenRepository.getAccessToken()}")
-        }
-
-        return chain.proceed(builder.build())
     }
 }
