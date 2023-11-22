@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, PrimaryColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'refresh_whitelist' })
 export class Token extends BaseEntity {
     @PrimaryColumn('uuid')
     userId: string;
