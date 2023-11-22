@@ -46,6 +46,7 @@
             android:layout_marginTop="44dp"
             app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
             app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_title">

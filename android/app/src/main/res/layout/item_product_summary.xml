@@ -16,7 +16,8 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
         android:background="?attr/colorSurfaceContainerLowest"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_setting"
@@ -37,17 +38,17 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/ic_11st_logo"
+                app:layout_constraintBottom_toBottomOf="@id/tv_my_page_item_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_my_page_item_title"
-                app:layout_constraintBottom_toBottomOf="@id/tv_my_page_item_title"/>
+                app:layout_constraintTop_toTopOf="@id/tv_my_page_item_title" />
 
             <TextView
                 android:id="@+id/tv_my_page_item_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="@{summary.title}"
@@ -74,10 +75,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@{summary.discountPercent}"
-                android:textColor="?attr/colorError"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                app:layout_constraintStart_toEndOf="@+id/tv_product_price"
+                android:textColor="?attr/colorError"
                 app:layout_constraintBottom_toBottomOf="@id/tv_product_price"
+                app:layout_constraintStart_toEndOf="@+id/tv_product_price"
                 app:layout_constraintTop_toTopOf="@id/tv_product_price"
                 tools:text="-99%" />
 
@@ -85,8 +86,8 @@
                 android:id="@+id/ms_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/iv_graph"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
