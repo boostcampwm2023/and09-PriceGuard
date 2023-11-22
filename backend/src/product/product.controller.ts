@@ -46,7 +46,14 @@ export class ProductController {
     @Post('/verify')
     async verifyUrl(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
         const { productName, productCode, shop, imageUrl } = await this.productService.verifyUrl(productUrlDto);
-        return { statusCode: HttpStatus.OK, message: '상품 URL 검증 성공', productCode, productName, shop, imageUrl };
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productCode,
+            productName,
+            shop,
+            imageUrl,
+        };
     }
 
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })
