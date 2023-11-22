@@ -38,10 +38,10 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun useSplashScreenAPI() {
-        val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { splashViewModel.isReady.value }
-        val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
+    private fun <T : Activity> launchActivityAndExit(context: Context, clazz: Class<T>) {
+        val intent = Intent(context, clazz)
+        startActivity(intent)
+        finish()
     }
 
     private fun observeState() {
@@ -66,9 +66,9 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun <T : Activity> launchActivityAndExit(context: Context, clazz: Class<T>) {
-        val intent = Intent(context, clazz)
-        startActivity(intent)
-        finish()
+    private fun useSplashScreenAPI() {
+        val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { splashViewModel.isReady.value }
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
     }
 }
