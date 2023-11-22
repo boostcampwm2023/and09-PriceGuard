@@ -5,7 +5,7 @@ import { IsNotEmpty } from 'class-validator';
 @Unique(['email'])
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
     @Column()
     @IsNotEmpty()
