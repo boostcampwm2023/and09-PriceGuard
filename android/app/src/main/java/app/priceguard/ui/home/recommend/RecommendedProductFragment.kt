@@ -39,7 +39,7 @@ class RecommendedProductFragment : Fragment() {
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
         rvMyPageSetting.adapter = adapter
-        viewLifecycleOwner.repeatOnStarted {
+        this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.recommendedProductList.collect { list ->
                 adapter.submitList(list)
             }

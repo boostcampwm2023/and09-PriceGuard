@@ -8,16 +8,15 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyPageFragment : Fragment() {
@@ -44,7 +43,7 @@ class MyPageFragment : Fragment() {
 
         initSettingAdapter()
 
-        lifecycleScope.launch {
+        this@MyPageFragment.repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()

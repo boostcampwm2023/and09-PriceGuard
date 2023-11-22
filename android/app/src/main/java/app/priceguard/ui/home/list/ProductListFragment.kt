@@ -41,7 +41,7 @@ class ProductListFragment : Fragment() {
     private fun FragmentProductListBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
         rvMyPageSetting.adapter = adapter
-        viewLifecycleOwner.repeatOnStarted {
+        this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
                 adapter.submitList(list)
             }
