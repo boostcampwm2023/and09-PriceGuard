@@ -24,6 +24,11 @@ export class VerifyUrlSuccess {
     })
     productCode: string;
     @ApiProperty({
+        example: '53730',
+        description: '상품 가격',
+    })
+    productPrice: number;
+    @ApiProperty({
         example: '11번가',
         description: '쇼핑몰 이름',
     })

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatus } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductDto } from 'src/dto/product.dto';
@@ -25,6 +25,7 @@ import {
     UpdateTargetPriceSuccess,
     DeleteProductSuccess,
 } from 'src/dto/product.swagger.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -33,6 +34,7 @@ import {
 })
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+@UseGuards(AuthGuard('access'))
 @Controller('product')
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
@@ -42,8 +44,18 @@ export class ProductController {
     @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 URL 검증 성공' })
     @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
     @Post('/verify')
-    verifyUrl(@Body() productUrlDto: ProductUrlDto) {
-        return this.productService.verifyUrl(productUrlDto);
+    async verifyUrl(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
+        const { productName, productCode, productPrice, shop, imageUrl } =
+            await this.productService.verifyUrl(productUrlDto);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productCode,
+            productName,
+            productPrice,
+            shop,
+            imageUrl,
+        };
     }
 
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })
