@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductDto } from '../dto/product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import { Repository } from 'typeorm';
+import { TrackingProductDto } from 'src/dto/product.tracking.dto';
 
 @Injectable()
 export class ProductService {
@@ -19,12 +20,14 @@ export class ProductService {
         console.log(productDto);
     }
 
-    async getTrackingList(userId: string): Promise<object[]> {
+    async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
         const trackingProductList = await this.trackingProductRepository.find({
             where: { userId: userId },
             relations: ['product'],
         });
-
+        if (trackingProductList.length === 0) {
+            throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
         const trackingListInfo = trackingProductList.map((product) => {
             const { productName, productCode, shop, shopUrl, imageUrl } = product.product;
             return {
