@@ -40,9 +40,7 @@ export class ProductService {
         }
     }
 
-    addProduct(productDto: ProductDto) {
-        console.log(productDto);
-    }
+    async addProduct(userId: string, productDto: ProductDto) {}
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
         const trackingProductList = await this.trackingProductRepository.find({

@@ -78,8 +78,9 @@ export class ProductController {
     @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 추가 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
     @Post()
-    addProduct(@Body() productDto: ProductDto) {
-        return this.productService.addProduct(productDto);
+    async addProduct(@Req() req: Request & { user: User }, @Body() productDto: ProductDto) {
+        await this.productService.addProduct(req.user.id, productDto);
+        return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
     }
 
     @ApiOperation({ summary: '상품 목록 조회 API', description: '사용자가 추가한 상품 목록을 조회한다.' })

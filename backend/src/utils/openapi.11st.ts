@@ -20,3 +20,7 @@ export function productInfo11st(productCode: string) {
     shopUrl.searchParams.append('productCode', productCode);
     return shopUrl.toString();
 }
+
+export function createUrl11st(productCode: string) {
+    return `http://www.11st.co.kr/products/${productCode}/share`;
+}

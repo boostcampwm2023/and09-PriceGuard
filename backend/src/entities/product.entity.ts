@@ -1,9 +1,9 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TrackingProduct } from './trackingProduct.entity';
 
 @Entity()
 export class Product extends BaseEntity {
-    @PrimaryColumn({ type: 'char', length: 36 })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column({ type: 'varchar', length: 255 })
