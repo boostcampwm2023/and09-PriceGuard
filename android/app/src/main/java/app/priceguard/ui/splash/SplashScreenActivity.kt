@@ -45,6 +45,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         val content: View = findViewById(android.R.id.content)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Use SplashScreen API
             content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener(content))
         }
     }
@@ -60,7 +61,7 @@ class SplashScreenActivity : AppCompatActivity() {
         // TODO: Token 갱신하기
 
         // Main Activity로 이동
-        launchActivityAndExit(this@SplashScreenActivity, MainActivity::class.java)
+        launchActivityAndExit(this@SplashScreenActivity, HomeActivity::class.java)
     }
 
     private fun onPreDrawListener(content: View) =
@@ -74,7 +75,7 @@ class SplashScreenActivity : AppCompatActivity() {
                     return directToIntro(content)
                 }
 
-                return directToMain(content)
+                return directToHome(content)
             }
         }
 
@@ -87,8 +88,8 @@ class SplashScreenActivity : AppCompatActivity() {
         return true
     }
 
-    private fun ViewTreeObserver.OnPreDrawListener.directToMain(content: View): Boolean {
-        launchActivityAndExit(this@SplashScreenActivity, MainActivity::class.java)
+    private fun ViewTreeObserver.OnPreDrawListener.directToHome(content: View): Boolean {
+        launchActivityAndExit(this@SplashScreenActivity, HomeActivity::class.java)
         content.viewTreeObserver.removeOnPreDrawListener(this)
         return true
     }
