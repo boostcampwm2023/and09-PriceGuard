@@ -53,15 +53,15 @@ class MyPageFragment : Fragment() {
                     override fun onClick(setting: Setting) {
                         when (setting) {
                             Setting.NOTIFICATION -> {
-                                // 알람 설정
+                                // TODO: 알람 설정
                             }
 
                             Setting.THEME -> {
-                                // 테마 설정
+                                // TODO: 테마 설정
                             }
 
                             Setting.LICENSE -> {
-                                // 오픈소스 라이선스
+                                // TODO: 오픈소스 라이선스
                             }
 
                             Setting.LOGOUT -> {
