@@ -27,10 +27,11 @@ export class ProductService {
             const openApiUrl = productInfo11st(code);
             const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
             const productDetails = xmlConvert11st(xml.data);
+            const price = productDetails['ProductPrice']['Price']['text'].replace(/(원|,)/g, '');
             return {
                 productCode: productDetails['ProductCode']['text'],
                 productName: productDetails['ProductName']['text'],
-                productPrice: productDetails['ProductPrice']['Price']['text'],
+                productPrice: parseInt(price),
                 shop: '11번가',
                 imageUrl: productDetails['BasicImage']['text'],
             };
