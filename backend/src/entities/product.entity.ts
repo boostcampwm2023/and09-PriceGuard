@@ -16,6 +16,9 @@ export class Product extends BaseEntity {
     shop: string;
 
     @Column({ type: 'varchar', length: 255 })
+    shopUrl: string;
+
+    @Column({ type: 'varchar', length: 255 })
     imageUrl: string;
 
     @OneToMany(() => TrackingProduct, (trackingProduct) => trackingProduct.productId)
