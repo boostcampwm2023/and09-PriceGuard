@@ -32,7 +32,7 @@
             android:name=".ui.signup.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.home.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.additem.AddItemActivity"

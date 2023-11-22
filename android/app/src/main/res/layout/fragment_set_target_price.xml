@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/tv_confirm_item_title"
-            style="?attr/textAppearanceHeadlineMedium"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"

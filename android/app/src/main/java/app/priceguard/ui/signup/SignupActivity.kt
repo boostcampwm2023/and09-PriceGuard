@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import app.priceguard.R
 import app.priceguard.data.dto.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
-import app.priceguard.ui.main.MainActivity
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
@@ -101,7 +101,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun gotoHomeActivity() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

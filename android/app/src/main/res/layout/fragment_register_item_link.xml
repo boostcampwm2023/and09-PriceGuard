@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/tv_register_item_title"
-            style="?attr/textAppearanceHeadlineMedium"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
@@ -70,7 +70,7 @@
 
         <TextView
             android:id="@+id/tv_register_item_helper"
-            style="?attr/textAppearanceLabelSmall"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
