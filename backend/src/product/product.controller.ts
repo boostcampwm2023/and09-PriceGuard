@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Req,
+    UseGuards,
+    HttpStatus,
+    UseFilters,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductDto } from 'src/dto/product.dto';
@@ -27,6 +39,7 @@ import {
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -36,6 +49,7 @@ import { AuthGuard } from '@nestjs/passport';
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
 @Controller('product')
+@UseFilters(HttpExceptionFilter)
 @UseGuards(AuthGuard('access'))
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
