@@ -38,7 +38,6 @@ object NetworkModule {
         .build()
         .create(AuthAPI::class.java)
 
-
     @Provides
     @Singleton
     fun provideProduct(requestInterceptor: RequestInterceptor): ProductAPI {

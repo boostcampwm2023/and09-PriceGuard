@@ -27,7 +27,6 @@ class SplashScreenViewModel @Inject constructor(tokenRepository: TokenRepository
             val accessToken = tokenRepository.getAccessToken()
             val refreshToken = tokenRepository.getRefreshToken()
 
-
             if (accessToken == null || refreshToken == null) {
                 // Send Intro Event
                 tokenRepository.clearTokens()

@@ -15,5 +15,6 @@ object ProductRepositoryModule {
 
     @Provides
     @Singleton
-    fun provideProductRepository(productAPI: ProductAPI): ProductRepository = ProductRepositoryImpl(productAPI)
+    fun provideProductRepository(productAPI: ProductAPI): ProductRepository =
+        ProductRepositoryImpl(productAPI)
 }
