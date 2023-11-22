@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
+import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +43,14 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initSettingAdapter()
+
+        lifecycleScope.launch {
+            viewModel.event.collect { event ->
+                when (event) {
+                    is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
+                }
+            }
+        }
     }
 
     private fun initSettingAdapter() {
@@ -102,21 +111,9 @@ class MyPageFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity())
             .setTitle(getString(R.string.logout_confirm_title))
             .setMessage(getString(R.string.logout_confirm_message))
-            .setPositiveButton(getString(R.string.yes)) { _, _ -> logout() }
+            .setPositiveButton(getString(R.string.yes)) { _, _ -> viewModel.logout() }
             .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
             .show()
-    }
-
-    private fun logout() {
-        lifecycleScope.launch {
-            val resetTokenJob = launch {
-                tokenRepository.clearTokens()
-            }
-            resetTokenJob.join()
-            if (resetTokenJob.isCompleted) {
-                startIntroAndExitHome()
-            }
-        }
     }
 
     private fun startIntroAndExitHome() {
