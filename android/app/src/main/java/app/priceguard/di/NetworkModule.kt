@@ -2,12 +2,15 @@ package app.priceguard.di
 
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.UserAPI
+import app.priceguard.data.repository.TokenRepository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType
@@ -32,9 +35,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideProduct(): ProductAPI {
+    fun provideProduct(requestInterceptor: RequestInterceptor): ProductAPI {
         val interceptorClient = OkHttpClient().newBuilder()
-            .addInterceptor(RequestInterceptor())
+            .addInterceptor(requestInterceptor)
             .build()
 
         return Retrofit.Builder()
@@ -45,13 +48,15 @@ object NetworkModule {
             .create(ProductAPI::class.java)
     }
 }
-class RequestInterceptor : Interceptor {
+
+class RequestInterceptor @Inject constructor(private val tokenRepository: TokenRepository) :
+    Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
 
-        // TODO: 토큰 가져오기
-        val accessToken = ""
-        builder.addHeader("Authorization", accessToken)
+        runBlocking {
+            builder.addHeader("Authorization", "Bearer ${tokenRepository.getAccessToken()}")
+        }
 
         return chain.proceed(builder.build())
     }
