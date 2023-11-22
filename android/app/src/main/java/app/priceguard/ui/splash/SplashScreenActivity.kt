@@ -6,13 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivitySplashScreenBinding
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
-import app.priceguard.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -27,7 +25,8 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash_screen)
+        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         lifecycleScope.launch {
             val accessToken = tokenRepository.getAccessToken()
@@ -43,7 +42,7 @@ class SplashScreenActivity : AppCompatActivity() {
             // TODO: Token 갱신하기
 
             // Main Activity로 이동
-            launchActivityAndExit(this@SplashScreenActivity, MainActivity::class.java)
+            launchActivityAndExit(this@SplashScreenActivity, HomeActivity::class.java)
         }
     }
 

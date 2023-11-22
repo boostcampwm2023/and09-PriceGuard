@@ -3,11 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="app.priceguard.ui.home.mypage.MyPageViewModel" />
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
-        tools:context=".ui.mypage.MyPageFragment">
+        tools:context=".ui.home.mypage.MyPageFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/abl_signup_topbar"
@@ -18,17 +24,17 @@
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/ctl_signup_topbar"
-                style="?attr/collapsingToolbarLayoutLargeStyle"
+                style="?attr/collapsingToolbarLayoutMediumStyle"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
+                android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
                 android:background="?attr/colorSurface"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:contentScrim="?attr/colorSurface"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/mt_signup_topbar"
                     android:layout_width="wrap_content"
                     android:layout_height="?attr/actionBarSize"
-                    android:elevation="0dp"
                     app:title="@string/my_page" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -50,43 +56,53 @@
                     android:layout_height="80dp"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="24dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="?attr/colorSurfaceContainerHighest">
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tv_my_page_profile"
-                    style="?attr/textAppearanceTitleMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:background="@drawable/bg_circle"
-                    android:gravity="center"
-                    android:textColor="#ffffff"
-                    app:layout_constraintBottom_toBottomOf="@id/view_my_page_background"
-                    app:layout_constraintStart_toStartOf="@id/view_my_page_background"
-                    app:layout_constraintTop_toTopOf="@id/view_my_page_background" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/tv_my_page_name"
-                    style="?attr/textAppearanceBodyLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toTopOf="@id/tv_my_page_email"
-                    app:layout_constraintStart_toEndOf="@id/tv_my_page_profile"
-                    app:layout_constraintTop_toTopOf="@id/view_my_page_background" />
+                        <TextView
+                            android:id="@+id/tv_my_page_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:background="@drawable/bg_circle"
+                            android:gravity="center"
+                            android:text="@{viewModel.flow.firstName}"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorSurface"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_my_page_email"
-                    style="?attr/textAppearanceBodyMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/view_my_page_background"
-                    app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
-                    app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
+                        <TextView
+                            android:id="@+id/tv_my_page_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@{viewModel.flow.name}"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"
+                            app:layout_constraintBottom_toTopOf="@id/tv_my_page_email"
+                            app:layout_constraintStart_toEndOf="@id/tv_my_page_profile"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_my_page_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.flow.email}"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
+                            app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
 

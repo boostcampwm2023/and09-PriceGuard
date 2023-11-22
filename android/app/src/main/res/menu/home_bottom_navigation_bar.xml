@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/productListFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_home"
+        android:title="@string/menu_home" />
+
+    <item
+        android:id="@+id/recommendedProductFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_trending_up"
+        android:title="@string/menu_recommend" />
+
+    <item
+        android:id="@+id/myPageFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_person"
+        android:title="@string/menu_my_page" />
+</menu>
