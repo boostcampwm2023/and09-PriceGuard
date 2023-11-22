@@ -14,6 +14,10 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MyPageViewModel @Inject constructor(val tokenRepository: TokenRepository) : ViewModel() {
 
+    sealed class MyPageEvent {
+        data object StartIntroAndExitHome : MyPageEvent()
+    }
+
     // 더미 데이터
     data class MyPageInfo(
         val name: String = "박승준 님",
@@ -37,9 +41,5 @@ class MyPageViewModel @Inject constructor(val tokenRepository: TokenRepository) 
                 _event.emit(MyPageEvent.StartIntroAndExitHome)
             }
         }
-    }
-
-    sealed class MyPageEvent {
-        data object StartIntroAndExitHome : MyPageEvent()
     }
 }
