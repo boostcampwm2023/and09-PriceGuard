@@ -60,6 +60,10 @@ class MyPageFragment : Fragment() {
                                 // 테마 설정
                             }
 
+                            Setting.LICENSE -> {
+                                // 오픈소스 라이선스
+                            }
+
                             Setting.LOGOUT -> {
                                 showLogoutConfirmDialog()
                             }
@@ -80,6 +84,11 @@ class MyPageFragment : Fragment() {
                 Setting.THEME,
                 ContextCompat.getDrawable(requireActivity(), R.drawable.ic_light_mode),
                 getString(R.string.theme_setting)
+            ),
+            SettingItemInfo(
+                Setting.LICENSE,
+                ContextCompat.getDrawable(requireActivity(), R.drawable.ic_android),
+                getString(R.string.opensource_license)
             ),
             SettingItemInfo(
                 Setting.LOGOUT,
