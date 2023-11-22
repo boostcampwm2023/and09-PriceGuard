@@ -18,7 +18,7 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'access') {
         if (Date.now() >= payload.exp * 1000) {
             throw new HttpException('토큰이 만료되었습니다.', HttpStatus.GONE);
         }
-        return { email: payload.email, userName: payload.name };
+        return { id: payload.id, email: payload.email, userName: payload.name };
     }
 }
 

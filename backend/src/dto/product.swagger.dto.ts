@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductDetailsDto } from './product.details.dto';
+import { TrackingProductDto } from './product.tracking.dto';
 
 export class VerifyUrlSuccess {
     @ApiProperty({
@@ -104,6 +105,28 @@ const productListExample = [
         imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B01HZ0YT2C/B.jpg?1700390686058',
     },
 ];
+
+const trackingProductListExample = [
+    {
+        productName: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',
+        productCode: '5897533626',
+        shop: '11번가',
+        shopUrl: 'https://www.11st.co.kr/products/6221602897',
+        imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B091516D2Z/B.jpg?1700527038699',
+        targetPrice: 30000,
+        price: 20000,
+    },
+    {
+        productName: 'Mercer Culinary 밀레니아 10인치 브레드 나이프 빵 칼 (M23210WBH)',
+        productCode: '3534429539',
+        shop: '11번가',
+        shopUrl: 'https://www.11st.co.kr/products/6221602897',
+        imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B01HZ0YT2C/B.jpg?1700390686058',
+        targetPrice: 20000,
+        price: 15000,
+    },
+];
+
 export class GetTrackingListSuccess {
     @ApiProperty({
         example: HttpStatus.OK,
@@ -116,10 +139,10 @@ export class GetTrackingListSuccess {
     })
     message: string;
     @ApiProperty({
-        example: JSON.stringify(productListExample, null, 2),
+        example: JSON.stringify(trackingProductListExample, null, 2),
         description: '상품 목록',
     })
-    trackingList: ProductDetailsDto[];
+    trackingList: TrackingProductDto[];
 }
 
 export class GetRecommendListSuccess {

@@ -7,7 +7,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Controller, Get, HttpStatus, Req, UseFilters, UseGuards } from '@nestjs/common';
-import { AuthExceptionFilter } from 'src/exceptions/auth.exception';
+import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 import { AuthSuccess, ExpiredTokenError, InvalidTokenError, RefreshJWTSuccess } from 'src/dto/auth.swagger.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -16,7 +16,7 @@ import { User } from 'src/entities/user.entity';
 
 @ApiTags('auth api')
 @Controller('auth')
-@UseFilters(AuthExceptionFilter)
+@UseFilters(HttpExceptionFilter)
 export class AuthController {
     constructor(private authService: AuthService) {}
 
