@@ -48,6 +48,7 @@ import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 })
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+@UseGuards(AuthGuard('access'))
 @Controller('product')
 @UseFilters(HttpExceptionFilter)
 @UseGuards(AuthGuard('access'))
@@ -59,8 +60,18 @@ export class ProductController {
     @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 URL 검증 성공' })
     @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
     @Post('/verify')
-    verifyUrl(@Body() productUrlDto: ProductUrlDto) {
-        return this.productService.verifyUrl(productUrlDto);
+    async verifyUrl(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
+        const { productName, productCode, productPrice, shop, imageUrl } =
+            await this.productService.verifyUrl(productUrlDto);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productCode,
+            productName,
+            productPrice,
+            shop,
+            imageUrl,
+        };
     }
 
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })

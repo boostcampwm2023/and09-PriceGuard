@@ -5,6 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import { Repository } from 'typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
+import { ProductDetailsDto } from 'src/dto/product.details.dto';
+import axios from 'axios';
+import { productInfo11st, xmlConvert11st } from 'src/utils/openapi.11st';
+
+const REGEXP_11ST = /(?:http:\/\/|https:\/\/)?www\.11st\.co\.kr\/products\/[1-9]\d*(?:\/share)?/g;
 
 @Injectable()
 export class ProductService {
@@ -12,8 +17,27 @@ export class ProductService {
         @InjectRepository(TrackingProduct)
         private trackingProductRepository: Repository<TrackingProduct>,
     ) {}
-    verifyUrl(productUrlDto: ProductUrlDto) {
-        console.log(productUrlDto);
+    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductDetailsDto> {
+        const { productUrl } = productUrlDto;
+        if (!REGEXP_11ST.test(productUrl)) {
+            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
+        }
+        try {
+            const { pathname } = new URL(productUrl);
+            const code = pathname.split('/')[2];
+            const openApiUrl = productInfo11st(code);
+            const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
+            const productDetails = xmlConvert11st(xml.data);
+            return {
+                productCode: productDetails['ProductCode']['text'],
+                productName: productDetails['ProductName']['text'],
+                productPrice: productDetails['ProductPrice']['Price']['text'],
+                shop: '11번가',
+                imageUrl: productDetails['BasicImage']['text'],
+            };
+        } catch (e) {
+            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
+        }
     }
 
     addProduct(productDto: ProductDto) {
