@@ -3,6 +3,7 @@ package app.priceguard.data.network
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductResponse
+import app.priceguard.data.dto.ProductVerifyRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -15,7 +16,7 @@ interface ProductAPI {
 
     @POST("product/verify")
     suspend fun verifyLink(
-        @Body productUrl: String
+        @Body productUrl: ProductVerifyRequest
     ): Response<ProductResponse>
 
     @POST("product")
