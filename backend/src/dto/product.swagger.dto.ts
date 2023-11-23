@@ -79,6 +79,19 @@ export class AddProductSuccess {
     message: string;
 }
 
+export class AddProductConflict {
+    @ApiProperty({
+        example: HttpStatus.CONFLICT,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '이미 등록된 상품입니다.',
+        description: '메시지',
+    })
+    message: string;
+}
+
 export class RequestError {
     @ApiProperty({
         example: HttpStatus.BAD_REQUEST,
