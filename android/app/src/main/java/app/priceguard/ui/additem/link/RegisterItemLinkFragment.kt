@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem.link
+package app.priceguard.ui.additem.link
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem.setprice
+package app.priceguard.ui.additem.setprice
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

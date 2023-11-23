@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem.setprice
+package app.priceguard.ui.additem.setprice
 
 import android.os.Bundle
 import android.view.LayoutInflater

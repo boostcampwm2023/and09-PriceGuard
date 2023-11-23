@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem.link
+package app.priceguard.ui.additem.link
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

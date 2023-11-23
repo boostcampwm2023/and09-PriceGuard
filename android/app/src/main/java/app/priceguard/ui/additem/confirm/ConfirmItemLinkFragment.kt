@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem.confirm
+package app.priceguard.ui.additem.confirm
 
 import android.os.Build
 import android.os.Bundle
