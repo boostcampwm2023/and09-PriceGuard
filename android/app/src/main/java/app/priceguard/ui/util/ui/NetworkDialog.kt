@@ -10,17 +10,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun Activity.showNetworkDialog(tokenRepository: TokenRepository) {
+fun Activity.showPermissionDeniedDialog(tokenRepository: TokenRepository) {
     MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
         .setTitle(getString(R.string.permission_denied_title))
         .setMessage(getString(R.string.permission_denied_message))
-        .setPositiveButton(getString(R.string.permission_denied_logout)) { _, _ ->
-            CoroutineScope(Dispatchers.IO).launch { tokenRepository.clearTokens() }
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }.setNegativeButton(getString(R.string.permission_denied_cancel)) { _, _ -> }
+        .setPositiveButton(getString(R.string.confirm)) { _, _ -> goBackToLoginActivity(tokenRepository) }
+        .setOnDismissListener { goBackToLoginActivity(tokenRepository) }
         .create()
         .show()
+}
+
+fun Activity.goBackToLoginActivity(tokenRepository: TokenRepository) {
+    CoroutineScope(Dispatchers.IO).launch { tokenRepository.clearTokens() }
+    val intent = Intent(this, LoginActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    startActivity(intent)
+    finish()
 }

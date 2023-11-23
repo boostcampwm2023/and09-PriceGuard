@@ -2,7 +2,7 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductListState
+import app.priceguard.data.dto.RecommendProductState
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,17 +40,17 @@ class RecommendedProductViewModel @Inject constructor(
 
     suspend fun getProductList() {
         val result = productRepository.getRecommendedProductList()
-        if (result.productListState == ProductListState.PERMISSION_DENIED) {
+        if (result.productListState == RecommendProductState.PERMISSION_DENIED) {
             _events.emit(RecommendedProductEvent.PermissionDenied)
         } else {
-            _recommendedProductList.value = result.trackingList.map { data ->
+            _recommendedProductList.value = result.recommendList.map { data ->
                 RecommendedProductSummary(
                     data.shop,
                     data.productName,
-                    "",
-                    "",
+                    data.price.toString(),
+                    "-15.3%",
                     data.productCode,
-                    1
+                    data.rank
                 )
             }
         }

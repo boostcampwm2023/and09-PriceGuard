@@ -2,11 +2,12 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("com.google.android.gms.oss-licenses-plugin")
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.firebase-perf")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
-    id("com.google.android.gms.oss-licenses-plugin")
+    id("androidx.navigation.safeargs.kotlin")
     kotlin("plugin.serialization") version "1.9.20"
 }
 
@@ -89,13 +90,16 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    // navigation
+    // Navigation
     val navVersion = "2.7.5"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
-    // oss-licenses
+    // OSS licences
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
 
 kapt {

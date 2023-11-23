@@ -1,5 +1,6 @@
 package app.priceguard.ui.home
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.priceguard.R
 import app.priceguard.databinding.ItemProductSummaryBinding
+import app.priceguard.ui.detail.DetailActivity
 
 class ProductSummaryAdapter :
     ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
@@ -73,7 +75,9 @@ class ProductSummaryAdapter :
 
         private fun ItemProductSummaryBinding.setClickListener(code: String) {
             cvProduct.setOnClickListener {
-                // TODO: Intent로 상세 페이지 연결 및 상품 코드 전달
+                val intent = Intent(binding.root.context, DetailActivity::class.java)
+                intent.putExtra("productCode", code)
+                binding.root.context.startActivity(intent)
             }
         }
     }
