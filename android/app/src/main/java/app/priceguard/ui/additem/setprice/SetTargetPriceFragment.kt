@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import com.google.android.material.slider.Slider
+import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,6 +61,14 @@ class SetTargetPriceFragment : Fragment() {
                 )
             }
         }
+        slTargetPrice.addOnSliderTouchListener(object : OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                binding.etTargetPrice.clearFocus()
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+            }
+        })
         etTargetPrice.addTextChangedListener {
             if (etTargetPrice.isFocused) {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
