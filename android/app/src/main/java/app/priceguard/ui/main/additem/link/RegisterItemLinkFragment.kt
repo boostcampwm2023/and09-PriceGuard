@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.priceguard.data.dto.ProductDTO
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,14 +42,7 @@ class RegisterItemLinkFragment : Fragment() {
 
     private fun initListener() {
         binding.btnRegisterItemNext.setOnClickListener {
-            val action =
-                RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                    ProductDTO("name", "123", 12345, "shop", "image")
-                )
-            findNavController().navigate(action)
-            repeatOnStarted {
-                viewModel.verifyLink()
-            }
+            viewModel.verifyLink()
         }
     }
 
@@ -58,11 +50,20 @@ class RegisterItemLinkFragment : Fragment() {
         repeatOnStarted {
             viewModel.state.collect { state ->
                 if (state.product != null) {
-                    val action =
-                        RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                            state.product
-                        )
-                    findNavController().navigate(action)
+                }
+            }
+        }
+
+        repeatOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
+                        val action =
+                            RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
+                                event.product
+                            )
+                        findNavController().navigate(action)
+                    }
                 }
             }
         }

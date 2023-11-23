@@ -1,5 +1,6 @@
 package app.priceguard.ui.main.additem.link
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductDTO
@@ -27,8 +28,7 @@ class RegisterItemLinkViewModel
     )
 
     sealed class RegisterLinkEvent {
-        data object LinkError : RegisterLinkEvent()
-        data object SuccessVerification : RegisterLinkEvent()
+        data class SuccessVerification(val product: ProductDTO) : RegisterLinkEvent()
     }
 
     private val _state = MutableStateFlow(RegisterLinkUIState())
@@ -37,22 +37,30 @@ class RegisterItemLinkViewModel
     private val _event = MutableSharedFlow<RegisterLinkEvent>()
     val event = _event.asSharedFlow()
 
+    private fun isUrlValid(url: String): Boolean {
+        val urlPattern = """^(https?):\\/\\/(-\.)?([^\s\\/?\.#]+\.?)+(\\/\S*)?$""".toRegex()
+        return urlPattern.matches(url)
+    }
+
     fun verifyLink() {
         _state.value = state.value.copy(isVerificationFinished = false)
 
         viewModelScope.launch {
             val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link))
+            Log.d("responseProduct", response.toString())
             when (response) {
                 is APIResult.Success -> {
-                    _state.value = state.value.copy(
-                        product = ProductDTO(
-                            response.data.productName,
-                            response.data.productCode,
-                            response.data.price,
-                            response.data.shop,
-                            response.data.imageUrl
-                        )
+                    val product = ProductDTO(
+                        response.data.productName,
+                        response.data.productCode,
+                        response.data.productPrice,
+                        response.data.shop,
+                        response.data.imageUrl
                     )
+                    _state.value = state.value.copy(
+                        product = product
+                    )
+                    _event.emit(RegisterLinkEvent.SuccessVerification(product))
                 }
 
                 is APIResult.Error -> {
@@ -68,6 +76,6 @@ class RegisterItemLinkViewModel
     }
 
     fun updateLink(link: String) {
-        _state.value = state.value.copy(link = link)
+        _state.value = state.value.copy(isLinkError = isUrlValid(link), link = link)
     }
 }
