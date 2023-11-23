@@ -1,8 +1,7 @@
-import { Body, Controller, Post, HttpStatus, UseFilters, UsePipes, forwardRef, Inject } from '@nestjs/common';
+import { Body, Controller, Post, HttpStatus, UseFilters, forwardRef, Inject } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserDto } from '../dto/user.dto';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
-import { UserValidationPipe } from 'src/exceptions/validation.user.pipe';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import {
@@ -37,7 +36,6 @@ export class UsersController {
     @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
     @Post('register')
-    @UsePipes(new UserValidationPipe())
     async registerUser(@Body() userDto: UserDto): Promise<RegisterSuccess> {
         const user = await this.userService.registerUser(userDto);
         const accessToken = await this.authService.getAccessToken(user);
@@ -50,7 +48,6 @@ export class UsersController {
     @ApiOkResponse({ type: LoginSuccess, description: '로그인 성공' })
     @ApiBadRequestResponse({ type: LoginFailError, description: '로그인 실패' })
     @Post('login')
-    @UsePipes(new UserValidationPipe())
     async loginUser(@Body() loginDto: LoginDto): Promise<LoginSuccess> {
         const { email, password } = loginDto;
         const { accessToken, refreshToken } = await this.authService.validateUser(email, password);

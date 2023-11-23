@@ -18,41 +18,23 @@ export class ProductService {
         private productRepository: ProductRepository,
     ) {}
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductDetailsDto> {
-        try {
-            const { productUrl } = productUrlDto;
-            const matchList = productUrl.match(REGEXP_11ST);
-            if (matchList === null) {
-                throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
-            }
-            const productCode = matchList[1];
-            return await getProductInfo11st(productCode);
-        } catch (error) {
-            if (error.status) {
-                throw new HttpException(error.response, error.status);
-            }
-            throw new HttpException('서버 내부 에러', HttpStatus.INTERNAL_SERVER_ERROR);
+        const { productUrl } = productUrlDto;
+        const matchList = productUrl.match(REGEXP_11ST);
+        if (matchList === null) {
+            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
+        const productCode = matchList[1];
+        return await getProductInfo11st(productCode);
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {
-        try {
-            const { productCode, targetPrice } = productAddDto;
-            const existProduct = await this.productRepository.findOne({
-                where: { productCode: productCode },
-            });
-            const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
-            const product =
-                existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
-            await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
-        } catch (error) {
-            if (error.status) {
-                throw new HttpException(error.response, error.status);
-            }
-            if (error.code === 'ER_NO_DEFAULT_FOR_FIELD' || error.code === 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD') {
-                throw new HttpException('입력 값이 유효하지 않습니다', HttpStatus.BAD_REQUEST);
-            }
-            throw new HttpException('서버 내부 에러', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        const { productCode, targetPrice } = productAddDto;
+        const existProduct = await this.productRepository.findOne({
+            where: { productCode: productCode },
+        });
+        const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
+        const product = existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
+        await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
