@@ -78,7 +78,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                     _state.update {
                         it.copy(
                             isReady = true,
-                            isTracking = result.targetPrice < 0,
+                            isTracking = result.targetPrice >= 0,
                             productName = result.productName,
                             shop = result.shop,
                             imageUrl = result.imageUrl,
