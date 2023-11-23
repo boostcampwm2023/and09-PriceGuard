@@ -34,4 +34,8 @@
         <item name="elevation">2dp</item>
         <item name="rippleColor">@color/primary_elevated_button_ripple_color_selector</item>
     </style>
+
+    <style name="Theme.Surface.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
 </resources>

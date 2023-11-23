@@ -20,6 +20,7 @@
             android:background="?attr/colorSurface">
 
             <com.google.android.material.appbar.MaterialToolbar
+                style="@style/Theme.Surface.Toolbar"
                 android:id="@+id/mt_detail_topbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
