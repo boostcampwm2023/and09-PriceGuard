@@ -1,16 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class ProductDto {
-    @ApiProperty({
-        example: '5897533626',
-        description: '상품 코드',
-        required: true,
-    })
+    productName: string;
     productCode: string;
-    @ApiProperty({
-        example: '36000',
-        description: '목표 가격',
-        required: true,
-    })
-    targetPrice: string;
+    shop: string;
+    shopUrl: string;
+    imageUrl: string;
 }
