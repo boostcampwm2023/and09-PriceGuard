@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ValidationException } from './validation.exception';
 
-export class UserValidationPipe extends ValidationPipe {
+export class GlobalValidationPipe extends ValidationPipe {
     exceptionFactory = (errors: any[]) => {
         errors.map((error) => {
             return {
