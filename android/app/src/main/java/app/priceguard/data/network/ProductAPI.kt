@@ -1,6 +1,7 @@
 package app.priceguard.data.network
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductDeleteResponse
 import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductResponse
@@ -25,7 +26,7 @@ interface ProductAPI {
     @POST(".")
     suspend fun addProduct(
         @Body productAddRequest: ProductAddRequest
-    ): Response<ProductResponse>
+    ): Response<ProductAddResponse>
 
     @GET("tracking")
     suspend fun getProductList(): Response<ProductListResponse>

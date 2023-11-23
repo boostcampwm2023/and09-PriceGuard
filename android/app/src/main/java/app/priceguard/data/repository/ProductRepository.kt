@@ -1,6 +1,7 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductListResult
@@ -14,7 +15,7 @@ interface ProductRepository {
 
     suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductVerifyResponse>
 
-    suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductResponse>
+    suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductAddResponse>
 
     suspend fun getProductList(afterRenew: Boolean = false): ProductListResult
 

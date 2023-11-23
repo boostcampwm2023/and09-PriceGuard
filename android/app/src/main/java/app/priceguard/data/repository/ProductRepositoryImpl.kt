@@ -1,6 +1,7 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
 import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
@@ -51,7 +52,7 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductResponse> {
+    override suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductAddResponse> {
         val response = getApiResult {
             productAPI.addProduct(productAddRequest)
         }
