@@ -24,6 +24,11 @@ class DetailActivity : AppCompatActivity() {
         binding.viewModel = productDetailViewModel
         setContentView(binding.root)
 
+        checkProductCode()
+        observeEvent()
+    }
+
+    private fun checkProductCode() {
         val productCode = intent.getStringExtra("productCode")
         if (productCode == null) {
             // Invalid access
@@ -32,7 +37,9 @@ class DetailActivity : AppCompatActivity() {
             productDetailViewModel.productCode = productCode
             productDetailViewModel.getDetails()
         }
+    }
 
+    private fun observeEvent() {
         repeatOnStarted {
             productDetailViewModel.event.collect { event ->
                 when (event) {
@@ -55,7 +62,8 @@ class DetailActivity : AppCompatActivity() {
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.OpenShoppingMall -> {
-                        val redirectUrl = "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${event.url}"
+                        val redirectUrl =
+                            "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${event.url}"
                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
                         startActivity(browserIntent)
                     }
