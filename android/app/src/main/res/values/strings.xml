@@ -62,4 +62,8 @@
     <string name="opensource_license">오픈소스 라이선스</string>
     <string name="lowest_price">역대 최저가</string>
     <string name="target_price">목표 가격</string>
+    <string name="permission_denied_title">인증 실패</string>
+    <string name="permission_denied_message">인증에 실패하였습니다.\n로그아웃하시겠습니까?</string>
+    <string name="permission_denied_logout">로그아웃</string>
+    <string name="permission_denied_cancel">취소</string>
 </resources>
