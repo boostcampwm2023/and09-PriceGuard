@@ -6,6 +6,7 @@ plugins {
     id("com.google.firebase.firebase-perf")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.android.gms.oss-licenses-plugin")
     kotlin("plugin.serialization") version "1.9.20"
 }
 
@@ -92,6 +93,9 @@ dependencies {
     val navVersion = "2.7.5"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // oss-licenses
+    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
 }
 
 kapt {
