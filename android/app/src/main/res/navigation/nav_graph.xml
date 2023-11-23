@@ -6,7 +6,7 @@
     app:startDestination="@id/registerItemLinkFragment">
     <fragment
         android:id="@+id/confirmItemLinkFragment"
-        android:name="app.priceguard.ui.main.additem.confirm.ConfirmItemLinkFragment"
+        android:name="app.priceguard.ui.additem.ConfirmItemLinkFragment"
         android:label="ConfirmItemLinkFragment"
         tools:layout="@layout/fragment_confirm_item_link">
         <argument
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/setTargetPriceFragment"
-        android:name="app.priceguard.ui.main.additem.setprice.SetTargetPriceFragment"
+        android:name="app.priceguard.ui.additem.SetTargetPriceFragment"
         android:label="SetTargetPriceFragment"
         tools:layout="@layout/fragment_set_target_price">
         <argument
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerItemLinkFragment"
-        android:name="app.priceguard.ui.main.additem.link.RegisterItemLinkFragment"
+        android:name="app.priceguard.ui.additem.RegisterItemLinkFragment"
         android:label="RegisterItemLinkFragment"
         tools:layout="@layout/fragment_register_item_link">
         <action

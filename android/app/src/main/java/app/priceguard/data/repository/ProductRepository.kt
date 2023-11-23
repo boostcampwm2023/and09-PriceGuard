@@ -1,7 +1,7 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.dto.ProductListResponse
+import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
 import app.priceguard.data.network.APIResult
@@ -12,9 +12,9 @@ interface ProductRepository {
 
     suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductResponse>
 
-    suspend fun getProductList(): ProductListResponse
+    suspend fun getProductList(afterRenew: Boolean = false): ProductListResult
 
-    suspend fun getRecommendedProductList(): ProductListResponse
+    suspend fun getRecommendedProductList(afterRenew: Boolean = false): ProductListResult
 
     suspend fun getProductDetail(productCode: String): ProductResponse
 

@@ -8,3 +8,15 @@ data class ProductListResponse(
     val message: String,
     val trackingList: List<ProductDTO>?
 )
+
+data class ProductListResult(
+    val productListState: ProductListState,
+    val trackingList: List<ProductData>
+)
+
+enum class ProductListState {
+    SUCCESS,
+    PERMISSION_DENIED,
+    NOT_FOUND,
+    UNDEFINED_ERROR
+}

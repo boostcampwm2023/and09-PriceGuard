@@ -1,19 +1,18 @@
-package app.priceguard.ui.main.additem
+package app.priceguard.ui.detail
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import app.priceguard.databinding.ActivityAddItemBinding
+import app.priceguard.databinding.ActivityDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddItemActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddItemBinding
+    private lateinit var binding: ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityAddItemBinding.inflate(layoutInflater)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 }
