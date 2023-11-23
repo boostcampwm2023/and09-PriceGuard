@@ -71,8 +71,7 @@
     <string name="price">%s원</string>
     <string name="rank">트래킹 인기 상품 #%s위</string>
     <string name="permission_denied_title">인증 실패</string>
-    <string name="permission_denied_message">인증에 실패하였습니다.\n로그아웃하시겠습니까?</string>
-    <string name="permission_denied_logout">로그아웃</string>
+    <string name="permission_denied_message">인증에 실패하였습니다. 로그아웃합니다.</string>
     <string name="permission_denied_cancel">취소</string>
     <string name="stop_tracking_confirm">트래킹 중지 확인</string>
     <string name="stop_tracking_detail">트래킹을 중지하시면, 더 이상 목표가에 도달하여도 알림을 받을 수 없게 됩니다.</string>
