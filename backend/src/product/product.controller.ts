@@ -40,6 +40,7 @@ import {
     ProductCodeError,
     TrackingProductsNotFound,
     AddProductConflict,
+    ProductDetailsSuccess,
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -110,12 +111,25 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: '상품 세부 정보 조회 API', description: '상품 세부 정보를 조회한다.' })
-    @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 세부 정보 조회 성공' })
+    @ApiOkResponse({ type: ProductDetailsSuccess, description: '상품 세부 정보 조회 성공' })
     @ApiNotFoundResponse({ type: ProductDetailsNotFound, description: '상품 정보가 존재하지 않습니다.' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @Get(':productCode')
-    getProductDetails(@Param('productCode') productCode: string) {
-        return this.productService.getProductDetails(productCode);
+    async getProductDetails(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
+        const { productName, shop, imageUrl, rank, shopUrl, targetPrice, price } =
+            await this.productService.getProductDetails(req.user.id, productCode);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productName,
+            productCode,
+            shop,
+            imageUrl,
+            rank,
+            shopUrl,
+            targetPrice,
+            price,
+        };
     }
 
     @ApiOperation({ summary: '상품 목표 가격 수정 API', description: '상품 목표 가격을 수정한다.' })
