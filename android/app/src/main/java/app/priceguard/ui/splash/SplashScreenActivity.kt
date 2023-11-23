@@ -9,11 +9,14 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
-import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
@@ -41,21 +44,23 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        repeatOnStarted {
-            splashViewModel.event.collect { event ->
-                when (event) {
-                    SplashScreenViewModel.SplashEvent.OpenHome -> {
-                        launchActivityAndExit(
-                            this@SplashScreenActivity,
-                            HomeActivity::class.java
-                        )
-                    }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                splashViewModel.event.collect { event ->
+                    when (event) {
+                        SplashScreenViewModel.SplashEvent.OpenHome -> {
+                            launchActivityAndExit(
+                                this@SplashScreenActivity,
+                                HomeActivity::class.java
+                            )
+                        }
 
-                    SplashScreenViewModel.SplashEvent.OpenIntro -> {
-                        launchActivityAndExit(
-                            this@SplashScreenActivity,
-                            IntroActivity::class.java
-                        )
+                        SplashScreenViewModel.SplashEvent.OpenIntro -> {
+                            launchActivityAndExit(
+                                this@SplashScreenActivity,
+                                IntroActivity::class.java
+                            )
+                        }
                     }
                 }
             }
