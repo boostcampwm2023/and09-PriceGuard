@@ -2,6 +2,7 @@ package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductData
+import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductDetailState
 import app.priceguard.data.dto.ProductListResult
@@ -114,7 +115,10 @@ class ProductRepositoryImpl @Inject constructor(
 
                     401 -> {
                         if (afterRenew) {
-                            return RecommendProductResult(RecommendProductState.PERMISSION_DENIED, listOf())
+                            return RecommendProductResult(
+                                RecommendProductState.PERMISSION_DENIED,
+                                listOf()
+                            )
                         } else {
                             val refreshToken =
                                 tokenRepository.getRefreshToken() ?: return RecommendProductResult(
@@ -197,8 +201,45 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteProduct(productCode: String): ProductResponse {
-        TODO("Not yet implemented")
+    override suspend fun deleteProduct(productCode: String, renewed: Boolean): ProductDeleteState {
+        when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
+            is APIResult.Success -> {
+                return ProductDeleteState.SUCCESS
+            }
+
+            is APIResult.Error -> {
+                when (response.code) {
+                    400 -> {
+                        return ProductDeleteState.INVALID_REQUEST
+                    }
+
+                    401 -> {
+                        if (renewed) {
+                            return ProductDeleteState.UNAUTHORIZED
+                        }
+
+                        val refreshToken = tokenRepository.getRefreshToken()
+                            ?: return ProductDeleteState.UNAUTHORIZED
+                        val renewResult = tokenRepository.renewTokens(refreshToken)
+
+                        if (renewResult != RenewResult.SUCCESS) {
+                            return ProductDeleteState.UNAUTHORIZED
+                        }
+
+                        return deleteProduct(productCode, true)
+                    }
+
+                    404 -> {
+                        return ProductDeleteState.NOT_FOUND
+                    }
+
+                    else -> {
+                        return ProductDeleteState.UNDEFINED_ERROR
+                    }
+                }
+            }
+        }
+
     }
 
     override suspend fun updateTargetPrice(productAddRequest: ProductAddRequest): ProductResponse {

@@ -1,11 +1,14 @@
 package app.priceguard.ui.detail
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
+import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -67,9 +70,58 @@ class DetailActivity : AppCompatActivity() {
                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
                         startActivity(browserIntent)
                     }
+
+                    ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
+                        showConfirmationDialog(
+                            getString(R.string.stop_tracking_confirm),
+                            getString(R.string.stop_tracking_detail)
+                        ) { _, _ -> productDetailViewModel.deleteProductTracking() }
+                    }
+
+                    is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
+                        when (event.errorType) {
+                            ProductDeleteState.NOT_FOUND -> {
+                                showToast(getString(R.string.product_not_found))
+                            }
+
+                            ProductDeleteState.INVALID_REQUEST -> {
+                                showToast(getString(R.string.invalid_request))
+                            }
+
+                            ProductDeleteState.UNAUTHORIZED -> {
+                                showToast(getString(R.string.logged_out))
+                                finish()
+                            }
+
+                            ProductDeleteState.UNDEFINED_ERROR -> {
+                                showToast(getString(R.string.undefined_error))
+                            }
+
+                            else -> {}
+                        }
+                    }
+
+                    ProductDetailViewModel.ProductDetailEvent.DeleteSuccess -> {
+                        showToast(getString(R.string.delete_success))
+                        finish()
+                    }
                 }
             }
         }
+    }
+
+    private fun showConfirmationDialog(
+        title: String,
+        message: String,
+        onConfirm: DialogInterface.OnClickListener
+    ) {
+        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.confirm), onConfirm)
+            .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+            .create()
+            .show()
     }
 
     private fun showDialogAndExit(title: String, message: String) {
@@ -80,5 +132,9 @@ class DetailActivity : AppCompatActivity() {
             .setCancelable(false)
             .create()
             .show()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

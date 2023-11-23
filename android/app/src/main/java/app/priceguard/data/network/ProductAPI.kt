@@ -1,6 +1,7 @@
 package app.priceguard.data.network
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductDeleteResponse
 import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
@@ -39,7 +40,7 @@ interface ProductAPI {
     @DELETE("{productCode}")
     suspend fun deleteProduct(
         @Path("productCode") productCode: String
-    ): Response<ProductResponse>
+    ): Response<ProductDeleteResponse>
 
     @PATCH("targetPrice")
     suspend fun updateTargetPrice(

@@ -2,6 +2,7 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailState
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,9 +39,12 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
     sealed class ProductDetailEvent {
         data class OpenShoppingMall(val url: String) : ProductDetailEvent()
+        data object DeleteTracking : ProductDetailEvent()
         data object Logout : ProductDetailEvent()
         data object NotFound : ProductDetailEvent()
         data object UnknownError : ProductDetailEvent()
+        data object DeleteSuccess : ProductDetailEvent()
+        data class DeleteFailed(val errorType: ProductDeleteState) : ProductDetailEvent()
     }
 
     lateinit var productCode: String
@@ -51,6 +55,20 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     private var _state: MutableStateFlow<ProductDetailUIState> =
         MutableStateFlow(ProductDetailUIState())
     val state: StateFlow<ProductDetailUIState> = _state.asStateFlow()
+
+    fun deleteProductTracking() {
+        viewModelScope.launch {
+            when (val result = productRepository.deleteProduct(productCode, false)) {
+                ProductDeleteState.SUCCESS -> {
+                    _event.emit(ProductDetailEvent.DeleteSuccess)
+                }
+
+                else -> {
+                    _event.emit(ProductDetailEvent.DeleteFailed(result))
+                }
+            }
+        }
+    }
 
     fun getDetails() {
         viewModelScope.launch {
@@ -118,8 +136,15 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
     fun sendBrowserEvent() {
         viewModelScope.launch {
-            val event = _state.value.shopUrl?.let { ProductDetailEvent.OpenShoppingMall(it) } ?: return@launch
+            val event = _state.value.shopUrl?.let { ProductDetailEvent.OpenShoppingMall(it) }
+                ?: return@launch
             _event.emit(event)
+        }
+    }
+
+    fun sendDeleteTrackingEvent() {
+        viewModelScope.launch {
+            _event.emit(ProductDetailEvent.DeleteTracking)
         }
     }
 
