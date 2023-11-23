@@ -34,7 +34,8 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProductDetail(
-        productCode: String, renewed: Boolean
+        productCode: String,
+        renewed: Boolean
     ): ProductDetailResult {
         when (val response = getApiResult { productAPI.getProductDetail(productCode) }) {
             is APIResult.Success -> {

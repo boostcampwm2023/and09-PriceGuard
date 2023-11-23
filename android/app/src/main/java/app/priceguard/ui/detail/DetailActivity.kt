@@ -49,7 +49,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun checkProductCode(productCode: String?) {
-
     }
 
     private fun showDialogAndExit(title: String, message: String) {

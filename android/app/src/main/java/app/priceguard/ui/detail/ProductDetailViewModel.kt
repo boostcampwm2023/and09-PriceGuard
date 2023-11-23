@@ -110,5 +110,4 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     private fun formatPrice(price: Int): String {
         return NumberFormat.getNumberInstance().format(price)
     }
-
 }
