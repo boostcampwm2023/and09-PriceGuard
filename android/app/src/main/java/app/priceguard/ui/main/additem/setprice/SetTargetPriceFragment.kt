@@ -38,7 +38,9 @@ class SetTargetPriceFragment : Fragment() {
         val productCode = requireArguments().getString("productCode") ?: ""
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
+
         viewModel.setProductInfo(productCode, title, price)
+        binding.etTargetPrice.setText(price.toString())
 
         binding.initListener()
         handleEvent()

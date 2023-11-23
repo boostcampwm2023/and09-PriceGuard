@@ -62,6 +62,6 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         _state.value = state.value.copy(targetPrice = price.toInt())
     }
     fun setProductInfo(productCode: String, name: String, price: Int) {
-        _state.value = state.value.copy(productCode = productCode, targetPrice = price, productName = name, productPrice = price)
+        _state.value = state.value.copy(productCode = productCode, productName = name, productPrice = price)
     }
 }
