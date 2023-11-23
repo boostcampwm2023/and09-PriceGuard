@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.data.dto.ProductDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
+import com.bumptech.glide.Glide
 
 class ConfirmItemLinkFragment : Fragment() {
 
@@ -41,8 +42,7 @@ class ConfirmItemLinkFragment : Fragment() {
 
         if (productInfo != null) {
             viewModel.setProductInfo(productInfo)
-        } else {
-            // TODO: 상품 정보 로드 에러
+            Glide.with(this).load(productInfo.imageUrl).into(binding.ivConfirmItem)
         }
     }
 
@@ -53,12 +53,10 @@ class ConfirmItemLinkFragment : Fragment() {
 
     private fun FragmentConfirmItemLinkBinding.initListener() {
         btnConfirmItemNext.setOnClickListener {
-            val price = 0
-            val name = "qeqwe"
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
-                    name,
-                    price
+                    viewModel.flow.value.productName!!,
+                    viewModel.flow.value.productPrice!!
                 )
             findNavController().navigate(action)
         }
