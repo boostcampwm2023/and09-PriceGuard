@@ -37,6 +37,7 @@ import {
     UpdateTargetPriceSuccess,
     DeleteProductSuccess,
     ProductCodeError,
+    TrackingProductsNotFound,
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -80,12 +81,11 @@ export class ProductController {
     @ApiBadRequestResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @Post()
     async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
-        console.log(productAddDto);
         await this.productService.addProduct(req.user.id, productAddDto);
         return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
     }
 
-    @ApiOperation({ summary: '상품 목록 조회 API', description: '사용자가 추가한 상품 목록을 조회한다.' })
+    @ApiOperation({ summary: '트래킹 상품 목록 조회 API', description: '사용자가 추가한 상품 목록을 조회한다.' })
     @ApiOkResponse({ type: GetTrackingListSuccess, description: '상품 목록 조회 성공' })
     @ApiNotFoundResponse({ type: ProductNotFound, description: '추가한 상품이 없어서 상품 목록을 조회할 수 없습니다.' })
     @Get('/tracking')
@@ -118,12 +118,12 @@ export class ProductController {
         return this.productService.updateTargetPrice(productAddDto);
     }
 
-    @ApiOperation({ summary: '상품 삭제 API', description: '상품을 삭제한다.' })
-    @ApiOkResponse({ type: DeleteProductSuccess, description: '상품 삭제 성공' })
-    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
+    @ApiOperation({ summary: '추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
+    @ApiOkResponse({ type: DeleteProductSuccess, description: '추적 상품 삭제 성공' })
+    @ApiBadRequestResponse({ type: TrackingProductsNotFound, description: '추적 상품 삭제 실패' })
     @Delete(':productCode')
     async deleteProduct(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
         await this.productService.deleteProduct(req.user.id, productCode);
-        return { statusCode: HttpStatus.OK, message: '상품 삭제 성공' };
+        return { statusCode: HttpStatus.OK, message: '추적 상품 삭제 성공' };
     }
 }
