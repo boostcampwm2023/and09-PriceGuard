@@ -40,7 +40,7 @@ class SetTargetPriceFragment : Fragment() {
         val price = requireArguments().getInt("productPrice")
 
         viewModel.setProductInfo(productCode, title, price)
-        binding.etTargetPrice.setText(price.toString())
+        binding.etTargetPrice.setText((price * 0.8).toInt().toString())
 
         binding.initListener()
         handleEvent()
@@ -54,14 +54,17 @@ class SetTargetPriceFragment : Fragment() {
             if (!etTargetPrice.isFocused) {
                 tvTargetPricePercent.text =
                     String.format(getString(R.string.current_price_percent), value.toInt())
-                etTargetPrice.setText(((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString())
+                etTargetPrice.setText(
+                    ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
+                )
             }
         }
         etTargetPrice.addTextChangedListener {
             if (etTargetPrice.isFocused) {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
                     val targetPrice = it.toString().toFloat()
-                    var percent = ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
+                    var percent =
+                        ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
