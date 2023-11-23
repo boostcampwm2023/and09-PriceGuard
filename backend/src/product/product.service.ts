@@ -69,7 +69,7 @@ export class ProductService {
     }
 
     async getRecommendList() {
-        const recommendList = await this.trackingProductRepository.getRankigList();
+        const recommendList = await this.trackingProductRepository.getRankingList();
         const recommendListInfo = recommendList.map((product, index) => {
             const { productName, productCode, shop, imageUrl } = product;
             return {
@@ -99,7 +99,7 @@ export class ProductService {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
             imageUrl: selectProduct.imageUrl,
-            rank: '1',
+            rank: 1,
             shopUrl: selectProduct.shopUrl,
             targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
             lowestPrice: 500,

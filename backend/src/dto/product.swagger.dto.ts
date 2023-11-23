@@ -249,10 +249,10 @@ export class ProductDetailsSuccess {
     })
     imageUrl: string;
     @ApiProperty({
-        example: '1',
+        example: 1,
         description: '상품 순위',
     })
-    rank: string;
+    rank: number;
     @ApiProperty({
         example: 'http://www.11st.co.kr/products/5897533626/share',
         description: '상품 링크',

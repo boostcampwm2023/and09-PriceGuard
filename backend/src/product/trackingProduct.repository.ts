@@ -19,7 +19,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
         return newTrackingProduct;
     }
 
-    async getRankigList() {
+    async getRankingList() {
         const recommendList = await this.repository
             .createQueryBuilder('tracking_product')
             .select([
