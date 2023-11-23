@@ -3,10 +3,11 @@ import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductAddDto } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
-import { ProductDetailsDto } from 'src/dto/product.details.dto';
+import { ProductInfoDto } from 'src/dto/product.info.dto';
 import { TrackingProductRepository } from './trackingProduct.repository';
 import { ProductRepository } from './product.repository';
 import { getProductInfo11st } from 'src/utils/openapi.11st';
+import { ProductDetailsDto } from 'src/dto/product.details.dto';
 
 const REGEXP_11ST = /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
@@ -17,7 +18,7 @@ export class ProductService {
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
     ) {}
-    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductDetailsDto> {
+    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
         const matchList = productUrl.match(REGEXP_11ST);
         if (matchList === null) {
@@ -69,9 +70,7 @@ export class ProductService {
 
     getRecommendList() {}
 
-    getProductDetails(productCode: string) {
-        console.log(productCode);
-    }
+    async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {}
 
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
         const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
