@@ -236,6 +236,11 @@ export class ProductDetailsSuccess {
     })
     targetPrice: number;
     @ApiProperty({
+        example: '33730',
+        description: '상품 역대 최저가',
+    })
+    lowestPrice: number;
+    @ApiProperty({
         example: '53730',
         description: '상품 현재 가격',
     })

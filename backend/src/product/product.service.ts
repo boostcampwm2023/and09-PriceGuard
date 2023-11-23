@@ -80,7 +80,7 @@ export class ProductService {
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
-
+        /* 랭킹, 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
@@ -88,6 +88,7 @@ export class ProductService {
             rank: '1',
             shopUrl: selectProduct.shopUrl,
             targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
+            lowestPrice: 500,
             price: 777,
         };
     }

@@ -5,5 +5,6 @@ export class ProductDetailsDto {
     rank: string;
     shopUrl: string;
     targetPrice: number;
+    lowestPrice: number;
     price: number;
 }
