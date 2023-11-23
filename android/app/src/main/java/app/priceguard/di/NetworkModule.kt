@@ -1,5 +1,6 @@
 package app.priceguard.di
 
+import app.priceguard.data.network.AuthAPI
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.RequestInterceptor
 import app.priceguard.data.network.UserAPI
@@ -28,6 +29,14 @@ object NetworkModule {
         .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
         .build()
         .create(UserAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAuthAPI(): AuthAPI = Retrofit.Builder()
+        .baseUrl("${BASE_URL}/auth/")
+        .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
+        .build()
+        .create(AuthAPI::class.java)
 
     @Provides
     @Singleton
