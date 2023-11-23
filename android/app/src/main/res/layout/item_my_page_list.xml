@@ -19,6 +19,7 @@
         android:id="@+id/layout_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> listener.onClick(settingItemInfo.id)}">
 
