@@ -8,6 +8,9 @@ import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.RecommendProductData
+import app.priceguard.data.dto.RecommendProductResult
+import app.priceguard.data.dto.RecommendProductState
 import app.priceguard.data.dto.RenewResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
@@ -80,20 +83,22 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRecommendedProductList(afterRenew: Boolean): ProductListResult {
+    override suspend fun getRecommendedProductList(afterRenew: Boolean): RecommendProductResult {
         val response = getApiResult {
             productAPI.getRecommendedProductList()
         }
         when (response) {
             is APIResult.Success -> {
-                return ProductListResult(
-                    ProductListState.SUCCESS,
-                    response.data.trackingList?.map { dto ->
-                        ProductData(
+                return RecommendProductResult(
+                    RecommendProductState.SUCCESS,
+                    response.data.recommendList?.map { dto ->
+                        RecommendProductData(
                             dto.productName ?: "",
                             dto.productCode ?: "",
                             dto.shop ?: "",
-                            dto.imageUrl ?: ""
+                            dto.imageUrl ?: "",
+                            dto.price,
+                            dto.rank
                         )
                     } ?: listOf()
                 )
@@ -101,19 +106,23 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 return when (response.code) {
+                    400 -> {
+                        RecommendProductResult(RecommendProductState.WRONG_REQUEST, listOf())
+                    }
+
                     401 -> {
                         if (afterRenew) {
-                            return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                            return RecommendProductResult(RecommendProductState.PERMISSION_DENIED, listOf())
                         } else {
                             val refreshToken =
-                                tokenRepository.getRefreshToken() ?: return ProductListResult(
-                                    ProductListState.PERMISSION_DENIED,
+                                tokenRepository.getRefreshToken() ?: return RecommendProductResult(
+                                    RecommendProductState.PERMISSION_DENIED,
                                     listOf()
                                 )
                             val renewResult = tokenRepository.renewTokens(refreshToken)
                             if (renewResult != RenewResult.SUCCESS) {
-                                return ProductListResult(
-                                    ProductListState.PERMISSION_DENIED,
+                                return RecommendProductResult(
+                                    RecommendProductState.PERMISSION_DENIED,
                                     listOf()
                                 )
                             }
@@ -122,11 +131,11 @@ class ProductRepositoryImpl @Inject constructor(
                     }
 
                     404 -> {
-                        ProductListResult(ProductListState.NOT_FOUND, listOf())
+                        RecommendProductResult(RecommendProductState.NOT_FOUND, listOf())
                     }
 
                     else -> {
-                        ProductListResult(ProductListState.UNDEFINED_ERROR, listOf())
+                        RecommendProductResult(RecommendProductState.UNDEFINED_ERROR, listOf())
                     }
                 }
             }
