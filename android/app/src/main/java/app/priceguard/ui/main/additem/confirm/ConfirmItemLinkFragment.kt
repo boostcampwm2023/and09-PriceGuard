@@ -55,8 +55,8 @@ class ConfirmItemLinkFragment : Fragment() {
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
-                    viewModel.flow.value.productName!!,
-                    viewModel.flow.value.productPrice!!
+                    viewModel?.flow?.value?.productName ?: "",
+                    viewModel?.flow?.value?.productPrice ?: 0
                 )
             findNavController().navigate(action)
         }
