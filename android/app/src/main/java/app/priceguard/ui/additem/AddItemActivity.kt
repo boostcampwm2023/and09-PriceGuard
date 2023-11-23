@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem
+package app.priceguard.ui.additem
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

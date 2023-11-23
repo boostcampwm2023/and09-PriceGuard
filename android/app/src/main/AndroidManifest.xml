@@ -36,7 +36,7 @@
             android:name=".ui.home.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.additem.AddItemActivity"
+            android:name=".ui.additem.AddItemActivity"
             android:exported="false" />
         <activity
             android:name=".ui.detail.DetailActivity"

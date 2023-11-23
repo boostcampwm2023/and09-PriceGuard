@@ -7,6 +7,7 @@
 
     <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
         <item name="shapeAppearance">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
         <item name="shapeAppearanceOverlay">@null</item>
     </style>
 
@@ -26,7 +27,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
-    
+
     <style name="Widget.Material3.Button.ElevatedButton.Primary" parent="Widget.Material3.Button.ElevatedButton">
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="iconTint">?attr/colorOnPrimary</item>

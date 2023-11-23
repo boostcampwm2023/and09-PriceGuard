@@ -30,6 +30,7 @@ class ProductSummaryAdapter :
             with(binding) {
                 summary = item
                 setViewType(item)
+                setClickListener(item.productCode)
             }
         }
 
@@ -68,6 +69,12 @@ class ProductSummaryAdapter :
             tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
                 R.string.recommand_rank, item.recommendRank
             )
+        }
+
+        private fun ItemProductSummaryBinding.setClickListener(code: String) {
+            cvProduct.setOnClickListener {
+                // TODO: Intent로 상세 페이지 연결 및 상품 코드 전달
+            }
         }
     }
 

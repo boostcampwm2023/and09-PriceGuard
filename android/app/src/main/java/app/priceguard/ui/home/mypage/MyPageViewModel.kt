@@ -12,24 +12,37 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(val tokenRepository: TokenRepository) : ViewModel() {
+class MyPageViewModel @Inject constructor(
+    val tokenRepository: TokenRepository
+) : ViewModel() {
 
     sealed class MyPageEvent {
         data object StartIntroAndExitHome : MyPageEvent()
     }
 
-    // 더미 데이터
     data class MyPageInfo(
-        val name: String = "박승준 님",
-        val email: String = "aaa@aa.aa",
-        val firstName: String = name.first().toString()
+        val name: String,
+        val email: String,
+        val firstName: String
     )
 
-    private val _flow = MutableStateFlow(MyPageInfo())
+    private val _flow = MutableStateFlow(MyPageInfo("", "", ""))
     val flow = _flow.asStateFlow()
 
     private val _event = MutableSharedFlow<MyPageEvent>()
     val event = _event.asSharedFlow()
+
+    init {
+        setInfo()
+    }
+
+    private fun setInfo() {
+        viewModelScope.launch {
+            val userData = tokenRepository.getUserData()
+            _flow.value =
+                MyPageInfo(userData.name, userData.email, if (userData.name.isNotEmpty()) userData.name.first().toString() else "")
+        }
+    }
 
     fun logout() {
         viewModelScope.launch {

@@ -9,3 +9,10 @@ data class ProductDTO(
     val shop: String?,
     val imageUrl: String?
 )
+
+data class ProductData(
+    val productName: String,
+    val productCode: String,
+    val shop: String,
+    val imageUrl: String
+)
