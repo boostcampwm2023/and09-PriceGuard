@@ -42,7 +42,6 @@ class RegisterItemLinkFragment : Fragment() {
 
     private fun initListener() {
         binding.btnRegisterItemNext.setOnClickListener {
-            viewModel.verifyLink()
         }
     }
 
