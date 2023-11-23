@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
 import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecommendedProductFragment : Fragment() {
@@ -49,7 +51,9 @@ class RecommendedProductFragment : Fragment() {
     private fun FragmentRecommendedProductBinding.initListener() {
         mtbRecommendedProduct.setOnMenuItemClickListener { menuItem ->
             if (menuItem.itemId == R.id.refresh) {
-                recommendedProductViewModel.getProductList()
+                lifecycleScope.launch {
+                    recommendedProductViewModel.getProductList()
+                }
             }
             true
         }

@@ -25,19 +25,17 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
-    fun getProductList() {
-        viewModelScope.launch {
-            val list = productRepository.getProductList()
-            _productList.value = list.trackingList.map { data ->
-                UserProductSummary(
-                    data.shop,
-                    data.productName,
-                    "",
-                    "",
-                    data.productCode,
-                    true
-                )
-            }
+    suspend fun getProductList() {
+        val list = productRepository.getProductList()
+        _productList.value = list.trackingList.map { data ->
+            UserProductSummary(
+                data.shop,
+                data.productName,
+                "",
+                "",
+                data.productCode,
+                true
+            )
         }
     }
 }
