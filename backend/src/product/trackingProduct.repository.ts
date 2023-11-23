@@ -17,4 +17,14 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
         await newTrackingProduct.save();
         return newTrackingProduct;
     }
+
+    async getRankigList() {
+        const recommendList = await this.repository
+            .createQueryBuilder('tracking_product')
+            .select('tracking_product.productId as productId')
+            .groupBy('tracking_product.productId')
+            .orderBy('COUNT(tracking_product.userId)', 'DESC')
+            .getRawMany();
+        return recommendList;
+    }
 }
