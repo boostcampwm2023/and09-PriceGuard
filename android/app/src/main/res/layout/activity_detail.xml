@@ -65,6 +65,7 @@
                         android:id="@+id/iv_detail_product"
                         android:layout_width="match_parent"
                         android:layout_height="256dp"
+                        app:imageFromUrl="@{viewModel.state.imageUrl}"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView

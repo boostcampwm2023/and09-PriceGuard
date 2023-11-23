@@ -92,6 +92,9 @@ dependencies {
     val navVersion = "2.7.5"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
 
 kapt {
