@@ -13,9 +13,9 @@ import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.recommend.RecommendedProductViewModel.RecommendedProductEvent
-import app.priceguard.ui.util.drawable.disableAppBarRecyclerView
-import app.priceguard.ui.util.drawable.showNetworkDialog
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.disableAppBarRecyclerView
+import app.priceguard.ui.util.ui.showNetworkDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch

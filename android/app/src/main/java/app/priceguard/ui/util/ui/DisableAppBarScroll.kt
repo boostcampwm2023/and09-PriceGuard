@@ -1,4 +1,4 @@
-package app.priceguard.ui.util.drawable
+package app.priceguard.ui.util.ui
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.RecyclerView

@@ -13,8 +13,8 @@ import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
-import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
