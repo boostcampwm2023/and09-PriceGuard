@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductAddRequest(
     val productCode: String,
-    val targetPrice: String
+    val targetPrice: Int
 )
