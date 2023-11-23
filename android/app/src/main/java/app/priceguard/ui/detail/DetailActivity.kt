@@ -49,9 +49,6 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkProductCode(productCode: String?) {
-    }
-
     private fun showDialogAndExit(title: String, message: String) {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
