@@ -45,8 +45,8 @@ class ProductListViewModel @Inject constructor(
                 UserProductSummary(
                     data.shop,
                     data.productName,
-                    "",
-                    "",
+                    data.price.toString(),
+                    "-15.0%",
                     data.productCode,
                     true
                 )
