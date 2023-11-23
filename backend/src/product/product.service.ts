@@ -95,9 +95,9 @@ export class ProductService {
             where: { userId: userId, productId: selectProduct.id },
         });
         const ranklist = await this.trackingProductRepository.getRankingList();
-        const rank = ranklist.findIndex((product) => product.productId === selectProduct.id) + 1;
-        console.log(ranklist, selectProduct.id, rank);
-        /* 랭킹, 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
+        const idx = ranklist.findIndex((product) => product.productId === selectProduct.id);
+        const rank = idx === -1 ? idx : idx + 1;
+        /* 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
