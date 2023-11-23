@@ -49,6 +49,7 @@ class RegisterItemLinkFragment : Fragment() {
         repeatOnStarted {
             viewModel.state.collect { state ->
                 if (state.product != null) {
+                    // TODO: 링크 정규식 검사에 맞지 않을 시 발생하는 ui 업데이트 로직
                 }
             }
         }
