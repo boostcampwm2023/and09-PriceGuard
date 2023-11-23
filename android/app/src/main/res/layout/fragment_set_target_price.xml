@@ -44,11 +44,16 @@
 
         <TextView
             android:id="@+id/tv_set_price_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@{title}"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            app:layout_constraintEnd_toStartOf="@id/tv_set_price_current_price"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_title" />
 
@@ -80,6 +85,10 @@
             android:id="@+id/sl_target_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:value="80"
+            android:valueFrom="1"
+            android:valueTo="100"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/et_target_price" />
@@ -90,7 +99,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical|end"
             android:paddingHorizontal="16dp"
-            android:text="현재 가격의 25%"
+            android:text="현재 가격의 80%"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
