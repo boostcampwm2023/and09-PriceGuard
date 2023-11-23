@@ -1,10 +1,9 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductData
 import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductDetailState
-import app.priceguard.data.dto.ProductListResponse
-import app.priceguard.data.dto.ProductData
 import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
 import app.priceguard.data.dto.ProductResponse
@@ -60,7 +59,10 @@ class ProductRepositoryImpl @Inject constructor(
                                 )
                             val renewResult = tokenRepository.renewTokens(refreshToken)
                             if (renewResult != RenewResult.SUCCESS) {
-                                return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                                return ProductListResult(
+                                    ProductListState.PERMISSION_DENIED,
+                                    listOf()
+                                )
                             }
                             return getProductList(afterRenew = true)
                         }
@@ -110,7 +112,10 @@ class ProductRepositoryImpl @Inject constructor(
                                 )
                             val renewResult = tokenRepository.renewTokens(refreshToken)
                             if (renewResult != RenewResult.SUCCESS) {
-                                return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                                return ProductListResult(
+                                    ProductListState.PERMISSION_DENIED,
+                                    listOf()
+                                )
                             }
                             return getRecommendedProductList(afterRenew = true)
                         }

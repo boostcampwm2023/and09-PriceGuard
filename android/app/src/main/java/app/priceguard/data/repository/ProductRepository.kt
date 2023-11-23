@@ -2,7 +2,6 @@ package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductDetailResult
-import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
