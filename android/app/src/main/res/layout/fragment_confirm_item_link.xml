@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="app.priceguard.ui.main.additem.ConfirmItemLinkViewModel" />
+            type="app.priceguard.ui.additem.ConfirmItemLinkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
