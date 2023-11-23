@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductUrlDto } from '../dto/product.url.dto';
-import { ProductDto } from 'src/dto/product.dto';
+import { ProductAddDto } from 'src/dto/product.add.dto';
 import {
     ApiBadRequestResponse,
     ApiBearerAuth,
@@ -74,12 +74,12 @@ export class ProductController {
     }
 
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })
-    @ApiBody({ type: ProductDto })
+    @ApiBody({ type: ProductAddDto })
     @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 추가 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
     @Post()
-    async addProduct(@Req() req: Request & { user: User }, @Body() productDto: ProductDto) {
-        await this.productService.addProduct(req.user.id, productDto);
+    async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
+        await this.productService.addProduct(req.user.id, productAddDto);
         return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
     }
 
@@ -112,8 +112,8 @@ export class ProductController {
     @ApiOkResponse({ type: UpdateTargetPriceSuccess, description: '상품 목표 가격 수정 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
     @Patch('/targetPrice')
-    updateTargetPrice(@Body() productDto: ProductDto) {
-        return this.productService.updateTargetPrice(productDto);
+    updateTargetPrice(@Body() productAddDto: ProductAddDto) {
+        return this.productService.updateTargetPrice(productAddDto);
     }
     @ApiOperation({ summary: '상품 삭제 API', description: '상품을 삭제한다.' })
     @ApiOkResponse({ type: DeleteProductSuccess, description: '상품 삭제 성공' })
