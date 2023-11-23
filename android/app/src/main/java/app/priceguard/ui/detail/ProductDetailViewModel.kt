@@ -88,7 +88,13 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                             lowestPrice = result.lowestPrice,
                             price = result.price,
                             formattedPrice = formatPrice(result.price),
-                            formattedTargetPrice = if (result.targetPrice < 0) "0" else formatPrice(result.targetPrice),
+                            formattedTargetPrice = if (result.targetPrice < 0) {
+                                "0"
+                            } else {
+                                formatPrice(
+                                    result.targetPrice
+                                )
+                            },
                             formattedLowestPrice = formatPrice(result.lowestPrice)
                         )
                     }

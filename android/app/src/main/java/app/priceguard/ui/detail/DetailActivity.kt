@@ -19,6 +19,8 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
+        binding.viewModel = productDetailViewModel
+        setContentView(binding.root)
 
         val productCode = intent.getStringExtra("productCode")
         if (productCode == null) {
@@ -29,20 +31,26 @@ class DetailActivity : AppCompatActivity() {
             productDetailViewModel.getDetails()
         }
 
-        binding.viewModel = productDetailViewModel
-        setContentView(binding.root)
-
         repeatOnStarted {
             productDetailViewModel.event.collect { event ->
                 when (event) {
                     ProductDetailViewModel.ProductDetailEvent.Logout -> {
                         showDialogAndExit(getString(R.string.error), getString(R.string.logged_out))
                     }
+
                     ProductDetailViewModel.ProductDetailEvent.NotFound -> {
-                        showDialogAndExit(getString(R.string.error), getString(R.string.product_not_found))
+                        showDialogAndExit(
+                            getString(R.string.error),
+                            getString(R.string.product_not_found)
+                        )
                     }
+
                     ProductDetailViewModel.ProductDetailEvent.UnknownError -> {
-                        showDialogAndExit(getString(R.string.error), getString(R.string.undefined_error))
+                        showDialogAndExit(
+                            getString(R.string.error),
+                            getString(R.string.undefined_error)
+                        )
+                    }
                     }
                 }
             }
