@@ -60,7 +60,40 @@ class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductA
     }
 
     override suspend fun getRecommendedProductList(): ProductListResult {
-        TODO("Not yet implemented")
+        val response = getApiResult {
+            productAPI.getRecommendedProductList()
+        }
+        when (response) {
+            is APIResult.Success -> {
+                return ProductListResult(
+                    ProductListState.SUCCESS,
+                    response.data.trackingList?.map { dto ->
+                        ProductData(
+                            dto.productName ?: "",
+                            dto.productCode ?: "",
+                            dto.shop ?: "",
+                            dto.imageUrl ?: ""
+                        )
+                    } ?: listOf()
+                )
+            }
+
+            is APIResult.Error -> {
+                return when (response.code) {
+                    401 -> {
+                        ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                    }
+
+                    404 -> {
+                        ProductListResult(ProductListState.NOT_FOUND, listOf())
+                    }
+
+                    else -> {
+                        ProductListResult(ProductListState.UNDEFINED_ERROR, listOf())
+                    }
+                }
+            }
+        }
     }
 
     override suspend fun getProductDetail(productCode: String): ProductResponse {
