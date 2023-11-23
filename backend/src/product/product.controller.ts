@@ -116,7 +116,7 @@ export class ProductController {
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @Get(':productCode')
     async getProductDetails(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
-        const { productName, shop, imageUrl, rank, shopUrl, targetPrice, price } =
+        const { productName, shop, imageUrl, rank, shopUrl, targetPrice, lowestPrice, price } =
             await this.productService.getProductDetails(req.user.id, productCode);
         return {
             statusCode: HttpStatus.OK,
@@ -128,6 +128,7 @@ export class ProductController {
             rank,
             shopUrl,
             targetPrice,
+            lowestPrice,
             price,
         };
     }
