@@ -19,7 +19,7 @@ interface ProductAPI {
         @Body productUrl: ProductVerifyRequest
     ): Response<ProductResponse>
 
-    @POST
+    @POST(".")
     suspend fun addProduct(
         @Body productAddRequest: ProductAddRequest
     ): Response<ProductResponse>
