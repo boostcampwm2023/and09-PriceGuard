@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 data class ProductResponse(
     val statusCode: Int,
     val message: String,
-    val productName: String?,
-    val productCode: String?,
-    val productPrice: Int?,
-    val shop: String?,
-    val imageUrl: String?
+    val productName: String? = null,
+    val productCode: String? = null,
+    val productPrice: Int? = null,
+    val shop: String? = null,
+    val imageUrl: String? = null
 )
