@@ -8,8 +8,8 @@ data class RecommendProductDTO(
     val productCode: String?,
     val shop: String?,
     val imageUrl: String?,
-    val price: Int,
-    val rank: Int
+    val price: Int?,
+    val rank: Int?
 )
 
 data class RecommendProductData(

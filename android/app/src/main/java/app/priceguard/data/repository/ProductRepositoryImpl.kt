@@ -43,7 +43,9 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.productName ?: "",
                             dto.productCode ?: "",
                             dto.shop ?: "",
-                            dto.imageUrl ?: ""
+                            dto.imageUrl ?: "",
+                            dto.targetPrice ?: 0,
+                            dto.price ?: 0
                         )
                     } ?: listOf()
                 )
@@ -97,8 +99,8 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.productCode ?: "",
                             dto.shop ?: "",
                             dto.imageUrl ?: "",
-                            dto.price,
-                            dto.rank
+                            dto.price ?: 0,
+                            dto.rank ?: 0
                         )
                     } ?: listOf()
                 )
