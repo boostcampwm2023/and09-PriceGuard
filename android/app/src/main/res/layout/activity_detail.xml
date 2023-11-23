@@ -20,8 +20,8 @@
             android:background="?attr/colorSurface">
 
             <com.google.android.material.appbar.MaterialToolbar
-                style="@style/Theme.Surface.Toolbar"
                 android:id="@+id/mt_detail_topbar"
+                style="@style/Theme.Surface.Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
@@ -76,6 +76,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -166,6 +168,48 @@
                         app:layout_constraintTop_toBottomOf="@id/tv_detail_already_tracking_title" />
 
                     <TextView
+                        android:id="@+id/tv_detail_lowest_price_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/lowest_price"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_detail_delete" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_lowest_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                        app:layout_constraintTop_toBottomOf="@id/btn_detail_delete"
+                        tools:text="28,080원" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_target_price_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/target_price"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price_title" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_target_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price"
+                        tools:text="28,080원" />
+
+                    <TextView
                         android:id="@+id/tv_detail_price_graph"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -174,7 +218,7 @@
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_detail_delete" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_target_price_title" />
 
                     <com.google.android.material.button.MaterialButtonToggleGroup
                         android:id="@+id/mbtg_graph_period"
@@ -244,8 +288,8 @@
                 app:icon="@drawable/ic_shopping_mall"
                 app:iconGravity="textStart"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

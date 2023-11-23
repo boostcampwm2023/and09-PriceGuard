@@ -60,4 +60,6 @@
     <string name="yes">네</string>
     <string name="no">아니오</string>
     <string name="opensource_license">오픈소스 라이선스</string>
+    <string name="lowest_price">역대 최저가</string>
+    <string name="target_price">목표 가격</string>
 </resources>
