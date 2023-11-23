@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.recommend.RecommendedProductViewModel.RecommendedProductEvent
+import app.priceguard.ui.util.drawable.disableAppBarRecyclerView
 import app.priceguard.ui.util.drawable.showNetworkDialog
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,11 +46,15 @@ class RecommendedProductFragment : Fragment() {
         binding.initSettingAdapter()
         binding.initListener()
         collectEvent()
+        disableAppBarRecyclerView(
+            binding.ablRecommendedProduct.layoutParams as CoordinatorLayout.LayoutParams,
+            binding.rvRecommendedProduct
+        )
     }
 
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
-        rvMyPageSetting.adapter = adapter
+        rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.recommendedProductList.collect { list ->
                 adapter.submitList(list)

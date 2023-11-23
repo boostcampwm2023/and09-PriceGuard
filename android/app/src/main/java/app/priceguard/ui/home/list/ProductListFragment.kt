@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.main.additem.AddItemActivity
+import app.priceguard.ui.util.drawable.disableAppBarRecyclerView
 import app.priceguard.ui.util.drawable.showNetworkDialog
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,11 +48,15 @@ class ProductListFragment : Fragment() {
         binding.initSettingAdapter()
         binding.initListener()
         collectEvent()
+        disableAppBarRecyclerView(
+            binding.ablProductList.layoutParams as CoordinatorLayout.LayoutParams,
+            binding.rvProductList
+        )
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
-        rvMyPageSetting.adapter = adapter
+        rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
                 adapter.submitList(list)
