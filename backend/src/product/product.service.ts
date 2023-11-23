@@ -6,8 +6,7 @@ import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import { Repository } from 'typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
-import axios from 'axios';
-import { productInfo11st, xmlConvert11st } from 'src/utils/openapi.11st';
+import { getProductInfo11st } from 'src/utils/openapi.11st';
 
 const REGEXP_11ST = /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
@@ -24,17 +23,7 @@ export class ProductService {
         }
         try {
             const [, code] = matchList;
-            const openApiUrl = productInfo11st(code);
-            const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
-            const productDetails = xmlConvert11st(xml.data);
-            const price = productDetails['ProductPrice']['Price']['text'].replace(/(원|,)/g, '');
-            return {
-                productCode: productDetails['ProductCode']['text'],
-                productName: productDetails['ProductName']['text'],
-                productPrice: parseInt(price),
-                shop: '11번가',
-                imageUrl: productDetails['BasicImage']['text'],
-            };
+            return await getProductInfo11st(code);
         } catch (e) {
             throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
