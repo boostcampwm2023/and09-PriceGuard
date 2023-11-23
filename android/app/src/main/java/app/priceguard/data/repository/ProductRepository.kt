@@ -4,12 +4,13 @@ import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.network.APIResult
 
 interface ProductRepository {
 
-    suspend fun verifyLink(productUrl: ProductVerifyRequest): ProductResponse
+    suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductResponse>
 
-    suspend fun addProduct(productAddRequest: ProductAddRequest): ProductResponse
+    suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductResponse>
 
     suspend fun getProductList(): ProductListResponse
 
