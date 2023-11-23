@@ -12,6 +12,8 @@ import app.priceguard.R
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class RegisterItemLinkFragment : Fragment() {
@@ -55,7 +57,7 @@ class RegisterItemLinkFragment : Fragment() {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
                         val action =
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                                event.product
+                                Json.encodeToString(event.product)
                             )
                         findNavController().navigate(action)
                     }

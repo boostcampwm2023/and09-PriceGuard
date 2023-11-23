@@ -9,7 +9,7 @@ data class ProductDTO(
     val productPrice: Int?,
     val shop: String?,
     val imageUrl: String?
-) : java.io.Serializable
+)
 
 data class ProductData(
     val productName: String,

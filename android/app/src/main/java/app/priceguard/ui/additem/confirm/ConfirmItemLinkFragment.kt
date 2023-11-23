@@ -1,6 +1,5 @@
 package app.priceguard.ui.additem.confirm
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.data.dto.ProductDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
 import com.bumptech.glide.Glide
+import kotlinx.serialization.json.Json
 
 class ConfirmItemLinkFragment : Fragment() {
 
@@ -34,16 +34,10 @@ class ConfirmItemLinkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.initListener()
 
-        val productInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireArguments().getSerializable("product", ProductDTO::class.java)
-        } else {
-            requireArguments().getSerializable("product") as ProductDTO
-        }
-
-        if (productInfo != null) {
-            viewModel.setProductInfo(productInfo)
-            Glide.with(this).load(productInfo.imageUrl).into(binding.ivConfirmItem)
-        }
+        val productJson = requireArguments().getString("product") ?: return
+        val productInfo = Json.decodeFromString<ProductDTO>(productJson)
+        viewModel.setProductInfo(productInfo)
+        Glide.with(this).load(productInfo.imageUrl).into(binding.ivConfirmItem)
     }
 
     override fun onDestroyView() {
