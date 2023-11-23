@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import { Product } from 'src/entities/product.entity';
+import { MAX_TRACKING_RANK } from 'src/constants';
 
 @Injectable()
 export class TrackingProductRepository extends Repository<TrackingProduct> {
@@ -19,7 +20,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
         return newTrackingProduct;
     }
 
-    async getRankingList() {
+    async getTotalInfoRankingList() {
         const recommendList = await this.repository
             .createQueryBuilder('tracking_product')
             .select([
@@ -33,7 +34,19 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .leftJoin(Product, 'product', 'tracking_product.productId = product.id')
             .groupBy('tracking_product.productId')
             .orderBy('userCount', 'DESC')
+            .take(MAX_TRACKING_RANK)
             .getRawMany();
         return recommendList;
+    }
+
+    async getRankingList() {
+        const rankList = await this.repository
+            .createQueryBuilder('tracking_product')
+            .select('tracking_product.productId as productId')
+            .groupBy('tracking_product.productId')
+            .orderBy('COUNT(tracking_product.userId)', 'DESC')
+            .take(MAX_TRACKING_RANK)
+            .getRawMany();
+        return rankList;
     }
 }

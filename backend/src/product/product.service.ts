@@ -69,7 +69,7 @@ export class ProductService {
     }
 
     async getRecommendList() {
-        const recommendList = await this.trackingProductRepository.getRankingList();
+        const recommendList = await this.trackingProductRepository.getTotalInfoRankingList();
         const recommendListInfo = recommendList.map((product, index) => {
             const { productName, productCode, shop, imageUrl } = product;
             return {
@@ -94,12 +94,15 @@ export class ProductService {
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
-        /* 랭킹, 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
+        const ranklist = await this.trackingProductRepository.getRankingList();
+        const idx = ranklist.findIndex((product) => product.productId === selectProduct.id);
+        const rank = idx === -1 ? idx : idx + 1;
+        /* 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
             imageUrl: selectProduct.imageUrl,
-            rank: 1,
+            rank: rank,
             shopUrl: selectProduct.shopUrl,
             targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
             lowestPrice: 500,
