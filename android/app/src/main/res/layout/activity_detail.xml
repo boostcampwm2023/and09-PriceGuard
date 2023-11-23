@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="app.priceguard.ui.detail.ProductDetailViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -78,6 +83,7 @@
                         android:layout_marginTop="8dp"
                         android:ellipsize="end"
                         android:singleLine="true"
+                        android:text="@{viewModel.state.productName}"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -89,6 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:text="@{@string/price(viewModel.state.formattedPrice)}"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                         app:layout_constraintTop_toBottomOf="@id/tv_detail_product_name"
@@ -100,6 +107,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceLabelLarge"
                         android:textColor="?attr/colorOnPrimaryFixedVariant"
+                        android:visibility="gone"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                         app:layout_constraintTop_toBottomOf="@+id/tv_detail_current_price"
                         tools:text="트래킹 상품 인기 #2위" />
@@ -112,6 +120,7 @@
                         android:text="@string/want_to_buy_cheap"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textStyle="bold"
+                        android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                         app:layout_constraintTop_toBottomOf="@+id/tv_detail_popular_rank" />
 
@@ -122,6 +131,7 @@
                         android:layout_height="48dp"
                         android:layout_marginTop="8dp"
                         android:text="@string/add_to_tracking_list"
+                        android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
                         app:icon="@drawable/ic_track"
                         app:iconGravity="textStart"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
@@ -136,6 +146,7 @@
                         android:text="@string/already_tracking"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textStyle="bold"
+                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
                         app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                         app:layout_constraintTop_toBottomOf="@+id/btn_detail_track" />
 
@@ -147,6 +158,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="4dp"
                         android:text="@string/edit_target_price"
+                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
                         app:icon="@drawable/ic_edit"
                         app:iconGravity="textStart"
                         app:layout_constraintEnd_toStartOf="@+id/btn_detail_delete"
@@ -161,6 +173,7 @@
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="8dp"
                         android:text="@string/delete_tracking"
+                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
                         app:icon="@drawable/ic_delete"
                         app:iconGravity="textStart"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
@@ -184,6 +197,7 @@
                         android:layout_marginTop="8dp"
                         android:textAppearance="?attr/textAppearanceTitleSmall"
                         android:textStyle="bold"
+                        android:text="@{@string/price(viewModel.state.formattedLowestPrice)}"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                         app:layout_constraintTop_toBottomOf="@id/btn_detail_delete"
                         tools:text="28,080원" />
@@ -204,6 +218,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textAppearance="?attr/textAppearanceTitleSmall"
+                        android:text="@{@string/price(viewModel.state.formattedTargetPrice)}"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                         app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price"
@@ -285,6 +300,7 @@
                 android:layout_height="64dp"
                 android:layout_margin="16dp"
                 android:text="@string/goto_shopping_mall"
+                android:enabled="@{viewModel.state.isReady}"
                 app:icon="@drawable/ic_shopping_mall"
                 app:iconGravity="textStart"
                 app:layout_constraintBottom_toBottomOf="parent"

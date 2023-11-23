@@ -62,4 +62,8 @@
     <string name="opensource_license">오픈소스 라이선스</string>
     <string name="lowest_price">역대 최저가</string>
     <string name="target_price">목표 가격</string>
+    <string name="invalid_access">잘못된 접근입니다.</string>
+    <string name="product_not_found">상품 정보가 존재하지 않습니다.</string>
+    <string name="logged_out">로그아웃 되었습니다. 다시 로그인하세요.</string>
+    <string name="price">%s원</string>
 </resources>
