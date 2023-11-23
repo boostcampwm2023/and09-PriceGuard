@@ -8,3 +8,9 @@ plugins {
     id("com.google.firebase.crashlytics") version "2.9.9" apply false
     id("com.google.firebase.firebase-perf") version "1.4.2" apply false
 }
+
+buildscript {
+    dependencies {
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
+    }
+}

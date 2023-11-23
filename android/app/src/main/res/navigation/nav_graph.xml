@@ -6,21 +6,34 @@
     app:startDestination="@id/registerItemLinkFragment">
     <fragment
         android:id="@+id/confirmItemLinkFragment"
-        android:name="app.priceguard.ui.additem.ConfirmItemLinkFragment"
+        android:name="app.priceguard.ui.additem.confirm.ConfirmItemLinkFragment"
         android:label="ConfirmItemLinkFragment"
         tools:layout="@layout/fragment_confirm_item_link">
+        <argument
+            android:name="product"
+            app:argType="string" />
         <action
             android:id="@+id/action_confirmItemLinkFragment_to_setTargetPriceFragment"
-            app:destination="@id/setTargetPriceFragment" />
+            app:destination="@id/setTargetPriceFragment"/>
     </fragment>
     <fragment
         android:id="@+id/setTargetPriceFragment"
-        android:name="app.priceguard.ui.additem.SetTargetPriceFragment"
+        android:name="app.priceguard.ui.additem.setprice.SetTargetPriceFragment"
         android:label="SetTargetPriceFragment"
-        tools:layout="@layout/fragment_set_target_price"/>
+        tools:layout="@layout/fragment_set_target_price">
+        <argument
+            android:name="productCode"
+            app:argType="string" />
+        <argument
+            android:name="productTitle"
+            app:argType="string" />
+        <argument
+            android:name="productPrice"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/registerItemLinkFragment"
-        android:name="app.priceguard.ui.additem.RegisterItemLinkFragment"
+        android:name="app.priceguard.ui.additem.link.RegisterItemLinkFragment"
         android:label="RegisterItemLinkFragment"
         tools:layout="@layout/fragment_register_item_link">
         <action

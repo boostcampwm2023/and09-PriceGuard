@@ -60,9 +60,22 @@
     <string name="yes">네</string>
     <string name="no">아니오</string>
     <string name="opensource_license">오픈소스 라이선스</string>
+    <string name="current_price_percent">현재 가격의 %d%%</string>
+    <string name="over_current_price">현재 가격보다 목표 가격이 높습니다</string>
+    <string name="not_link">유효하지 않은 링크입니다.</string>
     <string name="lowest_price">역대 최저가</string>
     <string name="target_price">목표 가격</string>
+    <string name="invalid_access">잘못된 접근입니다.</string>
+    <string name="product_not_found">상품 정보가 존재하지 않습니다.</string>
+    <string name="logged_out">로그아웃 되었습니다. 다시 로그인하세요.</string>
+    <string name="price">%s원</string>
+    <string name="rank">트래킹 인기 상품 #%s위</string>
     <string name="permission_denied_title">인증 실패</string>
     <string name="permission_denied_message">인증에 실패하였습니다. 로그아웃합니다.</string>
     <string name="permission_denied_cancel">취소</string>
+    <string name="stop_tracking_confirm">트래킹 중지 확인</string>
+    <string name="stop_tracking_detail">트래킹을 중지하시면, 더 이상 목표가에 도달하여도 알림을 받을 수 없게 됩니다.</string>
+    <string name="invalid_request">잘못된 요청입니다.</string>
+    <string name="delete_success">삭제되었습니다.</string>
+    <string name="cancel">취소</string>
 </resources>
