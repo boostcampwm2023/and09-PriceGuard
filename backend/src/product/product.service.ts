@@ -67,7 +67,21 @@ export class ProductService {
         return trackingListInfo;
     }
 
-    getRecommendList() {}
+    async getRecommendList() {
+        const recommendList = await this.trackingProductRepository.getRankigList();
+        const recommendListInfo = recommendList.map((product, index) => {
+            const { productName, productCode, shop, imageUrl } = product;
+            return {
+                productName,
+                productCode,
+                shop,
+                imageUrl,
+                price: 1234, // 임시 더미 가격 데이터
+                rank: index + 1,
+            };
+        });
+        return recommendListInfo;
+    }
 
     getProductDetails(productCode: string) {
         console.log(productCode);

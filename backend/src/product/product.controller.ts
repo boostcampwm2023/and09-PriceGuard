@@ -104,8 +104,9 @@ export class ProductController {
     @ApiNotFoundResponse({ type: ProductNotFound, description: '추천 상품 목록이 없습니다.' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @Get('/recommend')
-    getRecommendList() {
-        return this.productService.getRecommendList();
+    async getRecommendList() {
+        const recommendList = await this.productService.getRecommendList();
+        return { statusCode: HttpStatus.OK, message: '추천 상품 목록 조회 성공', recommendList: recommendList };
     }
 
     @ApiOperation({ summary: '상품 세부 정보 조회 API', description: '상품 세부 정보를 조회한다.' })
