@@ -42,6 +42,7 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initSettingAdapter()
+        viewModel.setInfo()
 
         repeatOnStarted {
             viewModel.event.collect { event ->
