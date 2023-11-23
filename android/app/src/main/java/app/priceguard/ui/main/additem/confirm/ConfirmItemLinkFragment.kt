@@ -55,6 +55,7 @@ class ConfirmItemLinkFragment : Fragment() {
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
+                    viewModel?.flow?.value?.productCode ?: "",
                     viewModel?.flow?.value?.productName ?: "",
                     viewModel?.flow?.value?.productPrice ?: 0
                 )

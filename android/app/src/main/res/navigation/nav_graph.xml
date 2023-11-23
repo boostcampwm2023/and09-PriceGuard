@@ -23,6 +23,9 @@
         android:label="SetTargetPriceFragment"
         tools:layout="@layout/fragment_set_target_price">
         <argument
+            android:name="productCode"
+            app:argType="string" />
+        <argument
             android:name="productTitle"
             app:argType="string" />
         <argument
