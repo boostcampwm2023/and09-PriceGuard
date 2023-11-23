@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
-import { User } from './user.entity';
+import { UserDto } from '../dto/user.dto';
+import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationException } from 'src/exceptions/validation.exception';
@@ -29,5 +29,9 @@ export class UsersService {
     async findOne(email: string): Promise<User | null> {
         const user = await this.usersRepository.findOne({ where: { email } });
         return user;
+    }
+
+    async getUserById(userId: string): Promise<User | null> {
+        return await this.usersRepository.findOne({ where: { id: userId } });
     }
 }
