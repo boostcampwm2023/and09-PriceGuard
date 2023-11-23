@@ -14,44 +14,38 @@
             type="app.priceguard.ui.home.mypage.MyPageSettingItemClickListener" />
     </data>
 
-    <androidx.cardview.widget.CardView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:backgroundTint="?attr/colorSurface"
-        android:clickable="true"
+        android:layout_marginBottom="8dp"
+        android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> listener.onClick(settingItemInfo.id)}">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_setting"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_my_page_item_icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:layout_marginStart="16dp"
+            android:src="@{settingItemInfo.icon}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_notification" />
 
-            <ImageView
-                android:id="@+id/iv_my_page_item_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:src="@{settingItemInfo.icon}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_notification" />
+        <TextView
+            android:id="@+id/tv_my_page_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@{settingItemInfo.title}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_my_page_item_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="알림 설정" />
 
-            <TextView
-                android:id="@+id/tv_my_page_item_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="@{settingItemInfo.title}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_my_page_item_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="알림 설정" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
