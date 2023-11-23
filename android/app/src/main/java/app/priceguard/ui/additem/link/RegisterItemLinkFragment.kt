@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
@@ -28,13 +30,13 @@ class RegisterItemLinkFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRegisterItemLinkBinding.inflate(layoutInflater, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
         setCollector()
     }
 
@@ -59,7 +61,7 @@ class RegisterItemLinkFragment : Fragment() {
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
                                 Json.encodeToString(event.product)
                             )
-                        findNavController().navigate(action)
+                        findNavController().safeNavigate(action)
                     }
 
                     is RegisterItemLinkViewModel.RegisterLinkEvent.FailureVerification -> {
@@ -72,6 +74,10 @@ class RegisterItemLinkFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun NavController.safeNavigate(direction: NavDirections) {
+        currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
     }
 
     private fun updateLinkFieldUI() {

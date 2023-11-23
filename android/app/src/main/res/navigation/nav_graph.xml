@@ -14,8 +14,7 @@
             app:argType="string" />
         <action
             android:id="@+id/action_confirmItemLinkFragment_to_setTargetPriceFragment"
-            app:destination="@id/setTargetPriceFragment" >
-        </action>
+            app:destination="@id/setTargetPriceFragment"/>
     </fragment>
     <fragment
         android:id="@+id/setTargetPriceFragment"

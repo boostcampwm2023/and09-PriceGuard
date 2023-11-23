@@ -24,16 +24,14 @@ class ConfirmItemLinkFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConfirmItemLinkBinding.inflate(layoutInflater, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
         binding.initListener()
-
         val productJson = requireArguments().getString("product") ?: return
         val productInfo = Json.decodeFromString<ProductDTO>(productJson)
         viewModel.setProductInfo(productInfo)
@@ -56,7 +54,7 @@ class ConfirmItemLinkFragment : Fragment() {
             findNavController().navigate(action)
         }
         btnConfirmItemBack.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
     }
 }
