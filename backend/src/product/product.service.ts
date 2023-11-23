@@ -37,7 +37,7 @@ export class ProductService {
             where: { productCode: productCode },
         });
         const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
-        const product = await this.productRepository.saveProduct(productInfo);
+        const product = existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
