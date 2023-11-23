@@ -12,17 +12,17 @@ export class UserExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
         this.logger.error(exception.message);
         if (exception.message.includes('Duplicate entry')) {
-            this.setResposne(response, HttpStatus.CONFLICT, '이메일 중복');
+            this.setResponse(response, HttpStatus.CONFLICT, '이메일 중복');
             return;
         }
         if (exception instanceof ValidationException) {
-            this.setResposne(response, exception.getStatus(), exception.getMessage());
+            this.setResponse(response, exception.getStatus(), exception.getMessage());
             return;
         }
-        this.setResposne(response, HttpStatus.INTERNAL_SERVER_ERROR, '서버 내부 에러');
+        this.setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, '서버 내부 에러');
     }
 
-    private setResposne(response: Response, statusCode: number, msg: string) {
+    private setResponse(response: Response, statusCode: number, msg: string) {
         response.status(statusCode).json({
             statusCode: statusCode,
             message: msg,
