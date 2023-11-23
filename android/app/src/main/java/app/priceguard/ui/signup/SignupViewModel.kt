@@ -1,0 +1,227 @@
+package app.priceguard.ui.signup
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.SignupState
+import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+@HiltViewModel
+class SignupViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository
+) : ViewModel() {
+
+    data class SignupUIState(
+        val name: String = "",
+        val email: String = "",
+        val password: String = "",
+        val retypePassword: String = "",
+        val isSignupReady: Boolean = false,
+        val isNameError: Boolean? = null,
+        val isEmailError: Boolean? = null,
+        val isPasswordError: Boolean? = null,
+        val isRetypePasswordError: Boolean? = null,
+        val isSignupStarted: Boolean = false,
+        val isSignupFinished: Boolean = false
+    )
+
+    sealed class SignupEvent {
+        data object SignupStart : SignupEvent()
+        data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
+        data class SignupFailure(val errorState: SignupState) : SignupEvent()
+        data object SignupInfoSaved : SignupEvent()
+    }
+
+    private val emailPattern =
+        """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
+    private val passwordPattern =
+        """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
+
+    private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
+    val state: StateFlow<SignupUIState> = _state.asStateFlow()
+
+    private val _eventFlow: MutableSharedFlow<SignupEvent> = MutableSharedFlow(replay = 0)
+    val eventFlow: SharedFlow<SignupEvent> = _eventFlow.asSharedFlow()
+
+    fun signup() {
+        if (_state.value.isSignupStarted || _state.value.isSignupFinished) {
+            Log.d("Signup", "Signup already requested. Skipping")
+            return
+        }
+
+        viewModelScope.launch {
+            sendSignupEvent(SignupEvent.SignupStart)
+            Log.d("ViewModel", "Event Start Sent")
+            updateSignupStarted(true)
+            val result =
+                userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
+
+            if (result.accessToken == null || result.refreshToken == null) {
+                sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
+                updateSignupStarted(false)
+                return@launch
+            }
+
+            when (result.signUpState) {
+                SignupState.SUCCESS -> {
+                    updateSignupFinished(true)
+                    sendSignupEvent(
+                        SignupEvent.SignupSuccess(
+                            result.accessToken,
+                            result.refreshToken
+                        )
+                    )
+                    saveTokens(result.accessToken, result.refreshToken)
+                    sendSignupEvent(SignupEvent.SignupInfoSaved)
+                    Log.d("ViewModel", "Event Finish Sent")
+                }
+
+                else -> {
+                    sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
+                }
+            }
+            updateSignupStarted(false)
+        }
+    }
+
+    fun updateName(name: String) {
+        _state.value = _state.value.copy(name = name)
+
+        updateNameError()
+        updateIsSignupReady()
+    }
+
+    fun updateEmail(email: String) {
+        _state.value = _state.value.copy(email = email)
+
+        updateEmailError()
+        updateIsSignupReady()
+    }
+
+    fun updatePassword(password: String) {
+        _state.value = _state.value.copy(password = password)
+
+        updatePasswordError()
+        updateRetypePasswordError()
+        updateIsSignupReady()
+    }
+
+    fun updateRetypePassword(retypePassword: String) {
+        _state.value = _state.value.copy(retypePassword = retypePassword)
+
+        updateRetypePasswordError()
+        updateIsSignupReady()
+    }
+
+    private fun isValidName(): Boolean {
+        return _state.value.name.isNotBlank()
+    }
+
+    private fun isValidEmail(): Boolean {
+        return emailPattern.matchEntire(_state.value.email) != null
+    }
+
+    private fun isValidPassword(): Boolean {
+        return passwordPattern.matchEntire(_state.value.password) != null
+    }
+
+    private fun isValidRetypePassword(): Boolean {
+        return _state.value.retypePassword.isNotBlank() && _state.value.password == _state.value.retypePassword
+    }
+
+    private suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        tokenRepository.storeTokens(accessToken, refreshToken)
+    }
+
+    private suspend fun sendSignupEvent(event: SignupEvent) {
+        _eventFlow.emit(event)
+    }
+
+    private fun updateIsSignupReady() {
+        _state.value =
+            _state.value.copy(isSignupReady = isValidName() && isValidEmail() && isValidPassword() && isValidRetypePassword())
+    }
+
+    private fun updateNameError() {
+        _state.value.let { uiState ->
+            if (isValidName()) {
+                _state.value = uiState.copy(isNameError = false)
+            } else {
+                _state.value = uiState.copy(isNameError = true)
+            }
+        }
+    }
+
+    private fun updateEmailError() {
+        _state.value.let { uiState ->
+            when {
+                isValidEmail() -> {
+                    _state.value = uiState.copy(isEmailError = false)
+                }
+
+                uiState.email.isEmpty() -> {
+                    _state.value = uiState.copy(isEmailError = null)
+                }
+
+                else -> {
+                    _state.value = uiState.copy(isEmailError = true)
+                }
+            }
+        }
+    }
+
+    private fun updatePasswordError() {
+        _state.value.let { uiState ->
+            when {
+                isValidPassword() -> {
+                    _state.value = uiState.copy(isPasswordError = false)
+                }
+
+                uiState.password.isEmpty() -> {
+                    _state.value = uiState.copy(isPasswordError = null)
+                }
+
+                else -> {
+                    _state.value = uiState.copy(isPasswordError = true)
+                }
+            }
+        }
+    }
+
+    private fun updateRetypePasswordError() {
+        _state.value.let { uiState ->
+            when {
+                isValidRetypePassword() -> {
+                    _state.value = uiState.copy(isRetypePasswordError = false)
+                }
+
+                uiState.retypePassword.isEmpty() -> {
+                    _state.value = uiState.copy(isRetypePasswordError = null)
+                }
+
+                else -> {
+                    _state.value = uiState.copy(isRetypePasswordError = true)
+                }
+            }
+        }
+    }
+
+    private fun updateSignupStarted(started: Boolean) {
+        _state.value = _state.value.copy(isSignupStarted = started)
+    }
+
+    private fun updateSignupFinished(finished: Boolean) {
+        _state.value = _state.value.copy(isSignupFinished = finished)
+    }
+}

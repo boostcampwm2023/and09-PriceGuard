@@ -1,0 +1,11 @@
+android:
+- android/**
+
+backend:
+- backend/**
+
+infra:
+- .github/**
+
+docs:
+- '*.md'
