@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -13,11 +14,13 @@
             type="app.priceguard.ui.home.mypage.MyPageSettingItemClickListener" />
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:paddingHorizontal="8dp"
+        android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> listener.onClick(settingItemInfo.id)}">
 
         <ImageView
@@ -28,18 +31,20 @@
             android:src="@{settingItemInfo.icon}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_notification" />
 
         <TextView
             android:id="@+id/tv_my_page_item_title"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@{settingItemInfo.title}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_my_page_item_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="알림 설정" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

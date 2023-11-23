@@ -107,7 +107,7 @@ class MyPageFragment : Fragment() {
     }
 
     private fun showLogoutConfirmDialog() {
-        MaterialAlertDialogBuilder(requireActivity())
+        MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(getString(R.string.logout_confirm_title))
             .setMessage(getString(R.string.logout_confirm_message))
             .setPositiveButton(getString(R.string.yes)) { _, _ -> viewModel.logout() }

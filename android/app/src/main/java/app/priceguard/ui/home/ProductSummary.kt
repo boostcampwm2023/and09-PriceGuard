@@ -5,12 +5,14 @@ sealed interface ProductSummary {
     val title: String
     val price: String
     val discountPercent: String
+    val productCode: String
 
     data class UserProductSummary(
         override val brandType: String,
         override val title: String,
         override val price: String,
         override val discountPercent: String,
+        override val productCode: String,
         val isAlarmOn: Boolean
     ) : ProductSummary
 
@@ -19,6 +21,7 @@ sealed interface ProductSummary {
         override val title: String,
         override val price: String,
         override val discountPercent: String,
+        override val productCode: String,
         val recommendRank: Int
     ) : ProductSummary
 }

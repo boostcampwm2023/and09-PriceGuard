@@ -66,4 +66,8 @@
     <string name="product_not_found">상품 정보가 존재하지 않습니다.</string>
     <string name="logged_out">로그아웃 되었습니다. 다시 로그인하세요.</string>
     <string name="price">%s원</string>
+    <string name="permission_denied_title">인증 실패</string>
+    <string name="permission_denied_message">인증에 실패하였습니다.\n로그아웃하시겠습니까?</string>
+    <string name="permission_denied_logout">로그아웃</string>
+    <string name="permission_denied_cancel">취소</string>
 </resources>

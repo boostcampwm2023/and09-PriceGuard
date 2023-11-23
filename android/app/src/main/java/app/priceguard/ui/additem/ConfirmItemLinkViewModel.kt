@@ -1,4 +1,4 @@
-package app.priceguard.ui.main.additem
+package app.priceguard.ui.additem
 
 import androidx.lifecycle.ViewModel
 import app.priceguard.data.dto.ProductInfo

@@ -2,19 +2,35 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ProductListState
+import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class RecommendedProductViewModel @Inject constructor() : ViewModel() {
+class RecommendedProductViewModel @Inject constructor(
+    private val productRepository: ProductRepository
+) : ViewModel() {
 
-    private var _recommendedProductList = MutableStateFlow<List<RecommendedProductSummary>>(listOf())
-    val recommendedProductList: StateFlow<List<RecommendedProductSummary>> = _recommendedProductList.asStateFlow()
+    sealed class RecommendedProductEvent {
+        data object PermissionDenied : RecommendedProductEvent()
+    }
+
+    private var _recommendedProductList =
+        MutableStateFlow<List<RecommendedProductSummary>>(listOf())
+    val recommendedProductList: StateFlow<List<RecommendedProductSummary>> =
+        _recommendedProductList.asStateFlow()
+
+    private var _events = MutableSharedFlow<RecommendedProductEvent>()
+    val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -22,44 +38,21 @@ class RecommendedProductViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getProductList() {
-        // TODO: repository 구현 후 연결
-        _recommendedProductList.value = listOf(
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                1
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                2
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                3
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                4
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                5
-            )
-        )
+    suspend fun getProductList() {
+        val result = productRepository.getRecommendedProductList()
+        if (result.productListState == ProductListState.PERMISSION_DENIED) {
+            _events.emit(RecommendedProductEvent.PermissionDenied)
+        } else {
+            _recommendedProductList.value = result.trackingList.map { data ->
+                RecommendedProductSummary(
+                    data.shop,
+                    data.productName,
+                    "",
+                    "",
+                    data.productCode,
+                    1
+                )
+            }
+        }
     }
 }
