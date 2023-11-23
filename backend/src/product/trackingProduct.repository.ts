@@ -19,7 +19,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
         return newTrackingProduct;
     }
 
-    async getRankingList() {
+    async getTotalInfoRankingList() {
         const recommendList = await this.repository
             .createQueryBuilder('tracking_product')
             .select([
@@ -35,5 +35,15 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .orderBy('userCount', 'DESC')
             .getRawMany();
         return recommendList;
+    }
+
+    async getRankingList() {
+        const rankList = await this.repository
+            .createQueryBuilder('tracking_product')
+            .select('tracking_product.productId as productId')
+            .groupBy('tracking_product.productId')
+            .orderBy('COUNT(tracking_product.userId)', 'DESC')
+            .getRawMany();
+        return rankList;
     }
 }
