@@ -114,8 +114,9 @@ export class ProductController {
     @ApiOkResponse({ type: UpdateTargetPriceSuccess, description: '상품 목표 가격 수정 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
     @Patch('/targetPrice')
-    updateTargetPrice(@Body() productAddDto: ProductAddDto) {
-        return this.productService.updateTargetPrice(productAddDto);
+    async updateTargetPrice(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
+        await this.productService.updateTargetPrice(req.user.id, productAddDto);
+        return { statusCode: HttpStatus.OK, message: '목표 가격 수정 성공' };
     }
 
     @ApiOperation({ summary: '추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
