@@ -40,6 +40,10 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    init {
+        setInfo()
+    }
+
     fun logout() {
         viewModelScope.launch {
             val resetTokenJob = launch {
