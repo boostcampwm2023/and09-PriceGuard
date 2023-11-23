@@ -51,4 +51,5 @@
     <string name="opensource_license">오픈소스 라이선스</string>
     <string name="current_price_percent">현재 가격의 %d%%</string>
     <string name="over_current_price">현재 가격보다 목표 가격이 높습니다</string>
+    <string name="not_link">유효하지 않은 링크입니다.</string>
 </resources>

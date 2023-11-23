@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import app.priceguard.R
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,18 +33,12 @@ class RegisterItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initListener()
         setCollector()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun initListener() {
-        binding.btnRegisterItemNext.setOnClickListener {
-        }
     }
 
     private fun setCollector() {
@@ -62,6 +58,14 @@ class RegisterItemLinkFragment : Fragment() {
                                 event.product
                             )
                         findNavController().navigate(action)
+                    }
+
+                    is RegisterItemLinkViewModel.RegisterLinkEvent.FailureVerification -> {
+                        Toast.makeText(
+                            requireActivity(),
+                            getString(R.string.not_link),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

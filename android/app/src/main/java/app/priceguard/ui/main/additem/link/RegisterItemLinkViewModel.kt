@@ -29,6 +29,7 @@ class RegisterItemLinkViewModel
 
     sealed class RegisterLinkEvent {
         data class SuccessVerification(val product: ProductDTO) : RegisterLinkEvent()
+        data object FailureVerification : RegisterLinkEvent()
     }
 
     private val _state = MutableStateFlow(RegisterLinkUIState())
@@ -69,6 +70,7 @@ class RegisterItemLinkViewModel
                             _state.value = state.value.copy(isLinkError = true)
                         }
                     }
+                    _event.emit(RegisterLinkEvent.FailureVerification)
                 }
             }
             _state.value = state.value.copy(isVerificationFinished = true)
