@@ -68,7 +68,21 @@ export class ProductService {
         return trackingListInfo;
     }
 
-    getRecommendList() {}
+    async getRecommendList() {
+        const recommendList = await this.trackingProductRepository.getRankingList();
+        const recommendListInfo = recommendList.map((product, index) => {
+            const { productName, productCode, shop, imageUrl } = product;
+            return {
+                productName,
+                productCode,
+                shop,
+                imageUrl,
+                price: 1234, // 임시 더미 가격 데이터
+                rank: index + 1,
+            };
+        });
+        return recommendListInfo;
+    }
 
     async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {
         const selectProduct = await this.productRepository.findOne({
@@ -85,7 +99,7 @@ export class ProductService {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
             imageUrl: selectProduct.imageUrl,
-            rank: '1',
+            rank: 1,
             shopUrl: selectProduct.shopUrl,
             targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
             lowestPrice: 500,

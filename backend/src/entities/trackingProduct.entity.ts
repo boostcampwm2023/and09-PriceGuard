@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Product } from './product.entity';
 
-@Entity()
+@Entity('tracking_product')
 export class TrackingProduct extends BaseEntity {
     @PrimaryColumn({ type: 'char', length: 36 })
     userId: string;

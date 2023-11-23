@@ -118,21 +118,6 @@ export class ProductCodeError {
     message: string;
 }
 
-const productListExample = [
-    {
-        productName: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',
-        productCode: '5897533626',
-        shop: '11번가',
-        imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B091516D2Z/B.jpg?1700527038699',
-    },
-    {
-        productName: 'Mercer Culinary 밀레니아 10인치 브레드 나이프 빵 칼 (M23210WBH)',
-        productCode: '3534429539',
-        shop: '11번가',
-        imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B01HZ0YT2C/B.jpg?1700390686058',
-    },
-];
-
 const trackingProductListExample = [
     {
         productName: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',
@@ -172,6 +157,49 @@ export class GetTrackingListSuccess {
     trackingList: TrackingProductDto[];
 }
 
+const recommendProductListExample = [
+    {
+        statusCode: 200,
+        message: '추천 상품 목록 조회 성공',
+        recommendList: [
+            {
+                productName: '갤럭시 GALAX 지포스 RTX 4060 1X D6 8GB',
+                productCode: '6221602897',
+                shop: '11번가',
+                imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/product/6221602897/B.jpg?556000000',
+                price: 1234,
+                rank: 1,
+            },
+            {
+                productName: '본사) 쿠쿠 화이트 3구 인덕션레인지 CIR-E301FW',
+                productCode: '3969500068',
+                shop: '11번가',
+                imageUrl:
+                    'https://cdn.011st.com/11dims/strip/false/11src/dl/v2/5/0/0/0/6/8/pNOcE/3969500068_154126549.jpg',
+                price: 1234,
+                rank: 2,
+            },
+            {
+                productName:
+                    '[카드추가할인] 삼성전자 SL-T1670FW 잉크젯 플러스S 정품 무한 복합기 프린터 복사 팩스 스캔 WiFi 무선 지원 잉크포함',
+                productCode: '4725944460',
+                shop: '11번가',
+                imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/product/4725944460/B.jpg?338000000',
+                price: 1234,
+                rank: 3,
+            },
+            {
+                productName: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',
+                productCode: '5897533626',
+                shop: '11번가',
+                imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B091516D2Z/B.jpg?1700715151392',
+                price: 1234,
+                rank: 4,
+            },
+        ],
+    },
+];
+
 export class GetRecommendListSuccess {
     @ApiProperty({
         example: HttpStatus.OK,
@@ -184,7 +212,7 @@ export class GetRecommendListSuccess {
     })
     message: string;
     @ApiProperty({
-        example: JSON.stringify(productListExample, null, 2),
+        example: JSON.stringify(recommendProductListExample, null, 2),
         description: '추천 상품 목록',
     })
     recommendList: ProductInfoDto[];
@@ -221,10 +249,10 @@ export class ProductDetailsSuccess {
     })
     imageUrl: string;
     @ApiProperty({
-        example: '1',
+        example: 1,
         description: '상품 순위',
     })
-    rank: string;
+    rank: number;
     @ApiProperty({
         example: 'http://www.11st.co.kr/products/5897533626/share',
         description: '상품 링크',
