@@ -1,6 +1,7 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
 import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
@@ -9,6 +10,7 @@ import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.ProductVerifyResponse
 import app.priceguard.data.dto.RecommendProductData
 import app.priceguard.data.dto.RecommendProductResult
 import app.priceguard.data.dto.RecommendProductState
@@ -23,12 +25,58 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    override suspend fun verifyLink(productUrl: ProductVerifyRequest): ProductResponse {
-        TODO("Not yet implemented")
+    override suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductVerifyResponse> {
+        val response = getApiResult {
+            productAPI.verifyLink(productUrl)
+        }
+        when (response) {
+            is APIResult.Success -> {
+                return response
+            }
+
+            is APIResult.Error -> {
+                return when (response.code) {
+                    400 -> {
+                        response
+                    }
+
+                    401 -> {
+                        response
+                    }
+
+                    else -> {
+                        response
+                    }
+                }
+            }
+        }
     }
 
-    override suspend fun addProduct(productAddRequest: ProductAddRequest): ProductResponse {
-        TODO("Not yet implemented")
+    override suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductAddResponse> {
+        val response = getApiResult {
+            productAPI.addProduct(productAddRequest)
+        }
+        when (response) {
+            is APIResult.Success -> {
+                return response
+            }
+
+            is APIResult.Error -> {
+                return when (response.code) {
+                    400 -> {
+                        response
+                    }
+
+                    401 -> {
+                        response
+                    }
+
+                    else -> {
+                        response
+                    }
+                }
+            }
+        }
     }
 
     override suspend fun getProductList(afterRenew: Boolean): ProductListResult {

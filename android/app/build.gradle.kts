@@ -6,6 +6,7 @@ plugins {
     id("com.google.firebase.firebase-perf")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("androidx.navigation.safeargs.kotlin")
     kotlin("plugin.serialization") version "1.9.20"
 }
 
