@@ -1,5 +1,7 @@
 package app.priceguard.ui.detail
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -51,6 +53,11 @@ class DetailActivity : AppCompatActivity() {
                             getString(R.string.undefined_error)
                         )
                     }
+
+                    is ProductDetailViewModel.ProductDetailEvent.OpenShoppingMall -> {
+                        val redirectUrl = "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${event.url}"
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
+                        startActivity(browserIntent)
                     }
                 }
             }

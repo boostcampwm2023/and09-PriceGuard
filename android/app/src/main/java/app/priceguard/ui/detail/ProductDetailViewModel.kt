@@ -37,6 +37,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     )
 
     sealed class ProductDetailEvent {
+        data class OpenShoppingMall(val url: String) : ProductDetailEvent()
         data object Logout : ProductDetailEvent()
         data object NotFound : ProductDetailEvent()
         data object UnknownError : ProductDetailEvent()
@@ -112,6 +113,13 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                     _event.emit(ProductDetailEvent.UnknownError)
                 }
             }
+        }
+    }
+
+    fun sendBrowserEvent() {
+        viewModelScope.launch {
+            val event = _state.value.shopUrl?.let { ProductDetailEvent.OpenShoppingMall(it) } ?: return@launch
+            _event.emit(event)
         }
     }
 
