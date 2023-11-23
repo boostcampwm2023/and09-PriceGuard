@@ -47,19 +47,16 @@ class ProductRepositoryImpl @Inject constructor(
             is APIResult.Error -> {
                 when (response.code) {
                     401 -> {
-                        val refreshToken =
-                            tokenRepository.getRefreshToken() ?: return ProductListResult(
-                                ProductListState.PERMISSION_DENIED,
-                                listOf()
-                            )
-                        tokenRepository.renewTokens(refreshToken)
-                        return if (afterRenew) {
-                            ProductListResult(
-                                ProductListState.PERMISSION_DENIED,
-                                listOf()
-                            )
+                        if (afterRenew) {
+                            return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
                         } else {
-                            getProductList(afterRenew = true)
+                            val refreshToken =
+                                tokenRepository.getRefreshToken() ?: return ProductListResult(
+                                    ProductListState.PERMISSION_DENIED,
+                                    listOf()
+                                )
+                            tokenRepository.renewTokens(refreshToken)
+                            return getProductList(afterRenew = true)
                         }
                     }
 
@@ -97,7 +94,17 @@ class ProductRepositoryImpl @Inject constructor(
             is APIResult.Error -> {
                 return when (response.code) {
                     401 -> {
-                        ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                        if (afterRenew) {
+                            return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                        } else {
+                            val refreshToken =
+                                tokenRepository.getRefreshToken() ?: return ProductListResult(
+                                    ProductListState.PERMISSION_DENIED,
+                                    listOf()
+                                )
+                            tokenRepository.renewTokens(refreshToken)
+                            return getRecommendedProductList(afterRenew = true)
+                        }
                     }
 
                     404 -> {

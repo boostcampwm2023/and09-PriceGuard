@@ -9,15 +9,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.main.additem.AddItemActivity
+import app.priceguard.ui.util.drawable.showNetworkDialog
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
+
+    @Inject
+    lateinit var tokenRepository: TokenRepository
 
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
@@ -38,6 +45,7 @@ class ProductListFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initSettingAdapter()
         binding.initListener()
+        collectEvent()
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
@@ -67,6 +75,16 @@ class ProductListFragment : Fragment() {
     private fun gotoProductAddActivity() {
         val intent = Intent(activity, AddItemActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun collectEvent() {
+        repeatOnStarted {
+            productListViewModel.events.collect { event ->
+                if (event is ProductListEvent.PermissionDenied) {
+                    activity?.showNetworkDialog(tokenRepository)
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
