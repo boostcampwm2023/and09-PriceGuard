@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductDetailsDto } from './product.details.dto';
+import { ProductInfoDto } from './product.info.dto';
 import { TrackingProductDto } from './product.tracking.dto';
 
 export class VerifyUrlSuccess {
@@ -187,9 +187,65 @@ export class GetRecommendListSuccess {
         example: JSON.stringify(productListExample, null, 2),
         description: '추천 상품 목록',
     })
-    recommendList: ProductDetailsDto[];
+    recommendList: ProductInfoDto[];
 }
-
+export class ProductDetailsSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '상품 상세 정보 조회 성공',
+        description: '메시지',
+    })
+    message: string;
+    @ApiProperty({
+        example: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',
+        description: '상품명',
+    })
+    productName: string;
+    @ApiProperty({
+        example: '5897533626',
+        description: '상품 코드',
+    })
+    productCode: string;
+    @ApiProperty({
+        example: '11번가',
+        description: '쇼핑몰 이름',
+    })
+    shop: string;
+    @ApiProperty({
+        example: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B091516D2Z/B.jpg?1700527038699',
+        description: '상품 이미지 URL',
+    })
+    imageUrl: string;
+    @ApiProperty({
+        example: '1',
+        description: '상품 순위',
+    })
+    rank: string;
+    @ApiProperty({
+        example: 'http://www.11st.co.kr/products/5897533626/share',
+        description: '상품 링크',
+    })
+    shopUrl: string;
+    @ApiProperty({
+        example: '50000',
+        description: '사용자 목표 가격',
+    })
+    targetPrice: number;
+    @ApiProperty({
+        example: '33730',
+        description: '상품 역대 최저가',
+    })
+    lowestPrice: number;
+    @ApiProperty({
+        example: '53730',
+        description: '상품 현재 가격',
+    })
+    price: number;
+}
 export class ProductNotFound {
     @ApiProperty({
         example: HttpStatus.NOT_FOUND,

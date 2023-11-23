@@ -1,7 +1,10 @@
 export class ProductDetailsDto {
     productName: string;
-    productCode: string;
-    productPrice: number;
     shop: string;
     imageUrl: string;
+    rank: string;
+    shopUrl: string;
+    targetPrice: number;
+    lowestPrice: number;
+    price: number;
 }

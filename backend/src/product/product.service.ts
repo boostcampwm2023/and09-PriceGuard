@@ -3,10 +3,11 @@ import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductAddDto } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
-import { ProductDetailsDto } from 'src/dto/product.details.dto';
+import { ProductInfoDto } from 'src/dto/product.info.dto';
 import { TrackingProductRepository } from './trackingProduct.repository';
 import { ProductRepository } from './product.repository';
 import { getProductInfo11st } from 'src/utils/openapi.11st';
+import { ProductDetailsDto } from 'src/dto/product.details.dto';
 
 const REGEXP_11ST = /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
@@ -17,10 +18,10 @@ export class ProductService {
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
     ) {}
-    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductDetailsDto> {
+    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
         const matchList = productUrl.match(REGEXP_11ST);
-        if (matchList === null) {
+        if (!matchList) {
             throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
         const productCode = matchList[1];
@@ -32,12 +33,12 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
-        const product = existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
-        const isTracking = await this.trackingProductRepository.findOne({
+        const productInfo = existProduct ?? (await getProductInfo11st(productCode));
+        const product = existProduct ?? (await this.productRepository.saveProduct(productInfo));
+        const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
-        if (isTracking !== null) {
+        if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
@@ -69,8 +70,27 @@ export class ProductService {
 
     getRecommendList() {}
 
-    getProductDetails(productCode: string) {
-        console.log(productCode);
+    async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {
+        const selectProduct = await this.productRepository.findOne({
+            where: { productCode: productCode },
+        });
+        if (!selectProduct) {
+            throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+        }
+        const trackingProduct = await this.trackingProductRepository.findOne({
+            where: { userId: userId, productId: selectProduct.id },
+        });
+        /* 랭킹, 역대 최저가, 현재가격은 더미 데이터 사용 중, 그래프 데이터 추가 필요 */
+        return {
+            productName: selectProduct.productName,
+            shop: selectProduct.shop,
+            imageUrl: selectProduct.imageUrl,
+            rank: '1',
+            shopUrl: selectProduct.shopUrl,
+            targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
+            lowestPrice: 500,
+            price: 777,
+        };
     }
 
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
