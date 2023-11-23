@@ -21,7 +21,7 @@ export class ProductService {
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
         const matchList = productUrl.match(REGEXP_11ST);
-        if (matchList === null) {
+        if (!matchList) {
             throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
         const productCode = matchList[1];
@@ -33,12 +33,12 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
-        const product = existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
-        const isTracking = await this.trackingProductRepository.findOne({
+        const productInfo = existProduct ? existProduct : await getProductInfo11st(productCode);
+        const product = existProduct ? existProduct : await this.productRepository.saveProduct(productInfo);
+        const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
-        if (isTracking !== null) {
+        if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
@@ -74,10 +74,10 @@ export class ProductService {
         const selectProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        if (selectProduct === null) {
+        if (!selectProduct) {
             throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
         }
-        const isTracking = await this.trackingProductRepository.findOne({
+        const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
 
@@ -87,7 +87,7 @@ export class ProductService {
             imageUrl: selectProduct.imageUrl,
             rank: '1',
             shopUrl: selectProduct.shopUrl,
-            targetPrice: isTracking === null ? -1 : isTracking.targetPrice,
+            targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
             price: 777,
         };
     }
