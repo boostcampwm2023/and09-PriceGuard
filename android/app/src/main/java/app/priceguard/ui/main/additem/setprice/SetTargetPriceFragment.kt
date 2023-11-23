@@ -1,29 +1,28 @@
-package app.priceguard.ui.main.additem
+package app.priceguard.ui.main.additem.setprice
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.priceguard.R
-import app.priceguard.databinding.FragmentConfirmItemLinkBinding
+import app.priceguard.databinding.FragmentSetTargetPriceBinding
 
-class ConfirmItemLinkFragment : Fragment() {
+class SetTargetPriceFragment : Fragment() {
 
-    private var _binding: FragmentConfirmItemLinkBinding? = null
+    private var _binding: FragmentSetTargetPriceBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ConfirmItemLinkViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentConfirmItemLinkBinding.inflate(layoutInflater, container, false)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
+        _binding = FragmentSetTargetPriceBinding.inflate(layoutInflater, container, false)
+
+        binding.title = requireArguments().getString("productTitle")
+        binding.price = requireArguments().getInt("productPrice")
+
         return binding.root
     }
 
@@ -37,10 +36,7 @@ class ConfirmItemLinkFragment : Fragment() {
         _binding = null
     }
 
-    private fun FragmentConfirmItemLinkBinding.initListener() {
-        btnConfirmItemNext.setOnClickListener {
-            findNavController().navigate(R.id.action_confirmItemLinkFragment_to_setTargetPriceFragment)
-        }
+    private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
             findNavController().navigateUp()
         }
