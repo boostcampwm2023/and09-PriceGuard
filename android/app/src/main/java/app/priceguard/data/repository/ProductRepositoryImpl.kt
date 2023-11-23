@@ -239,7 +239,6 @@ class ProductRepositoryImpl @Inject constructor(
                 }
             }
         }
-
     }
 
     override suspend fun updateTargetPrice(productAddRequest: ProductAddRequest): ProductResponse {
