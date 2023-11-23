@@ -91,6 +91,20 @@ export class RequestError {
     })
     message: string;
 }
+
+export class ProductCodeError {
+    @ApiProperty({
+        example: HttpStatus.BAD_REQUEST,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '존재하지 않는 상품 코드입니다.',
+        description: '메시지',
+    })
+    message: string;
+}
+
 const productListExample = [
     {
         productName: 'Hallmark Keepsake 해리포터 마법의 분류 모자 크리스마스 장식',

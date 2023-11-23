@@ -37,7 +37,7 @@ export async function getProductInfo11st(productCode: string) {
             imageUrl: productDetails['BasicImage']['text'],
         };
     } catch (e) {
-        throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
+        throw new HttpException('존재하지 않는 상품 코드입니다.', HttpStatus.BAD_REQUEST);
     }
 }
 

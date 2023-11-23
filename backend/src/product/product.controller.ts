@@ -36,6 +36,7 @@ import {
     GetRecommendListSuccess,
     UpdateTargetPriceSuccess,
     DeleteProductSuccess,
+    ProductCodeError,
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -76,7 +77,7 @@ export class ProductController {
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })
     @ApiBody({ type: ProductAddDto })
     @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 추가 성공' })
-    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
+    @ApiBadRequestResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @Post()
     async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
         await this.productService.addProduct(req.user.id, productAddDto);
