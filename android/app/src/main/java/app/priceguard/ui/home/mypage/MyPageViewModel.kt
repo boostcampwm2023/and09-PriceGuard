@@ -32,16 +32,16 @@ class MyPageViewModel @Inject constructor(
     private val _event = MutableSharedFlow<MyPageEvent>()
     val event = _event.asSharedFlow()
 
-    fun setInfo() {
+    init {
+        setInfo()
+    }
+
+    private fun setInfo() {
         viewModelScope.launch {
             val userData = tokenRepository.getUserData()
             _flow.value =
                 MyPageInfo(userData.name, userData.email, if (userData.name.isNotEmpty()) userData.name.first().toString() else "")
         }
-    }
-
-    init {
-        setInfo()
     }
 
     fun logout() {
