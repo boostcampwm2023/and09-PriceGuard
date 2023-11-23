@@ -34,6 +34,12 @@ export class ProductService {
         });
         const productInfo = existProduct === null ? await getProductInfo11st(productCode) : existProduct;
         const product = existProduct === null ? await this.productRepository.saveProduct(productInfo) : existProduct;
+        const isTracking = await this.trackingProductRepository.findOne({
+            where: { productId: product.id, userId: userId },
+        });
+        if (isTracking !== null) {
+            throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
+        }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
