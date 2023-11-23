@@ -43,7 +43,7 @@ class MyPageViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             val resetTokenJob = launch {
-                tokenRepository.getUserData()
+                tokenRepository.clearTokens()
             }
             resetTokenJob.join()
             if (resetTokenJob.isCompleted) {
