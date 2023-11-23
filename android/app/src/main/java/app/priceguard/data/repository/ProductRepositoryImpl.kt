@@ -6,6 +6,7 @@ import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.RenewResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.getApiResult
@@ -55,7 +56,10 @@ class ProductRepositoryImpl @Inject constructor(
                                     ProductListState.PERMISSION_DENIED,
                                     listOf()
                                 )
-                            tokenRepository.renewTokens(refreshToken)
+                            val renewResult = tokenRepository.renewTokens(refreshToken)
+                            if (renewResult != RenewResult.SUCCESS) {
+                                return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                            }
                             return getProductList(afterRenew = true)
                         }
                     }
@@ -102,7 +106,10 @@ class ProductRepositoryImpl @Inject constructor(
                                     ProductListState.PERMISSION_DENIED,
                                     listOf()
                                 )
-                            tokenRepository.renewTokens(refreshToken)
+                            val renewResult = tokenRepository.renewTokens(refreshToken)
+                            if (renewResult != RenewResult.SUCCESS) {
+                                return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                            }
                             return getRecommendedProductList(afterRenew = true)
                         }
                     }
