@@ -51,7 +51,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         MutableStateFlow(ProductDetailUIState())
     val state: StateFlow<ProductDetailUIState> = _state.asStateFlow()
 
-    init {
+    fun getDetails() {
         viewModelScope.launch {
             if (::productCode.isInitialized.not()) {
                 return@launch
