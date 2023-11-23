@@ -30,11 +30,11 @@
 
         <TextView
             android:id="@+id/tv_register_item_title"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="96dp"
             android:text="@string/add_link_title"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,27 +64,27 @@
             app:layout_constraintTop_toTopOf="@id/view_edit_text_background" />
 
         <Button
-            style="?attr/materialIconButtonFilledStyle"
             android:id="@+id/btn_register_item_next"
+            style="?attr/materialIconButtonFilledStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="?attr/colorSurfaceContainerHighest"
+            android:onClick="@{()->viewModel.verifyLink()}"
             app:icon="@drawable/ic_next"
             app:iconTint="?attr/colorOnSurface"
-            android:onClick="@{()->viewModel.verifyLink()}"
             app:layout_constraintBottom_toBottomOf="@id/et_register_item_link"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintTop_toTopOf="@id/et_register_item_link" />
 
         <TextView
             android:id="@+id/tv_register_item_helper"
-            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="20dp"
             android:text="@string/how_get_product_link"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintHorizontal_bias="0.497"
