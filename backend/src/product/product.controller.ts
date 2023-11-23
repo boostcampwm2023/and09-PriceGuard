@@ -80,6 +80,7 @@ export class ProductController {
     @ApiBadRequestResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @Post()
     async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
+        console.log(productAddDto);
         await this.productService.addProduct(req.user.id, productAddDto);
         return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
     }
@@ -116,11 +117,13 @@ export class ProductController {
     updateTargetPrice(@Body() productAddDto: ProductAddDto) {
         return this.productService.updateTargetPrice(productAddDto);
     }
+
     @ApiOperation({ summary: '상품 삭제 API', description: '상품을 삭제한다.' })
     @ApiOkResponse({ type: DeleteProductSuccess, description: '상품 삭제 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청' })
     @Delete(':productCode')
-    deleteProduct(@Param('productCode') productCode: string) {
-        return this.productService.deleteProduct(productCode);
+    async deleteProduct(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
+        await this.productService.deleteProduct(req.user.id, productCode);
+        return { statusCode: HttpStatus.OK, message: '상품 삭제 성공' };
     }
 }
