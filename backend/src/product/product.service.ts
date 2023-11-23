@@ -73,23 +73,30 @@ export class ProductService {
         console.log(productCode);
     }
 
-    updateTargetPrice(productAddDto: ProductAddDto) {
-        console.log(productAddDto);
+    async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
+        const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
+        product.targetPrice = productAddDto.targetPrice;
+        await this.trackingProductRepository.save(product);
     }
 
     async deleteProduct(userId: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, productCode);
+        await this.trackingProductRepository.remove(product);
+    }
+
+    async findTrackingProductByCode(userId: string, productCode: string) {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
         if (!existProduct) {
-            throw new HttpException('삭제할 상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: existProduct.id },
         });
         if (!trackingProduct) {
-            throw new HttpException('삭제할 상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
-        await this.trackingProductRepository.remove(trackingProduct);
+        return trackingProduct;
     }
 }
