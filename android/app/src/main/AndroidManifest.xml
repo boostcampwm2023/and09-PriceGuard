@@ -6,6 +6,7 @@
         android:name=".ui.PriceGuardApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_priceguard"
         android:label="@string/app_name"
@@ -32,7 +33,7 @@
             android:name=".ui.signup.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.home.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.additem.AddItemActivity"

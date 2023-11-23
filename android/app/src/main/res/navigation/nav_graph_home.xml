@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_home"
+    app:startDestination="@id/productListFragment">
+
+    <fragment
+        android:id="@+id/productListFragment"
+        android:name="app.priceguard.ui.home.list.ProductListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_product_list" />
+    <fragment
+        android:id="@+id/recommendedProductFragment"
+        android:name="app.priceguard.ui.home.recommend.RecommendedProductFragment"
+        android:label="fragment_recommend"
+        tools:layout="@layout/fragment_recommended_product" />
+    <fragment
+        android:id="@+id/myPageFragment"
+        android:name="app.priceguard.ui.home.mypage.MyPageFragment"
+        android:label="MyPageFragment"
+        tools:layout="@layout/fragment_my_page"/>
+    <action
+        android:id="@+id/action_global_listFragment"
+        app:destination="@id/productListFragment" />
+    <action
+        android:id="@+id/action_global_recommendFragment"
+        app:destination="@id/recommendedProductFragment" />
+    <action
+        android:id="@+id/action_global_myPageFragment"
+        app:destination="@id/myPageFragment" />
+</navigation>

@@ -28,6 +28,14 @@
     <string name="invalid_parameter">입력값이 유효하지 않습니다.</string>
     <string name="duplicate_email">이미 가입된 계정입니다.</string>
     <string name="undefined_error">오류가 발생했습니다. 다시 시도해 주세요.</string>
+    <string name="menu_home">홈</string>
+    <string name="menu_recommend">인기 상품</string>
+    <string name="menu_my_page">내 설정</string>
+    <string name="fragment_recommend_title">인기 상품</string>
+    <string name="fragment_list_title">상품 목록</string>
+    <string name="menu_refresh">refresh</string>
+    <string name="product_list_add_product">add product</string>
+    <string name="recommand_rank">#%1$d</string>
     <string name="back">뒤로</string>
     <string name="next">다음</string>
     <string name="add_link_title">상품 링크를\n입력해 주세요</string>
@@ -47,4 +55,9 @@
     <string name="week">주</string>
     <string name="month">월</string>
     <string name="quarter">분기</string>
+    <string name="logout_confirm_title">로그아웃 확인</string>
+    <string name="logout_confirm_message">정말로 로그아웃 하시겠습니까?</string>
+    <string name="yes">네</string>
+    <string name="no">아니오</string>
+    <string name="opensource_license">오픈소스 라이선스</string>
 </resources>
