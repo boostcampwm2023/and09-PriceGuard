@@ -1,9 +1,11 @@
 package app.priceguard.data.network
 
 import app.priceguard.data.dto.ProductAddRequest
+import app.priceguard.data.dto.ProductDeleteResponse
 import app.priceguard.data.dto.ProductListResponse
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.RecommendProductResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -28,7 +30,7 @@ interface ProductAPI {
     suspend fun getProductList(): Response<ProductListResponse>
 
     @GET("recommend")
-    suspend fun getRecommendedProductList(): Response<ProductListResponse>
+    suspend fun getRecommendedProductList(): Response<RecommendProductResponse>
 
     @GET("{productCode}")
     suspend fun getProductDetail(
@@ -38,7 +40,7 @@ interface ProductAPI {
     @DELETE("{productCode}")
     suspend fun deleteProduct(
         @Path("productCode") productCode: String
-    ): Response<ProductResponse>
+    ): Response<ProductDeleteResponse>
 
     @PATCH("targetPrice")
     suspend fun updateTargetPrice(
