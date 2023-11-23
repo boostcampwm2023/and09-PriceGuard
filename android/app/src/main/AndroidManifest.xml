@@ -41,6 +41,12 @@
         <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="false" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.Material3.DayNight" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/Theme.Material3.DayNight" />
     </application>
 
 </manifest>
