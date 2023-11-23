@@ -8,6 +8,7 @@ data class ProductResponse(
     val message: String,
     val productName: String?,
     val productCode: String?,
+    val price: Int?,
     val shop: String?,
     val imageUrl: String?
 )
