@@ -94,7 +94,7 @@ export class RequestError {
 
 export class ProductCodeError {
     @ApiProperty({
-        example: HttpStatus.BAD_REQUEST,
+        example: HttpStatus.NOT_FOUND,
         description: 'Http 상태 코드',
     })
     statusCode: number;
@@ -236,7 +236,7 @@ export class TrackingProductsNotFound {
     })
     statusCode: number;
     @ApiProperty({
-        example: '삭제할 상품을 찾을 수 없습니다.',
+        example: '상품을 찾을 수 없습니다.',
         description: '메시지',
     })
     message: string;
