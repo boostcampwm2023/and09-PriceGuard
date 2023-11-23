@@ -27,6 +27,7 @@ class DetailActivity : AppCompatActivity() {
         binding.viewModel = productDetailViewModel
         setContentView(binding.root)
 
+        setNavigationButton()
         checkProductCode()
         observeEvent()
     }
@@ -107,6 +108,12 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setNavigationButton() {
+        binding.mtDetailTopbar.setNavigationOnClickListener {
+            finish()
         }
     }
 
