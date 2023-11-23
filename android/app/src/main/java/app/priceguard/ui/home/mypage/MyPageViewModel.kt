@@ -36,7 +36,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             val userData = tokenRepository.getUserData()
             _flow.value =
-                MyPageInfo(userData.name, userData.email, userData.name.first().toString())
+                MyPageInfo(userData.name, userData.email, if (userData.name.isNotEmpty()) userData.name.first().toString() else "")
         }
     }
 
