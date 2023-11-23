@@ -26,7 +26,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val productName: String? = null,
         val shop: String? = null,
         val imageUrl: String? = null,
-        val rank: String? = null,
+        val rank: Int? = null,
         val shopUrl: String? = null,
         val targetPrice: Int? = null,
         val lowestPrice: Int? = null,
