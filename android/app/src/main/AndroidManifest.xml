@@ -38,6 +38,9 @@
         <activity
             android:name=".ui.main.additem.AddItemActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.detail.DetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

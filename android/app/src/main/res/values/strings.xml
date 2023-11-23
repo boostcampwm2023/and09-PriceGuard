@@ -44,9 +44,22 @@
     <string name="register_link">링크를 입력하세요.</string>
     <string name="how_get_product_link">상품 링크는 어떻게 얻나요?</string>
     <string name="want_notification">에 알람을 받고 싶습니다.</string>
+    <string name="goto_shopping_mall">쇼핑몰로 이동</string>
+    <string name="add_to_tracking_list">트래킹 목록에 추가</string>
+    <string name="edit_target_price">목표가격 수정</string>
+    <string name="delete_tracking">트래킹 중지</string>
+    <string name="already_tracking">이미 추적중이시군요!</string>
+    <string name="want_to_buy_cheap">저렴하게 사고 싶으신가요?</string>
+    <string name="price_track_graph">가격 변화 그래프</string>
+    <string name="day">일</string>
+    <string name="week">주</string>
+    <string name="month">월</string>
+    <string name="quarter">분기</string>
     <string name="logout_confirm_title">로그아웃 확인</string>
     <string name="logout_confirm_message">정말로 로그아웃 하시겠습니까?</string>
     <string name="yes">네</string>
     <string name="no">아니오</string>
     <string name="opensource_license">오픈소스 라이선스</string>
+    <string name="lowest_price">역대 최저가</string>
+    <string name="target_price">목표 가격</string>
 </resources>
