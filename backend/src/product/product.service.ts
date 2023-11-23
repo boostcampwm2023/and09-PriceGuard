@@ -23,12 +23,8 @@ export class ProductService {
         if (matchList === null) {
             throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
         }
-        try {
-            const [, code] = matchList;
-            return await getProductInfo11st(code);
-        } catch (e) {
-            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
-        }
+        const productCode = matchList[1];
+        return await getProductInfo11st(productCode);
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {
