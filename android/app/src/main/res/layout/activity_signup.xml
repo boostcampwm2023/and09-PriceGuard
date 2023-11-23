@@ -34,7 +34,6 @@
                     android:id="@+id/mt_signup_topbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:elevation="0dp"
                     android:fitsSystemWindows="true"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"

@@ -12,3 +12,9 @@ fun LifecycleOwner.repeatOnStarted(block: suspend CoroutineScope.() -> Unit) {
         repeatOnLifecycle(Lifecycle.State.STARTED, block)
     }
 }
+
+fun LifecycleOwner.repeatOnCreated(block: suspend CoroutineScope.() -> Unit) {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.CREATED, block)
+    }
+}

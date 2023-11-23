@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.login.LoginActivity">
+        android:background="?attr/colorSurface">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_vertical_start"
@@ -138,6 +138,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
             app:layout_constraintStart_toEndOf="@+id/gl_vertical_start" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

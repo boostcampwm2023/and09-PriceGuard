@@ -3,38 +3,37 @@ package app.priceguard.data.repository
 import app.priceguard.data.dto.LoginRequest
 import app.priceguard.data.dto.LoginResult
 import app.priceguard.data.dto.LoginState
-import app.priceguard.data.dto.SignUpRequest
-import app.priceguard.data.dto.SignUpResult
-import app.priceguard.data.dto.SignUpState
+import app.priceguard.data.dto.SignupRequest
+import app.priceguard.data.dto.SignupResult
+import app.priceguard.data.dto.SignupState
 import app.priceguard.data.network.APIResult
-import app.priceguard.data.network.RetrofitBuilder
+import app.priceguard.data.network.UserAPI
 import app.priceguard.data.network.getApiResult
+import javax.inject.Inject
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : UserRepository {
 
-    private val userAPI = RetrofitBuilder.getUserRetrofit()
-
-    override suspend fun signUp(email: String, userName: String, password: String): SignUpResult {
+    override suspend fun signUp(email: String, userName: String, password: String): SignupResult {
         val response = getApiResult {
-            userAPI.register(SignUpRequest(email, userName, password))
+            userAPI.register(SignupRequest(email, userName, password))
         }
         when (response) {
             is APIResult.Success -> {
-                return SignUpResult(SignUpState.SUCCESS, response.data)
+                return SignupResult(SignupState.SUCCESS, response.data.accessToken, response.data.refreshToken)
             }
 
             is APIResult.Error -> {
                 return when (response.code) {
                     400 -> {
-                        SignUpResult(SignUpState.INVALID_PARAMETER)
+                        SignupResult(SignupState.INVALID_PARAMETER, null, null)
                     }
 
                     409 -> {
-                        SignUpResult(SignUpState.DUPLICATE_EMAIL)
+                        SignupResult(SignupState.DUPLICATE_EMAIL, null, null)
                     }
 
                     else -> {
-                        SignUpResult(SignUpState.UNDEFINED_ERROR)
+                        SignupResult(SignupState.UNDEFINED_ERROR, null, null)
                     }
                 }
             }
@@ -47,17 +46,17 @@ class UserRepositoryImpl : UserRepository {
         }
         when (response) {
             is APIResult.Success -> {
-                return LoginResult(LoginState.SUCCESS, response.data)
+                return LoginResult(LoginState.SUCCESS, response.data.accessToken, response.data.refreshToken)
             }
 
             is APIResult.Error -> {
                 return when (response.code) {
                     400 -> {
-                        LoginResult(LoginState.INVALID_PARAMETER)
+                        LoginResult(LoginState.INVALID_PARAMETER, null, null)
                     }
 
                     else -> {
-                        LoginResult(LoginState.UNDEFINED_ERROR)
+                        LoginResult(LoginState.UNDEFINED_ERROR, null, null)
                     }
                 }
             }

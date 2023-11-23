@@ -7,24 +7,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import app.priceguard.MainActivity
 import app.priceguard.R
-import app.priceguard.data.dto.SignUpState
-import app.priceguard.data.repository.UserRepositoryImpl
+import app.priceguard.data.dto.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
-import com.google.android.material.progressindicator.IndeterminateDrawable
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
@@ -35,7 +32,6 @@ class SignupActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
-        signupViewModel.userRepository = UserRepositoryImpl()
         setNavigationButton()
         disableAppBarScroll()
         observeState()
@@ -68,60 +64,47 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
-        val spec =
-            CircularProgressIndicatorSpec(
-                this,
-                null,
-                0,
-                R.style.Theme_PriceGuard_CircularProgressIndicator
-            )
-
-        val progressIndicatorDrawable =
-            IndeterminateDrawable.createCircularDrawable(this, spec).apply {
-                setVisible(true, true)
-            }
+        val circularProgressIndicator = getCircularProgressIndicatorDrawable(this)
 
         when (event) {
             is SignupEvent.SignupStart -> {
-                (binding.btnSignupSignup as MaterialButton).icon = progressIndicatorDrawable
+                (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
             }
 
-            is SignupEvent.SignupFinish -> {
+            is SignupEvent.SignupSuccess -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
-                val response = event.response
-
-                if (response == null) {
-                    showDialog(getString(R.string.error), getString(R.string.undefined_error))
-                } else {
-                    // TODO: DataStore에 저장하기
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-
-                    // TODO: 뒤에 액티비티 스택 다 날리기
-                    finish()
-                }
             }
 
-            is SignupEvent.SignupError -> {
+            is SignupEvent.SignupFailure -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
                 when (event.errorState) {
-                    SignUpState.INVALID_PARAMETER -> {
+                    SignupState.INVALID_PARAMETER -> {
                         showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
                     }
 
-                    SignUpState.DUPLICATE_EMAIL -> {
+                    SignupState.DUPLICATE_EMAIL -> {
                         showDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
-                    SignUpState.UNDEFINED_ERROR -> {
+                    SignupState.UNDEFINED_ERROR -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
                     }
 
                     else -> {}
                 }
             }
+
+            SignupEvent.SignupInfoSaved -> {
+                gotoHomeActivity()
+            }
         }
+    }
+
+    private fun gotoHomeActivity() {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun setNavigationButton() {
@@ -140,22 +123,18 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.state.collect { state ->
-                    updateNameTextFieldUI(state)
-                    updateEmailTextFieldUI(state)
-                    updatePasswordTextFieldUI(state)
-                    updateRetypePasswordTextFieldUI(state)
-                }
+        repeatOnStarted {
+            signupViewModel.state.collect { state ->
+                updateNameTextFieldUI(state)
+                updateEmailTextFieldUI(state)
+                updatePasswordTextFieldUI(state)
+                updateRetypePasswordTextFieldUI(state)
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signupViewModel.eventFlow.collect { event ->
-                    handleSignupEvent(event)
-                }
+        repeatOnStarted {
+            signupViewModel.eventFlow.collect { event ->
+                handleSignupEvent(event)
             }
         }
     }
