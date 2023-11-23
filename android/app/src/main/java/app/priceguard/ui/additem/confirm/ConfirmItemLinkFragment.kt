@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.priceguard.data.dto.ProductDTO
+import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
 import com.bumptech.glide.Glide
 import kotlinx.serialization.json.Json
@@ -33,7 +33,7 @@ class ConfirmItemLinkFragment : Fragment() {
         binding.viewModel = viewModel
         binding.initListener()
         val productJson = requireArguments().getString("product") ?: return
-        val productInfo = Json.decodeFromString<ProductDTO>(productJson)
+        val productInfo = Json.decodeFromString<ProductVerifyDTO>(productJson)
         viewModel.setProductInfo(productInfo)
         Glide.with(this).load(productInfo.imageUrl).into(binding.ivConfirmItem)
     }

@@ -9,6 +9,7 @@ import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
 import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.ProductVerifyResponse
 import app.priceguard.data.dto.RecommendProductData
 import app.priceguard.data.dto.RecommendProductResult
 import app.priceguard.data.dto.RecommendProductState
@@ -23,7 +24,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    override suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductResponse> {
+    override suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductVerifyResponse> {
         val response = getApiResult {
             productAPI.verifyLink(productUrl)
         }
