@@ -2,6 +2,7 @@ package app.priceguard.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -11,7 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ProductListViewModel @Inject constructor() : ViewModel() {
+class ProductListViewModel @Inject constructor(
+    private val productRepository: ProductRepository
+) : ViewModel() {
 
     private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
     val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
@@ -23,43 +26,18 @@ class ProductListViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getProductList() {
-        // TODO: repository 구현 후 연결
-        _productList.value = listOf(
-            UserProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                false
-            ),
-            UserProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                false
-            ),
-            UserProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                false
-            ),
-            UserProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                false
-            ),
-            UserProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                false
-            )
-        )
+        viewModelScope.launch {
+            val list = productRepository.getProductList()
+            _productList.value = list.trackingList.map { data ->
+                UserProductSummary(
+                    data.shop,
+                    data.productName,
+                    "",
+                    "",
+                    data.productCode,
+                    true
+                )
+            }
+        }
     }
 }

@@ -24,42 +24,5 @@ class RecommendedProductViewModel @Inject constructor() : ViewModel() {
 
     fun getProductList() {
         // TODO: repository 구현 후 연결
-        _recommendedProductList.value = listOf(
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                1
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                2
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                3
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                4
-            ),
-            RecommendedProductSummary(
-                "11번가",
-                "오뚜기 진라면, 120g, 40개",
-                "28080원",
-                "-12.6%",
-                5
-            )
-        )
     }
 }
