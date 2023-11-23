@@ -33,8 +33,8 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productInfo = existProduct ? existProduct : await getProductInfo11st(productCode);
-        const product = existProduct ? existProduct : await this.productRepository.saveProduct(productInfo);
+        const productInfo = existProduct ?? (await getProductInfo11st(productCode));
+        const product = existProduct ?? (await this.productRepository.saveProduct(productInfo));
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
