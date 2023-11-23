@@ -15,7 +15,7 @@ import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.recommend.RecommendedProductViewModel.RecommendedProductEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
-import app.priceguard.ui.util.ui.showNetworkDialog
+import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -77,7 +77,7 @@ class RecommendedProductFragment : Fragment() {
         repeatOnStarted {
             recommendedProductViewModel.events.collect { event ->
                 if (event is RecommendedProductEvent.PermissionDenied) {
-                    activity?.showNetworkDialog(tokenRepository)
+                    activity?.showPermissionDeniedDialog(tokenRepository)
                 }
             }
         }
