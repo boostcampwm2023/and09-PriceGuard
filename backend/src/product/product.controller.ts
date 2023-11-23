@@ -116,7 +116,7 @@ export class ProductController {
     @Get(':productCode')
     async getProductDetails(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
         const { productName, shop, imageUrl, rank, shopUrl, targetPrice, price } =
-            await this.productService.getProductDetails(productCode);
+            await this.productService.getProductDetails(req.user.id, productCode);
         return {
             statusCode: HttpStatus.OK,
             message: '상품 URL 검증 성공',

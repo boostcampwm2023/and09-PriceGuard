@@ -70,7 +70,27 @@ export class ProductService {
 
     getRecommendList() {}
 
-    async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {}
+    async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {
+        const selectProduct = await this.productRepository.findOne({
+            where: { productCode: productCode },
+        });
+        if (selectProduct === null) {
+            throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+        }
+        const isTracking = await this.trackingProductRepository.findOne({
+            where: { userId: userId, productId: selectProduct.id },
+        });
+
+        return {
+            productName: selectProduct.productName,
+            shop: selectProduct.shop,
+            imageUrl: selectProduct.imageUrl,
+            rank: '1',
+            shopUrl: selectProduct.shopUrl,
+            targetPrice: isTracking === null ? -1 : isTracking.targetPrice,
+            price: 777,
+        };
+    }
 
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
         const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
