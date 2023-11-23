@@ -3,6 +3,7 @@ package app.priceguard.di
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.ProductRepositoryImpl
+import app.priceguard.data.repository.TokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +16,6 @@ object ProductRepositoryModule {
 
     @Provides
     @Singleton
-    fun provideProductRepository(productAPI: ProductAPI): ProductRepository =
-        ProductRepositoryImpl(productAPI)
+    fun provideProductRepository(productAPI: ProductAPI, tokenRepository: TokenRepository): ProductRepository =
+        ProductRepositoryImpl(productAPI, tokenRepository)
 }

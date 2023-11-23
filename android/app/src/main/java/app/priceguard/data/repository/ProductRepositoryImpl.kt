@@ -11,7 +11,10 @@ import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.getApiResult
 import javax.inject.Inject
 
-class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductAPI) :
+class ProductRepositoryImpl @Inject constructor(
+    private val productAPI: ProductAPI,
+    private val tokenRepository: TokenRepository
+) :
     ProductRepository {
 
     override suspend fun verifyLink(productUrl: ProductVerifyRequest): ProductResponse {
@@ -22,7 +25,7 @@ class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductA
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProductList(): ProductListResult {
+    override suspend fun getProductList(afterRenew: Boolean): ProductListResult {
         val response = getApiResult {
             productAPI.getProductList()
         }
@@ -42,24 +45,37 @@ class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductA
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
+                when (response.code) {
                     401 -> {
-                        ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
+                        val refreshToken =
+                            tokenRepository.getRefreshToken() ?: return ProductListResult(
+                                ProductListState.PERMISSION_DENIED,
+                                listOf()
+                            )
+                        tokenRepository.renewTokens(refreshToken)
+                        return if (afterRenew) {
+                            ProductListResult(
+                                ProductListState.PERMISSION_DENIED,
+                                listOf()
+                            )
+                        } else {
+                            getProductList(afterRenew = true)
+                        }
                     }
 
                     404 -> {
-                        ProductListResult(ProductListState.NOT_FOUND, listOf())
+                        return ProductListResult(ProductListState.NOT_FOUND, listOf())
                     }
 
                     else -> {
-                        ProductListResult(ProductListState.UNDEFINED_ERROR, listOf())
+                        return ProductListResult(ProductListState.UNDEFINED_ERROR, listOf())
                     }
                 }
             }
         }
     }
 
-    override suspend fun getRecommendedProductList(): ProductListResult {
+    override suspend fun getRecommendedProductList(afterRenew: Boolean): ProductListResult {
         val response = getApiResult {
             productAPI.getRecommendedProductList()
         }

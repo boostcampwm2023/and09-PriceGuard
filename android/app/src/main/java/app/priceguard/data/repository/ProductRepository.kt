@@ -11,9 +11,9 @@ interface ProductRepository {
 
     suspend fun addProduct(productAddRequest: ProductAddRequest): ProductResponse
 
-    suspend fun getProductList(): ProductListResult
+    suspend fun getProductList(afterRenew: Boolean = false): ProductListResult
 
-    suspend fun getRecommendedProductList(): ProductListResult
+    suspend fun getRecommendedProductList(afterRenew: Boolean = false): ProductListResult
 
     suspend fun getProductDetail(productCode: String): ProductResponse
 
