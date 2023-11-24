@@ -11,7 +11,10 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import com.google.android.material.slider.Slider
+import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.NumberFormat
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
@@ -39,8 +42,14 @@ class SetTargetPriceFragment : Fragment() {
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
 
+        binding.tvSetPriceCurrentPrice.text =
+            String.format(
+                resources.getString(R.string.won),
+                NumberFormat.getNumberInstance().format(price)
+            )
+
         viewModel.setProductInfo(productCode, title, price)
-        binding.etTargetPrice.setText(price.toString())
+        binding.etTargetPrice.setText((price * 0.8).toInt().toString())
 
         binding.initListener()
         handleEvent()
@@ -50,31 +59,48 @@ class SetTargetPriceFragment : Fragment() {
         btnConfirmItemBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        slTargetPrice.addOnChangeListener { slider, value, fromUser ->
+        slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
-                tvTargetPricePercent.text =
-                    String.format(getString(R.string.current_price_percent), value.toInt())
-                etTargetPrice.setText(((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString())
+                setTargetPriceAndPercent(value)
             }
         }
+        slTargetPrice.addOnSliderTouchListener(object : OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                etTargetPrice.clearFocus()
+                setTargetPriceAndPercent(slider.value)
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+            }
+        })
         etTargetPrice.addTextChangedListener {
             if (etTargetPrice.isFocused) {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
                     val targetPrice = it.toString().toFloat()
-                    var percent = ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
+                    var percent =
+                        ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
+                    percent = 10 * ((percent + 5) / 10)
                     if (targetPrice > (viewModel?.state?.value?.productPrice ?: 0)) {
                         tvTargetPricePercent.text = getString(R.string.over_current_price)
                         percent = 100
                     } else if (percent < 1) {
-                        percent = 1
+                        percent = 0
                     }
                     slTargetPrice.value = percent.toFloat()
                 }
             }
         }
+    }
+
+    private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
+        tvTargetPricePercent.text =
+            String.format(getString(R.string.current_price_percent), value.toInt())
+        etTargetPrice.setText(
+            ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
+        )
     }
 
     private fun handleEvent() {
@@ -86,7 +112,6 @@ class SetTargetPriceFragment : Fragment() {
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
                         activity?.finish()
-                        // TODO: AddProductItem 액티비티 종료 후 상품 세부 정보 화면으로 이동하기
                     }
                 }
             }
