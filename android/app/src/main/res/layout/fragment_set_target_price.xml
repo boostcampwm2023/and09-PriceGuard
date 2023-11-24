@@ -73,6 +73,7 @@
             android:paddingHorizontal="24dp"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:imeOptions="actionDone"
             android:onTextChanged="@{(content, s, b, c) -> viewModel.updateTargetPrice(content.toString())}"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
