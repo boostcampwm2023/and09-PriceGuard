@@ -78,11 +78,12 @@ class SetTargetPriceFragment : Fragment() {
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
+                    percent = 10 * ((percent + 5) / 10)
                     if (targetPrice > (viewModel?.state?.value?.productPrice ?: 0)) {
                         tvTargetPricePercent.text = getString(R.string.over_current_price)
                         percent = 100
                     } else if (percent < 1) {
-                        percent = 1
+                        percent = 0
                     }
                     slTargetPrice.value = percent.toFloat()
                 }
