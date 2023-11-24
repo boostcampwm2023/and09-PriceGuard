@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("com.google.android.gms.oss-licenses-plugin")
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.firebase-perf")
     id("kotlin-kapt")
@@ -18,8 +19,8 @@ android {
         applicationId = "app.priceguard"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -93,6 +94,9 @@ dependencies {
     val navVersion = "2.7.5"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // OSS licences
+    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
