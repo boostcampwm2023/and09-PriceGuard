@@ -43,10 +43,10 @@
             android:exported="false" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.Material3.DayNight" />
+            android:theme="@style/Theme.PriceGuard.WithActionBar" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.Material3.DayNight" />
+            android:theme="@style/Theme.PriceGuard.WithActionBar" />
     </application>
 
 </manifest>
