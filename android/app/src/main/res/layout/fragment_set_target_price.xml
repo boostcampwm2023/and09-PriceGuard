@@ -57,7 +57,7 @@
             android:id="@+id/tv_set_price_current_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            priceText="@{viewModel.state.productPrice}"
+            android:text="@{viewModel.state.formattedPrice}"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
             app:layout_constraintTop_toTopOf="@id/tv_set_price_name" />
