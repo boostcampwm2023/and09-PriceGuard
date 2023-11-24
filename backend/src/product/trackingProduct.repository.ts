@@ -34,6 +34,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .leftJoin(Product, 'product', 'tracking_product.productId = product.id')
             .groupBy('tracking_product.productId')
             .orderBy('userCount', 'DESC')
+            .addOrderBy('MAX(tracking_product.productId)', 'DESC')
             .take(MAX_TRACKING_RANK)
             .getRawMany();
         return recommendList;
@@ -45,6 +46,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .select('tracking_product.productId as productId')
             .groupBy('tracking_product.productId')
             .orderBy('COUNT(tracking_product.userId)', 'DESC')
+            .addOrderBy('MAX(tracking_product.productId)', 'DESC')
             .take(MAX_TRACKING_RANK)
             .getRawMany();
         return rankList;
