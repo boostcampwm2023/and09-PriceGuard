@@ -59,18 +59,15 @@ class SetTargetPriceFragment : Fragment() {
         btnConfirmItemBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        slTargetPrice.addOnChangeListener { slider, value, fromUser ->
+        slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
-                tvTargetPricePercent.text =
-                    String.format(getString(R.string.current_price_percent), value.toInt())
-                etTargetPrice.setText(
-                    ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
-                )
+                setTargetPriceAndPercent(value)
             }
         }
         slTargetPrice.addOnSliderTouchListener(object : OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
-                binding.etTargetPrice.clearFocus()
+                etTargetPrice.clearFocus()
+                setTargetPriceAndPercent(slider.value)
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
@@ -98,6 +95,14 @@ class SetTargetPriceFragment : Fragment() {
         }
     }
 
+    private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
+        tvTargetPricePercent.text =
+            String.format(getString(R.string.current_price_percent), value.toInt())
+        etTargetPrice.setText(
+            ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
+        )
+    }
+
     private fun handleEvent() {
         repeatOnStarted {
             viewModel.event.collect { event ->
@@ -107,7 +112,6 @@ class SetTargetPriceFragment : Fragment() {
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
                         activity?.finish()
-                        // TODO: AddProductItem 액티비티 종료 후 상품 세부 정보 화면으로 이동하기
                     }
                 }
             }
