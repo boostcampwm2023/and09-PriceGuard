@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="app.priceguard.ui.additem.confirm.ConfirmItemLinkViewModel" />
+            name="imageUrl"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +64,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:imageFromUrl="@{viewModel.flow.imageUrl}"/>
+                    app:imageFromUrl="@{imageUrl}"/>
 
                 <TextView
                     android:id="@+id/tv_confirm_item_item_title"
@@ -73,7 +73,6 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
                     android:maxLines="3"
-                    android:text="@{viewModel.flow.productName}"
                     android:textAppearance="?attr/textAppearanceBodyLarge"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +83,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@{viewModel.flow.shop}"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     app:layout_constraintStart_toStartOf="@id/tv_confirm_item_item_title"
                     app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_item_title" />
@@ -102,7 +100,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    priceText="@{viewModel.flow.productPrice}"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_confirm_item_shop_logo" />
