@@ -14,6 +14,7 @@ import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.NumberFormat
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
@@ -40,6 +41,12 @@ class SetTargetPriceFragment : Fragment() {
         val productCode = requireArguments().getString("productCode") ?: ""
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
+
+        binding.tvSetPriceCurrentPrice.text =
+            String.format(
+                resources.getString(R.string.won),
+                NumberFormat.getNumberInstance().format(price)
+            )
 
         viewModel.setProductInfo(productCode, title, price)
         binding.etTargetPrice.setText((price * 0.8).toInt().toString())

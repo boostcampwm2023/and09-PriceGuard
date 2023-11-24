@@ -7,7 +7,6 @@ import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.NumberFormat
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +22,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         val productCode: String = "",
         val targetPrice: Int = 0,
         val productName: String = "",
-        val productPrice: Int = 0,
-        val formattedPrice: String = ""
+        val productPrice: Int = 0
     )
 
     sealed class SetTargetPriceEvent {
@@ -68,6 +66,10 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     fun setProductInfo(productCode: String, name: String, price: Int) {
         _state.value =
-            state.value.copy(productCode = productCode, productName = name, productPrice = price, formattedPrice = NumberFormat.getNumberInstance().format(price))
+            state.value.copy(
+                productCode = productCode,
+                productName = name,
+                productPrice = price
+            )
     }
 }
