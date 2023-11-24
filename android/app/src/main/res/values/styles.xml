@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Theme.PriceGuard.WithActionBar" parent="Theme.PriceGuard">
+        <item name="windowActionBar">true</item>
+        <item name="android:windowNoTitle">false</item>
+    </style>
+
     <style name="Theme.PriceGuard.CircularProgressIndicator" parent="Widget.Material3.CircularProgressIndicator.ExtraSmall">
         <item name="indicatorColor">?attr/colorOnPrimary</item>
     </style>
