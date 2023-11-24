@@ -14,6 +14,7 @@ import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -69,7 +70,7 @@ class MyPageFragment : Fragment() {
                             }
 
                             Setting.LICENSE -> {
-                                // TODO: 오픈소스 라이선스
+                                startActivity(Intent(activity, OssLicensesMenuActivity::class.java))
                             }
 
                             Setting.LOGOUT -> {
