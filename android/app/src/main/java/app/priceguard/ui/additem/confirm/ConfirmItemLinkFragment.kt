@@ -5,17 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import app.priceguard.R
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
+import java.text.NumberFormat
 import kotlinx.serialization.json.Json
 
 class ConfirmItemLinkFragment : Fragment() {
 
     private var _binding: FragmentConfirmItemLinkBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ConfirmItemLinkViewModel by viewModels()
+
+    private lateinit var productInfo: ProductVerifyDTO
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,12 +30,23 @@ class ConfirmItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
+
         binding.initListener()
+        binding.initView()
+    }
+
+    private fun FragmentConfirmItemLinkBinding.initView() {
         val productJson = requireArguments().getString("product") ?: return
-        val productInfo = Json.decodeFromString<ProductVerifyDTO>(productJson)
-        viewModel.setProductInfo(productInfo)
+        productInfo = Json.decodeFromString(productJson)
+
+        tvConfirmItemPrice.text =
+            String.format(
+                resources.getString(R.string.won),
+                NumberFormat.getNumberInstance().format(productInfo.productPrice)
+            )
+        tvConfirmItemBrand.text = productInfo.shop
+        tvConfirmItemItemTitle.text = productInfo.productName
+        imageUrl = productInfo.imageUrl
     }
 
     override fun onDestroyView() {
@@ -45,9 +58,9 @@ class ConfirmItemLinkFragment : Fragment() {
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
-                    viewModel?.flow?.value?.productCode ?: "",
-                    viewModel?.flow?.value?.productName ?: "",
-                    viewModel?.flow?.value?.productPrice ?: 0
+                    productInfo.productCode ?: "",
+                    productInfo.productName ?: "",
+                    productInfo.productPrice ?: 0
                 )
             findNavController().navigate(action)
         }

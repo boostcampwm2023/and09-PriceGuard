@@ -26,8 +26,8 @@ class MyPageViewModel @Inject constructor(
         val firstName: String
     )
 
-    private val _flow = MutableStateFlow(MyPageInfo("", "", ""))
-    val flow = _flow.asStateFlow()
+    private val _state = MutableStateFlow(MyPageInfo("", "", ""))
+    val state = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<MyPageEvent>()
     val event = _event.asSharedFlow()
@@ -39,20 +39,19 @@ class MyPageViewModel @Inject constructor(
     private fun setInfo() {
         viewModelScope.launch {
             val userData = tokenRepository.getUserData()
-            _flow.value =
-                MyPageInfo(userData.name, userData.email, if (userData.name.isNotEmpty()) userData.name.first().toString() else "")
+            _state.value =
+                MyPageInfo(
+                    userData.name,
+                    userData.email,
+                    if (userData.name.isNotEmpty()) userData.name.first().toString() else ""
+                )
         }
     }
 
     fun logout() {
         viewModelScope.launch {
-            val resetTokenJob = launch {
-                tokenRepository.clearTokens()
-            }
-            resetTokenJob.join()
-            if (resetTokenJob.isCompleted) {
-                _event.emit(MyPageEvent.StartIntroAndExitHome)
-            }
+            tokenRepository.clearTokens()
+            _event.emit(MyPageEvent.StartIntroAndExitHome)
         }
     }
 }
