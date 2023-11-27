@@ -39,7 +39,7 @@ class DetailActivity : AppCompatActivity() {
             showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
         } else {
             productDetailViewModel.productCode = productCode
-            productDetailViewModel.getDetails()
+            productDetailViewModel.getDetails(false)
         }
     }
 

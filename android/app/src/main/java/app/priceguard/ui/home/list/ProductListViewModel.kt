@@ -24,6 +24,9 @@ class ProductListViewModel @Inject constructor(
         data object PermissionDenied : ProductListEvent()
     }
 
+    private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
     val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
 
@@ -31,25 +34,32 @@ class ProductListViewModel @Inject constructor(
     val events: SharedFlow<ProductListEvent> = _events.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            getProductList()
-        }
+        getProductList(false)
     }
 
-    suspend fun getProductList() {
-        val result = productRepository.getProductList()
-        if (result.productListState == ProductListState.PERMISSION_DENIED) {
-            _events.emit(ProductListEvent.PermissionDenied)
-        } else {
-            _productList.value = result.trackingList.map { data ->
-                UserProductSummary(
-                    data.shop,
-                    data.productName,
-                    data.price.toString(),
-                    "-15.0%",
-                    data.productCode,
-                    true
-                )
+    fun getProductList(isRefresh: Boolean) {
+        viewModelScope.launch {
+            if (isRefresh) {
+                _isRefreshing.value = true
+            }
+
+            val result = productRepository.getProductList()
+
+            _isRefreshing.value = false
+
+            if (result.productListState == ProductListState.PERMISSION_DENIED) {
+                _events.emit(ProductListEvent.PermissionDenied)
+            } else {
+                _productList.value = result.trackingList.map { data ->
+                    UserProductSummary(
+                        data.shop,
+                        data.productName,
+                        data.price.toString(),
+                        "-15.0%",
+                        data.productCode,
+                        true
+                    )
+                }
             }
         }
     }

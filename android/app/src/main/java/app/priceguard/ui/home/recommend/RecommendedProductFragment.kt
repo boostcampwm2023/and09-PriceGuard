@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.home.ProductSummaryAdapter
@@ -18,7 +16,6 @@ import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecommendedProductFragment : Fragment() {
@@ -63,13 +60,8 @@ class RecommendedProductFragment : Fragment() {
     }
 
     private fun FragmentRecommendedProductBinding.initListener() {
-        mtbRecommendedProduct.setOnMenuItemClickListener { menuItem ->
-            if (menuItem.itemId == R.id.refresh) {
-                lifecycleScope.launch {
-                    recommendedProductViewModel.getProductList()
-                }
-            }
-            true
+        ablRecommendedProduct.addOnOffsetChangedListener { _, verticalOffset ->
+            srlRecommendedProduct.isEnabled = verticalOffset == 0
         }
     }
 
