@@ -11,46 +11,54 @@
             type="app.priceguard.ui.home.recommend.RecommendedProductViewModel" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl_recommended_product"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:onRefreshListener="@{() -> viewModel.getRecommendedProductList(true)}"
+        app:refreshing="@{viewModel.isRefreshing}"
         tools:context=".ui.home.recommend.RecommendedProductFragment">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/abl_recommended_product"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                style="?attr/collapsingToolbarLayoutMediumStyle"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/abl_recommended_product"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-                android:background="?attr/colorSurface"
-                android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorSurface"
-                app:expandedTitleMarginBottom="32dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-                app:title="@string/fragment_recommend_title">
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true">
 
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/mtb_recommended_product"
-                    android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:menu="@menu/list_top_app_bar_menu" />
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    style="?attr/collapsingToolbarLayoutMediumStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
+                    android:background="?attr/colorSurface"
+                    android:fitsSystemWindows="true"
+                    app:contentScrim="?attr/colorSurface"
+                    app:expandedTitleMarginBottom="32dp"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                    app:title="@string/fragment_recommend_title">
 
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/mtb_recommended_product"
+                        android:layout_width="wrap_content"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_recommended_product"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/item_product_summary" />
+            </com.google.android.material.appbar.AppBarLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_recommended_product"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/item_product_summary" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

@@ -24,6 +24,9 @@ class RecommendedProductViewModel @Inject constructor(
         data object PermissionDenied : RecommendedProductEvent()
     }
 
+    private var _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var _recommendedProductList =
         MutableStateFlow<List<RecommendedProductSummary>>(listOf())
     val recommendedProductList: StateFlow<List<RecommendedProductSummary>> =
@@ -33,25 +36,31 @@ class RecommendedProductViewModel @Inject constructor(
     val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
 
     init {
-        viewModelScope.launch {
-            getProductList()
-        }
+        getRecommendedProductList(false)
     }
 
-    suspend fun getProductList() {
-        val result = productRepository.getRecommendedProductList()
-        if (result.productListState == RecommendProductState.PERMISSION_DENIED) {
-            _events.emit(RecommendedProductEvent.PermissionDenied)
-        } else {
-            _recommendedProductList.value = result.recommendList.map { data ->
-                RecommendedProductSummary(
-                    data.shop,
-                    data.productName,
-                    data.price.toString(),
-                    "-15.3%",
-                    data.productCode,
-                    data.rank
-                )
+    fun getRecommendedProductList(isRefresh: Boolean) {
+        viewModelScope.launch {
+            if (isRefresh) {
+                _isRefreshing.value = true
+            }
+
+            val result = productRepository.getRecommendedProductList()
+            _isRefreshing.value = false
+
+            if (result.productListState == RecommendProductState.PERMISSION_DENIED) {
+                _events.emit(RecommendedProductEvent.PermissionDenied)
+            } else {
+                _recommendedProductList.value = result.recommendList.map { data ->
+                    RecommendedProductSummary(
+                        data.shop,
+                        data.productName,
+                        data.price.toString(),
+                        "-15.3%",
+                        data.productCode,
+                        data.rank
+                    )
+                }
             }
         }
     }
