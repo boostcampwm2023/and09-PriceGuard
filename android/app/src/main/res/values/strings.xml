@@ -83,4 +83,6 @@
     <string name="error_add_product">상품 등록 실패</string>
     <string name="exist_product">이미 등록한 상품입니다.</string>료
     <string name="finish">완료</string>
+    <string name="error_patch_price">가격 수정 실패</string>
+    <string name="retry">다시 시도해 주세요.</string>
 </resources>
