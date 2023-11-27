@@ -18,6 +18,7 @@ import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
+import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -65,16 +66,12 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initListener() {
-        mtbProductList.setOnMenuItemClickListener { menuItem ->
-            if (menuItem.itemId == R.id.refresh) {
-                lifecycleScope.launch {
-                    productListViewModel.getProductList()
-                }
-            }
-            true
-        }
         fabProductList.setOnClickListener {
             gotoProductAddActivity()
+        }
+
+        ablProductList.addOnOffsetChangedListener { _, verticalOffset ->
+            srlProductList.isEnabled = verticalOffset == 0
         }
     }
 
