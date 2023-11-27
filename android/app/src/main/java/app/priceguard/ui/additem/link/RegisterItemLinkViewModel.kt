@@ -2,9 +2,10 @@ package app.priceguard.ui.additem.link
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ErrorState
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.network.APIResult
+import app.priceguard.data.network.RepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -54,24 +55,26 @@ class RegisterItemLinkViewModel
         )
 
         viewModelScope.launch {
-            val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link))
+            val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link), false)
             when (response) {
-                is APIResult.Success -> {
-                    val product = ProductVerifyDTO(
-                        response.data.productName,
-                        response.data.productCode,
-                        response.data.productPrice,
-                        response.data.shop,
-                        response.data.imageUrl
-                    )
-                    _state.value = state.value.copy(isNextReady = true, product = product)
-                    _event.emit(RegisterLinkEvent.SuccessVerification(product))
+                is RepositoryResult.Success -> {
+                    _state.value = state.value.copy(isNextReady = true, product = response.data)
+                    _event.emit(RegisterLinkEvent.SuccessVerification(response.data))
                 }
 
-                is APIResult.Error -> {
-                    when (response.code) {
-                        400 -> {
+                is RepositoryResult.Error -> {
+                    when (response.errorState) {
+                        ErrorState.INVALID_REQUEST -> {
                             _state.value = state.value.copy(isLinkError = true, isNextReady = false)
+                        }
+
+                        ErrorState.PERMISSION_DENIED -> {
+                        }
+
+                        ErrorState.TOKEN_ERROR -> {
+                        }
+
+                        else -> {
                         }
                     }
                     _event.emit(RegisterLinkEvent.FailureVerification)

@@ -2,9 +2,11 @@ package app.priceguard.ui.additem.setprice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ErrorState
 import app.priceguard.data.dto.PricePatchRequest
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.network.APIResult
+import app.priceguard.data.network.RepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,7 +29,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
-        data object FailureProductAdd : SetTargetPriceEvent()
+        data object ExistProduct : SetTargetPriceEvent()
         data object SuccessPriceUpdate : SetTargetPriceEvent()
         data object FailurePriceUpdate : SetTargetPriceEvent()
     }
@@ -44,15 +46,22 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 ProductAddRequest(
                     _state.value.productCode,
                     _state.value.targetPrice
-                )
+                ),
+                false
             )
             when (response) {
-                is APIResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailureProductAdd)
+                is RepositoryResult.Success -> {
+                    _event.emit(SetTargetPriceEvent.SuccessProductAdd)
                 }
 
-                is APIResult.Success -> {
-                    _event.emit(SetTargetPriceEvent.SuccessProductAdd)
+                is RepositoryResult.Error -> {
+                    when (response.errorState) {
+                        ErrorState.EXIST -> {
+                            _event.emit(SetTargetPriceEvent.ExistProduct)
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }
