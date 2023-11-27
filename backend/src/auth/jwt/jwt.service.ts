@@ -3,7 +3,7 @@ import { JWTRepository } from './jwt.repository';
 import { Token } from 'src/entities/token.entity';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { REFRESH_TOKEN_SECRETS } from 'src/constants';
+import { INVALIDATED_REFRESHTOKEN, REFRESH_TOKEN_SECRETS } from 'src/constants';
 
 @Injectable()
 export class JWTService {
@@ -15,7 +15,7 @@ export class JWTService {
 
     async validateRefreshToken(userId: string, payload: string) {
         if (!(await this.isLatestRefreshToken(userId, payload))) {
-            this.jwtRepository.saveToken(userId, '');
+            this.jwtRepository.saveToken(userId, INVALIDATED_REFRESHTOKEN);
             throw new UnauthorizedException('이미 재발급된 refreshToken');
         }
     }
