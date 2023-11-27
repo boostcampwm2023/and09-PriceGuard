@@ -1,6 +1,7 @@
 package app.priceguard.ui.home
 
 import android.content.Intent
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,6 +74,13 @@ class ProductSummaryAdapter :
         private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
             tvProductDiscountPercent.text =
                 tvProductDiscountPercent.context.getString(R.string.percent, discount)
+            val value = TypedValue()
+            tvProductDiscountPercent.context.theme.resolveAttribute(
+                if (discount > 0) android.R.attr.colorPrimary else android.R.attr.colorError,
+                value,
+                true
+            )
+            tvProductDiscountPercent.setTextColor(value.data)
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
