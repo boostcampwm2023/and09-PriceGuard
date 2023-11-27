@@ -51,4 +51,14 @@ export class RefreshJWTSuccess {
         description: '메시지',
     })
     message: string;
+    @ApiProperty({
+        example: 'access example',
+        description: 'Access Token의 만료 기간은 2시간이다.',
+    })
+    accessToken: string;
+    @ApiProperty({
+        example: 'refresh example',
+        description: 'Refresh Token의 만료 기간은 2주이다.',
+    })
+    refreshToken: string;
 }

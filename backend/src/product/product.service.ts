@@ -9,7 +9,8 @@ import { ProductRepository } from './product.repository';
 import { getProductInfo11st } from 'src/utils/openapi.11st';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
 
-const REGEXP_11ST = /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
+const REGEXP_11ST =
+    /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     constructor(
@@ -53,12 +54,11 @@ export class ProductService {
             throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         const trackingListInfo = trackingProductList.map(({ product, targetPrice }) => {
-            const { productName, productCode, shop, shopUrl, imageUrl } = product;
+            const { productName, productCode, shop, imageUrl } = product;
             return {
                 productName,
                 productCode,
                 shop,
-                shopUrl,
                 imageUrl,
                 targetPrice: targetPrice,
                 price: 1234, // 임시 더미 가격 데이터

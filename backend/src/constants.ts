@@ -15,3 +15,4 @@ export const REFRESH_TOKEN_SECRETS = process.env.REFRESH_TOKEN_SECRETS;
 export const OPEN_API_KEY_11ST = process.env.OPEN_API_KEY_11ST as string;
 export const BASE_URL_11ST = process.env.BASE_URL_11ST as string;
 export const MAX_TRACKING_RANK = parseInt(process.env.MAX_TRACKING_RANK || '50');
+export const INVALIDATED_REFRESHTOKEN = 'invalidate refreshToken';

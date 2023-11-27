@@ -14,7 +14,7 @@ export class RegisterSuccess {
     message: string;
     @ApiProperty({
         example: 'access example',
-        description: 'Access Token의 만료 기간은 5분이다.',
+        description: 'Access Token의 만료 기간은 2시간이다.',
     })
     accessToken: string;
     @ApiProperty({
@@ -37,7 +37,7 @@ export class LoginSuccess {
     message: string;
     @ApiProperty({
         example: 'access example',
-        description: 'Access Token의 만료 기간은 5분이다.',
+        description: 'Access Token의 만료 기간은 2시간이다.',
     })
     accessToken: string;
     @ApiProperty({
