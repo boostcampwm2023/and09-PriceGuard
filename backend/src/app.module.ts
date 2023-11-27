@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from './configs/typeorm.config';
 import { UsersModule } from './user/user.module';
@@ -8,6 +8,7 @@ import { winstonConfig } from './configs/winston.config';
 import { ProductModule } from './product/product.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 
 @Module({
     imports: [
@@ -20,4 +21,8 @@ import { AppService } from './app.service';
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).exclude('/app').forRoutes('*');
+    }
+}
