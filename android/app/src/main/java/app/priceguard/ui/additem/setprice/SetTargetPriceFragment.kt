@@ -100,15 +100,14 @@ class SetTargetPriceFragment : Fragment() {
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
-                    updateSlideValueWithPrice(targetPrice, round(percent))
-                    round(percent)
+                    updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
                 }
             }
         }
     }
 
-    private fun round(percent: Int): Int {
-        return ((percent + 5) / 10) * 10
+    private fun Int.roundAtFirstDigit(): Int {
+        return ((this + 5) / 10) * 10
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
