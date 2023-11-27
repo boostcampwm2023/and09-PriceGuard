@@ -1,6 +1,5 @@
 package app.priceguard.ui.additem.setprice
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.PricePatchRequest
@@ -40,7 +39,6 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     val event = _event.asSharedFlow()
 
     fun addProduct() {
-        Log.d("responseSetTargetPrice", "1")
         viewModelScope.launch {
             val response = productRepository.addProduct(
                 ProductAddRequest(
@@ -48,7 +46,6 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                     _state.value.targetPrice
                 )
             )
-            Log.d("responseSetTargetPrice", response.toString())
             when (response) {
                 is APIResult.Error -> {
                     _event.emit(SetTargetPriceEvent.FailureProductAdd)

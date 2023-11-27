@@ -36,7 +36,7 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewModel = viewModel
+        binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -74,7 +74,7 @@ class SetTargetPriceFragment : Fragment() {
         }
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
-            if (isAdding) viewModel?.addProduct() else viewModel?.patchProduct()
+            if (isAdding) viewModel.addProduct() else viewModel.patchProduct()
         }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
@@ -94,29 +94,27 @@ class SetTargetPriceFragment : Fragment() {
             if (etTargetPrice.isFocused) {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
                     val targetPrice = it.toString().toFloat()
-                    var percent =
-                        ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
+                    val percent =
+                        ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
-                    percent = 10 * ((percent + 5) / 10)
-                    if (targetPrice > (viewModel?.state?.value?.productPrice ?: 0)) {
-                        tvTargetPricePercent.text = getString(R.string.over_current_price)
-                        percent = 100
-                    } else if (percent < 1) {
-                        percent = 0
-                    }
-                    slTargetPrice.value = percent.toFloat()
+                    updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
                 }
             }
         }
+    }
+
+    private fun Int.roundAtFirstDigit(): Int {
+        return ((this + 5) / 10) * 10
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
-            ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
+            ((viewModel.state.value.productPrice) * value.toInt() / 100).toString()
         )
     }
 
@@ -138,8 +136,24 @@ class SetTargetPriceFragment : Fragment() {
         }
     }
 
+    private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
+        targetPrice: Float,
+        percent: Int
+    ) {
+        val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
+        if (targetPrice > viewModel.state.value.productPrice) {
+            tvTargetPricePercent.text = getString(R.string.over_current_price)
+        }
+        slTargetPrice.value = pricePercent.toFloat()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val MIN_PERCENT = 0
+        const val MAX_PERCENT = 100
     }
 }

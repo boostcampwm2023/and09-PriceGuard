@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -37,23 +36,23 @@ class RegisterItemLinkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-        setCollector()
+        initCollector()
+        initEvent()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun setCollector() {
+    private fun initCollector() {
         repeatOnStarted {
             viewModel.state.collect { state ->
-                if (state.product != null) {
-                    // TODO: 링크 정규식 검사에 맞지 않을 시 발생하는 ui 업데이트 로직
+                if (state.isLinkError) {
+                    updateLinkError(getString(R.string.not_link))
+                } else {
+                    updateLinkError("")
                 }
             }
         }
+    }
 
+    private fun initEvent() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
@@ -66,27 +65,23 @@ class RegisterItemLinkFragment : Fragment() {
                     }
 
                     is RegisterItemLinkViewModel.RegisterLinkEvent.FailureVerification -> {
-                        Toast.makeText(
-                            requireActivity(),
-                            getString(R.string.not_link),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        updateLinkError(getString(R.string.not_product_link))
                     }
                 }
             }
         }
     }
 
+    private fun updateLinkError(message: String) {
+        binding.tvRegisterItemError.text = message
+    }
+
     private fun NavController.safeNavigate(direction: NavDirections) {
         currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
     }
 
-    private fun updateLinkFieldUI() {
-    }
-
-    private fun updateNextBtnUI() {
-    }
-
-    private fun update() {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
