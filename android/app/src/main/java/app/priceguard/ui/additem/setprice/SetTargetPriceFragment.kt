@@ -134,7 +134,12 @@ class SetTargetPriceFragment : Fragment() {
                         activity?.finish()
                     }
 
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> TODO()
+                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> {
+                        showActivityFinishDialog(
+                            getString(R.string.error_patch_price),
+                            getString(R.string.retry)
+                        )
+                    }
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
                         activity?.finish()
                     }

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ErrorState
 import app.priceguard.data.dto.PricePatchRequest
 import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.RepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,14 +72,15 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 PricePatchRequest(
                     _state.value.productCode,
                     _state.value.targetPrice
-                )
+                ),
+                false
             )
             when (response) {
-                is APIResult.Error -> {
+                is RepositoryResult.Error -> {
                     _event.emit(SetTargetPriceEvent.FailurePriceUpdate)
                 }
 
-                is APIResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
             }

@@ -28,7 +28,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    private suspend fun <T> renew(apiFunc: RepositoryResult<T>): RepositoryResult<T> {
+    private suspend fun <T> renew(repoFun: RepositoryResult<T>): RepositoryResult<T> {
         val refreshToken =
             tokenRepository.getRefreshToken()
                 ?: return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
@@ -38,19 +38,53 @@ class ProductRepositoryImpl @Inject constructor(
         if (renewResult != RenewResult.SUCCESS) {
             return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
         }
-        return apiFunc
+        return repoFun
+    }
+
+    private suspend fun <T> handleError(
+        code: Int?,
+        repoFun: RepositoryResult<T>
+    ): RepositoryResult<T> {
+        return when (code) {
+            400 -> {
+                RepositoryResult.Error(ErrorState.INVALID_REQUEST)
+            }
+
+            401 -> {
+                RepositoryResult.Error(ErrorState.PERMISSION_DENIED)
+            }
+
+            404 -> {
+                RepositoryResult.Error(ErrorState.NOT_FOUND)
+            }
+
+            409 -> {
+                RepositoryResult.Error(ErrorState.EXIST)
+            }
+
+            410 -> {
+                renew(repoFun)
+            }
+
+            else -> {
+                RepositoryResult.Error(ErrorState.UNDEFINED_ERROR)
+            }
+        }
     }
 
     override suspend fun verifyLink(
         productUrl: ProductVerifyRequest,
         isRenewed: Boolean
     ): RepositoryResult<ProductVerifyDTO> {
+        if (isRenewed) {
+            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
+        }
         val response = getApiResult {
             productAPI.verifyLink(productUrl)
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductVerifyDTO(
                         response.data.productName,
                         response.data.productCode,
@@ -62,27 +96,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        RepositoryResult.Error(ErrorState.INVALID_REQUEST)
-                    }
-
-                    401 -> {
-                        RepositoryResult.Error(ErrorState.PERMISSION_DENIED)
-                    }
-
-                    410 -> {
-                        if (!isRenewed) {
-                            renew(verifyLink(productUrl, true))
-                        } else {
-                            RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-                        }
-                    }
-
-                    else -> {
-                        RepositoryResult.Error(ErrorState.UNDEFINED_ERROR)
-                    }
-                }
+                handleError(response.code, verifyLink(productUrl, true))
             }
         }
     }
@@ -91,12 +105,15 @@ class ProductRepositoryImpl @Inject constructor(
         productAddRequest: ProductAddRequest,
         isRenewed: Boolean
     ): RepositoryResult<ProductAddResponse> {
+        if (isRenewed) {
+            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
+        }
         val response = getApiResult {
             productAPI.addProduct(productAddRequest)
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductAddResponse(
                         response.data.statusCode,
                         response.data.message
@@ -105,35 +122,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        RepositoryResult.Error(ErrorState.INVALID_REQUEST)
-                    }
-
-                    401 -> {
-                        RepositoryResult.Error(ErrorState.PERMISSION_DENIED)
-                    }
-
-                    404 -> {
-                        RepositoryResult.Error(ErrorState.NOT_FOUND)
-                    }
-
-                    409 -> {
-                        RepositoryResult.Error(ErrorState.EXIST)
-                    }
-
-                    410 -> {
-                        if (!isRenewed) {
-                            renew(addProduct(productAddRequest, true))
-                        } else {
-                            RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-                        }
-                    }
-
-                    else -> {
-                        RepositoryResult.Error(ErrorState.UNDEFINED_ERROR)
-                    }
-                }
+                handleError(response.code, addProduct(productAddRequest, true))
             }
         }
     }
@@ -348,10 +337,29 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest): APIResult<PricePatchResponse> {
+    override suspend fun updateTargetPrice(
+        pricePatchRequest: PricePatchRequest,
+        isRenewed: Boolean
+    ): RepositoryResult<PricePatchResponse> {
+        if (isRenewed) {
+            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
+        }
         val response = getApiResult {
             productAPI.updateTargetPrice(pricePatchRequest)
         }
-        return response
+        return when (response) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(
+                    PricePatchResponse(
+                        response.data.statusCode,
+                        response.data.message
+                    )
+                )
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code, updateTargetPrice(pricePatchRequest, false))
+            }
+        }
     }
 }

@@ -10,7 +10,6 @@ import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
 import app.priceguard.data.dto.RecommendProductResult
-import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.RepositoryResult
 
 interface ProductRepository {
@@ -27,5 +26,5 @@ interface ProductRepository {
 
     suspend fun deleteProduct(productCode: String, renewed: Boolean): ProductDeleteState
 
-    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest): APIResult<PricePatchResponse>
+    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean): RepositoryResult<PricePatchResponse>
 }
