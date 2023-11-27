@@ -1,17 +1,16 @@
 package app.priceguard.ui.additem.setprice
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
-import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
@@ -39,6 +38,14 @@ class SetTargetPriceFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (activity?.intent?.hasExtra("isAdding") == true) {
+                activity?.finish()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
 
         val productCode = requireArguments().getString("productCode") ?: ""
         val title = requireArguments().getString("productTitle") ?: ""
@@ -118,12 +125,7 @@ class SetTargetPriceFragment : Fragment() {
             viewModel.event.collect { event ->
                 when (event) {
                     SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> TODO()
-
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
-                        val intent = Intent(activity, HomeActivity::class.java)
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        this@SetTargetPriceFragment.startActivity(intent)
                         activity?.finish()
                     }
 
