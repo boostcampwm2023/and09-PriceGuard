@@ -1,5 +1,7 @@
 package app.priceguard.data.repository
 
+import app.priceguard.data.dto.PricePatchRequest
+import app.priceguard.data.dto.PricePatchResponse
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
@@ -8,7 +10,6 @@ import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductDetailState
 import app.priceguard.data.dto.ProductListResult
 import app.priceguard.data.dto.ProductListState
-import app.priceguard.data.dto.ProductResponse
 import app.priceguard.data.dto.ProductVerifyRequest
 import app.priceguard.data.dto.ProductVerifyResponse
 import app.priceguard.data.dto.RecommendProductData
@@ -289,7 +290,10 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTargetPrice(productAddRequest: ProductAddRequest): ProductResponse {
-        TODO("Not yet implemented")
+    override suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest): APIResult<PricePatchResponse> {
+        val response = getApiResult {
+            productAPI.updateTargetPrice(pricePatchRequest)
+        }
+        return response
     }
 }

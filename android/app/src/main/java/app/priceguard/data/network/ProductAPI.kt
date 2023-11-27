@@ -1,5 +1,7 @@
 package app.priceguard.data.network
 
+import app.priceguard.data.dto.PricePatchRequest
+import app.priceguard.data.dto.PricePatchResponse
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductDeleteResponse
@@ -46,6 +48,6 @@ interface ProductAPI {
 
     @PATCH("targetPrice")
     suspend fun updateTargetPrice(
-        @Body productAddRequest: ProductAddRequest
-    ): Response<ProductResponse>
+        @Body pricePatchRequest: PricePatchRequest
+    ): Response<PricePatchResponse>
 }

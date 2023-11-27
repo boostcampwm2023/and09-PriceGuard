@@ -3,6 +3,7 @@ package app.priceguard.ui.additem.setprice
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.PricePatchRequest
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.repository.ProductRepository
@@ -28,6 +29,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
         data object FailureProductAdd : SetTargetPriceEvent()
+        data object SuccessPriceUpdate : SetTargetPriceEvent()
+        data object FailurePriceUpdate : SetTargetPriceEvent()
     }
 
     private val _state = MutableStateFlow(SetTargetPriceState())
@@ -53,6 +56,26 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
                 is APIResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessProductAdd)
+                }
+            }
+        }
+    }
+
+    fun patchProduct() {
+        viewModelScope.launch {
+            val response = productRepository.updateTargetPrice(
+                PricePatchRequest(
+                    _state.value.productCode,
+                    _state.value.targetPrice
+                )
+            )
+            when (response) {
+                is APIResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate)
+                }
+
+                is APIResult.Success -> {
+                    _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
             }
         }
