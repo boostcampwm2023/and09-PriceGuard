@@ -101,7 +101,6 @@ class SetTargetPriceFragment : Fragment() {
                         String.format(getString(R.string.current_price_percent), percent)
 
                     updateSlideValueWithPrice(targetPrice, round(percent))
-                    round(percent)
                 }
             }
         }
@@ -141,12 +140,9 @@ class SetTargetPriceFragment : Fragment() {
         targetPrice: Float,
         percent: Int
     ) {
-        var pricePercent = percent
+        val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
         if (targetPrice > viewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
-            pricePercent = MAX_PERCENT
-        } else if (percent < 1) {
-            pricePercent = MIN_PERCENT
         }
         slTargetPrice.value = pricePercent.toFloat()
     }
