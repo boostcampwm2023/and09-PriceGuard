@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,6 +40,14 @@ class SetTargetPriceFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (activity?.intent?.hasExtra("isAdding") == true) {
+                activity?.finish()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+
         val productCode = requireArguments().getString("productCode") ?: ""
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
@@ -58,7 +67,15 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
-            findNavController().navigateUp()
+            if (activity?.intent?.hasExtra("isAdding") == true) {
+                activity?.finish()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+        btnConfirmItemNext.setOnClickListener {
+            val isAdding = requireArguments().getBoolean("isAdding")
+            if (isAdding) viewModel?.addProduct() else viewModel?.patchProduct()
         }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
@@ -109,10 +126,13 @@ class SetTargetPriceFragment : Fragment() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> {
+                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> TODO()
+                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
+                        activity?.finish()
                     }
 
-                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
+                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> TODO()
+                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
                         activity?.finish()
                     }
                 }
