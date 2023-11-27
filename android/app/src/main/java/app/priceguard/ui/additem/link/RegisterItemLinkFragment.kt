@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -47,7 +46,7 @@ class RegisterItemLinkFragment : Fragment() {
                 if (state.isLinkError) {
                     updateLinkError(getString(R.string.not_link))
                 } else {
-                    updateLinkError("", false)
+                    updateLinkError("")
                 }
             }
         }
@@ -73,12 +72,7 @@ class RegisterItemLinkFragment : Fragment() {
         }
     }
 
-    private fun updateLinkError(message: String, isEnabled: Boolean = true) {
-        binding.viewEditTextBackground.background = if (isEnabled) {
-            ContextCompat.getDrawable(requireActivity(), R.drawable.bg_round_corner_error)
-        } else {
-            ContextCompat.getDrawable(requireActivity(), R.drawable.bg_round_corner)
-        }
+    private fun updateLinkError(message: String) {
         binding.tvRegisterItemError.text = message
     }
 
