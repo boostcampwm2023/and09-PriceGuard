@@ -59,6 +59,10 @@ class SetTargetPriceFragment : Fragment() {
         btnConfirmItemBack.setOnClickListener {
             findNavController().navigateUp()
         }
+        btnConfirmItemNext.setOnClickListener {
+            val isAdding = requireArguments().getBoolean("isAdding")
+            if (isAdding) viewModel.addProduct() else viewModel.patchProduct()
+        }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
                 setTargetPriceAndPercent(value)

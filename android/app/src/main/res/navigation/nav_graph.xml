@@ -30,6 +30,9 @@
         <argument
             android:name="productPrice"
             app:argType="integer" />
+        <argument
+            android:name="isAdding"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/registerItemLinkFragment"
