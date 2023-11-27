@@ -41,12 +41,15 @@ class ProductSummaryAdapter :
                 is ProductSummary.RecommendedProductSummary -> {
                     tvProductRecommendRank.visibility = View.VISIBLE
                     msProduct.visibility = View.GONE
+                    tvProductDiscountPercent.visibility = View.GONE
                     setRecommendRank(item)
                 }
 
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    tvProductDiscountPercent.visibility = View.VISIBLE
+                    setDisCount(item.discountPercent)
                     setSwitchListener()
                 }
             }
@@ -65,6 +68,11 @@ class ProductSummaryAdapter :
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
                 }
             }
+        }
+
+        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+            tvProductDiscountPercent.text =
+                tvProductDiscountPercent.context.getString(R.string.percent, discount)
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {

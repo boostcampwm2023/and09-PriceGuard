@@ -80,4 +80,5 @@
     <string name="cancel">취소</string>
     <string name="won">%s원</string>
     <string name="not_product_link">상품 정보가 없는 링크입니다.</string>
+    <string name="percent">%.1f%%</string>
 </resources>

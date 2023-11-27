@@ -55,8 +55,7 @@ class RecommendedProductViewModel @Inject constructor(
                     RecommendedProductSummary(
                         data.shop,
                         data.productName,
-                        data.price.toString(),
-                        "-15.3%",
+                        data.price,
                         data.productCode,
                         data.rank
                     )
