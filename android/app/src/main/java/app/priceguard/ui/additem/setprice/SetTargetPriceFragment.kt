@@ -52,6 +52,8 @@ class SetTargetPriceFragment : Fragment() {
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
 
+        viewModel.updateTargetPrice((price * 0.8).toInt().toString())
+
         binding.tvSetPriceCurrentPrice.text =
             String.format(
                 resources.getString(R.string.won),
