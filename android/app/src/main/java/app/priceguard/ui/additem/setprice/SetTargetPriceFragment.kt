@@ -99,7 +99,7 @@ class SetTargetPriceFragment : Fragment() {
 
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
-                    
+
                     updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
                 }
             }
