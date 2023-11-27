@@ -9,11 +9,6 @@ data class RecommendProductResponse(
     val recommendList: List<RecommendProductDTO>? = null
 )
 
-data class RecommendProductResult(
-    val productListState: RecommendProductState,
-    val recommendList: List<RecommendProductData>
-)
-
 enum class RecommendProductState {
     SUCCESS,
     WRONG_REQUEST,

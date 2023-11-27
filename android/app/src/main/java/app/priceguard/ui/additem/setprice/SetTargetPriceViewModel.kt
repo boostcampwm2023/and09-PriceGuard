@@ -29,6 +29,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
         data object ExistProduct : SetTargetPriceEvent()
+        data object FailurePriceAdd : SetTargetPriceEvent()
         data object SuccessPriceUpdate : SetTargetPriceEvent()
         data object FailurePriceUpdate : SetTargetPriceEvent()
     }
@@ -59,7 +60,9 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                             _event.emit(SetTargetPriceEvent.ExistProduct)
                         }
 
-                        else -> {}
+                        else -> {
+                            _event.emit(SetTargetPriceEvent.FailurePriceAdd)
+                        }
                     }
                 }
             }

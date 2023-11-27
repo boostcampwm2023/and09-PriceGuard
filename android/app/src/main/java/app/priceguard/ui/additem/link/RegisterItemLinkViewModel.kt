@@ -68,12 +68,6 @@ class RegisterItemLinkViewModel
                             _state.value = state.value.copy(isLinkError = true, isNextReady = false)
                         }
 
-                        ErrorState.PERMISSION_DENIED -> {
-                        }
-
-                        ErrorState.TOKEN_ERROR -> {
-                        }
-
                         else -> {
                         }
                     }

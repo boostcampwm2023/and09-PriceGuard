@@ -2,8 +2,9 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ErrorState
 import app.priceguard.data.dto.ProductDeleteState
-import app.priceguard.data.dto.ProductDetailState
+import app.priceguard.data.network.RepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
@@ -85,57 +86,47 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
             _state.value = _state.value.copy(isRefreshing = false)
 
-            when (result.state) {
-                ProductDetailState.SUCCESS -> {
-                    if (result.productName == null ||
-                        result.productCode == null ||
-                        result.shop == null ||
-                        result.imageUrl == null ||
-                        result.rank == null ||
-                        result.shopUrl == null ||
-                        result.targetPrice == null ||
-                        result.lowestPrice == null ||
-                        result.price == null
-                    ) {
-                        _event.emit(ProductDetailEvent.UnknownError)
-                        return@launch
-                    }
-
+            when (result) {
+                is RepositoryResult.Success -> {
                     _state.update {
                         it.copy(
                             isReady = true,
-                            isTracking = result.targetPrice >= 0,
-                            productName = result.productName,
-                            shop = result.shop,
-                            imageUrl = result.imageUrl,
-                            rank = result.rank,
-                            shopUrl = result.shopUrl,
-                            targetPrice = result.targetPrice,
-                            lowestPrice = result.lowestPrice,
-                            price = result.price,
-                            formattedPrice = formatPrice(result.price),
-                            formattedTargetPrice = if (result.targetPrice < 0) {
+                            isTracking = result.data.targetPrice >= 0,
+                            productName = result.data.productName,
+                            shop = result.data.shop,
+                            imageUrl = result.data.imageUrl,
+                            rank = result.data.rank,
+                            shopUrl = result.data.shopUrl,
+                            targetPrice = result.data.targetPrice,
+                            lowestPrice = result.data.lowestPrice,
+                            price = result.data.price,
+                            formattedPrice = formatPrice(result.data.price),
+                            formattedTargetPrice = if (result.data.targetPrice < 0) {
                                 "0"
                             } else {
                                 formatPrice(
-                                    result.targetPrice
+                                    result.data.targetPrice
                                 )
                             },
-                            formattedLowestPrice = formatPrice(result.lowestPrice)
+                            formattedLowestPrice = formatPrice(result.data.lowestPrice)
                         )
                     }
                 }
 
-                ProductDetailState.PERMISSION_DENIED -> {
-                    _event.emit(ProductDetailEvent.Logout)
-                }
+                is RepositoryResult.Error -> {
+                    when (result.errorState) {
+                        ErrorState.PERMISSION_DENIED -> {
+                            _event.emit(ProductDetailEvent.Logout)
+                        }
 
-                ProductDetailState.NOT_FOUND -> {
-                    _event.emit(ProductDetailEvent.NotFound)
-                }
+                        ErrorState.NOT_FOUND -> {
+                            _event.emit(ProductDetailEvent.NotFound)
+                        }
 
-                ProductDetailState.UNDEFINED_ERROR -> {
-                    _event.emit(ProductDetailEvent.UnknownError)
+                        else -> {
+                            _event.emit(ProductDetailEvent.UnknownError)
+                        }
+                    }
                 }
             }
         }
