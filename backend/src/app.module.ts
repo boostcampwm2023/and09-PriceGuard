@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
 import { ProductModule } from './product/product.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
     imports: [
@@ -15,5 +17,7 @@ import { ProductModule } from './product/product.module';
         AuthModule,
         ProductModule,
     ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
