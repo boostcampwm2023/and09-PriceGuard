@@ -24,6 +24,9 @@ class RecommendedProductViewModel @Inject constructor(
         data object PermissionDenied : RecommendedProductEvent()
     }
 
+    private var _isReady = MutableStateFlow(false)
+    val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
+
     private var _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
@@ -47,6 +50,7 @@ class RecommendedProductViewModel @Inject constructor(
 
             val result = productRepository.getRecommendedProductList()
             _isRefreshing.value = false
+            _isReady.value = true
 
             if (result.productListState == RecommendProductState.PERMISSION_DENIED) {
                 _events.emit(RecommendedProductEvent.PermissionDenied)

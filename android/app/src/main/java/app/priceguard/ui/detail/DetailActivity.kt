@@ -34,6 +34,13 @@ class DetailActivity : AppCompatActivity() {
         observeEvent()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (productDetailViewModel.state.value.isReady) {
+            productDetailViewModel.getDetails(true)
+        }
+    }
+
     private fun initListener() {
         binding.btnDetailTrack.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
@@ -43,6 +50,7 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("isAdding", true)
             this@DetailActivity.startActivity(intent)
         }
+
         binding.btnDetailEditPrice.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
             intent.putExtra("productCode", productDetailViewModel.productCode)

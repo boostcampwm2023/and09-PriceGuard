@@ -49,6 +49,13 @@ class RecommendedProductFragment : Fragment() {
         )
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (recommendedProductViewModel.isReady.value) {
+            recommendedProductViewModel.getRecommendedProductList(false)
+        }
+    }
+
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
         rvRecommendedProduct.adapter = adapter
