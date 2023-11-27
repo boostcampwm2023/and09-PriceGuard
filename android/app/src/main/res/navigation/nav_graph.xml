@@ -30,6 +30,9 @@
         <argument
             android:name="productPrice"
             app:argType="integer" />
+        <argument
+            android:name="isAdding"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/registerItemLinkFragment"
@@ -39,5 +42,8 @@
         <action
             android:id="@+id/action_registerItemLinkFragment_to_confirmItemLinkFragment"
             app:destination="@id/confirmItemLinkFragment" />
+        <action
+            android:id="@+id/action_registerItemLinkFragment_to_setTargetPriceFragment"
+            app:destination="@id/setTargetPriceFragment" />
     </fragment>
 </navigation>

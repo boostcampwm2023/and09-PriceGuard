@@ -24,6 +24,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
         val isReady: Boolean = false,
+        val isRefreshing: Boolean = false,
         val productName: String? = null,
         val shop: String? = null,
         val imageUrl: String? = null,
@@ -70,13 +71,19 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         }
     }
 
-    fun getDetails() {
+    fun getDetails(isRefresh: Boolean) {
         viewModelScope.launch {
             if (::productCode.isInitialized.not()) {
                 return@launch
             }
 
+            if (isRefresh) {
+                _state.value = _state.value.copy(isRefreshing = true)
+            }
+
             val result = productRepository.getProductDetail(productCode, false)
+
+            _state.value = _state.value.copy(isRefreshing = false)
 
             when (result.state) {
                 ProductDetailState.SUCCESS -> {
