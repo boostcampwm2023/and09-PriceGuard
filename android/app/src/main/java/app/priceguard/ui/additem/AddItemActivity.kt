@@ -32,7 +32,7 @@ class AddItemActivity : AppCompatActivity() {
                     intent.getStringExtra("productCode") ?: "",
                     intent.getStringExtra("productTitle") ?: "",
                     intent.getIntExtra("productPrice", 0),
-                    intent.getBooleanExtra("isAdding", true)
+                    intent.getBooleanExtra("isAdding", intent.getBooleanExtra("isAdding", true))
                 )
             navController.navigate(action)
         }
