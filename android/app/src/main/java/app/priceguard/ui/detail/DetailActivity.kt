@@ -43,6 +43,14 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("isAdding", true)
             this@DetailActivity.startActivity(intent)
         }
+        binding.btnDetailEditPrice.setOnClickListener {
+            val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productCode", productDetailViewModel.productCode)
+            intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
+            intent.putExtra("productPrice", productDetailViewModel.state.value.price)
+            intent.putExtra("isAdding", false)
+            this@DetailActivity.startActivity(intent)
+        }
     }
 
     private fun checkProductCode() {
