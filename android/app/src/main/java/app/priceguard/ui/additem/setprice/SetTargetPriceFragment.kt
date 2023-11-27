@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -122,7 +123,13 @@ class SetTargetPriceFragment : Fragment() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> TODO()
+                    SetTargetPriceViewModel.SetTargetPriceEvent.ExistProduct -> {
+                        showActivityFinishDialog(
+                            getString(R.string.error_add_product),
+                            getString(R.string.exist_product)
+                        )
+                    }
+
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
                         activity?.finish()
                     }
@@ -134,6 +141,15 @@ class SetTargetPriceFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showActivityFinishDialog(title: String, message: String) {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(R.string.confirm) { _, _ -> activity?.finish() }
+            .create()
+            .show()
     }
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
