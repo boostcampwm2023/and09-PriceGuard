@@ -16,7 +16,6 @@ import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
-import kotlin.math.round
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
@@ -75,7 +74,7 @@ class SetTargetPriceFragment : Fragment() {
         }
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
-            if (isAdding) viewModel?.addProduct() else viewModel?.patchProduct()
+            if (isAdding) viewModel.addProduct() else viewModel.patchProduct()
         }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
@@ -101,10 +100,15 @@ class SetTargetPriceFragment : Fragment() {
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
-                    updateSlideValueWithPrice(targetPrice, round(percent.toFloat()).toInt())
+                    updateSlideValueWithPrice(targetPrice, round(percent))
+                    round(percent)
                 }
             }
         }
+    }
+
+    private fun round(percent: Int): Int {
+        return ((percent + 5) / 10) * 10
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
