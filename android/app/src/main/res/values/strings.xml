@@ -85,4 +85,7 @@
     <string name="finish">완료</string>
     <string name="error_patch_price">가격 수정 실패</string>
     <string name="retry">다시 시도해 주세요.</string>
+    <string name="comma_number">%,d</string>
+    <string name="percent">%.1f%%</string>
+    <string name="add_plus">+%1$s</string>
 </resources>

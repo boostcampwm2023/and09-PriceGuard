@@ -8,6 +8,7 @@ import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.math.round
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,10 +35,6 @@ class ProductListViewModel @Inject constructor(
     private var _events = MutableSharedFlow<ProductListEvent>()
     val events: SharedFlow<ProductListEvent> = _events.asSharedFlow()
 
-    init {
-        getProductList(false)
-    }
-
     fun getProductList(isRefresh: Boolean) {
         viewModelScope.launch {
             if (isRefresh) {
@@ -54,9 +51,9 @@ class ProductListViewModel @Inject constructor(
                         UserProductSummary(
                             data.shop,
                             data.productName,
-                            data.price.toString(),
-                            "-15.0%",
+                            data.price,
                             data.productCode,
+                            calculateDiscountRate(data.targetPrice, data.price),
                             true
                         )
                     }
@@ -74,5 +71,9 @@ class ProductListViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
+        return round((price - targetPrice).toFloat() / (if (targetPrice == 0) 1 else targetPrice) * 1000) / 10
     }
 }

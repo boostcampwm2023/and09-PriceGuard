@@ -51,6 +51,11 @@ class ProductListFragment : Fragment() {
         )
     }
 
+    override fun onStart() {
+        super.onStart()
+        productListViewModel.getProductList(false)
+    }
+
     private fun FragmentProductListBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
         rvProductList.adapter = adapter

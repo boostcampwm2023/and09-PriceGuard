@@ -35,10 +35,6 @@ class RecommendedProductViewModel @Inject constructor(
     private var _events = MutableSharedFlow<RecommendedProductEvent>()
     val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
 
-    init {
-        getRecommendedProductList(false)
-    }
-
     fun getRecommendedProductList(isRefresh: Boolean) {
         viewModelScope.launch {
             if (isRefresh) {
@@ -54,8 +50,7 @@ class RecommendedProductViewModel @Inject constructor(
                         RecommendedProductSummary(
                             data.shop,
                             data.productName,
-                            data.price.toString(),
-                            "-15.3%",
+                            data.price,
                             data.productCode,
                             data.rank
                         )

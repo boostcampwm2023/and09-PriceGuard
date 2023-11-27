@@ -1,6 +1,7 @@
 package app.priceguard.ui.home
 
 import android.content.Intent
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,12 +42,15 @@ class ProductSummaryAdapter :
                 is ProductSummary.RecommendedProductSummary -> {
                     tvProductRecommendRank.visibility = View.VISIBLE
                     msProduct.visibility = View.GONE
+                    tvProductDiscountPercent.visibility = View.GONE
                     setRecommendRank(item)
                 }
 
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    tvProductDiscountPercent.visibility = View.VISIBLE
+                    setDisCount(item.discountPercent)
                     setSwitchListener()
                 }
             }
@@ -65,6 +69,28 @@ class ProductSummaryAdapter :
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
                 }
             }
+        }
+
+        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+            tvProductDiscountPercent.text =
+                if (discount > 0) {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.add_plus,
+                        tvProductDiscountPercent.context.getString(R.string.percent, discount)
+                    )
+                } else {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.percent,
+                        discount
+                    )
+                }
+            val value = TypedValue()
+            tvProductDiscountPercent.context.theme.resolveAttribute(
+                if (discount > 0) android.R.attr.colorPrimary else android.R.attr.colorError,
+                value,
+                true
+            )
+            tvProductDiscountPercent.setTextColor(value.data)
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
