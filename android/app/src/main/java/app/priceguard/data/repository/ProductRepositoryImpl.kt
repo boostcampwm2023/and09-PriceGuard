@@ -23,7 +23,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    private suspend fun <T> renew(repoFun: RepositoryResult<T>): RepositoryResult<T> {
+    private suspend fun <T> renew(repoFun: suspend () -> RepositoryResult<T>): RepositoryResult<T> {
         val refreshToken =
             tokenRepository.getRefreshToken()
                 ?: return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
@@ -33,12 +33,12 @@ class ProductRepositoryImpl @Inject constructor(
         if (renewResult != RenewResult.SUCCESS) {
             return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
         }
-        return repoFun
+        return repoFun.invoke()
     }
 
     private suspend fun <T> handleError(
         code: Int?,
-        repoFun: RepositoryResult<T>
+        repoFun: suspend () -> RepositoryResult<T>
     ): RepositoryResult<T> {
         return when (code) {
             400 -> {
@@ -91,7 +91,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code, verifyLink(productUrl, true))
+                handleError(response.code) {
+                    verifyLink(productUrl, true)
+                }
             }
         }
     }
@@ -117,7 +119,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code, addProduct(productAddRequest, true))
+                handleError(response.code) {
+                    addProduct(productAddRequest, true)
+                }
             }
         }
     }
@@ -146,7 +150,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code, getProductList(true))
+                return handleError(response.code) {
+                    getProductList(true)
+                }
             }
         }
     }
@@ -175,7 +181,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code, getRecommendedProductList(true))
+                return handleError(response.code) {
+                    getRecommendedProductList(true)
+                }
             }
         }
     }
@@ -208,7 +216,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code, getProductDetail(productCode, true))
+                return handleError(response.code) {
+                    getProductDetail(productCode, true)
+                }
             }
         }
     }
@@ -274,7 +284,9 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code, updateTargetPrice(pricePatchRequest, false))
+                handleError(response.code) {
+                    updateTargetPrice(pricePatchRequest, false)
+                }
             }
         }
     }
