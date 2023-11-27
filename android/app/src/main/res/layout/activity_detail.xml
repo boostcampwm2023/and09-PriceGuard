@@ -34,286 +34,296 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srl_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:onRefreshListener="@{() -> viewModel.getDetails(true)}"
+            app:refreshing="@{viewModel.state.isRefreshing}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <androidx.core.widget.NestedScrollView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/gl_vertical_start_nested"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_begin="16dp" />
-
-                    <androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/gl_vertical_end_nested"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_end="16dp" />
-
-                    <ImageView
-                        android:id="@+id/iv_detail_product"
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="256dp"
-                        app:imageFromUrl="@{viewModel.state.imageUrl}"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/iv_detail_shopping_mall_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:src="@drawable/ic_11st_logo"
-                        app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/iv_detail_product" />
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/gl_vertical_start_nested"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_begin="16dp" />
 
-                    <TextView
-                        android:id="@+id/tv_detail_product_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text="@{viewModel.state.productName}"
-                        android:textAppearance="?attr/textAppearanceTitleLarge"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/iv_detail_shopping_mall_icon"
-                        tools:text="오뚜기 진라면, 120g, 40개" />
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/gl_vertical_end_nested"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_end="16dp" />
 
-                    <TextView
-                        android:id="@+id/tv_detail_current_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@{@string/price(viewModel.state.formattedPrice)}"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/tv_detail_product_name"
-                        tools:text="28,080원" />
+                        <ImageView
+                            android:id="@+id/iv_detail_product"
+                            android:layout_width="match_parent"
+                            android:layout_height="256dp"
+                            app:imageFromUrl="@{viewModel.state.imageUrl}"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_detail_popular_rank"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="?attr/colorOnPrimaryFixedVariant"
-                        android:visibility="@{viewModel.state.rank > 0 &amp;&amp; viewModel.state.rank &lt;= 100 ? View.VISIBLE : View.GONE}"
-                        android:text="@{@string/rank(viewModel.state.rank)}"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_current_price"
-                        tools:text="트래킹 상품 인기 #2위" />
+                        <ImageView
+                            android:id="@+id/iv_detail_shopping_mall_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp"
+                            android:src="@drawable/ic_11st_logo"
+                            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/iv_detail_product" />
 
-                    <TextView
-                        android:id="@+id/tv_detail_add_tracking_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/want_to_buy_cheap"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textStyle="bold"
-                        android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_popular_rank" />
-
-                    <Button
-                        android:id="@+id/btn_detail_track"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/add_to_tracking_list"
-                        android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
-                        app:icon="@drawable/ic_track"
-                        app:iconGravity="textStart"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_add_tracking_title" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_already_tracking_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/already_tracking"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textStyle="bold"
-                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_detail_track" />
-
-                    <Button
-                        android:id="@+id/btn_detail_edit_price"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="4dp"
-                        android:text="@string/edit_target_price"
-                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
-                        app:icon="@drawable/ic_edit"
-                        app:iconGravity="textStart"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_detail_delete"
-                        app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/tv_detail_already_tracking_title" />
-
-                    <Button
-                        android:id="@+id/btn_detail_delete"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="8dp"
-                        android:onClick="@{() -> viewModel.sendDeleteTrackingEvent()}"
-                        android:text="@string/delete_tracking"
-                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
-                        app:icon="@drawable/ic_delete"
-                        app:iconGravity="textStart"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintStart_toEndOf="@+id/btn_detail_edit_price"
-                        app:layout_constraintTop_toBottomOf="@id/tv_detail_already_tracking_title" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_lowest_price_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/lowest_price"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_detail_delete" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_lowest_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@{@string/price(viewModel.state.formattedLowestPrice)}"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintTop_toBottomOf="@id/btn_detail_delete"
-                        tools:text="28,080원" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_target_price_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/target_price"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price_title" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_target_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@{@string/price(viewModel.state.formattedTargetPrice)}"
-                        android:textAppearance="?attr/textAppearanceTitleSmall"
-                        android:textStyle="bold"
-                        android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price"
-                        tools:text="28,080원" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_price_graph"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/price_track_graph"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detail_target_price_title" />
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/mbtg_graph_period"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:checkedButton="@+id/btn_period_day"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/tv_detail_price_graph"
-                        app:singleSelection="true">
-
-                        <Button
-                            android:id="@+id/btn_period_day"
-                            style="?attr/materialButtonOutlinedStyle"
+                        <TextView
+                            android:id="@+id/tv_detail_product_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/day" />
+                            android:layout_marginTop="8dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="@{viewModel.state.productName}"
+                            android:textAppearance="?attr/textAppearanceTitleLarge"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/iv_detail_shopping_mall_icon"
+                            tools:text="오뚜기 진라면, 120g, 40개" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_current_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@{@string/price(viewModel.state.formattedPrice)}"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/tv_detail_product_name"
+                            tools:text="28,080원" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_popular_rank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnPrimaryFixedVariant"
+                            android:visibility="@{viewModel.state.rank > 0 &amp;&amp; viewModel.state.rank &lt;= 100 ? View.VISIBLE : View.GONE}"
+                            android:text="@{@string/rank(viewModel.state.rank)}"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_current_price"
+                            tools:text="트래킹 상품 인기 #2위" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_add_tracking_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/want_to_buy_cheap"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textStyle="bold"
+                            android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_popular_rank" />
 
                         <Button
-                            android:id="@+id/btn_period_week"
+                            android:id="@+id/btn_detail_track"
                             style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/add_to_tracking_list"
+                            android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
+                            app:icon="@drawable/ic_track"
+                            app:iconGravity="textStart"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_add_tracking_title" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_already_tracking_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/week" />
+                            android:layout_marginTop="8dp"
+                            android:text="@string/already_tracking"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textStyle="bold"
+                            android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/btn_detail_track" />
 
                         <Button
-                            android:id="@+id/btn_period_month"
-                            style="?attr/materialButtonOutlinedStyle"
+                            android:id="@+id/btn_detail_edit_price"
+                            style="@style/Widget.Material3.Button.TonalButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/month" />
+                            android:layout_height="48dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="4dp"
+                            android:text="@string/edit_target_price"
+                            android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
+                            app:icon="@drawable/ic_edit"
+                            app:iconGravity="textStart"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_detail_delete"
+                            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/tv_detail_already_tracking_title" />
 
                         <Button
-                            android:id="@+id/btn_period_quarter"
-                            style="?attr/materialButtonOutlinedStyle"
+                            android:id="@+id/btn_detail_delete"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="8dp"
+                            android:onClick="@{() -> viewModel.sendDeleteTrackingEvent()}"
+                            android:text="@string/delete_tracking"
+                            android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
+                            app:icon="@drawable/ic_delete"
+                            app:iconGravity="textStart"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintStart_toEndOf="@+id/btn_detail_edit_price"
+                            app:layout_constraintTop_toBottomOf="@id/tv_detail_already_tracking_title" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_lowest_price_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/lowest_price"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/btn_detail_delete" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_lowest_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@{@string/price(viewModel.state.formattedLowestPrice)}"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintTop_toBottomOf="@id/btn_detail_delete"
+                            tools:text="28,080원" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_target_price_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/target_price"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price_title" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_target_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@{@string/price(viewModel.state.formattedTargetPrice)}"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:textStyle="bold"
+                            android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_lowest_price"
+                            tools:text="28,080원" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_price_graph"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/price_track_graph"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_detail_target_price_title" />
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/mbtg_graph_period"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/quarter" />
+                            android:layout_marginTop="8dp"
+                            app:checkedButton="@+id/btn_period_day"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/tv_detail_price_graph"
+                            app:singleSelection="true">
 
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                            <Button
+                                android:id="@+id/btn_period_day"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/day" />
 
-                    <androidx.constraintlayout.widget.Placeholder
-                        android:layout_width="0dp"
-                        android:layout_height="400dp"
-                        android:layout_marginTop="8dp"
-                        android:backgroundTint="?attr/colorSecondaryContainer"
-                        app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
-                        app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
-                        app:layout_constraintTop_toBottomOf="@id/mbtg_graph_period" />
+                            <Button
+                                android:id="@+id/btn_period_week"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/week" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                            <Button
+                                android:id="@+id/btn_period_month"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/month" />
 
-            </androidx.core.widget.NestedScrollView>
+                            <Button
+                                android:id="@+id/btn_period_quarter"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/quarter" />
 
-            <Button
-                android:id="@+id/btn_detail_to_shopping_mall"
-                style="@style/Widget.Material3.Button.ElevatedButton.Primary"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_margin="16dp"
-                android:enabled="@{viewModel.state.isReady}"
-                android:onClick="@{() -> viewModel.sendBrowserEvent()}"
-                android:text="@string/goto_shopping_mall"
-                app:icon="@drawable/ic_shopping_mall"
-                app:iconGravity="textStart"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.Placeholder
+                            android:layout_width="0dp"
+                            android:layout_height="400dp"
+                            android:layout_marginTop="8dp"
+                            android:backgroundTint="?attr/colorSecondaryContainer"
+                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
+                            app:layout_constraintTop_toBottomOf="@id/mbtg_graph_period" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+                <Button
+                    android:id="@+id/btn_detail_to_shopping_mall"
+                    style="@style/Widget.Material3.Button.ElevatedButton.Primary"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_margin="16dp"
+                    android:enabled="@{viewModel.state.isReady}"
+                    android:onClick="@{() -> viewModel.sendBrowserEvent()}"
+                    android:text="@string/goto_shopping_mall"
+                    app:icon="@drawable/ic_shopping_mall"
+                    app:iconGravity="textStart"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
