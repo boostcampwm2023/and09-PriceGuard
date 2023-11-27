@@ -15,6 +15,7 @@ import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
+import kotlin.math.round
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
@@ -77,19 +78,20 @@ class SetTargetPriceFragment : Fragment() {
             if (etTargetPrice.isFocused) {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
                     val targetPrice = it.toString().toFloat()
-                    var percent =
-                        ((targetPrice / (viewModel?.state?.value?.productPrice ?: 0)) * 100).toInt()
+                    val percent =
+                        (
+                            (
+                                targetPrice / (
+                                    viewModel?.state?.value?.productPrice
+                                        ?: MIN_PERCENT
+                                    )
+                                ) * MAX_PERCENT
+                            ).toInt()
+
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
 
-                    percent = 10 * ((percent + 5) / 10)
-                    if (targetPrice > (viewModel?.state?.value?.productPrice ?: 0)) {
-                        tvTargetPricePercent.text = getString(R.string.over_current_price)
-                        percent = 100
-                    } else if (percent < 1) {
-                        percent = 0
-                    }
-                    slTargetPrice.value = percent.toFloat()
+                    updateSlideValueWithPrice(targetPrice, round(percent.toFloat()).toInt())
                 }
             }
         }
@@ -118,8 +120,27 @@ class SetTargetPriceFragment : Fragment() {
         }
     }
 
+    private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
+        targetPrice: Float,
+        percent: Int
+    ) {
+        var pricePercent = percent
+        if (targetPrice > (viewModel?.state?.value?.productPrice ?: MIN_PERCENT)) {
+            tvTargetPricePercent.text = getString(R.string.over_current_price)
+            pricePercent = MAX_PERCENT
+        } else if (percent < 1) {
+            pricePercent = MIN_PERCENT
+        }
+        slTargetPrice.value = pricePercent.toFloat()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val MIN_PERCENT = 0
+        const val MAX_PERCENT = 100
     }
 }
