@@ -118,7 +118,7 @@
             android:id="@+id/btn_confirm_item_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next"
+            android:text="@string/finish"
             app:layout_constraintBottom_toBottomOf="@id/btn_confirm_item_back"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />
 

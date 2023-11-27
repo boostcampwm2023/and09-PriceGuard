@@ -81,5 +81,6 @@
     <string name="won">%s원</string>
     <string name="not_product_link">상품 정보가 없는 링크입니다.</string>
     <string name="error_add_product">상품 등록 실패</string>
-    <string name="exist_product">이미 등록한 상품입니다.</string>
+    <string name="exist_product">이미 등록한 상품입니다.</string>료
+    <string name="finish">완료</string>
 </resources>
