@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.databinding.ActivityDetailBinding
+import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,9 +28,21 @@ class DetailActivity : AppCompatActivity() {
         binding.viewModel = productDetailViewModel
         setContentView(binding.root)
 
+        initListener()
         setNavigationButton()
         checkProductCode()
         observeEvent()
+    }
+
+    private fun initListener() {
+        binding.btnDetailTrack.setOnClickListener {
+            val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productCode", productDetailViewModel.productCode)
+            intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
+            intent.putExtra("productPrice", productDetailViewModel.state.value.price)
+            intent.putExtra("isAdding", true)
+            this@DetailActivity.startActivity(intent)
+        }
     }
 
     private fun checkProductCode() {
