@@ -36,7 +36,7 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewModel = viewModel
+        binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         val productCode = requireArguments().getString("productCode") ?: ""
@@ -79,14 +79,7 @@ class SetTargetPriceFragment : Fragment() {
                 if (it.toString().matches("^\\d+\$".toRegex())) {
                     val targetPrice = it.toString().toFloat()
                     val percent =
-                        (
-                            (
-                                targetPrice / (
-                                    viewModel?.state?.value?.productPrice
-                                        ?: MIN_PERCENT
-                                    )
-                                ) * MAX_PERCENT
-                            ).toInt()
+                        ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
 
                     tvTargetPricePercent.text =
                         String.format(getString(R.string.current_price_percent), percent)
@@ -101,7 +94,7 @@ class SetTargetPriceFragment : Fragment() {
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
-            ((viewModel?.state?.value?.productPrice ?: 0) * value.toInt() / 100).toString()
+            ((viewModel.state.value.productPrice) * value.toInt() / 100).toString()
         )
     }
 
@@ -125,7 +118,7 @@ class SetTargetPriceFragment : Fragment() {
         percent: Int
     ) {
         var pricePercent = percent
-        if (targetPrice > (viewModel?.state?.value?.productPrice ?: MIN_PERCENT)) {
+        if (targetPrice > viewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
             pricePercent = MAX_PERCENT
         } else if (percent < 1) {
