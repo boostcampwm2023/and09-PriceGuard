@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.additem.AddItemActivity
@@ -18,10 +16,8 @@ import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
-import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
