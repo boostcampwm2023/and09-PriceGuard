@@ -29,6 +29,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
         data object FailureProductAdd : SetTargetPriceEvent()
+        data object SuccessPriceUpdate : SetTargetPriceEvent()
+        data object FailurePriceUpdate : SetTargetPriceEvent()
     }
 
     private val _state = MutableStateFlow(SetTargetPriceState())
@@ -69,12 +71,11 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
             )
             when (response) {
                 is APIResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailureProductAdd)
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate)
                 }
 
                 is APIResult.Success -> {
-                    Log.d("TEST", response.toString())
-                    _event.emit(SetTargetPriceEvent.SuccessProductAdd)
+                    _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
             }
         }

@@ -59,7 +59,11 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
-            findNavController().navigateUp()
+            if (activity?.intent?.hasExtra("isAdding") == true) {
+                activity?.finish()
+            } else {
+                findNavController().navigateUp()
+            }
         }
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
@@ -113,13 +117,18 @@ class SetTargetPriceFragment : Fragment() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> {
-                    }
+                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> TODO()
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
                         val intent = Intent(activity, HomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         this@SetTargetPriceFragment.startActivity(intent)
+                        activity?.finish()
+                    }
+
+                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> TODO()
+                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
                         activity?.finish()
                     }
                 }
