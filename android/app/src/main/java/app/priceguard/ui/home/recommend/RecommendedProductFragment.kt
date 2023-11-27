@@ -51,9 +51,7 @@ class RecommendedProductFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (recommendedProductViewModel.isReady.value) {
-            recommendedProductViewModel.getRecommendedProductList(false)
-        }
+        recommendedProductViewModel.getRecommendedProductList(false)
     }
 
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
