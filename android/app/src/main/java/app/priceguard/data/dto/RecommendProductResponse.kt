@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class RecommendProductResponse(
     val statusCode: Int,
     val message: String,
-    val recommendList: List<RecommendProductDTO>?
+    val recommendList: List<RecommendProductDTO>? = null
 )
 
 data class RecommendProductResult(
