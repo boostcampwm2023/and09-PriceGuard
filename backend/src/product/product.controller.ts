@@ -41,6 +41,7 @@ import {
     TrackingProductsNotFound,
     AddProductConflict,
     ProductDetailsSuccess,
+    AddProductSuccess,
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -80,7 +81,7 @@ export class ProductController {
 
     @ApiOperation({ summary: '상품 추가 API', description: '상품을 추가한다' })
     @ApiBody({ type: ProductAddDto })
-    @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 추가 성공' })
+    @ApiOkResponse({ type: AddProductSuccess, description: '상품 추가 성공' })
     @ApiNotFoundResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @ApiConflictResponse({ type: AddProductConflict, description: '이미 등록된 상품 존재' })
