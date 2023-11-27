@@ -35,10 +35,6 @@ class RecommendedProductViewModel @Inject constructor(
     private var _events = MutableSharedFlow<RecommendedProductEvent>()
     val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
 
-    init {
-        getRecommendedProductList(false)
-    }
-
     fun getRecommendedProductList(isRefresh: Boolean) {
         viewModelScope.launch {
             if (isRefresh) {
