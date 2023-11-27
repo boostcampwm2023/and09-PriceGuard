@@ -13,18 +13,25 @@ export class JWTService {
         private jwtService: JwtService,
     ) {}
 
+    async validateRefreshToken(userId: string, payload: string) {
+        if (!(await this.isLatestRefreshToken(userId, payload))) {
+            this.jwtRepository.saveToken(userId, '');
+            throw new UnauthorizedException('이미 재발급된 refreshToken');
+        }
+    }
+
     async isLatestRefreshToken(userId: string, payload: string) {
         const tokenInfo = await this.findOne(userId);
         const latestRefreshToken = tokenInfo?.token;
         const token = this.jwtService.sign(payload, { secret: REFRESH_TOKEN_SECRETS });
         if (latestRefreshToken !== token) {
-            throw new UnauthorizedException('이미 재발급된 refreshToken');
+            return false;
         }
         return true;
     }
 
     async findOne(userId: string): Promise<Token | null> {
-        const refreshToken = await this.jwtRepository.findOne({ where: { userId } });
+        const refreshToken = await this.jwtRepository.findOne({ where: { userId: userId } });
         return refreshToken;
     }
 }
