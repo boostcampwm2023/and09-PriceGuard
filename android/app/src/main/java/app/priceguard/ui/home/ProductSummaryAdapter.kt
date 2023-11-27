@@ -73,7 +73,17 @@ class ProductSummaryAdapter :
 
         private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
             tvProductDiscountPercent.text =
-                tvProductDiscountPercent.context.getString(R.string.percent, discount)
+                if (discount > 0) {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.add_plus,
+                        tvProductDiscountPercent.context.getString(R.string.percent, discount)
+                    )
+                } else {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.percent,
+                        discount
+                    )
+                }
             val value = TypedValue()
             tvProductDiscountPercent.context.theme.resolveAttribute(
                 if (discount > 0) android.R.attr.colorPrimary else android.R.attr.colorError,
