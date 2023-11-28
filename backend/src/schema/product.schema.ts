@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-
-const KR_OFFSET = 9 * 60 * 60 * 1000;
+import { KR_OFFSET } from 'src/constants';
 
 @Schema({
     timestamps: {
