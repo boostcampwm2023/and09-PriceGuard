@@ -41,8 +41,8 @@ class SetTargetPriceFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (activity?.intent?.hasExtra("isAdding") == true) {
-                activity?.finish()
+            if (requireActivity().intent?.hasExtra("isAdding") == true) {
+                requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
@@ -69,8 +69,8 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
-            if (activity?.intent?.hasExtra("isAdding") == true) {
-                activity?.finish()
+            if (requireActivity().intent?.hasExtra("isAdding") == true) {
+                requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
@@ -168,8 +168,8 @@ class SetTargetPriceFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(R.string.confirm) { _, _ -> activity?.finish() }
-            .setOnDismissListener { activity?.finish() }
+            .setPositiveButton(R.string.confirm) { _, _ -> requireActivity().finish() }
+            .setOnDismissListener { requireActivity().finish() }
             .create()
             .show()
     }

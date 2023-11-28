@@ -88,25 +88,25 @@ class ProductListFragment : Fragment() {
             productListViewModel.events.collect { event ->
                 when (event) {
                     ProductErrorState.PERMISSION_DENIED -> {
-                        activity?.showPermissionDeniedDialog(tokenRepository)
+                        requireActivity().showPermissionDeniedDialog(tokenRepository)
                     }
 
                     ProductErrorState.INVALID_REQUEST -> {
-                        activity?.showConfirmationDialog(
+                        requireActivity().showConfirmationDialog(
                             getString(R.string.product_list_failed),
                             getString(R.string.invalid_request)
                         )
                     }
 
                     ProductErrorState.NOT_FOUND -> {
-                        activity?.showConfirmationDialog(
+                        requireActivity().showConfirmationDialog(
                             getString(R.string.product_list_failed),
                             getString(R.string.not_found)
                         )
                     }
 
                     else -> {
-                        activity?.showConfirmationDialog(
+                        requireActivity().showConfirmationDialog(
                             getString(R.string.product_list_failed),
                             getString(R.string.undefined_error)
                         )
