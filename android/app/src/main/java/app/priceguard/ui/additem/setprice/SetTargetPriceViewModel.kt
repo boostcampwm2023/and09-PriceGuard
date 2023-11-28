@@ -79,10 +79,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         }
     }
 
-    fun updateTargetPrice(price: String) {
-        if (price.toIntOrNull() != null) {
-            _state.value = state.value.copy(targetPrice = price.toInt())
-        }
+    fun updateTargetPrice(price: Int) {
+        _state.value = state.value.copy(targetPrice = price)
     }
 
     fun setProductInfo(productCode: String, name: String, price: Int) {

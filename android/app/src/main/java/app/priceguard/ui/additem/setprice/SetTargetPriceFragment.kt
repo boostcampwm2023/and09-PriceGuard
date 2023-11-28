@@ -1,6 +1,7 @@
 package app.priceguard.ui.additem.setprice
 
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +61,7 @@ class SetTargetPriceFragment : Fragment() {
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
 
-        viewModel.updateTargetPrice((price * 0.8).toInt().toString())
+        viewModel.updateTargetPrice((price * 0.8).toInt())
 
         binding.tvSetPriceCurrentPrice.text =
             String.format(
@@ -102,18 +103,27 @@ class SetTargetPriceFragment : Fragment() {
             }
         })
         etTargetPrice.addTextChangedListener {
-            if (etTargetPrice.isFocused) {
-                if (it.toString().matches("^\\d+\$".toRegex())) {
-                    val targetPrice = it.toString().toFloat()
-                    val percent =
-                        ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+            updateTargetPriceUI(it)
+        }
+    }
 
-                    tvTargetPricePercent.text =
-                        String.format(getString(R.string.current_price_percent), percent)
-
-                    updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
-                }
+    private fun updateTargetPriceUI(it: Editable?) {
+        if (binding.etTargetPrice.isFocused) {
+            val targetPrice = if (it.toString().matches("^\\d+\$".toRegex())) {
+                it.toString().toFloat()
+            } else {
+                0F
             }
+
+            viewModel.updateTargetPrice(targetPrice.toInt())
+
+            val percent =
+                ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+
+            binding.tvTargetPricePercent.text =
+                String.format(getString(R.string.current_price_percent), percent)
+
+            binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
         }
     }
 
@@ -122,11 +132,13 @@ class SetTargetPriceFragment : Fragment() {
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
+        val targetPrice = ((viewModel.state.value.productPrice) * value.toInt() / 100)
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
-            ((viewModel.state.value.productPrice) * value.toInt() / 100).toString()
+            targetPrice.toString()
         )
+        viewModel.updateTargetPrice(targetPrice)
     }
 
     private fun handleEvent() {
