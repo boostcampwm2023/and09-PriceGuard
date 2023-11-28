@@ -90,7 +90,7 @@
     <string name="add_plus">+%1$s</string>
     <string name="success_add">등록 완료</string>
     <string name="success_update">수정 완료</string>
-    <string name="success_add_message">상품 등록을 완료했습니다..</string>
+    <string name="success_add_message">상품 등록을 완료했습니다.</string>
     <string name="success_update_message">목표 가격 수정을 완료했습니다.</string>
     <string name="not_found">데이터가 없습니다.</string>
     <string name="recommended_product_failed">인기 상품 조회 실패</string>

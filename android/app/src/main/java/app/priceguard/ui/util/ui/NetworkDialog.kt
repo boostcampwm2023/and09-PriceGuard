@@ -1,7 +1,6 @@
 package app.priceguard.ui.util.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
@@ -29,7 +28,7 @@ fun Activity.goBackToLoginActivity(tokenRepository: TokenRepository) {
     finish()
 }
 
-fun Context.showConfirmationDialog(
+fun Activity.showConfirmationDialog(
     title: String,
     message: String
 ) {
