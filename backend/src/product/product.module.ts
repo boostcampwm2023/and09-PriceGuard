@@ -10,7 +10,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([TrackingProduct, Product]), MongooseModule.forFeature([{name : ProductPrice.name, schema: ProductPriceSchema }])],
+    imports: [
+        TypeOrmModule.forFeature([TrackingProduct, Product]),
+        MongooseModule.forFeature([{ name: ProductPrice.name, schema: ProductPriceSchema }]),
+    ],
     controllers: [ProductController],
     providers: [ProductService, ProductRepository, TrackingProductRepository],
 })

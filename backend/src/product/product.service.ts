@@ -23,7 +23,7 @@ export class ProductService {
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
         @InjectModel(ProductPrice.name)
-        private productPriceModel: Model<ProductPrice>
+        private productPriceModel: Model<ProductPrice>,
     ) {}
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
