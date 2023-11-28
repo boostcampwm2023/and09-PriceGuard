@@ -5,7 +5,6 @@ import app.priceguard.data.dto.PricePatchResponse
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
-import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.ProductVerifyDTO
@@ -216,38 +215,15 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun deleteProduct(
         productCode: String,
         isRenewed: Boolean
-    ): ProductDeleteState {
-        when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
+    ): ProductRepositoryResult<Boolean> {
+        return when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
             is APIResult.Success -> {
-                return ProductDeleteState.SUCCESS
+                ProductRepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
-                when (response.code) {
-                    400 -> {
-                        return ProductDeleteState.INVALID_REQUEST
-                    }
-
-                    401 -> {
-                        if (isRenewed) {
-                            return ProductDeleteState.UNAUTHORIZED
-                        }
-                        val refreshToken = tokenRepository.getRefreshToken()
-                            ?: return ProductDeleteState.UNAUTHORIZED
-                        val renewResult = tokenRepository.renewTokens(refreshToken)
-                        if (renewResult != RenewResult.SUCCESS) {
-                            return ProductDeleteState.UNAUTHORIZED
-                        }
-                        return deleteProduct(productCode, true)
-                    }
-
-                    404 -> {
-                        return ProductDeleteState.NOT_FOUND
-                    }
-
-                    else -> {
-                        return ProductDeleteState.UNDEFINED_ERROR
-                    }
+                handleError(response.code, isRenewed) {
+                    deleteProduct(productCode, true)
                 }
             }
         }

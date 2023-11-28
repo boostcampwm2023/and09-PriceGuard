@@ -2,7 +2,6 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
@@ -46,7 +45,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         data object NotFound : ProductDetailEvent()
         data object UnknownError : ProductDetailEvent()
         data object DeleteSuccess : ProductDetailEvent()
-        data class DeleteFailed(val errorType: ProductDeleteState) : ProductDetailEvent()
+        data class DeleteFailed(val errorType: ProductErrorState) : ProductDetailEvent()
     }
 
     lateinit var productCode: String
@@ -61,12 +60,12 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     fun deleteProductTracking() {
         viewModelScope.launch {
             when (val result = productRepository.deleteProduct(productCode)) {
-                ProductDeleteState.SUCCESS -> {
+                is ProductRepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
 
-                else -> {
-                    _event.emit(ProductDetailEvent.DeleteFailed(result))
+                is ProductRepositoryResult.Error -> {
+                    _event.emit(ProductDetailEvent.DeleteFailed(result.productErrorState))
                 }
             }
         }

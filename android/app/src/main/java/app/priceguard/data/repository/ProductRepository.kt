@@ -5,7 +5,6 @@ import app.priceguard.data.dto.PricePatchResponse
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
-import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
@@ -24,7 +23,7 @@ interface ProductRepository {
 
     suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<ProductDetailResult>
 
-    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductDeleteState
+    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<Boolean>
 
     suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean = false): ProductRepositoryResult<PricePatchResponse>
 }
