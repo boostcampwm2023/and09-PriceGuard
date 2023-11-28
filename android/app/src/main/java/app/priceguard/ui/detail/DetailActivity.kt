@@ -8,16 +8,22 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
-import app.priceguard.data.dto.ProductDeleteState
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.showConfirmationDialog
+import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var tokenRepository: TokenRepository
     private lateinit var binding: ActivityDetailBinding
     private val productDetailViewModel: ProductDetailViewModel by viewModels()
 
@@ -110,24 +116,30 @@ class DetailActivity : AppCompatActivity() {
 
                     is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
                         when (event.errorType) {
-                            ProductDeleteState.NOT_FOUND -> {
-                                showToast(getString(R.string.product_not_found))
+                            ProductErrorState.NOT_FOUND -> {
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.product_not_found)
+                                )
                             }
 
-                            ProductDeleteState.INVALID_REQUEST -> {
-                                showToast(getString(R.string.invalid_request))
+                            ProductErrorState.INVALID_REQUEST -> {
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.invalid_request)
+                                )
                             }
 
-                            ProductDeleteState.UNAUTHORIZED -> {
-                                showToast(getString(R.string.logged_out))
-                                finish()
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                showPermissionDeniedDialog(tokenRepository)
                             }
 
-                            ProductDeleteState.UNDEFINED_ERROR -> {
-                                showToast(getString(R.string.undefined_error))
+                            else -> {
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.undefined_error)
+                                )
                             }
-
-                            else -> {}
                         }
                     }
 

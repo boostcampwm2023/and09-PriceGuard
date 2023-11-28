@@ -73,7 +73,6 @@
             android:textSize="22sp"
             android:textStyle="bold"
             android:imeOptions="actionDone"
-            android:onTextChanged="@{(content, s, b, c) -> vm.updateTargetPrice(content.toString())}"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/tv_set_price_name" />
@@ -118,7 +117,7 @@
             android:id="@+id/btn_confirm_item_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next"
+            android:text="@string/finish"
             app:layout_constraintBottom_toBottomOf="@id/btn_confirm_item_back"
             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />
 

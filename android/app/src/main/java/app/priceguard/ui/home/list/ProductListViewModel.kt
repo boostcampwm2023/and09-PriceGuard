@@ -2,7 +2,8 @@ package app.priceguard.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductListState
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,18 +22,14 @@ class ProductListViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    sealed class ProductListEvent {
-        data object PermissionDenied : ProductListEvent()
-    }
-
     private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
     val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
 
-    private var _events = MutableSharedFlow<ProductListEvent>()
-    val events: SharedFlow<ProductListEvent> = _events.asSharedFlow()
+    private var _events = MutableSharedFlow<ProductErrorState>()
+    val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
 
     fun getProductList(isRefresh: Boolean) {
         viewModelScope.launch {
@@ -44,18 +41,22 @@ class ProductListViewModel @Inject constructor(
 
             _isRefreshing.value = false
 
-            if (result.productListState == ProductListState.PERMISSION_DENIED) {
-                _events.emit(ProductListEvent.PermissionDenied)
-            } else {
-                _productList.value = result.trackingList.map { data ->
-                    UserProductSummary(
-                        data.shop,
-                        data.productName,
-                        data.price,
-                        data.productCode,
-                        calculateDiscountRate(data.targetPrice, data.price),
-                        true
-                    )
+            when (result) {
+                is ProductRepositoryResult.Success -> {
+                    _productList.value = result.data.map { data ->
+                        UserProductSummary(
+                            data.shop,
+                            data.productName,
+                            data.price,
+                            data.productCode,
+                            calculateDiscountRate(data.targetPrice, data.price),
+                            true
+                        )
+                    }
+                }
+
+                is ProductRepositoryResult.Error -> {
+                    _events.emit(result.productErrorState)
                 }
             }
         }

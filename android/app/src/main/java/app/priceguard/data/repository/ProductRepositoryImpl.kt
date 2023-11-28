@@ -5,19 +5,15 @@ import app.priceguard.data.dto.PricePatchResponse
 import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductAddResponse
 import app.priceguard.data.dto.ProductData
-import app.priceguard.data.dto.ProductDeleteState
 import app.priceguard.data.dto.ProductDetailResult
-import app.priceguard.data.dto.ProductDetailState
-import app.priceguard.data.dto.ProductListResult
-import app.priceguard.data.dto.ProductListState
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.dto.ProductVerifyResponse
 import app.priceguard.data.dto.RecommendProductData
-import app.priceguard.data.dto.RecommendProductResult
-import app.priceguard.data.dto.RecommendProductState
 import app.priceguard.data.dto.RenewResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.network.getApiResult
 import javax.inject.Inject
 
@@ -26,68 +22,115 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    override suspend fun verifyLink(productUrl: ProductVerifyRequest): APIResult<ProductVerifyResponse> {
+    private suspend fun renew(): Boolean {
+        val refreshToken = tokenRepository.getRefreshToken() ?: return false
+        val renewResult = tokenRepository.renewTokens(refreshToken)
+        if (renewResult != RenewResult.SUCCESS) {
+            return false
+        }
+        return true
+    }
+
+    private suspend fun <T> handleError(
+        code: Int?,
+        isRenewed: Boolean,
+        repoFun: suspend () -> ProductRepositoryResult<T>
+    ): ProductRepositoryResult<T> {
+        return when (code) {
+            400 -> {
+                ProductRepositoryResult.Error(ProductErrorState.INVALID_REQUEST)
+            }
+
+            401 -> {
+                ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+            }
+
+            404 -> {
+                ProductRepositoryResult.Error(ProductErrorState.NOT_FOUND)
+            }
+
+            409 -> {
+                ProductRepositoryResult.Error(ProductErrorState.EXIST)
+            }
+
+            410 -> {
+                if (isRenewed) {
+                    ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+                } else {
+                    if (renew()) {
+                        repoFun.invoke()
+                    } else {
+                        ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+                    }
+                }
+            }
+
+            else -> {
+                ProductRepositoryResult.Error(ProductErrorState.UNDEFINED_ERROR)
+            }
+        }
+    }
+
+    override suspend fun verifyLink(
+        productUrl: ProductVerifyRequest,
+        isRenewed: Boolean
+    ): ProductRepositoryResult<ProductVerifyDTO> {
         val response = getApiResult {
             productAPI.verifyLink(productUrl)
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return response
+                ProductRepositoryResult.Success(
+                    ProductVerifyDTO(
+                        response.data.productName,
+                        response.data.productCode,
+                        response.data.productPrice,
+                        response.data.shop,
+                        response.data.imageUrl
+                    )
+                )
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        response
-                    }
-
-                    401 -> {
-                        response
-                    }
-
-                    else -> {
-                        response
-                    }
+                handleError(response.code, isRenewed) {
+                    verifyLink(productUrl, true)
                 }
             }
         }
     }
 
-    override suspend fun addProduct(productAddRequest: ProductAddRequest): APIResult<ProductAddResponse> {
+    override suspend fun addProduct(
+        productAddRequest: ProductAddRequest,
+        isRenewed: Boolean
+    ): ProductRepositoryResult<ProductAddResponse> {
         val response = getApiResult {
             productAPI.addProduct(productAddRequest)
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return response
+                ProductRepositoryResult.Success(
+                    ProductAddResponse(
+                        response.data.statusCode,
+                        response.data.message
+                    )
+                )
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        response
-                    }
-
-                    401 -> {
-                        response
-                    }
-
-                    else -> {
-                        response
-                    }
+                handleError(response.code, isRenewed) {
+                    addProduct(productAddRequest, true)
                 }
             }
         }
     }
 
-    override suspend fun getProductList(afterRenew: Boolean): ProductListResult {
+    override suspend fun getProductList(isRenewed: Boolean): ProductRepositoryResult<List<ProductData>> {
         val response = getApiResult {
             productAPI.getProductList()
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return ProductListResult(
-                    ProductListState.SUCCESS,
+                ProductRepositoryResult.Success(
                     response.data.trackingList?.map { dto ->
                         ProductData(
                             dto.productName ?: "",
@@ -102,47 +145,20 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                when (response.code) {
-                    401 -> {
-                        if (afterRenew) {
-                            return ProductListResult(ProductListState.PERMISSION_DENIED, listOf())
-                        } else {
-                            val refreshToken =
-                                tokenRepository.getRefreshToken() ?: return ProductListResult(
-                                    ProductListState.PERMISSION_DENIED,
-                                    listOf()
-                                )
-                            val renewResult = tokenRepository.renewTokens(refreshToken)
-                            if (renewResult != RenewResult.SUCCESS) {
-                                return ProductListResult(
-                                    ProductListState.PERMISSION_DENIED,
-                                    listOf()
-                                )
-                            }
-                            return getProductList(afterRenew = true)
-                        }
-                    }
-
-                    404 -> {
-                        return ProductListResult(ProductListState.NOT_FOUND, listOf())
-                    }
-
-                    else -> {
-                        return ProductListResult(ProductListState.UNDEFINED_ERROR, listOf())
-                    }
+                handleError(response.code, isRenewed) {
+                    getProductList(true)
                 }
             }
         }
     }
 
-    override suspend fun getRecommendedProductList(afterRenew: Boolean): RecommendProductResult {
+    override suspend fun getRecommendedProductList(isRenewed: Boolean): ProductRepositoryResult<List<RecommendProductData>> {
         val response = getApiResult {
             productAPI.getRecommendedProductList()
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RecommendProductResult(
-                    RecommendProductState.SUCCESS,
+                ProductRepositoryResult.Success(
                     response.data.recommendList?.map { dto ->
                         RecommendProductData(
                             dto.productName ?: "",
@@ -157,41 +173,8 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        RecommendProductResult(RecommendProductState.WRONG_REQUEST, listOf())
-                    }
-
-                    401 -> {
-                        if (afterRenew) {
-                            return RecommendProductResult(
-                                RecommendProductState.PERMISSION_DENIED,
-                                listOf()
-                            )
-                        } else {
-                            val refreshToken =
-                                tokenRepository.getRefreshToken() ?: return RecommendProductResult(
-                                    RecommendProductState.PERMISSION_DENIED,
-                                    listOf()
-                                )
-                            val renewResult = tokenRepository.renewTokens(refreshToken)
-                            if (renewResult != RenewResult.SUCCESS) {
-                                return RecommendProductResult(
-                                    RecommendProductState.PERMISSION_DENIED,
-                                    listOf()
-                                )
-                            }
-                            return getRecommendedProductList(afterRenew = true)
-                        }
-                    }
-
-                    404 -> {
-                        RecommendProductResult(RecommendProductState.NOT_FOUND, listOf())
-                    }
-
-                    else -> {
-                        RecommendProductResult(RecommendProductState.UNDEFINED_ERROR, listOf())
-                    }
+                handleError(response.code, isRenewed) {
+                    getRecommendedProductList(true)
                 }
             }
         }
@@ -199,101 +182,75 @@ class ProductRepositoryImpl @Inject constructor(
 
     override suspend fun getProductDetail(
         productCode: String,
-        renewed: Boolean
-    ): ProductDetailResult {
-        when (val response = getApiResult { productAPI.getProductDetail(productCode) }) {
+        isRenewed: Boolean
+    ): ProductRepositoryResult<ProductDetailResult> {
+        val response = getApiResult {
+            productAPI.getProductDetail(productCode)
+        }
+        return when (response) {
             is APIResult.Success -> {
-                return ProductDetailResult(
-                    ProductDetailState.SUCCESS,
-                    productName = response.data.productName ?: "",
-                    productCode = response.data.productCode,
-                    shop = response.data.shop,
-                    imageUrl = response.data.imageUrl,
-                    rank = response.data.rank,
-                    shopUrl = response.data.shopUrl,
-                    targetPrice = response.data.targetPrice,
-                    lowestPrice = response.data.lowestPrice,
-                    price = response.data.price
+                ProductRepositoryResult.Success(
+                    ProductDetailResult(
+                        productName = response.data.productName ?: "",
+                        productCode = response.data.productCode ?: "",
+                        shop = response.data.shop ?: "",
+                        imageUrl = response.data.imageUrl ?: "",
+                        rank = response.data.rank ?: -1,
+                        shopUrl = response.data.shopUrl ?: "",
+                        targetPrice = response.data.targetPrice ?: -1,
+                        lowestPrice = response.data.lowestPrice ?: -1,
+                        price = response.data.price ?: -1
+                    )
                 )
             }
 
             is APIResult.Error -> {
-                when (response.code) {
-                    401 -> {
-                        if (renewed) {
-                            return ProductDetailResult(ProductDetailState.PERMISSION_DENIED)
-                        }
-
-                        val refreshToken =
-                            tokenRepository.getRefreshToken() ?: return ProductDetailResult(
-                                ProductDetailState.PERMISSION_DENIED
-                            )
-
-                        val renewResult = tokenRepository.renewTokens(refreshToken)
-
-                        if (renewResult != RenewResult.SUCCESS) {
-                            return ProductDetailResult(ProductDetailState.PERMISSION_DENIED)
-                        }
-
-                        return getProductDetail(productCode, true)
-                    }
-
-                    404 -> {
-                        return ProductDetailResult(ProductDetailState.NOT_FOUND)
-                    }
-
-                    else -> {
-                        return ProductDetailResult(ProductDetailState.UNDEFINED_ERROR)
-                    }
+                handleError(response.code, isRenewed) {
+                    getProductDetail(productCode, true)
                 }
             }
         }
     }
 
-    override suspend fun deleteProduct(productCode: String, renewed: Boolean): ProductDeleteState {
-        when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
+    override suspend fun deleteProduct(
+        productCode: String,
+        isRenewed: Boolean
+    ): ProductRepositoryResult<Boolean> {
+        return when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
             is APIResult.Success -> {
-                return ProductDeleteState.SUCCESS
+                ProductRepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
-                when (response.code) {
-                    400 -> {
-                        return ProductDeleteState.INVALID_REQUEST
-                    }
-
-                    401 -> {
-                        if (renewed) {
-                            return ProductDeleteState.UNAUTHORIZED
-                        }
-
-                        val refreshToken = tokenRepository.getRefreshToken()
-                            ?: return ProductDeleteState.UNAUTHORIZED
-                        val renewResult = tokenRepository.renewTokens(refreshToken)
-
-                        if (renewResult != RenewResult.SUCCESS) {
-                            return ProductDeleteState.UNAUTHORIZED
-                        }
-
-                        return deleteProduct(productCode, true)
-                    }
-
-                    404 -> {
-                        return ProductDeleteState.NOT_FOUND
-                    }
-
-                    else -> {
-                        return ProductDeleteState.UNDEFINED_ERROR
-                    }
+                handleError(response.code, isRenewed) {
+                    deleteProduct(productCode, true)
                 }
             }
         }
     }
 
-    override suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest): APIResult<PricePatchResponse> {
+    override suspend fun updateTargetPrice(
+        pricePatchRequest: PricePatchRequest,
+        isRenewed: Boolean
+    ): ProductRepositoryResult<PricePatchResponse> {
         val response = getApiResult {
             productAPI.updateTargetPrice(pricePatchRequest)
         }
-        return response
+        return when (response) {
+            is APIResult.Success -> {
+                ProductRepositoryResult.Success(
+                    PricePatchResponse(
+                        response.data.statusCode,
+                        response.data.message
+                    )
+                )
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code, isRenewed) {
+                    updateTargetPrice(pricePatchRequest, true)
+                }
+            }
+        }
     }
 }

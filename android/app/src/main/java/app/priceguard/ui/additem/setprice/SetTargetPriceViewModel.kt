@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.PricePatchRequest
 import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.network.APIResult
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,9 +28,9 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
-        data object FailureProductAdd : SetTargetPriceEvent()
+        data class FailurePriceAdd(val errorType: ProductErrorState) : SetTargetPriceEvent()
         data object SuccessPriceUpdate : SetTargetPriceEvent()
-        data object FailurePriceUpdate : SetTargetPriceEvent()
+        data class FailurePriceUpdate(val errorType: ProductErrorState) : SetTargetPriceEvent()
     }
 
     private val _state = MutableStateFlow(SetTargetPriceState())
@@ -47,12 +48,12 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 )
             )
             when (response) {
-                is APIResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailureProductAdd)
+                is ProductRepositoryResult.Success -> {
+                    _event.emit(SetTargetPriceEvent.SuccessProductAdd)
                 }
 
-                is APIResult.Success -> {
-                    _event.emit(SetTargetPriceEvent.SuccessProductAdd)
+                is ProductRepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.productErrorState))
                 }
             }
         }
@@ -67,21 +68,19 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 )
             )
             when (response) {
-                is APIResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate)
+                is ProductRepositoryResult.Success -> {
+                    _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
 
-                is APIResult.Success -> {
-                    _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
+                is ProductRepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.productErrorState))
                 }
             }
         }
     }
 
-    fun updateTargetPrice(price: String) {
-        if (price.toIntOrNull() != null) {
-            _state.value = state.value.copy(targetPrice = price.toInt())
-        }
+    fun updateTargetPrice(price: Int) {
+        _state.value = state.value.copy(targetPrice = price)
     }
 
     fun setProductInfo(productCode: String, name: String, price: Int) {

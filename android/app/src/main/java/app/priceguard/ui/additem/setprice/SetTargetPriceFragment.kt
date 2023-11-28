@@ -1,6 +1,7 @@
 package app.priceguard.ui.additem.setprice
 
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
+import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.showPermissionDeniedDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
+
+    @Inject
+    lateinit var tokenRepository: TokenRepository
 
     private var _binding: FragmentSetTargetPriceBinding? = null
     private val binding get() = _binding!!
@@ -40,8 +50,8 @@ class SetTargetPriceFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (activity?.intent?.hasExtra("isAdding") == true) {
-                activity?.finish()
+            if (requireActivity().intent.hasExtra("isAdding")) {
+                requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
@@ -50,6 +60,8 @@ class SetTargetPriceFragment : Fragment() {
         val productCode = requireArguments().getString("productCode") ?: ""
         val title = requireArguments().getString("productTitle") ?: ""
         val price = requireArguments().getInt("productPrice")
+
+        viewModel.updateTargetPrice((price * 0.8).toInt())
 
         binding.tvSetPriceCurrentPrice.text =
             String.format(
@@ -66,8 +78,8 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
-            if (activity?.intent?.hasExtra("isAdding") == true) {
-                activity?.finish()
+            if (requireActivity().intent.hasExtra("isAdding")) {
+                requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
@@ -91,18 +103,27 @@ class SetTargetPriceFragment : Fragment() {
             }
         })
         etTargetPrice.addTextChangedListener {
-            if (etTargetPrice.isFocused) {
-                if (it.toString().matches("^\\d+\$".toRegex())) {
-                    val targetPrice = it.toString().toFloat()
-                    val percent =
-                        ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+            updateTargetPriceUI(it)
+        }
+    }
 
-                    tvTargetPricePercent.text =
-                        String.format(getString(R.string.current_price_percent), percent)
-
-                    updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
-                }
+    private fun updateTargetPriceUI(it: Editable?) {
+        if (binding.etTargetPrice.isFocused) {
+            val targetPrice = if (it.toString().matches("^\\d+\$".toRegex())) {
+                it.toString().toFloat()
+            } else {
+                0F
             }
+
+            viewModel.updateTargetPrice(targetPrice.toInt())
+
+            val percent =
+                ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+
+            binding.tvTargetPricePercent.text =
+                String.format(getString(R.string.current_price_percent), percent)
+
+            binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
         }
     }
 
@@ -111,29 +132,82 @@ class SetTargetPriceFragment : Fragment() {
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
+        val targetPrice = ((viewModel.state.value.productPrice) * value.toInt() / 100)
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
-            ((viewModel.state.value.productPrice) * value.toInt() / 100).toString()
+            targetPrice.toString()
         )
+        viewModel.updateTargetPrice(targetPrice)
     }
 
     private fun handleEvent() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailureProductAdd -> TODO()
-                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
-                        activity?.finish()
+                    is SetTargetPriceEvent.SuccessProductAdd -> {
+                        showActivityFinishDialog(
+                            getString(R.string.success_add),
+                            getString(R.string.success_add_message)
+                        )
                     }
 
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> TODO()
-                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
-                        activity?.finish()
+                    is SetTargetPriceEvent.SuccessPriceUpdate -> {
+                        showActivityFinishDialog(
+                            getString(R.string.success_update),
+                            getString(R.string.success_update_message)
+                        )
+                    }
+
+                    is SetTargetPriceEvent.FailurePriceAdd -> {
+                        when (event.errorType) {
+                            ProductErrorState.EXIST -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error_add_product),
+                                    getString(R.string.exist_product)
+                                )
+                            }
+
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                            }
+
+                            else -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error),
+                                    getString(R.string.retry)
+                                )
+                            }
+                        }
+                    }
+
+                    is SetTargetPriceEvent.FailurePriceUpdate -> {
+                        when (event.errorType) {
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                            }
+
+                            else -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error_patch_price),
+                                    getString(R.string.retry)
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun showActivityFinishDialog(title: String, message: String) {
+        MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(R.string.confirm) { _, _ -> requireActivity().finish() }
+            .setOnDismissListener { requireActivity().finish() }
+            .create()
+            .show()
     }
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
