@@ -13,6 +13,7 @@ import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -116,11 +117,17 @@ class DetailActivity : AppCompatActivity() {
                     is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
                         when (event.errorType) {
                             ProductErrorState.NOT_FOUND -> {
-                                showToast(getString(R.string.product_not_found))
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.product_not_found)
+                                )
                             }
 
                             ProductErrorState.INVALID_REQUEST -> {
-                                showToast(getString(R.string.invalid_request))
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.invalid_request)
+                                )
                             }
 
                             ProductErrorState.PERMISSION_DENIED -> {
@@ -128,7 +135,10 @@ class DetailActivity : AppCompatActivity() {
                             }
 
                             else -> {
-                                showToast(getString(R.string.undefined_error))
+                                showConfirmationDialog(
+                                    getString(R.string.delete_product_failed),
+                                    getString(R.string.undefined_error)
+                                )
                             }
                         }
                     }
