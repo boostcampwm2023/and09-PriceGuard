@@ -8,6 +8,10 @@ import { TrackingProductRepository } from './trackingProduct.repository';
 import { ProductRepository } from './product.repository';
 import { getProductInfo11st } from 'src/utils/openapi.11st';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { ProductPrice } from 'src/schema/product.schema';
+import { Model } from 'mongoose';
+import { ProductPriceDto } from 'src/dto/product.price.dto';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -18,7 +22,10 @@ export class ProductService {
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
+        @InjectModel(ProductPrice.name)
+        private productPriceModel: Model<ProductPrice>
     ) {}
+
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
         const matchList = productUrl.match(REGEXP_11ST);
@@ -135,5 +142,10 @@ export class ProductService {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         return trackingProduct;
+    }
+
+    async mongo(productPriceDto: ProductPriceDto) {
+        const newData = new this.productPriceModel(productPriceDto);
+        return newData.save();
     }
 }
