@@ -145,6 +145,7 @@ class SetTargetPriceFragment : Fragment() {
                             getString(R.string.retry)
                         )
                     }
+
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
                         showActivityFinishDialog(
                             getString(R.string.success_update),
@@ -153,7 +154,10 @@ class SetTargetPriceFragment : Fragment() {
                     }
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceAdd -> {
-                        showActivityFinishDialog(getString(R.string.error), getString(R.string.retry))
+                        showActivityFinishDialog(
+                            getString(R.string.error),
+                            getString(R.string.retry)
+                        )
                     }
                 }
             }
@@ -161,10 +165,11 @@ class SetTargetPriceFragment : Fragment() {
     }
 
     private fun showActivityFinishDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(requireActivity())
+        MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(R.string.confirm) { _, _ -> activity?.finish() }
+            .setOnDismissListener { activity?.finish() }
             .create()
             .show()
     }
