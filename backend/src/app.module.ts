@@ -9,6 +9,8 @@ import { ProductModule } from './product/product.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MONGODB_URL } from './constants';
 
 @Module({
     imports: [
@@ -17,6 +19,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
         UsersModule,
         AuthModule,
         ProductModule,
+        MongooseModule.forRoot(MONGODB_URL),
     ],
     controllers: [AppController],
     providers: [AppService],
