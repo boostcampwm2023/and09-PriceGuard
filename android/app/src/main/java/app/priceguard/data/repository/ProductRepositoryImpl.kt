@@ -23,21 +23,18 @@ class ProductRepositoryImpl @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ProductRepository {
 
-    private suspend fun <T> renew(repoFun: suspend () -> RepositoryResult<T>): RepositoryResult<T> {
-        val refreshToken =
-            tokenRepository.getRefreshToken()
-                ?: return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-
+    private suspend fun renew(): Boolean {
+        val refreshToken = tokenRepository.getRefreshToken() ?: return false
         val renewResult = tokenRepository.renewTokens(refreshToken)
-
         if (renewResult != RenewResult.SUCCESS) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
+            return false
         }
-        return repoFun.invoke()
+        return true
     }
 
     private suspend fun <T> handleError(
         code: Int?,
+        isRenewed: Boolean,
         repoFun: suspend () -> RepositoryResult<T>
     ): RepositoryResult<T> {
         return when (code) {
@@ -58,7 +55,15 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             410 -> {
-                renew(repoFun)
+                if (isRenewed) {
+                    RepositoryResult.Error(ErrorState.PERMISSION_DENIED)
+                } else {
+                    if (renew()) {
+                        repoFun.invoke()
+                    } else {
+                        RepositoryResult.Error(ErrorState.TOKEN_ERROR)
+                    }
+                }
             }
 
             else -> {
@@ -71,9 +76,6 @@ class ProductRepositoryImpl @Inject constructor(
         productUrl: ProductVerifyRequest,
         isRenewed: Boolean
     ): RepositoryResult<ProductVerifyDTO> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.verifyLink(productUrl)
         }
@@ -91,7 +93,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code) {
+                handleError(response.code, isRenewed) {
                     verifyLink(productUrl, true)
                 }
             }
@@ -102,9 +104,6 @@ class ProductRepositoryImpl @Inject constructor(
         productAddRequest: ProductAddRequest,
         isRenewed: Boolean
     ): RepositoryResult<ProductAddResponse> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.addProduct(productAddRequest)
         }
@@ -119,7 +118,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code) {
+                handleError(response.code, isRenewed) {
                     addProduct(productAddRequest, true)
                 }
             }
@@ -127,15 +126,12 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProductList(isRenewed: Boolean): RepositoryResult<List<ProductData>> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.getProductList()
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RepositoryResult.Success(
+                RepositoryResult.Success(
                     response.data.trackingList?.map { dto ->
                         ProductData(
                             dto.productName ?: "",
@@ -150,7 +146,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code) {
+                handleError(response.code, isRenewed) {
                     getProductList(true)
                 }
             }
@@ -158,15 +154,12 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecommendedProductList(isRenewed: Boolean): RepositoryResult<List<RecommendProductData>> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.getRecommendedProductList()
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RepositoryResult.Success(
+                RepositoryResult.Success(
                     response.data.recommendList?.map { dto ->
                         RecommendProductData(
                             dto.productName ?: "",
@@ -181,7 +174,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code) {
+                handleError(response.code, isRenewed) {
                     getRecommendedProductList(true)
                 }
             }
@@ -192,15 +185,12 @@ class ProductRepositoryImpl @Inject constructor(
         productCode: String,
         isRenewed: Boolean
     ): RepositoryResult<ProductDetailResult> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.getProductDetail(productCode)
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return RepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductDetailResult(
                         productName = response.data.productName ?: "",
                         productCode = response.data.productCode ?: "",
@@ -216,7 +206,7 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                return handleError(response.code) {
+                handleError(response.code, isRenewed) {
                     getProductDetail(productCode, true)
                 }
             }
@@ -267,9 +257,6 @@ class ProductRepositoryImpl @Inject constructor(
         pricePatchRequest: PricePatchRequest,
         isRenewed: Boolean
     ): RepositoryResult<PricePatchResponse> {
-        if (isRenewed) {
-            return RepositoryResult.Error(ErrorState.TOKEN_ERROR)
-        }
         val response = getApiResult {
             productAPI.updateTargetPrice(pricePatchRequest)
         }
@@ -284,8 +271,8 @@ class ProductRepositoryImpl @Inject constructor(
             }
 
             is APIResult.Error -> {
-                handleError(response.code) {
-                    updateTargetPrice(pricePatchRequest, false)
+                handleError(response.code, isRenewed) {
+                    updateTargetPrice(pricePatchRequest, true)
                 }
             }
         }
