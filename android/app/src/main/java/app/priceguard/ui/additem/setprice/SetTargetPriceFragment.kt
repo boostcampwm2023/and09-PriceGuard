@@ -41,7 +41,7 @@ class SetTargetPriceFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (requireActivity().intent?.hasExtra("isAdding") == true) {
+            if (requireActivity().intent.hasExtra("isAdding")) {
                 requireActivity().finish()
             } else {
                 findNavController().navigateUp()
@@ -69,7 +69,7 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.initListener() {
         btnConfirmItemBack.setOnClickListener {
-            if (requireActivity().intent?.hasExtra("isAdding") == true) {
+            if (requireActivity().intent.hasExtra("isAdding")) {
                 requireActivity().finish()
             } else {
                 findNavController().navigateUp()
