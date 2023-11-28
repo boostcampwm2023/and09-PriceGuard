@@ -14,17 +14,17 @@ import app.priceguard.data.network.RepositoryResult
 
 interface ProductRepository {
 
-    suspend fun verifyLink(productUrl: ProductVerifyRequest, isRenewed: Boolean): RepositoryResult<ProductVerifyDTO>
+    suspend fun verifyLink(productUrl: ProductVerifyRequest, isRenewed: Boolean = false): RepositoryResult<ProductVerifyDTO>
 
-    suspend fun addProduct(productAddRequest: ProductAddRequest, isRenewed: Boolean): RepositoryResult<ProductAddResponse>
+    suspend fun addProduct(productAddRequest: ProductAddRequest, isRenewed: Boolean = false): RepositoryResult<ProductAddResponse>
 
-    suspend fun getProductList(afterRenew: Boolean = false): RepositoryResult<List<ProductData>>
+    suspend fun getProductList(isRenewed: Boolean = false): RepositoryResult<List<ProductData>>
 
-    suspend fun getRecommendedProductList(afterRenew: Boolean = false): RepositoryResult<List<RecommendProductData>>
+    suspend fun getRecommendedProductList(isRenewed: Boolean = false): RepositoryResult<List<RecommendProductData>>
 
-    suspend fun getProductDetail(productCode: String, renewed: Boolean): RepositoryResult<ProductDetailResult>
+    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): RepositoryResult<ProductDetailResult>
 
-    suspend fun deleteProduct(productCode: String, renewed: Boolean): ProductDeleteState
+    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductDeleteState
 
-    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean): RepositoryResult<PricePatchResponse>
+    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean = false): RepositoryResult<PricePatchResponse>
 }

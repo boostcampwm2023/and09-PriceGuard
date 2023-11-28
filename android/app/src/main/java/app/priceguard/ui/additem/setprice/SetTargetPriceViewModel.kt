@@ -46,8 +46,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 ProductAddRequest(
                     _state.value.productCode,
                     _state.value.targetPrice
-                ),
-                false
+                )
             )
             when (response) {
                 is RepositoryResult.Success -> {
@@ -75,8 +74,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 PricePatchRequest(
                     _state.value.productCode,
                     _state.value.targetPrice
-                ),
-                false
+                )
             )
             when (response) {
                 is RepositoryResult.Error -> {

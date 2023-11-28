@@ -60,7 +60,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
     fun deleteProductTracking() {
         viewModelScope.launch {
-            when (val result = productRepository.deleteProduct(productCode, false)) {
+            when (val result = productRepository.deleteProduct(productCode)) {
                 ProductDeleteState.SUCCESS -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
@@ -82,7 +82,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                 _state.value = _state.value.copy(isRefreshing = true)
             }
 
-            val result = productRepository.getProductDetail(productCode, false)
+            val result = productRepository.getProductDetail(productCode)
 
             _state.value = _state.value.copy(isRefreshing = false)
 

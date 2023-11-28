@@ -57,7 +57,7 @@ class RegisterItemLinkViewModel
         )
 
         viewModelScope.launch {
-            val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link), false)
+            val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link))
             when (response) {
                 is RepositoryResult.Success -> {
                     _state.value = state.value.copy(isNextReady = true, product = response.data)
