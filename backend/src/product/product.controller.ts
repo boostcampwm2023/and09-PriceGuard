@@ -19,6 +19,7 @@ import {
     ApiBearerAuth,
     ApiBody,
     ApiConflictResponse,
+    ApiGoneResponse,
     ApiHeader,
     ApiNotFoundResponse,
     ApiOkResponse,
@@ -47,6 +48,7 @@ import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
+import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -55,6 +57,7 @@ import { ProductPriceDto } from 'src/dto/product.price.dto';
 })
 @ApiTags('상품 API')
 @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+@ApiGoneResponse({ type: ExpiredTokenError, description: 'accessToken 만료' })
 @Controller('product')
 @UseFilters(HttpExceptionFilter)
 @UseGuards(AuthGuard('access'))
