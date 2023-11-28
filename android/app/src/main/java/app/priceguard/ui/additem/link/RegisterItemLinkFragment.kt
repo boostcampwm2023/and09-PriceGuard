@@ -75,7 +75,7 @@ class RegisterItemLinkFragment : Fragment() {
                     }
 
                     is RegisterItemLinkViewModel.RegisterLinkEvent.ErrorToken -> {
-                        activity?.showPermissionDeniedDialog(tokenRepository)
+                        requireActivity().showPermissionDeniedDialog(tokenRepository)
                     }
 
                     is RegisterItemLinkViewModel.RegisterLinkEvent.UndefinedError -> {

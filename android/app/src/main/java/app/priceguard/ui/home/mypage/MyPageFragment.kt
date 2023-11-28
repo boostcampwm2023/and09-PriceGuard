@@ -119,7 +119,7 @@ class MyPageFragment : Fragment() {
     private fun startIntroAndExitHome() {
         val intent = Intent(requireActivity(), IntroActivity::class.java)
         startActivity(intent)
-        activity?.finish()
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {
