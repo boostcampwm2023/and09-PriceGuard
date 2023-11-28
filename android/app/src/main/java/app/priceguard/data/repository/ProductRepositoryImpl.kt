@@ -60,7 +60,7 @@ class ProductRepositoryImpl @Inject constructor(
                     if (renew()) {
                         repoFun.invoke()
                     } else {
-                        ProductRepositoryResult.Error(ProductErrorState.TOKEN_ERROR)
+                        ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
                     }
                 }
             }

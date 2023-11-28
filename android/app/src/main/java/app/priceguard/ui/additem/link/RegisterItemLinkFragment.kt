@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
@@ -71,15 +72,19 @@ class RegisterItemLinkFragment : Fragment() {
                     }
 
                     is RegisterItemLinkViewModel.RegisterLinkEvent.FailureVerification -> {
-                        updateLinkError(getString(R.string.not_product_link))
-                    }
+                        when (event.errorType) {
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                            }
 
-                    is RegisterItemLinkViewModel.RegisterLinkEvent.ErrorToken -> {
-                        requireActivity().showPermissionDeniedDialog(tokenRepository)
-                    }
+                            ProductErrorState.INVALID_REQUEST -> {
+                                updateLinkError(getString(R.string.not_product_link))
+                            }
 
-                    is RegisterItemLinkViewModel.RegisterLinkEvent.UndefinedError -> {
-                        updateLinkError(getString(R.string.undefined_error))
+                            else -> {
+                                updateLinkError(getString(R.string.undefined_error))
+                            }
+                        }
                     }
                 }
             }

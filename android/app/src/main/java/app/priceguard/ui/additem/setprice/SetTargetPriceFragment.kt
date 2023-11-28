@@ -10,16 +10,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
+import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SetTargetPriceFragment : Fragment() {
+
+    @Inject
+    lateinit var tokenRepository: TokenRepository
 
     private var _binding: FragmentSetTargetPriceBinding? = null
     private val binding get() = _binding!!
@@ -125,39 +133,55 @@ class SetTargetPriceFragment : Fragment() {
         repeatOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    SetTargetPriceViewModel.SetTargetPriceEvent.ExistProduct -> {
-                        showActivityFinishDialog(
-                            getString(R.string.error_add_product),
-                            getString(R.string.exist_product)
-                        )
-                    }
-
-                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
+                    is SetTargetPriceEvent.SuccessProductAdd -> {
                         showActivityFinishDialog(
                             getString(R.string.success_add),
                             getString(R.string.success_add_message)
                         )
                     }
 
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> {
-                        showActivityFinishDialog(
-                            getString(R.string.error_patch_price),
-                            getString(R.string.retry)
-                        )
-                    }
-
-                    SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
+                    is SetTargetPriceEvent.SuccessPriceUpdate -> {
                         showActivityFinishDialog(
                             getString(R.string.success_update),
                             getString(R.string.success_update_message)
                         )
                     }
 
-                    SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceAdd -> {
-                        showActivityFinishDialog(
-                            getString(R.string.error),
-                            getString(R.string.retry)
-                        )
+                    is SetTargetPriceEvent.FailurePriceAdd -> {
+                        when (event.errorType) {
+                            ProductErrorState.EXIST -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error_add_product),
+                                    getString(R.string.exist_product)
+                                )
+                            }
+
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                            }
+
+                            else -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error),
+                                    getString(R.string.retry)
+                                )
+                            }
+                        }
+                    }
+
+                    is SetTargetPriceEvent.FailurePriceUpdate -> {
+                        when (event.errorType) {
+                            ProductErrorState.PERMISSION_DENIED -> {
+                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                            }
+
+                            else -> {
+                                showActivityFinishDialog(
+                                    getString(R.string.error_patch_price),
+                                    getString(R.string.retry)
+                                )
+                            }
+                        }
                     }
                 }
             }

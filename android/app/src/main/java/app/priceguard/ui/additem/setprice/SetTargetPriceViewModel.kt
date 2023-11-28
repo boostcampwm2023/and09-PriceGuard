@@ -28,10 +28,9 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     sealed class SetTargetPriceEvent {
         data object SuccessProductAdd : SetTargetPriceEvent()
-        data object ExistProduct : SetTargetPriceEvent()
-        data object FailurePriceAdd : SetTargetPriceEvent()
+        data class FailurePriceAdd(val errorType: ProductErrorState) : SetTargetPriceEvent()
         data object SuccessPriceUpdate : SetTargetPriceEvent()
-        data object FailurePriceUpdate : SetTargetPriceEvent()
+        data class FailurePriceUpdate(val errorType: ProductErrorState) : SetTargetPriceEvent()
     }
 
     private val _state = MutableStateFlow(SetTargetPriceState())
@@ -54,15 +53,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 }
 
                 is ProductRepositoryResult.Error -> {
-                    when (response.productErrorState) {
-                        ProductErrorState.EXIST -> {
-                            _event.emit(SetTargetPriceEvent.ExistProduct)
-                        }
-
-                        else -> {
-                            _event.emit(SetTargetPriceEvent.FailurePriceAdd)
-                        }
-                    }
+                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.productErrorState))
                 }
             }
         }
@@ -77,12 +68,12 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 )
             )
             when (response) {
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate)
-                }
-
                 is ProductRepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
+                }
+
+                is ProductRepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.productErrorState))
                 }
             }
         }
