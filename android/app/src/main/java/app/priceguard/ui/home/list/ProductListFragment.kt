@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import app.priceguard.R
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
-import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
+import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -84,8 +86,31 @@ class ProductListFragment : Fragment() {
     private fun collectEvent() {
         repeatOnStarted {
             productListViewModel.events.collect { event ->
-                if (event is ProductListEvent.PermissionDenied) {
-                    activity?.showPermissionDeniedDialog(tokenRepository)
+                when (event) {
+                    ProductErrorState.PERMISSION_DENIED -> {
+                        activity?.showPermissionDeniedDialog(tokenRepository)
+                    }
+
+                    ProductErrorState.INVALID_REQUEST -> {
+                        activity?.showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.invalid_request)
+                        )
+                    }
+
+                    ProductErrorState.NOT_FOUND -> {
+                        activity?.showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.not_found)
+                        )
+                    }
+
+                    else -> {
+                        activity?.showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.undefined_error)
+                        )
+                    }
                 }
             }
         }

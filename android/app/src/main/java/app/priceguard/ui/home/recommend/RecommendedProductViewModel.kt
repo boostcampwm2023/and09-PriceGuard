@@ -2,6 +2,7 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
@@ -32,8 +33,8 @@ class RecommendedProductViewModel @Inject constructor(
     val recommendedProductList: StateFlow<List<RecommendedProductSummary>> =
         _recommendedProductList.asStateFlow()
 
-    private var _events = MutableSharedFlow<RecommendedProductEvent>()
-    val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
+    private var _events = MutableSharedFlow<ProductErrorState>()
+    val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
 
     fun getRecommendedProductList(isRefresh: Boolean) {
         viewModelScope.launch {
@@ -58,7 +59,7 @@ class RecommendedProductViewModel @Inject constructor(
                 }
 
                 is ProductRepositoryResult.Error -> {
-                    _events.emit(RecommendedProductEvent.PermissionDenied)
+                    _events.emit(result.productErrorState)
                 }
             }
         }

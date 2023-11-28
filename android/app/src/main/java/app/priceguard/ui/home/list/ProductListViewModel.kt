@@ -22,18 +22,14 @@ class ProductListViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    sealed class ProductListEvent {
-        data object PermissionDenied : ProductListEvent()
-    }
-
     private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
     val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
 
-    private var _events = MutableSharedFlow<ProductListEvent>()
-    val events: SharedFlow<ProductListEvent> = _events.asSharedFlow()
+    private var _events = MutableSharedFlow<ProductErrorState>()
+    val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
 
     fun getProductList(isRefresh: Boolean) {
         viewModelScope.launch {
@@ -60,14 +56,7 @@ class ProductListViewModel @Inject constructor(
                 }
 
                 is ProductRepositoryResult.Error -> {
-                    when (result.productErrorState) {
-                        ProductErrorState.PERMISSION_DENIED -> {
-                            _events.emit(ProductListEvent.PermissionDenied)
-                        }
-
-                        else -> {
-                        }
-                    }
+                    _events.emit(result.productErrorState)
                 }
             }
         }

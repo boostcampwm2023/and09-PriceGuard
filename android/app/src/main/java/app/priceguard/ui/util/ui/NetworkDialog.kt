@@ -1,6 +1,7 @@
 package app.priceguard.ui.util.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
@@ -26,4 +27,17 @@ fun Activity.goBackToLoginActivity(tokenRepository: TokenRepository) {
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     startActivity(intent)
     finish()
+}
+
+fun Context.showConfirmationDialog(
+    title: String,
+    message: String
+) {
+    MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
+        .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+        .create()
+        .show()
 }
