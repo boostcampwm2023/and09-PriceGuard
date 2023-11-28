@@ -133,7 +133,10 @@ class SetTargetPriceFragment : Fragment() {
                     }
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessProductAdd -> {
-                        activity?.finish()
+                        showActivityFinishDialog(
+                            getString(R.string.success_add),
+                            getString(R.string.success_add_message)
+                        )
                     }
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceUpdate -> {
@@ -143,7 +146,10 @@ class SetTargetPriceFragment : Fragment() {
                         )
                     }
                     SetTargetPriceViewModel.SetTargetPriceEvent.SuccessPriceUpdate -> {
-                        activity?.finish()
+                        showActivityFinishDialog(
+                            getString(R.string.success_update),
+                            getString(R.string.success_update_message)
+                        )
                     }
 
                     SetTargetPriceViewModel.SetTargetPriceEvent.FailurePriceAdd -> {
