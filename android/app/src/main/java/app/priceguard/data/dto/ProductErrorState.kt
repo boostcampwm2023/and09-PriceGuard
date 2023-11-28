@@ -1,6 +1,6 @@
 package app.priceguard.data.dto
 
-enum class ErrorState {
+enum class ProductErrorState {
     PERMISSION_DENIED,
     INVALID_REQUEST,
     TOKEN_ERROR,

@@ -10,21 +10,21 @@ import app.priceguard.data.dto.ProductDetailResult
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
 import app.priceguard.data.dto.RecommendProductData
-import app.priceguard.data.network.RepositoryResult
+import app.priceguard.data.network.ProductRepositoryResult
 
 interface ProductRepository {
 
-    suspend fun verifyLink(productUrl: ProductVerifyRequest, isRenewed: Boolean = false): RepositoryResult<ProductVerifyDTO>
+    suspend fun verifyLink(productUrl: ProductVerifyRequest, isRenewed: Boolean = false): ProductRepositoryResult<ProductVerifyDTO>
 
-    suspend fun addProduct(productAddRequest: ProductAddRequest, isRenewed: Boolean = false): RepositoryResult<ProductAddResponse>
+    suspend fun addProduct(productAddRequest: ProductAddRequest, isRenewed: Boolean = false): ProductRepositoryResult<ProductAddResponse>
 
-    suspend fun getProductList(isRenewed: Boolean = false): RepositoryResult<List<ProductData>>
+    suspend fun getProductList(isRenewed: Boolean = false): ProductRepositoryResult<List<ProductData>>
 
-    suspend fun getRecommendedProductList(isRenewed: Boolean = false): RepositoryResult<List<RecommendProductData>>
+    suspend fun getRecommendedProductList(isRenewed: Boolean = false): ProductRepositoryResult<List<RecommendProductData>>
 
-    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): RepositoryResult<ProductDetailResult>
+    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<ProductDetailResult>
 
     suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductDeleteState
 
-    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean = false): RepositoryResult<PricePatchResponse>
+    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean = false): ProductRepositoryResult<PricePatchResponse>
 }

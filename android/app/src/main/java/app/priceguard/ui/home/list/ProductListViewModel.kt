@@ -2,8 +2,8 @@ package app.priceguard.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ErrorState
-import app.priceguard.data.network.RepositoryResult
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +46,7 @@ class ProductListViewModel @Inject constructor(
             _isRefreshing.value = false
 
             when (result) {
-                is RepositoryResult.Success -> {
+                is ProductRepositoryResult.Success -> {
                     _productList.value = result.data.map { data ->
                         UserProductSummary(
                             data.shop,
@@ -59,9 +59,9 @@ class ProductListViewModel @Inject constructor(
                     }
                 }
 
-                is RepositoryResult.Error -> {
-                    when (result.errorState) {
-                        ErrorState.PERMISSION_DENIED -> {
+                is ProductRepositoryResult.Error -> {
+                    when (result.productErrorState) {
+                        ProductErrorState.PERMISSION_DENIED -> {
                             _events.emit(ProductListEvent.PermissionDenied)
                         }
 

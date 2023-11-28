@@ -2,9 +2,9 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ErrorState
 import app.priceguard.data.dto.ProductDeleteState
-import app.priceguard.data.network.RepositoryResult
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
@@ -87,7 +87,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
             _state.value = _state.value.copy(isRefreshing = false)
 
             when (result) {
-                is RepositoryResult.Success -> {
+                is ProductRepositoryResult.Success -> {
                     _state.update {
                         it.copy(
                             isReady = true,
@@ -113,13 +113,13 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                     }
                 }
 
-                is RepositoryResult.Error -> {
-                    when (result.errorState) {
-                        ErrorState.PERMISSION_DENIED -> {
+                is ProductRepositoryResult.Error -> {
+                    when (result.productErrorState) {
+                        ProductErrorState.PERMISSION_DENIED -> {
                             _event.emit(ProductDetailEvent.Logout)
                         }
 
-                        ErrorState.NOT_FOUND -> {
+                        ProductErrorState.NOT_FOUND -> {
                             _event.emit(ProductDetailEvent.NotFound)
                         }
 

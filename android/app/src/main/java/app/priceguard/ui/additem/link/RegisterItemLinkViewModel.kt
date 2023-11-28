@@ -2,10 +2,10 @@ package app.priceguard.ui.additem.link
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ErrorState
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.network.RepositoryResult
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -59,18 +59,18 @@ class RegisterItemLinkViewModel
         viewModelScope.launch {
             val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link))
             when (response) {
-                is RepositoryResult.Success -> {
+                is ProductRepositoryResult.Success -> {
                     _state.value = state.value.copy(isNextReady = true, product = response.data)
                     _event.emit(RegisterLinkEvent.SuccessVerification(response.data))
                 }
 
-                is RepositoryResult.Error -> {
-                    when (response.errorState) {
-                        ErrorState.INVALID_REQUEST -> {
+                is ProductRepositoryResult.Error -> {
+                    when (response.productErrorState) {
+                        ProductErrorState.INVALID_REQUEST -> {
                             _state.value = state.value.copy(isLinkError = true, isNextReady = false)
                         }
 
-                        ErrorState.TOKEN_ERROR -> {
+                        ProductErrorState.TOKEN_ERROR -> {
                             _event.emit(RegisterLinkEvent.ErrorToken)
                         }
 

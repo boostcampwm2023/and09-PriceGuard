@@ -2,7 +2,7 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.network.RepositoryResult
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +45,7 @@ class RecommendedProductViewModel @Inject constructor(
             _isRefreshing.value = false
 
             when (result) {
-                is RepositoryResult.Success -> {
+                is ProductRepositoryResult.Success -> {
                     _recommendedProductList.value = result.data.map { data ->
                         RecommendedProductSummary(
                             data.shop,
@@ -57,7 +57,7 @@ class RecommendedProductViewModel @Inject constructor(
                     }
                 }
 
-                is RepositoryResult.Error -> {
+                is ProductRepositoryResult.Error -> {
                     _events.emit(RecommendedProductEvent.PermissionDenied)
                 }
             }
