@@ -78,7 +78,9 @@ class RegisterItemLinkFragment : Fragment() {
                         activity?.showPermissionDeniedDialog(tokenRepository)
                     }
 
-                    is RegisterItemLinkViewModel.RegisterLinkEvent.UndefinedError -> TODO()
+                    is RegisterItemLinkViewModel.RegisterLinkEvent.UndefinedError -> {
+                        updateLinkError(getString(R.string.undefined_error))
+                    }
                 }
             }
         }
