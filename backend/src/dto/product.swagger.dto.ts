@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductInfoDto } from './product.info.dto';
 import { TrackingProductDto } from './product.tracking.dto';
+import { ProductPriceDto } from './product.price.dto';
 
 export class VerifyUrlSuccess {
     @ApiProperty({
@@ -117,6 +118,19 @@ export class ProductCodeError {
     })
     message: string;
 }
+
+const priceDataExample = [
+    {
+        time: 1701212844.919,
+        price: 1211353123,
+        isSoldOut: false,
+    },
+    {
+        time: 1701212846.442,
+        price: 1211353123,
+        isSoldOut: false,
+    },
+];
 
 const trackingProductListExample = [
     {
@@ -264,6 +278,11 @@ export class ProductDetailsSuccess {
         description: '상품 현재 가격',
     })
     price: number;
+    @ApiProperty({
+        example: JSON.stringify(priceDataExample, null, 2),
+        description: '가격 그래프 데이터',
+    })
+    priceData: ProductPriceDto[];
 }
 export class ProductNotFound {
     @ApiProperty({
