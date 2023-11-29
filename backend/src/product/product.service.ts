@@ -208,7 +208,7 @@ export class ProductService {
         });
         const updatedDataInfo = results.filter(({ productId, price, isSoldOut }) => {
             if (!this.productDataCache.has(productId)) {
-                this.productDataCache.set(productId, { productId, price, isSoldOut });
+                this.productDataCache.set(productId, { productId, price, isSoldOut, lowestPrice: price });
                 return true;
             }
             const cache = this.productDataCache.get(productId);
