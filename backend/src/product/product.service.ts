@@ -17,6 +17,7 @@ const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
+    private productDataCache = new Map();
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -24,7 +25,29 @@ export class ProductService {
         private productRepository: ProductRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
-    ) {}
+    ) {
+        this.initCache();
+    }
+
+    async initCache() {
+        const latestData = await this.productPriceModel
+            .aggregate([
+                {
+                    $sort: { time: -1 },
+                },
+                {
+                    $group: {
+                        _id: '$productId',
+                        price: { $first: '$price' },
+                        isSoldOut: { $first: '$isSoldOut' },
+                    },
+                },
+            ])
+            .exec();
+        latestData.forEach((data) => {
+            this.productDataCache.set(data._id, { price: data.price, isSoldOut: data.isSoldOut });
+        });
+    }
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
