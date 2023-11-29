@@ -200,14 +200,17 @@ export class ProductService {
         });
     }
     @Cron('* */10 * * * *')
-    async handleCron() {
+    async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
         const results = (await Promise.all(productCodeList)).map(({ productId, productPrice, isSoldOut }) => {
             return { productId, price: productPrice, isSoldOut };
         });
         const updatedDataInfo = results.filter(({ productId, price, isSoldOut }) => {
-            if (!this.productDataCache.has(productId)) return true;
+            if (!this.productDataCache.has(productId)) {
+                this.productDataCache.set(productId, { productId, price, isSoldOut });
+                return true;
+            }
             const cache = this.productDataCache.get(productId);
             if (cache.isSoldOut !== isSoldOut || cache.price !== price) {
                 cache.isSoldOut = isSoldOut;
