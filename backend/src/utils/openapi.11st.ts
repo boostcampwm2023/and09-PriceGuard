@@ -25,7 +25,7 @@ function productInfoUrl11st(productCode: string) {
     return shopUrl.toString();
 }
 
-export async function getProductInfo11st(productCode: string) {
+export async function getProductInfo11st(productCode: string, productId?: string) {
     const openApiUrl = productInfoUrl11st(productCode);
     try {
         const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
@@ -38,6 +38,7 @@ export async function getProductInfo11st(productCode: string) {
             shop: '11번가',
             imageUrl: productDetails['BasicImage']['text'],
             isSoldOut: productDetails['isSoldOut'],
+            productId,
         };
     } catch (e) {
         throw new HttpException('존재하지 않는 상품 코드입니다.', HttpStatus.BAD_REQUEST);
