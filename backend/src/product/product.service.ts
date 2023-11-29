@@ -42,6 +42,7 @@ export class ProductService {
                         _id: '$productId',
                         price: { $first: '$price' },
                         isSoldOut: { $first: '$isSoldOut' },
+                        lowestPrice: { $min: '$price' },
                     },
                 },
             ])
@@ -50,6 +51,7 @@ export class ProductService {
             this.productDataCache.set(data._id, {
                 price: data.price,
                 isSoldOut: data.isSoldOut,
+                lowestPrice: data.lowestPrice,
             });
         });
     }
@@ -133,7 +135,7 @@ export class ProductService {
         const idx = ranklist.findIndex((product) => product.productId === selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
-        const { price } = this.productDataCache.get(selectProduct.id);
+        const { price, lowestPrice } = this.productDataCache.get(selectProduct.id);
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
@@ -141,7 +143,7 @@ export class ProductService {
             rank: rank,
             shopUrl: selectProduct.shopUrl,
             targetPrice: trackingProduct ? trackingProduct.targetPrice : -1,
-            lowestPrice: 500,
+            lowestPrice: lowestPrice,
             price: price,
             priceData: priceData,
         };
