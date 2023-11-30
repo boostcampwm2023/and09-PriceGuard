@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +12,7 @@ import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showConfirmationDialog
@@ -66,6 +66,29 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
+        }
+        binding.mbtgGraphPeriod.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.btn_period_day -> {
+                        productDetailViewModel.changePeriod(GraphMode.DAY)
+                    }
+
+                    R.id.btn_period_week -> {
+                        productDetailViewModel.changePeriod(GraphMode.WEEK)
+                    }
+
+                    R.id.btn_period_month -> {
+                        productDetailViewModel.changePeriod(GraphMode.MONTH)
+                    }
+
+                    R.id.btn_period_quarter -> {
+                        productDetailViewModel.changePeriod(GraphMode.QUARTER)
+                    }
+
+                    else -> {}
+                }
+            }
         }
     }
 

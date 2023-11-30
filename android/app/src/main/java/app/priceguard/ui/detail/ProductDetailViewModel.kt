@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.graph.ProductChartDataset
-import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
@@ -23,12 +22,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(val productRepository: ProductRepository) :
     ViewModel() {
-    enum class ChartPeriod {
-        DAY,
-        WEEK,
-        MONTH,
-        QUARTER
-    }
 
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
@@ -45,7 +38,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
-        val chartPeriod: ChartPeriod = ChartPeriod.QUARTER,
+        val chartPeriod: GraphMode = GraphMode.DAY,
         val chartData: ProductChartDataset? = null
     )
 
@@ -119,7 +112,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                                 )
                             },
                             formattedLowestPrice = formatPrice(result.data.lowestPrice),
-                            chartPeriod = ChartPeriod.QUARTER,
+                            chartPeriod = GraphMode.DAY,
                             chartData = ProductChartDataset(
                                 showXAxis = true,
                                 showYAxis = true,
@@ -148,6 +141,22 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                     }
                 }
             }
+        }
+    }
+
+    fun changePeriod(period: GraphMode) {
+        _state.update {
+            it.copy(
+                chartPeriod = period,
+                chartData = ProductChartDataset(
+                    showXAxis = true,
+                    showYAxis = true,
+                    isInteractive = true,
+                    graphMode = period,
+                    data = it.chartData?.data ?: listOf(),
+                    gridLines = listOf()
+                )
+            )
         }
     }
 
