@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.ui.additem.AddItemActivity
@@ -82,8 +83,18 @@ class DetailActivity : AppCompatActivity() {
     private fun observeEvent() {
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
-                binding.chGraphDetail.dataset = state.chartData
-                Log.d("TEST", state.chartData.toString())
+                binding.chGraphDetail.dataset = state.chartData?.copy(
+                    gridLines = listOf(
+                        ProductChartGridLine(
+                            resources.getString(R.string.target_price),
+                            state.targetPrice?.toFloat() ?: 0F
+                        ),
+                        ProductChartGridLine(
+                            resources.getString(R.string.lowest_price),
+                            state.lowestPrice?.toFloat() ?: 0F
+                        )
+                    )
+                )
             }
         }
         repeatOnStarted {

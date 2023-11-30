@@ -115,6 +115,7 @@ class ProductSummaryAdapter :
             chGraph.dataset = ProductChartDataset(
                 showXAxis = false,
                 showYAxis = false,
+                isInteractive = false,
                 graphMode = GraphMode.DAY,
                 data = data,
                 gridLines = listOf()

@@ -123,12 +123,10 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                             chartData = ProductChartDataset(
                                 showXAxis = true,
                                 showYAxis = true,
+                                isInteractive = true,
                                 graphMode = GraphMode.DAY,
                                 data = result.data.priceData,
-                                gridLines = listOf(
-                                    ProductChartGridLine("목표가", result.data.targetPrice.toFloat()),
-                                    ProductChartGridLine("역대최저가", result.data.lowestPrice.toFloat())
-                                )
+                                gridLines = listOf()
                             )
                         )
                     }
