@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, NINETY_DAYS } from 'src/constants';
+import { KR_OFFSET, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 
 const REGEXP_11ST =
@@ -91,35 +91,42 @@ export class ProductService {
         if (trackingProductList.length === 0) {
             throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
-        const trackingListInfo = trackingProductList.map(({ product, targetPrice }) => {
-            const { productName, productCode, shop, imageUrl } = product;
+        const trackingListInfo = trackingProductList.map(async ({ product, targetPrice }) => {
+            const { id, productName, productCode, shop, imageUrl } = product;
+            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
                 productCode,
                 shop,
                 imageUrl,
                 targetPrice: targetPrice,
-                price: 1234, // 임시 더미 가격 데이터
+                price,
+                priceData,
             };
         });
-
-        return trackingListInfo;
+        const result = await Promise.all(trackingListInfo);
+        return result;
     }
 
     async getRecommendList() {
         const recommendList = await this.trackingProductRepository.getTotalInfoRankingList();
-        const recommendListInfo = recommendList.map((product, index) => {
-            const { productName, productCode, shop, imageUrl } = product;
+        const recommendListInfo = recommendList.map(async (product, index) => {
+            const { id, productName, productCode, shop, imageUrl } = product;
+            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
                 productCode,
                 shop,
                 imageUrl,
-                price: 1234, // 임시 더미 가격 데이터
+                price,
                 rank: index + 1,
+                priceData,
             };
         });
-        return recommendListInfo;
+        const result = await Promise.all(recommendListInfo);
+        return result;
     }
 
     async getProductDetails(userId: string, productCode: string): Promise<ProductDetailsDto> {
@@ -133,7 +140,7 @@ export class ProductService {
             where: { userId: userId, productId: selectProduct.id },
         });
         const ranklist = await this.trackingProductRepository.getRankingList();
-        const idx = ranklist.findIndex((product) => product.productId === selectProduct.id);
+        const idx = ranklist.findIndex(({ id }) => id === selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
         const { price, lowestPrice } = this.productDataCache.get(selectProduct.id);

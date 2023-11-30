@@ -20,3 +20,4 @@ export const MONGODB_URL = process.env.MONGODB_URL as string;
 export const KR_OFFSET = 9 * 60 * 60 * 1000;
 export const THIRTY_DAYS = 30;
 export const NINETY_DAYS = 90;
+export const NO_CACHE = 0;
