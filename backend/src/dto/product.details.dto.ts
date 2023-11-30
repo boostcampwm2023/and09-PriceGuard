@@ -1,3 +1,5 @@
+import { PriceDataDto } from './price.data.dto';
+
 export class ProductDetailsDto {
     productName: string;
     shop: string;
@@ -7,4 +9,5 @@ export class ProductDetailsDto {
     targetPrice: number;
     lowestPrice: number;
     price: number;
+    priceData: PriceDataDto[];
 }

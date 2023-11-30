@@ -36,7 +36,7 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refresh') {
         if (Date.now() >= payload.exp * 1000) {
             throw new HttpException('토큰이 만료되었습니다.', HttpStatus.GONE);
         }
-        await this.jwtService.isLatestRefreshToken(payload.id, payload);
+        await this.jwtService.validateRefreshToken(payload.id, payload);
         return { id: payload.id };
     }
 }
