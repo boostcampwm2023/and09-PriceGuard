@@ -4,6 +4,7 @@ import app.priceguard.data.dto.PriceDataDTO
 
 class GraphDataConverter {
 
+    // TODO: 기간별로 데이터 필터링을 통해 해당 기간에 발생한 가격 변동만 추적하도록 구조 변경.
     fun toDataset(priceData: List<PriceDataDTO>?): List<ProductChartData> {
         priceData ?: return listOf()
         if (priceData.isEmpty()) {
