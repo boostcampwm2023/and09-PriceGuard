@@ -1,9 +1,8 @@
 package app.priceguard.data.graph
 
 import app.priceguard.data.dto.PriceDataDTO
-import javax.inject.Inject
 
-class GraphDataConverter @Inject constructor() {
+class GraphDataConverter {
 
     fun toDataset(priceData: List<PriceDataDTO>?): List<ProductChartData> {
         priceData ?: return listOf()
