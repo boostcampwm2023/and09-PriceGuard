@@ -9,8 +9,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showConfirmationDialog
@@ -36,6 +38,7 @@ class DetailActivity : AppCompatActivity() {
 
         initListener()
         setNavigationButton()
+        setGraph()
         checkProductCode()
         observeEvent()
     }
@@ -65,6 +68,28 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
         }
+
+        binding.mbtgGraphPeriod.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+
+            when (checkedId) {
+                R.id.btn_period_day -> {
+                    productDetailViewModel.changePeriod(GraphMode.DAY)
+                }
+
+                R.id.btn_period_week -> {
+                    productDetailViewModel.changePeriod(GraphMode.WEEK)
+                }
+
+                R.id.btn_period_month -> {
+                    productDetailViewModel.changePeriod(GraphMode.MONTH)
+                }
+
+                R.id.btn_period_quarter -> {
+                    productDetailViewModel.changePeriod(GraphMode.QUARTER)
+                }
+            }
+        }
     }
 
     private fun checkProductCode() {
@@ -79,6 +104,22 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun observeEvent() {
+        repeatOnStarted {
+            productDetailViewModel.state.collect { state ->
+                binding.chGraphDetail.dataset = state.chartData?.copy(
+                    gridLines = listOf(
+                        ProductChartGridLine(
+                            resources.getString(R.string.target_price),
+                            state.targetPrice?.toFloat() ?: 0F
+                        ),
+                        ProductChartGridLine(
+                            resources.getString(R.string.lowest_price),
+                            state.lowestPrice?.toFloat() ?: 0F
+                        )
+                    )
+                )
+            }
+        }
         repeatOnStarted {
             productDetailViewModel.event.collect { event ->
                 when (event) {
@@ -156,6 +197,10 @@ class DetailActivity : AppCompatActivity() {
         binding.mtDetailTopbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun setGraph() {
+        binding.chGraphDetail.setXAxisMargin(48F)
     }
 
     private fun showConfirmationDialog(

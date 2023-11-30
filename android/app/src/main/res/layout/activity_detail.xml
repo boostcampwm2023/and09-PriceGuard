@@ -38,9 +38,9 @@
             android:id="@+id/srl_product_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:onRefreshListener="@{() -> viewModel.getDetails(true)}"
-            app:refreshing="@{viewModel.state.isRefreshing}"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:refreshing="@{viewModel.state.isRefreshing}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -52,7 +52,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="80dp">
 
                         <androidx.constraintlayout.widget.Guideline
                             android:id="@+id/gl_vertical_start_nested"
@@ -113,10 +114,10 @@
                             android:id="@+id/tv_detail_popular_rank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{@string/rank(viewModel.state.rank)}"
                             android:textAppearance="?attr/textAppearanceLabelLarge"
                             android:textColor="?attr/colorOnPrimaryFixedVariant"
                             android:visibility="@{viewModel.state.rank > 0 &amp;&amp; viewModel.state.rank &lt;= 100 ? View.VISIBLE : View.GONE}"
-                            android:text="@{@string/rank(viewModel.state.rank)}"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@+id/tv_detail_current_price"
                             tools:text="트래킹 상품 인기 #2위" />
@@ -256,7 +257,8 @@
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/tv_detail_price_graph"
-                            app:singleSelection="true">
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
 
                             <Button
                                 android:id="@+id/btn_period_day"
@@ -292,11 +294,12 @@
 
                         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                        <androidx.constraintlayout.widget.Placeholder
+                        <app.priceguard.materialchart.Chart
+                            android:id="@+id/ch_graph_detail"
+                            style="@style/DetailChartTheme"
                             android:layout_width="0dp"
-                            android:layout_height="400dp"
+                            android:layout_height="300dp"
                             android:layout_marginTop="8dp"
-                            android:backgroundTint="?attr/colorSecondaryContainer"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/mbtg_graph_period" />

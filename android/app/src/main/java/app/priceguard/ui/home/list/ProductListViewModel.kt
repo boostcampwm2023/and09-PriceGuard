@@ -49,6 +49,7 @@ class ProductListViewModel @Inject constructor(
                             data.productName,
                             data.price,
                             data.productCode,
+                            data.priceData,
                             calculateDiscountRate(data.targetPrice, data.price),
                             true
                         )

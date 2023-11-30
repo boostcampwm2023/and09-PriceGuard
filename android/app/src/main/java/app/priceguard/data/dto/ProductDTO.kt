@@ -1,5 +1,6 @@
 package app.priceguard.data.dto
 
+import app.priceguard.data.graph.ProductChartData
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,7 +10,8 @@ data class ProductDTO(
     val shop: String? = null,
     val imageUrl: String? = null,
     val targetPrice: Int? = null,
-    val price: Int? = null
+    val price: Int? = null,
+    val priceData: List<PriceDataDTO>? = null
 )
 
 data class ProductData(
@@ -18,5 +20,6 @@ data class ProductData(
     val shop: String,
     val imageUrl: String,
     val targetPrice: Int,
-    val price: Int
+    val price: Int,
+    val priceData: List<ProductChartData>
 )

@@ -3,8 +3,10 @@ package app.priceguard.ui.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
 import javax.inject.Inject
@@ -35,7 +37,9 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val price: Int? = null,
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
-        val formattedLowestPrice: String = ""
+        val formattedLowestPrice: String = "",
+        val chartPeriod: GraphMode = GraphMode.DAY,
+        val chartData: ProductChartDataset? = null
     )
 
     sealed class ProductDetailEvent {
@@ -107,7 +111,16 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                                     result.data.targetPrice
                                 )
                             },
-                            formattedLowestPrice = formatPrice(result.data.lowestPrice)
+                            formattedLowestPrice = formatPrice(result.data.lowestPrice),
+                            chartPeriod = GraphMode.DAY,
+                            chartData = ProductChartDataset(
+                                showXAxis = true,
+                                showYAxis = true,
+                                isInteractive = true,
+                                graphMode = GraphMode.DAY,
+                                data = result.data.priceData,
+                                gridLines = listOf()
+                            )
                         )
                     }
                 }
@@ -128,6 +141,22 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                     }
                 }
             }
+        }
+    }
+
+    fun changePeriod(period: GraphMode) {
+        _state.update {
+            it.copy(
+                chartPeriod = period,
+                chartData = ProductChartDataset(
+                    showXAxis = true,
+                    showYAxis = true,
+                    isInteractive = true,
+                    graphMode = period,
+                    data = it.chartData?.data ?: listOf(),
+                    gridLines = listOf()
+                )
+            )
         }
     }
 
