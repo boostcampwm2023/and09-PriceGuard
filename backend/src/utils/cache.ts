@@ -9,42 +9,50 @@ class CacheNode {
     }
 }
 
-export class RankCache {
+export class ProductRankCache {
     maxSize: number;
     count: number;
     head: CacheNode;
     tail: CacheNode;
+    hashTable = new Map();
     constructor(size: number) {
         this.maxSize = size;
         this.head = new CacheNode('head', 'head');
         this.tail = new CacheNode('tail', 'tail');
+        this.head.next = this.tail;
+        this.tail.prev = this.head;
+        this.count = 0;
     }
 
     put(key: string, value: any) {
-        if (this.tail.prev.value >= value) {
-            return;
-        }
         const node = new CacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
             const lowestNode = this.getlowestNode();
             this.delete(lowestNode);
         }
-        console.log(key);
     }
 
     private add(node: CacheNode) {
-        const prev = this.tail.prev;
+        let prev = this.tail.prev;
+        while (prev.value.userCount < node.value.userCount) {
+            if (prev === this.head) {
+                break;
+            }
+            prev = prev.prev;
+        }
+        const next = prev.next;
         prev.next = node;
-        this.tail.prev = node;
+        node.next = next;
         node.prev = prev;
-        node.next = this.tail;
+        next.prev = node;
+        this.hashTable.set(node.key, node);
         this.count++;
     }
 
     private getlowestNode() {
         let node = this.tail.prev;
-        while (node.value > node.prev.value) {
+        while (node.value.userCount >= node.prev.value.userCount) {
             node = node.prev;
         }
         return node;
@@ -55,6 +63,8 @@ export class RankCache {
         const next = node.next;
         prev.next = next;
         next.prev = prev;
+        this.hashTable.delete(node.key);
+        this.count--;
     }
 
     findIndex(key: string) {
@@ -69,5 +79,47 @@ export class RankCache {
             node = node.next;
         }
         return idx;
+    }
+
+    update(product: any) {
+        const node = this.hashTable.get(product.id);
+        if (node) {
+            node.value.userCount = String(parseInt(node.value.userCount) + 1);
+            while (node.value.userCount > node.prev.value.userCount) {
+                this.moveFront(node);
+            }
+            return;
+        }
+        product.userCount = '1';
+        this.put(product.id, product);
+    }
+    private moveFront(node: CacheNode) {
+        const prev = node.prev;
+        const pPrev = prev.prev;
+        const nNext = node.next;
+        prev.next = nNext;
+        node.next = prev;
+        pPrev.next = node;
+        node.prev = pPrev;
+        prev.prev = node;
+        nNext.prev = prev;
+    }
+
+    get(key: string) {
+        const node = this.hashTable.get(key);
+        if (node) {
+            return node;
+        }
+        return null;
+    }
+
+    getAll() {
+        const nodeList = [];
+        let node = this.head.next;
+        while (node !== this.tail) {
+            nodeList.push(node.value);
+            node = node.next;
+        }
+        return nodeList;
     }
 }
