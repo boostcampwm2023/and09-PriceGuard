@@ -38,6 +38,7 @@ class DetailActivity : AppCompatActivity() {
 
         initListener()
         setNavigationButton()
+        setGraph()
         checkProductCode()
         observeEvent()
     }
@@ -197,6 +198,10 @@ class DetailActivity : AppCompatActivity() {
         binding.mtDetailTopbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun setGraph() {
+        binding.chGraphDetail.setXAxisMargin(48F)
     }
 
     private fun showConfirmationDialog(

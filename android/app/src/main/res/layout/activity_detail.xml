@@ -297,7 +297,7 @@
                             android:id="@+id/ch_graph_detail"
                             style="@style/DetailChartTheme"
                             android:layout_width="0dp"
-                            android:layout_height="400dp"
+                            android:layout_height="300dp"
                             android:layout_marginTop="8dp"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
