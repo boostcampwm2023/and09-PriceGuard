@@ -30,6 +30,7 @@ export class RankCache {
             const lowestNode = this.getlowestNode();
             this.delete(lowestNode);
         }
+        console.log(key);
     }
 
     private add(node: CacheNode) {
@@ -54,5 +55,19 @@ export class RankCache {
         const next = node.next;
         prev.next = next;
         next.prev = prev;
+    }
+
+    findIndex(key: string) {
+        let node = this.head.next;
+        let idx = -1;
+        while (node.key !== key) {
+            idx++;
+            if (this.count <= idx) {
+                idx = -1;
+                break;
+            }
+            node = node.next;
+        }
+        return idx;
     }
 }

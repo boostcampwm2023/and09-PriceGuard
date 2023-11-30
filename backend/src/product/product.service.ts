@@ -13,14 +13,16 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { KR_OFFSET, MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
+import { RankCache } from 'src/utils/cache';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     private productDataCache = new Map();
+    private rankListCache = new RankCache(MAX_TRACKING_RANK);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -55,6 +57,10 @@ export class ProductService {
                 lowestPrice: data.lowestPrice,
             });
         });
+        const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
+        rankList.forEach((product) => {
+            this.rankListCache.put(product.id, product);
+        });
     }
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
@@ -80,6 +86,8 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
+        const userCount = await this.trackingProductRepository.getUserCount(product.id);
+        this.rankListCache.put(product.id, userCount);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
