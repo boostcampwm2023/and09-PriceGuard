@@ -140,7 +140,7 @@ export class ProductService {
             where: { userId: userId, productId: selectProduct.id },
         });
         const ranklist = await this.trackingProductRepository.getRankingList();
-        const idx = ranklist.findIndex((product) => product.productId === selectProduct.id);
+        const idx = ranklist.findIndex(({ id }) => id === selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
         const { price, lowestPrice } = this.productDataCache.get(selectProduct.id);
