@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, NINETY_DAYS } from 'src/constants';
+import { KR_OFFSET, NINETY_DAYS, NO_CACHE } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 
 const REGEXP_11ST =
@@ -92,14 +92,15 @@ export class ProductService {
             throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         const trackingListInfo = trackingProductList.map(({ product, targetPrice }) => {
-            const { productName, productCode, shop, imageUrl } = product;
+            const { id, productName, productCode, shop, imageUrl } = product;
+            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
             return {
                 productName,
                 productCode,
                 shop,
                 imageUrl,
                 targetPrice: targetPrice,
-                price: 1234, // 임시 더미 가격 데이터
+                price,
             };
         });
 
@@ -109,13 +110,14 @@ export class ProductService {
     async getRecommendList() {
         const recommendList = await this.trackingProductRepository.getTotalInfoRankingList();
         const recommendListInfo = recommendList.map((product, index) => {
-            const { productName, productCode, shop, imageUrl } = product;
+            const { id, productName, productCode, shop, imageUrl } = product;
+            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
             return {
                 productName,
                 productCode,
                 shop,
                 imageUrl,
-                price: 1234, // 임시 더미 가격 데이터
+                price,
                 rank: index + 1,
             };
         });
