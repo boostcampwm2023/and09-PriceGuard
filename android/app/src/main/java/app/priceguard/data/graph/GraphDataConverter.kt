@@ -17,7 +17,10 @@ class GraphDataConverter @Inject constructor() {
             dto.isSoldOut ?: return@forEach
             dataList.add(ProductChartData(dto.time / 1000, dto.price.toFloat(), dto.isSoldOut.not()))
         }
-        dataList.add(ProductChartData((System.currentTimeMillis() / 1000).toFloat(), dataList.last().y, dataList.last().valid))
-        return dataList.toList()
+        val currentTime = (System.currentTimeMillis() / 1000).toFloat()
+        if (dataList.last().x < currentTime) {
+            dataList.add(ProductChartData(currentTime, dataList.last().y, dataList.last().valid))
+        }
+        return dataList.toList().sortedBy { it.x }
     }
 }
