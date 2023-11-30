@@ -60,7 +60,8 @@ class ConfirmItemLinkFragment : Fragment() {
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
                     productInfo.productCode ?: "",
                     productInfo.productName ?: "",
-                    productInfo.productPrice ?: 0
+                    productInfo.productPrice ?: 0,
+                    true
                 )
             findNavController().navigate(action)
         }

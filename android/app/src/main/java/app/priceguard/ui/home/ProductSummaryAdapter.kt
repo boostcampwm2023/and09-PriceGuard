@@ -1,6 +1,7 @@
 package app.priceguard.ui.home
 
 import android.content.Intent
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.priceguard.R
+import app.priceguard.data.graph.ProductChartData
+import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.databinding.ItemProductSummaryBinding
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.detail.DetailActivity
 
 class ProductSummaryAdapter :
@@ -33,6 +37,7 @@ class ProductSummaryAdapter :
                 summary = item
                 setViewType(item)
                 setClickListener(item.productCode)
+                setGraph(item.priceData)
             }
         }
 
@@ -41,12 +46,15 @@ class ProductSummaryAdapter :
                 is ProductSummary.RecommendedProductSummary -> {
                     tvProductRecommendRank.visibility = View.VISIBLE
                     msProduct.visibility = View.GONE
+                    tvProductDiscountPercent.visibility = View.GONE
                     setRecommendRank(item)
                 }
 
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    tvProductDiscountPercent.visibility = View.VISIBLE
+                    setDisCount(item.discountPercent)
                     setSwitchListener()
                 }
             }
@@ -67,6 +75,28 @@ class ProductSummaryAdapter :
             }
         }
 
+        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+            tvProductDiscountPercent.text =
+                if (discount > 0) {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.add_plus,
+                        tvProductDiscountPercent.context.getString(R.string.percent, discount)
+                    )
+                } else {
+                    tvProductDiscountPercent.context.getString(
+                        R.string.percent,
+                        discount
+                    )
+                }
+            val value = TypedValue()
+            tvProductDiscountPercent.context.theme.resolveAttribute(
+                if (discount > 0) android.R.attr.colorPrimary else android.R.attr.colorError,
+                value,
+                true
+            )
+            tvProductDiscountPercent.setTextColor(value.data)
+        }
+
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
             tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
                 R.string.recommand_rank, item.recommendRank
@@ -79,6 +109,17 @@ class ProductSummaryAdapter :
                 intent.putExtra("productCode", code)
                 binding.root.context.startActivity(intent)
             }
+        }
+
+        private fun ItemProductSummaryBinding.setGraph(data: List<ProductChartData>) {
+            chGraph.dataset = ProductChartDataset(
+                showXAxis = false,
+                showYAxis = false,
+                isInteractive = false,
+                graphMode = GraphMode.DAY,
+                data = data,
+                gridLines = listOf()
+            )
         }
     }
 

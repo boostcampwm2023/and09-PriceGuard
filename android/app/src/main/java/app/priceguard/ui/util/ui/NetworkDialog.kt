@@ -27,3 +27,16 @@ fun Activity.goBackToLoginActivity(tokenRepository: TokenRepository) {
     startActivity(intent)
     finish()
 }
+
+fun Activity.showConfirmationDialog(
+    title: String,
+    message: String
+) {
+    MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
+        .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+        .create()
+        .show()
+}

@@ -2,7 +2,8 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.RecommendProductState
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,34 +25,43 @@ class RecommendedProductViewModel @Inject constructor(
         data object PermissionDenied : RecommendedProductEvent()
     }
 
+    private var _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var _recommendedProductList =
         MutableStateFlow<List<RecommendedProductSummary>>(listOf())
     val recommendedProductList: StateFlow<List<RecommendedProductSummary>> =
         _recommendedProductList.asStateFlow()
 
-    private var _events = MutableSharedFlow<RecommendedProductEvent>()
-    val events: SharedFlow<RecommendedProductEvent> = _events.asSharedFlow()
+    private var _events = MutableSharedFlow<ProductErrorState>()
+    val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
 
-    init {
+    fun getRecommendedProductList(isRefresh: Boolean) {
         viewModelScope.launch {
-            getProductList()
-        }
-    }
+            if (isRefresh) {
+                _isRefreshing.value = true
+            }
 
-    suspend fun getProductList() {
-        val result = productRepository.getRecommendedProductList()
-        if (result.productListState == RecommendProductState.PERMISSION_DENIED) {
-            _events.emit(RecommendedProductEvent.PermissionDenied)
-        } else {
-            _recommendedProductList.value = result.recommendList.map { data ->
-                RecommendedProductSummary(
-                    data.shop,
-                    data.productName,
-                    data.price.toString(),
-                    "-15.3%",
-                    data.productCode,
-                    data.rank
-                )
+            val result = productRepository.getRecommendedProductList()
+            _isRefreshing.value = false
+
+            when (result) {
+                is ProductRepositoryResult.Success -> {
+                    _recommendedProductList.value = result.data.map { data ->
+                        RecommendedProductSummary(
+                            data.shop,
+                            data.productName,
+                            data.price,
+                            data.productCode,
+                            data.priceData,
+                            data.rank
+                        )
+                    }
+                }
+
+                is ProductRepositoryResult.Error -> {
+                    _events.emit(result.productErrorState)
+                }
             }
         }
     }

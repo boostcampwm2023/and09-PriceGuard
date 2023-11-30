@@ -6,17 +6,5 @@ import kotlinx.serialization.Serializable
 data class ProductListResponse(
     val statusCode: Int,
     val message: String,
-    val trackingList: List<ProductDTO>?
+    val trackingList: List<ProductDTO>? = null
 )
-
-data class ProductListResult(
-    val productListState: ProductListState,
-    val trackingList: List<ProductData>
-)
-
-enum class ProductListState {
-    SUCCESS,
-    PERMISSION_DENIED,
-    NOT_FOUND,
-    UNDEFINED_ERROR
-}
