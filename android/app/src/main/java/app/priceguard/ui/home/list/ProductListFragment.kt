@@ -8,19 +8,18 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
-import app.priceguard.ui.home.list.ProductListViewModel.ProductListEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
+import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
@@ -54,6 +53,11 @@ class ProductListFragment : Fragment() {
         )
     }
 
+    override fun onStart() {
+        super.onStart()
+        productListViewModel.getProductList(false)
+    }
+
     private fun FragmentProductListBinding.initSettingAdapter() {
         val adapter = ProductSummaryAdapter()
         rvProductList.adapter = adapter
@@ -65,16 +69,12 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initListener() {
-        mtbProductList.setOnMenuItemClickListener { menuItem ->
-            if (menuItem.itemId == R.id.refresh) {
-                lifecycleScope.launch {
-                    productListViewModel.getProductList()
-                }
-            }
-            true
-        }
         fabProductList.setOnClickListener {
             gotoProductAddActivity()
+        }
+
+        ablProductList.addOnOffsetChangedListener { _, verticalOffset ->
+            srlProductList.isEnabled = verticalOffset == 0
         }
     }
 
@@ -86,8 +86,31 @@ class ProductListFragment : Fragment() {
     private fun collectEvent() {
         repeatOnStarted {
             productListViewModel.events.collect { event ->
-                if (event is ProductListEvent.PermissionDenied) {
-                    activity?.showPermissionDeniedDialog(tokenRepository)
+                when (event) {
+                    ProductErrorState.PERMISSION_DENIED -> {
+                        requireActivity().showPermissionDeniedDialog(tokenRepository)
+                    }
+
+                    ProductErrorState.INVALID_REQUEST -> {
+                        requireActivity().showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.invalid_request)
+                        )
+                    }
+
+                    ProductErrorState.NOT_FOUND -> {
+                        requireActivity().showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.not_found)
+                        )
+                    }
+
+                    else -> {
+                        requireActivity().showConfirmationDialog(
+                            getString(R.string.product_list_failed),
+                            getString(R.string.undefined_error)
+                        )
+                    }
                 }
             }
         }

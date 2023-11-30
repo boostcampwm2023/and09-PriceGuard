@@ -1,11 +1,11 @@
 package app.priceguard.ui.additem.link
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.network.APIResult
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,14 +22,13 @@ class RegisterItemLinkViewModel
     data class RegisterLinkUIState(
         val link: String = "",
         val product: ProductVerifyDTO? = null,
-        val isNextReady: Boolean = false,
-        val isLinkError: Boolean? = null,
-        val isVerificationFinished: Boolean = true
+        val isNextReady: Boolean = true,
+        val isLinkError: Boolean = false
     )
 
     sealed class RegisterLinkEvent {
         data class SuccessVerification(val product: ProductVerifyDTO) : RegisterLinkEvent()
-        data object FailureVerification : RegisterLinkEvent()
+        data class FailureVerification(val errorType: ProductErrorState) : RegisterLinkEvent()
     }
 
     private val _state = MutableStateFlow(RegisterLinkUIState())
@@ -39,45 +38,39 @@ class RegisterItemLinkViewModel
     val event = _event.asSharedFlow()
 
     private fun isUrlValid(url: String): Boolean {
-        val urlPattern = """^(https?):\\/\\/(-\.)?([^\s\\/?\.#]+\.?)+(\\/\S*)?$""".toRegex()
+        val urlPattern =
+            """(https?:\/\/)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)""".toRegex()
         return urlPattern.matches(url)
     }
 
     fun verifyLink() {
-        _state.value = state.value.copy(isVerificationFinished = false)
+        if (!isUrlValid(state.value.link)) {
+            _state.value =
+                state.value.copy(isLinkError = !isUrlValid(state.value.link), isNextReady = false)
+            return
+        }
+        _state.value = state.value.copy(
+            isNextReady = false,
+            isLinkError = false
+        )
 
         viewModelScope.launch {
             val response = productRepository.verifyLink(ProductVerifyRequest(state.value.link))
-            Log.d("responseProduct", response.toString())
             when (response) {
-                is APIResult.Success -> {
-                    val product = ProductVerifyDTO(
-                        response.data.productName,
-                        response.data.productCode,
-                        response.data.productPrice,
-                        response.data.shop,
-                        response.data.imageUrl
-                    )
-                    _state.value = state.value.copy(
-                        product = product
-                    )
-                    _event.emit(RegisterLinkEvent.SuccessVerification(product))
+                is ProductRepositoryResult.Success -> {
+                    _state.value = state.value.copy(isNextReady = true, product = response.data)
+                    _event.emit(RegisterLinkEvent.SuccessVerification(response.data))
                 }
 
-                is APIResult.Error -> {
-                    when (response.code) {
-                        400 -> {
-                            _state.value = state.value.copy(isLinkError = true)
-                        }
-                    }
-                    _event.emit(RegisterLinkEvent.FailureVerification)
+                is ProductRepositoryResult.Error -> {
+                    _state.value = state.value.copy(isLinkError = true, isNextReady = false)
+                    _event.emit(RegisterLinkEvent.FailureVerification(response.productErrorState))
                 }
             }
-            _state.value = state.value.copy(isVerificationFinished = true)
         }
     }
 
     fun updateLink(link: String) {
-        _state.value = state.value.copy(isLinkError = isUrlValid(link), link = link)
+        _state.value = state.value.copy(isLinkError = false, isNextReady = true, link = link)
     }
 }

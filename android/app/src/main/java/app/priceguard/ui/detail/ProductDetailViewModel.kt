@@ -2,9 +2,11 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductDeleteState
-import app.priceguard.data.dto.ProductDetailState
+import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartDataset
+import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
 import javax.inject.Inject
@@ -24,6 +26,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
         val isReady: Boolean = false,
+        val isRefreshing: Boolean = false,
         val productName: String? = null,
         val shop: String? = null,
         val imageUrl: String? = null,
@@ -34,7 +37,9 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val price: Int? = null,
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
-        val formattedLowestPrice: String = ""
+        val formattedLowestPrice: String = "",
+        val chartPeriod: GraphMode = GraphMode.DAY,
+        val chartData: ProductChartDataset? = null
     )
 
     sealed class ProductDetailEvent {
@@ -44,7 +49,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         data object NotFound : ProductDetailEvent()
         data object UnknownError : ProductDetailEvent()
         data object DeleteSuccess : ProductDetailEvent()
-        data class DeleteFailed(val errorType: ProductDeleteState) : ProductDetailEvent()
+        data class DeleteFailed(val errorType: ProductErrorState) : ProductDetailEvent()
     }
 
     lateinit var productCode: String
@@ -58,79 +63,100 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
     fun deleteProductTracking() {
         viewModelScope.launch {
-            when (val result = productRepository.deleteProduct(productCode, false)) {
-                ProductDeleteState.SUCCESS -> {
+            when (val result = productRepository.deleteProduct(productCode)) {
+                is ProductRepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
 
-                else -> {
-                    _event.emit(ProductDetailEvent.DeleteFailed(result))
+                is ProductRepositoryResult.Error -> {
+                    _event.emit(ProductDetailEvent.DeleteFailed(result.productErrorState))
                 }
             }
         }
     }
 
-    fun getDetails() {
+    fun getDetails(isRefresh: Boolean) {
         viewModelScope.launch {
             if (::productCode.isInitialized.not()) {
                 return@launch
             }
 
-            val result = productRepository.getProductDetail(productCode, false)
+            if (isRefresh) {
+                _state.value = _state.value.copy(isRefreshing = true)
+            }
 
-            when (result.state) {
-                ProductDetailState.SUCCESS -> {
-                    if (result.productName == null ||
-                        result.productCode == null ||
-                        result.shop == null ||
-                        result.imageUrl == null ||
-                        result.rank == null ||
-                        result.shopUrl == null ||
-                        result.targetPrice == null ||
-                        result.lowestPrice == null ||
-                        result.price == null
-                    ) {
-                        _event.emit(ProductDetailEvent.UnknownError)
-                        return@launch
-                    }
+            val result = productRepository.getProductDetail(productCode)
 
+            _state.value = _state.value.copy(isRefreshing = false)
+
+            when (result) {
+                is ProductRepositoryResult.Success -> {
                     _state.update {
                         it.copy(
                             isReady = true,
-                            isTracking = result.targetPrice >= 0,
-                            productName = result.productName,
-                            shop = result.shop,
-                            imageUrl = result.imageUrl,
-                            rank = result.rank,
-                            shopUrl = result.shopUrl,
-                            targetPrice = result.targetPrice,
-                            lowestPrice = result.lowestPrice,
-                            price = result.price,
-                            formattedPrice = formatPrice(result.price),
-                            formattedTargetPrice = if (result.targetPrice < 0) {
+                            isTracking = result.data.targetPrice >= 0,
+                            productName = result.data.productName,
+                            shop = result.data.shop,
+                            imageUrl = result.data.imageUrl,
+                            rank = result.data.rank,
+                            shopUrl = result.data.shopUrl,
+                            targetPrice = result.data.targetPrice,
+                            lowestPrice = result.data.lowestPrice,
+                            price = result.data.price,
+                            formattedPrice = formatPrice(result.data.price),
+                            formattedTargetPrice = if (result.data.targetPrice < 0) {
                                 "0"
                             } else {
                                 formatPrice(
-                                    result.targetPrice
+                                    result.data.targetPrice
                                 )
                             },
-                            formattedLowestPrice = formatPrice(result.lowestPrice)
+                            formattedLowestPrice = formatPrice(result.data.lowestPrice),
+                            chartPeriod = GraphMode.DAY,
+                            chartData = ProductChartDataset(
+                                showXAxis = true,
+                                showYAxis = true,
+                                isInteractive = true,
+                                graphMode = GraphMode.DAY,
+                                data = result.data.priceData,
+                                gridLines = listOf()
+                            )
                         )
                     }
                 }
 
-                ProductDetailState.PERMISSION_DENIED -> {
-                    _event.emit(ProductDetailEvent.Logout)
-                }
+                is ProductRepositoryResult.Error -> {
+                    when (result.productErrorState) {
+                        ProductErrorState.PERMISSION_DENIED -> {
+                            _event.emit(ProductDetailEvent.Logout)
+                        }
 
-                ProductDetailState.NOT_FOUND -> {
-                    _event.emit(ProductDetailEvent.NotFound)
-                }
+                        ProductErrorState.NOT_FOUND -> {
+                            _event.emit(ProductDetailEvent.NotFound)
+                        }
 
-                ProductDetailState.UNDEFINED_ERROR -> {
-                    _event.emit(ProductDetailEvent.UnknownError)
+                        else -> {
+                            _event.emit(ProductDetailEvent.UnknownError)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    fun changePeriod(period: GraphMode) {
+        _state.update {
+            it.copy(
+                chartPeriod = period,
+                chartData = ProductChartDataset(
+                    showXAxis = true,
+                    showYAxis = true,
+                    isInteractive = true,
+                    graphMode = period,
+                    data = it.chartData?.data ?: listOf(),
+                    gridLines = listOf()
+                )
+            )
         }
     }
 

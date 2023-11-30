@@ -3,8 +3,7 @@ package app.priceguard.data.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProductListResponse(
+data class PricePatchResponse(
     val statusCode: Int,
-    val message: String,
-    val trackingList: List<ProductDTO>? = null
+    val message: String
 )
