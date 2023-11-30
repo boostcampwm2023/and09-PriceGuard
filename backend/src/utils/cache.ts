@@ -1,6 +1,8 @@
+import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
+
 class CacheNode {
     key: string;
-    value: any;
+    value: ProductRankCacheDto;
     prev: CacheNode;
     next: CacheNode;
     constructor(key: string, value: any) {
@@ -24,11 +26,11 @@ export class ProductRankCache {
         this.count = 0;
     }
 
-    put(key: string, value: any) {
+    put(key: string, value: ProductRankCacheDto) {
         const node = new CacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
-            const lowestNode = this.getlowestNode();
+            const lowestNode = this.getLowestNode();
             this.delete(lowestNode);
         }
     }
@@ -50,7 +52,7 @@ export class ProductRankCache {
         this.count++;
     }
 
-    private getlowestNode() {
+    private getLowestNode() {
         let node = this.tail.prev;
         while (node.value.userCount >= node.prev.value.userCount) {
             node = node.prev;
@@ -59,8 +61,7 @@ export class ProductRankCache {
     }
 
     delete(node: CacheNode) {
-        const prev = node.prev;
-        const next = node.next;
+        const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
         this.hashTable.delete(node.key);
@@ -81,7 +82,7 @@ export class ProductRankCache {
         return idx;
     }
 
-    update(product: any) {
+    updatePost(product: ProductRankCacheDto) {
         const node = this.hashTable.get(product.id);
         if (node) {
             node.value.userCount = String(parseInt(node.value.userCount) + 1);
@@ -90,27 +91,23 @@ export class ProductRankCache {
             }
             return;
         }
-        product.userCount = '1';
         this.put(product.id, product);
     }
     private moveFront(node: CacheNode) {
         const prev = node.prev;
-        const pPrev = prev.prev;
-        const nNext = node.next;
-        prev.next = nNext;
+        const beforePrev = prev.prev;
+        const nextNode = node.next;
+        prev.next = nextNode;
         node.next = prev;
-        pPrev.next = node;
-        node.prev = pPrev;
+        beforePrev.next = node;
+        node.prev = beforePrev;
         prev.prev = node;
-        nNext.prev = prev;
+        nextNode.prev = prev;
     }
 
     get(key: string) {
         const node = this.hashTable.get(key);
-        if (node) {
-            return node;
-        }
-        return null;
+        return node ? node : null;
     }
 
     getAll() {

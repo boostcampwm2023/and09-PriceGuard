@@ -86,7 +86,16 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        this.productRankCache.update(product);
+        const userCount = await this.trackingProductRepository.getUserCount(product.id);
+        const productRanck = {
+            id: product.id,
+            productName: product.productName,
+            productCode: product.productCode,
+            shop: product.shop,
+            imageUrl: product.imageUrl,
+            userCount: userCount,
+        };
+        this.productRankCache.updatePost(productRanck);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 

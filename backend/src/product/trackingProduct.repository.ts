@@ -52,12 +52,12 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
         return rankList;
     }
 
-    async getUserCount(productId: string) {
-        const userCount = await this.repository
+    async getUserCount(productId: string): Promise<string> {
+        const raw = await this.repository
             .createQueryBuilder('tracking_product')
             .select('COUNT(tracking_product.userId) as userCount')
             .where('tracking_product.productId = :productId', { productId })
-            .getRawMany();
-        return userCount;
+            .getRawOne();
+        return raw.userCount;
     }
 }
