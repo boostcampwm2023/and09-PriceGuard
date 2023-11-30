@@ -1,11 +1,10 @@
 import { PriceDataDto } from './price.data.dto';
 
-export class TrackingProductDto {
+export class RecommendProductDto {
     productName: string;
     productCode: string;
     shop: string;
     imageUrl: string;
-    targetPrice: number;
     price: number;
     priceData: PriceDataDto[];
 }
