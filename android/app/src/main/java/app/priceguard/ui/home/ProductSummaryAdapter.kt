@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.priceguard.R
+import app.priceguard.data.graph.ProductChartData
+import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.databinding.ItemProductSummaryBinding
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.detail.DetailActivity
 
 class ProductSummaryAdapter :
@@ -34,6 +37,7 @@ class ProductSummaryAdapter :
                 summary = item
                 setViewType(item)
                 setClickListener(item.productCode)
+                setGraph(item.priceData)
             }
         }
 
@@ -105,6 +109,16 @@ class ProductSummaryAdapter :
                 intent.putExtra("productCode", code)
                 binding.root.context.startActivity(intent)
             }
+        }
+
+        private fun ItemProductSummaryBinding.setGraph(data: List<ProductChartData>) {
+            chGraph.dataset = ProductChartDataset(
+                showXAxis = false,
+                showYAxis = false,
+                graphMode = GraphMode.DAY,
+                data = data,
+                gridLines = listOf()
+            )
         }
     }
 

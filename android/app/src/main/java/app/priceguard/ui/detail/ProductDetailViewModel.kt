@@ -3,8 +3,11 @@ package app.priceguard.ui.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartDataset
+import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
 import javax.inject.Inject
@@ -20,6 +23,12 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(val productRepository: ProductRepository) :
     ViewModel() {
+    enum class ChartPeriod {
+        DAY,
+        WEEK,
+        MONTH,
+        QUARTER
+    }
 
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
@@ -35,7 +44,9 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val price: Int? = null,
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
-        val formattedLowestPrice: String = ""
+        val formattedLowestPrice: String = "",
+        val chartPeriod: ChartPeriod = ChartPeriod.QUARTER,
+        val chartData: ProductChartDataset? = null
     )
 
     sealed class ProductDetailEvent {
@@ -107,7 +118,18 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                                     result.data.targetPrice
                                 )
                             },
-                            formattedLowestPrice = formatPrice(result.data.lowestPrice)
+                            formattedLowestPrice = formatPrice(result.data.lowestPrice),
+                            chartPeriod = ChartPeriod.QUARTER,
+                            chartData = ProductChartDataset(
+                                showXAxis = true,
+                                showYAxis = true,
+                                graphMode = GraphMode.DAY,
+                                data = result.data.priceData,
+                                gridLines = listOf(
+                                    ProductChartGridLine("목표가", result.data.targetPrice.toFloat()),
+                                    ProductChartGridLine("역대최저가", result.data.lowestPrice.toFloat())
+                                )
+                            )
                         )
                     }
                 }

@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -79,6 +80,12 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun observeEvent() {
+        repeatOnStarted {
+            productDetailViewModel.state.collect { state ->
+                binding.chGraphDetail.dataset = state.chartData
+                Log.d("TEST", state.chartData.toString())
+            }
+        }
         repeatOnStarted {
             productDetailViewModel.event.collect { event ->
                 when (event) {

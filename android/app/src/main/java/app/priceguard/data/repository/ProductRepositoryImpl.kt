@@ -11,6 +11,7 @@ import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.data.dto.ProductVerifyRequest
 import app.priceguard.data.dto.RecommendProductData
 import app.priceguard.data.dto.RenewResult
+import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.ProductRepositoryResult
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
     private val productAPI: ProductAPI,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val graphDataConverter: GraphDataConverter
 ) : ProductRepository {
 
     private suspend fun renew(): Boolean {
@@ -138,7 +140,8 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.shop ?: "",
                             dto.imageUrl ?: "",
                             dto.targetPrice ?: 0,
-                            dto.price ?: 0
+                            dto.price ?: 0,
+                            GraphDataConverter().toDataset(dto.priceData)
                         )
                     } ?: listOf()
                 )
@@ -166,7 +169,8 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.shop ?: "",
                             dto.imageUrl ?: "",
                             dto.price ?: 0,
-                            dto.rank ?: 0
+                            dto.rank ?: 0,
+                            GraphDataConverter().toDataset(dto.priceData)
                         )
                     } ?: listOf()
                 )
@@ -199,7 +203,8 @@ class ProductRepositoryImpl @Inject constructor(
                         shopUrl = response.data.shopUrl ?: "",
                         targetPrice = response.data.targetPrice ?: -1,
                         lowestPrice = response.data.lowestPrice ?: -1,
-                        price = response.data.price ?: -1
+                        price = response.data.price ?: -1,
+                        priceData = graphDataConverter.toDataset(response.data.priceData)
                     )
                 )
             }

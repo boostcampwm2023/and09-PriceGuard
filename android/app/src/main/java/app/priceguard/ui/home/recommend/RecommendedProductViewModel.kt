@@ -53,6 +53,7 @@ class RecommendedProductViewModel @Inject constructor(
                             data.productName,
                             data.price,
                             data.productCode,
+                            data.priceData,
                             data.rank
                         )
                     }
