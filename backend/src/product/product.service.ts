@@ -15,14 +15,14 @@ import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
 import { KR_OFFSET, MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
-import { RankCache } from 'src/utils/cache';
+import { ProductRankCache } from 'src/utils/cache';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     private productDataCache = new Map();
-    private rankListCache = new RankCache(MAX_TRACKING_RANK);
+    private productRankCache = new ProductRankCache(MAX_TRACKING_RANK);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -59,7 +59,7 @@ export class ProductService {
         });
         const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
         rankList.forEach((product) => {
-            this.rankListCache.put(product.id, product);
+            this.productRankCache.put(product.id, product);
         });
     }
 
@@ -86,8 +86,7 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const userCount = await this.trackingProductRepository.getUserCount(product.id);
-        this.rankListCache.put(product.id, userCount);
+        this.productRankCache.update(product);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
@@ -118,7 +117,7 @@ export class ProductService {
     }
 
     async getRecommendList() {
-        const recommendList = await this.trackingProductRepository.getTotalInfoRankingList();
+        const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
             const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
