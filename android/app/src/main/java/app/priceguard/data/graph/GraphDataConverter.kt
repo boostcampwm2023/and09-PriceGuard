@@ -10,27 +10,14 @@ class GraphDataConverter @Inject constructor() {
         if (priceData.isEmpty()) {
             return listOf()
         }
-        var currentTime = 0
-        var dataList = mutableListOf<ProductChartData>()
-        priceData.forEachIndexed { i, dto ->
-            dto.time ?: return@forEachIndexed
-            dto.price ?: return@forEachIndexed
-            dto.isSoldOut ?: return@forEachIndexed
-            if (i == 0) {
-                currentTime = dto.time.milliSecondToMinute()
-                dataList.add(ProductChartData(currentTime.toFloat(), dto.price.toFloat(), dto.isSoldOut.not()))
-            } else {
-                currentTime += period
-                while (currentTime < dto.time.milliSecondToMinute()) {
-                    dataList.add(ProductChartData(currentTime.toFloat(), dto.price.toFloat(), dto.isSoldOut.not()))
-                    currentTime += period
-                }
-            }
+        val dataList = mutableListOf<ProductChartData>()
+        priceData.forEach { dto ->
+            dto.time ?: return@forEach
+            dto.price ?: return@forEach
+            dto.isSoldOut ?: return@forEach
+            dataList.add(ProductChartData(dto.time / 1000, dto.price.toFloat(), dto.isSoldOut.not()))
         }
+        dataList.add(ProductChartData((System.currentTimeMillis() / 1000).toFloat(), dataList.last().y, dataList.last().valid))
         return dataList.toList()
-    }
-
-    private fun Float.milliSecondToMinute(): Int {
-        return this.toInt() / 1000
     }
 }
