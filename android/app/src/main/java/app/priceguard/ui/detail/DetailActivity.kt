@@ -68,26 +68,25 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
         }
+
         binding.mbtgGraphPeriod.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
-                when (checkedId) {
-                    R.id.btn_period_day -> {
-                        productDetailViewModel.changePeriod(GraphMode.DAY)
-                    }
+            if (!isChecked) return@addOnButtonCheckedListener
 
-                    R.id.btn_period_week -> {
-                        productDetailViewModel.changePeriod(GraphMode.WEEK)
-                    }
+            when (checkedId) {
+                R.id.btn_period_day -> {
+                    productDetailViewModel.changePeriod(GraphMode.DAY)
+                }
 
-                    R.id.btn_period_month -> {
-                        productDetailViewModel.changePeriod(GraphMode.MONTH)
-                    }
+                R.id.btn_period_week -> {
+                    productDetailViewModel.changePeriod(GraphMode.WEEK)
+                }
 
-                    R.id.btn_period_quarter -> {
-                        productDetailViewModel.changePeriod(GraphMode.QUARTER)
-                    }
+                R.id.btn_period_month -> {
+                    productDetailViewModel.changePeriod(GraphMode.MONTH)
+                }
 
-                    else -> {}
+                R.id.btn_period_quarter -> {
+                    productDetailViewModel.changePeriod(GraphMode.QUARTER)
                 }
             }
         }
