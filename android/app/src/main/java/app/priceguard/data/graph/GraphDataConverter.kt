@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class GraphDataConverter @Inject constructor() {
 
-    fun toDataset(priceData: List<PriceDataDTO>?, period: Int = 5): List<ProductChartData> {
+    fun toDataset(priceData: List<PriceDataDTO>?): List<ProductChartData> {
         priceData ?: return listOf()
         if (priceData.isEmpty()) {
             return listOf()
