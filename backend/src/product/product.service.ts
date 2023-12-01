@@ -72,15 +72,14 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productInfo = existProduct ?? (await getProductInfo11st(productCode));
-        const product = existProduct ?? (await this.productRepository.saveProduct(productInfo));
+        const productId = existProduct ? existProduct.id : await this.firstAddProduct(productCode);
         const trackingProduct = await this.trackingProductRepository.findOne({
-            where: { productId: product.id, userId: userId },
+            where: { productId: productId, userId: userId },
         });
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
+        await this.trackingProductRepository.saveTrackingProduct(userId, productId, targetPrice);
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
@@ -204,6 +203,7 @@ export class ProductService {
             return { time: new Date(time).getTime(), price, isSoldOut };
         });
     }
+
     @Cron('* */10 * * * *')
     async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
@@ -225,5 +225,23 @@ export class ProductService {
             return false;
         });
         await this.productPriceModel.insertMany(updatedDataInfo);
+    }
+
+    async firstAddProduct(productCode: string) {
+        const productInfo = await getProductInfo11st(productCode);
+        const product = await this.productRepository.saveProduct(productInfo);
+        const updatedDataInfo = {
+            productId: product.id,
+            price: productInfo.productPrice,
+            isSoldOut: productInfo.isSoldOut,
+        };
+
+        this.productDataCache.set(product.id, {
+            isSoldOut: productInfo.isSoldOut,
+            price: productInfo.productPrice,
+            lowestPrice: productInfo.productPrice,
+        });
+        this.productPriceModel.create(updatedDataInfo);
+        return product.id;
     }
 }
