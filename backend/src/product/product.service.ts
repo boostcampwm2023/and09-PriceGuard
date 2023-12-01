@@ -72,12 +72,7 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        let productId;
-        if (!existProduct) {
-            productId = await this.firstAddProduct(productCode);
-        } else {
-            productId = existProduct.id;
-        }
+        const productId = existProduct ? existProduct.id : await this.firstAddProduct(productCode);
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: productId, userId: userId },
         });
@@ -235,19 +230,18 @@ export class ProductService {
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);
         const product = await this.productRepository.saveProduct(productInfo);
-        const updatedDataInfo = [
-            {
-                productId: product.id,
-                price: productInfo.productPrice,
-                isSoldOut: productInfo.isSoldOut,
-            },
-        ];
+        const updatedDataInfo = {
+            productId: product.id,
+            price: productInfo.productPrice,
+            isSoldOut: productInfo.isSoldOut,
+        };
+
         this.productDataCache.set(product.id, {
             isSoldOut: productInfo.isSoldOut,
             price: productInfo.productPrice,
             lowestPrice: productInfo.productPrice,
         });
-        this.productPriceModel.insertMany(updatedDataInfo);
+        this.productPriceModel.create(updatedDataInfo);
         return product.id;
     }
 }
