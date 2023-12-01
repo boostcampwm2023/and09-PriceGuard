@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 
 const REGEXP_11ST =
@@ -88,9 +88,7 @@ export class ProductService {
             where: { userId: userId },
             relations: ['product'],
         });
-        if (trackingProductList.length === 0) {
-            throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
+        if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
             const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
@@ -190,7 +188,7 @@ export class ProductService {
     }
 
     async getPriceData(productId: string, days: number): Promise<PriceDataDto[]> {
-        const endDate = new Date(+new Date() + KR_OFFSET);
+        const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setDate(endDate.getDate() - days);
         const dataInfo = await this.productPriceModel
