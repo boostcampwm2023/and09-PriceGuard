@@ -17,7 +17,6 @@ export const BASE_URL_11ST = process.env.BASE_URL_11ST as string;
 export const MAX_TRACKING_RANK = parseInt(process.env.MAX_TRACKING_RANK || '50');
 export const INVALIDATED_REFRESHTOKEN = 'invalidate refreshToken';
 export const MONGODB_URL = process.env.MONGODB_URL as string;
-export const KR_OFFSET = 9 * 60 * 60 * 1000;
 export const THIRTY_DAYS = 30;
 export const NINETY_DAYS = 90;
 export const NO_CACHE = 0;

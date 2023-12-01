@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 
 const REGEXP_11ST =
@@ -190,7 +190,7 @@ export class ProductService {
     }
 
     async getPriceData(productId: string, days: number): Promise<PriceDataDto[]> {
-        const endDate = new Date(+new Date() + KR_OFFSET);
+        const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setDate(endDate.getDate() - days);
         const dataInfo = await this.productPriceModel
