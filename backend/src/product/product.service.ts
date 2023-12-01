@@ -88,9 +88,7 @@ export class ProductService {
             where: { userId: userId },
             relations: ['product'],
         });
-        if (trackingProductList.length === 0) {
-            throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
+        if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
             const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
