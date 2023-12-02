@@ -90,6 +90,21 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.btnDetailShare.setOnClickListener {
+            val shareLink =
+                getString(R.string.share_link_template, productDetailViewModel.productCode)
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TITLE, getString(R.string.share_product))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message_template, shareLink))
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
