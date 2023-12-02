@@ -39,7 +39,7 @@ class DetailActivity : AppCompatActivity() {
         initListener()
         setNavigationButton()
         setGraph()
-        checkProductCode()
+        checkProductCode(intent)
         observeEvent()
     }
 
@@ -92,13 +92,31 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkProductCode() {
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            checkProductCode(intent)
+        }
+    }
+
+    private fun checkProductCode(intent: Intent) {
         val productCode = intent.getStringExtra("productCode")
-        if (productCode == null) {
-            // Invalid access
+        val deepLink = intent.data
+        val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
+
+        if (productCode == null && productCodeFromDeepLink == null) {
             showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
-        } else {
-            productDetailViewModel.productCode = productCode
+            return
+        }
+
+        productCode?.let { code ->
+            productDetailViewModel.productCode = code
+            productDetailViewModel.getDetails(false)
+            return
+        }
+
+        productCodeFromDeepLink?.let { code ->
+            productDetailViewModel.productCode = code
             productDetailViewModel.getDetails(false)
         }
     }
