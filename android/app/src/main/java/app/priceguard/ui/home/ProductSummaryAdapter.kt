@@ -116,7 +116,7 @@ class ProductSummaryAdapter :
                 showXAxis = false,
                 showYAxis = false,
                 isInteractive = false,
-                graphMode = GraphMode.DAY,
+                graphMode = GraphMode.QUARTER,
                 data = data,
                 gridLines = listOf()
             )

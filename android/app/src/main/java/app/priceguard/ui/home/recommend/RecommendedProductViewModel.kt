@@ -3,8 +3,10 @@ package app.priceguard.ui.home.recommend
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +20,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RecommendedProductViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
     sealed class RecommendedProductEvent {
@@ -53,7 +56,7 @@ class RecommendedProductViewModel @Inject constructor(
                             data.productName,
                             data.price,
                             data.productCode,
-                            data.priceData,
+                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.QUARTER),
                             data.rank
                         )
                     }
