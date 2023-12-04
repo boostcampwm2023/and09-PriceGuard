@@ -101,4 +101,5 @@
     <string name="share_product">상품 공유하기</string>
     <string name="share_link_template">https://share.priceguard.app/11st?code=%1$s</string>
     <string name="share_message_template">[PriceGuard]\n이 상품 가격 같이 확인해요!\n\n%1$s</string>
+    <string name="price_notification">상품 가격 알림</string>
 </resources>
