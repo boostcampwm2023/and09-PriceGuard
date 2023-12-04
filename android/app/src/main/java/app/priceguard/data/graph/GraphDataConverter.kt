@@ -18,9 +18,9 @@ class GraphDataConverter {
             dto.isSoldOut ?: return@forEach
             dataList.add(
                 ProductChartData(
-                    dto.time / 1000,
-                    dto.price.toFloat(),
-                    dto.isSoldOut.not()
+                    x = dto.time / 1000,
+                    y = dto.price.toFloat(),
+                    valid = dto.isSoldOut.not()
                 )
             )
         }
