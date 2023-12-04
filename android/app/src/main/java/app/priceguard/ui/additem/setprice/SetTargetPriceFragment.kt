@@ -32,7 +32,7 @@ class SetTargetPriceFragment : Fragment() {
 
     private var _binding: FragmentSetTargetPriceBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SetTargetPriceViewModel by viewModels()
+    private val setTargetPriceViewModel: SetTargetPriceViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +46,7 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.vm = viewModel
+        binding.viewModel = setTargetPriceViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         setBackPressedCallback()
@@ -72,7 +72,7 @@ class SetTargetPriceFragment : Fragment() {
         val title = arguments.getString("productTitle") ?: ""
         val price = arguments.getInt("productPrice")
 
-        viewModel.updateTargetPrice((price * 0.8).toInt())
+        setTargetPriceViewModel.updateTargetPrice((price * 0.8).toInt())
 
         binding.tvSetPriceCurrentPrice.text =
             String.format(
@@ -80,7 +80,7 @@ class SetTargetPriceFragment : Fragment() {
                 NumberFormat.getNumberInstance().format(price)
             )
 
-        viewModel.setProductInfo(productCode, title, price)
+        setTargetPriceViewModel.setProductInfo(productCode, title, price)
         binding.etTargetPrice.setText((price * 0.8).toInt().toString())
     }
 
@@ -94,7 +94,7 @@ class SetTargetPriceFragment : Fragment() {
         }
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
-            if (isAdding) viewModel.addProduct() else viewModel.patchProduct()
+            if (isAdding) setTargetPriceViewModel.addProduct() else setTargetPriceViewModel.patchProduct()
         }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
@@ -123,10 +123,10 @@ class SetTargetPriceFragment : Fragment() {
                 0F
             }
 
-            viewModel.updateTargetPrice(targetPrice.toInt())
+            setTargetPriceViewModel.updateTargetPrice(targetPrice.toInt())
 
             val percent =
-                ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+                ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt()
 
             binding.tvTargetPricePercent.text =
                 String.format(getString(R.string.current_price_percent), percent)
@@ -140,18 +140,18 @@ class SetTargetPriceFragment : Fragment() {
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
-        val targetPrice = ((viewModel.state.value.productPrice) * value.toInt() / 100)
+        val targetPrice = ((setTargetPriceViewModel.state.value.productPrice) * value.toInt() / 100)
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
             targetPrice.toString()
         )
-        viewModel.updateTargetPrice(targetPrice)
+        setTargetPriceViewModel.updateTargetPrice(targetPrice)
     }
 
     private fun handleEvent() {
         repeatOnStarted {
-            viewModel.event.collect { event ->
+            setTargetPriceViewModel.event.collect { event ->
                 when (event) {
                     is SetTargetPriceEvent.SuccessProductAdd -> {
                         showActivityFinishDialog(
@@ -223,7 +223,7 @@ class SetTargetPriceFragment : Fragment() {
         percent: Int
     ) {
         val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
-        if (targetPrice > viewModel.state.value.productPrice) {
+        if (targetPrice > setTargetPriceViewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
         }
         slTargetPrice.value = pricePercent.toFloat()
