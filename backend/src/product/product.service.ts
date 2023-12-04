@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { KR_OFFSET, MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 import { ProductRankCache } from 'src/utils/cache';
 
@@ -81,8 +81,7 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productInfo = existProduct ?? (await getProductInfo11st(productCode));
-        const product = existProduct ?? (await this.productRepository.saveProduct(productInfo));
+        const product = existProduct ?? (await this.firstAddProduct(productCode));
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
@@ -111,9 +110,7 @@ export class ProductService {
             where: { userId: userId },
             relations: ['product'],
         });
-        if (trackingProductList.length === 0) {
-            throw new HttpException('상품 목록을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
+        if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
             const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
@@ -214,7 +211,7 @@ export class ProductService {
     }
 
     async getPriceData(productId: string, days: number): Promise<PriceDataDto[]> {
-        const endDate = new Date(+new Date() + KR_OFFSET);
+        const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setDate(endDate.getDate() - days);
         const dataInfo = await this.productPriceModel
@@ -230,6 +227,7 @@ export class ProductService {
             return { time: new Date(time).getTime(), price, isSoldOut };
         });
     }
+
     @Cron('* */10 * * * *')
     async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
@@ -251,5 +249,23 @@ export class ProductService {
             return false;
         });
         await this.productPriceModel.insertMany(updatedDataInfo);
+    }
+
+    async firstAddProduct(productCode: string) {
+        const productInfo = await getProductInfo11st(productCode);
+        const product = await this.productRepository.saveProduct(productInfo);
+        const updatedDataInfo = {
+            productId: product.id,
+            price: productInfo.productPrice,
+            isSoldOut: productInfo.isSoldOut,
+        };
+
+        this.productDataCache.set(product.id, {
+            isSoldOut: productInfo.isSoldOut,
+            price: productInfo.productPrice,
+            lowestPrice: productInfo.productPrice,
+        });
+        this.productPriceModel.create(updatedDataInfo);
+        return product;
     }
 }
