@@ -17,6 +17,7 @@ import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
+import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -248,21 +249,35 @@ export class ProductService {
         };
     }
     async getNotifications(productInfo: ProductInfoDto[]): Promise<Message[]> {
-        const notifications = productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
-            const trackingList = await this.trackingProductRepository.find({
-                where: { productId: productId },
-            });
-            const messageList = [];
-            for (let index = 0; index < trackingList.length; index++) {
-                const { targetPrice } = trackingList[index];
-                if (targetPrice < productPrice) continue;
-                const token = `example token value`;
-                const message = this.getMessage(productName, productPrice, imageUrl, token);
-                messageList.push(message);
-            }
+        const productIds = productInfo.map((p) => p.productId);
+
+        const trackingProducts = await this.trackingProductRepository
+            .createQueryBuilder('tracking_product')
+            .where('tracking_product.productId IN (:...productIds)', { productIds })
+            .getMany();
+
+        const trackingMap = new Map<string, TrackingProduct[]>();
+        trackingProducts.forEach((tracking) => {
+            const { productId } = tracking;
+            const products = trackingMap.get(productId) || [];
+            products.push(tracking);
+            trackingMap.set(productId, products);
+        });
+
+        const notifications = productInfo.flatMap(({ productId, productName, productPrice, imageUrl }) => {
+            const trackingList = productId ? trackingMap.get(productId) || [] : [];
+            const messageList = trackingList.reduce((messages: Message[], { targetPrice }) => {
+                if (targetPrice >= productPrice) {
+                    const token = `example token value`;
+                    const message = this.getMessage(productName, productPrice, imageUrl, token);
+                    messages.push(message);
+                }
+                return messages;
+            }, []);
             return messageList;
         });
-        return (await Promise.all(notifications)).flat();
+
+        return notifications;
     }
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);
