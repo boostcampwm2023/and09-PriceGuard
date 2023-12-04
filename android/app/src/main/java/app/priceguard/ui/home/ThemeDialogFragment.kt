@@ -1,4 +1,4 @@
-package app.priceguard.ui.home.mypage
+package app.priceguard.ui.home
 
 import android.app.Dialog
 import android.content.Context
