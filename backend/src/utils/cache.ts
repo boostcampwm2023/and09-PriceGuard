@@ -37,7 +37,7 @@ export class ProductRankCache {
 
     private add(node: CacheNode) {
         let prev = this.tail.prev;
-        while (prev.value.userCount < node.value.userCount) {
+        while (prev.value.userCount <= node.value.userCount) {
             if (prev === this.head) {
                 break;
             }
@@ -54,7 +54,7 @@ export class ProductRankCache {
 
     private getLowestNode() {
         let node = this.tail.prev;
-        while (node.value.userCount >= node.prev.value.userCount) {
+        while (node.value.userCount > node.prev.value.userCount) {
             node = node.prev;
         }
         return node;
@@ -82,27 +82,16 @@ export class ProductRankCache {
         return idx;
     }
 
-    updatePost(product: ProductRankCacheDto) {
+    update(product: ProductRankCacheDto, newProduct?: ProductRankCacheDto) {
         const node = this.hashTable.get(product.id);
         if (node) {
-            node.value.userCount = String(parseInt(node.value.userCount) + 1);
-            while (node.value.userCount > node.prev.value.userCount) {
-                this.moveFront(node);
-            }
+            this.delete(node);
+        }
+        if (newProduct) {
+            this.put(newProduct.id, newProduct);
             return;
         }
         this.put(product.id, product);
-    }
-    private moveFront(node: CacheNode) {
-        const prev = node.prev;
-        const beforePrev = prev.prev;
-        const nextNode = node.next;
-        prev.next = nextNode;
-        node.next = prev;
-        beforePrev.next = node;
-        node.prev = beforePrev;
-        prev.prev = node;
-        nextNode.prev = prev;
     }
 
     get(key: string) {
