@@ -3,7 +3,6 @@ package app.priceguard.ui.home.mypage
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
 import app.priceguard.R
@@ -11,7 +10,6 @@ import app.priceguard.databinding.FragmentThemeDialogBinding
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-
 
 class ThemeDialogFragment : DialogFragment() {
 
@@ -36,7 +34,8 @@ class ThemeDialogFragment : DialogFragment() {
                     }
 
                     else -> {
-                        DynamicColors.applyToActivitiesIfAvailable(requireActivity().application,
+                        DynamicColors.applyToActivitiesIfAvailable(
+                            requireActivity().application,
                             DynamicColorsOptions.Builder()
                                 .setThemeOverlay(R.style.Base_Theme_PriceGuard).build()
                         )
