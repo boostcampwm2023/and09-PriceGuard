@@ -39,7 +39,7 @@ class DetailActivity : AppCompatActivity() {
         initListener()
         setNavigationButton()
         setGraph()
-        checkProductCode()
+        checkProductCode(intent)
         observeEvent()
     }
 
@@ -90,15 +90,48 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.btnDetailShare.setOnClickListener {
+            val shareLink =
+                getString(R.string.share_link_template, productDetailViewModel.productCode)
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TITLE, getString(R.string.share_product))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message_template, shareLink))
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
     }
 
-    private fun checkProductCode() {
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            checkProductCode(intent)
+        }
+    }
+
+    private fun checkProductCode(intent: Intent) {
         val productCode = intent.getStringExtra("productCode")
-        if (productCode == null) {
-            // Invalid access
+        val deepLink = intent.data
+        val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
+
+        if (productCode == null && productCodeFromDeepLink == null) {
             showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
-        } else {
-            productDetailViewModel.productCode = productCode
+            return
+        }
+
+        productCode?.let { code ->
+            productDetailViewModel.productCode = code
+            productDetailViewModel.getDetails(false)
+            return
+        }
+
+        productCodeFromDeepLink?.let { code ->
+            productDetailViewModel.productCode = code
             productDetailViewModel.getDetails(false)
         }
     }

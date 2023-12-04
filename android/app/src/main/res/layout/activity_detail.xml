@@ -73,6 +73,7 @@
                             android:id="@+id/iv_detail_product"
                             android:layout_width="match_parent"
                             android:layout_height="256dp"
+                            android:contentDescription="@string/product_image"
                             app:imageFromUrl="@{viewModel.state.imageUrl}"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,20 +82,33 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="24dp"
+                            android:contentDescription="@string/shopping_mall_logo"
                             android:src="@drawable/ic_11st_logo"
                             app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/iv_detail_product" />
+
+                        <Button
+                            android:id="@+id/btn_detail_share"
+                            style="?attr/materialIconButtonOutlinedStyle"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="12dp"
+                            app:icon="@drawable/ic_share"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_detail_product" />
 
                         <TextView
                             android:id="@+id/tv_detail_product_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="@{viewModel.state.productName}"
                             android:textAppearance="?attr/textAppearanceTitleLarge"
-                            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
+                            app:layout_constraintEnd_toStartOf="@id/btn_detail_share"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/iv_detail_shopping_mall_icon"
                             tools:text="오뚜기 진라면, 120g, 40개" />
@@ -257,8 +271,8 @@
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/tv_detail_price_graph"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
 
                             <Button
                                 android:id="@+id/btn_period_day"
