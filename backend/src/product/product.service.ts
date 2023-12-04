@@ -226,13 +226,17 @@ export class ProductService {
             }
             return false;
         });
-        await this.productPriceModel.insertMany(
-            updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
-                return { productId, price: productPrice, isSoldOut };
-            }),
-        );
-        const message: Message[] = await this.getNotifications(updatedDataInfo);
-        await this.firebaseService.getMessaging().sendEach(message);
+        if (updatedDataInfo.length > 0) {
+            await this.productPriceModel.insertMany(
+                updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
+                    return { productId, price: productPrice, isSoldOut };
+                }),
+            );
+            const notifications: Message[] = await this.getNotifications(updatedDataInfo);
+            if (notifications.length > 0) {
+                await this.firebaseService.getMessaging().sendEach(notifications);
+            }
+        }
     }
     getMessage(productName: string, productPrice: number, imageUrl: string, token: string): Message {
         return {
@@ -269,14 +273,12 @@ export class ProductService {
             const messageList = trackingList.reduce((messages: Message[], { targetPrice }) => {
                 if (targetPrice >= productPrice) {
                     const token = `example token value`;
-                    const message = this.getMessage(productName, productPrice, imageUrl, token);
-                    messages.push(message);
+                    messages.push(this.getMessage(productName, productPrice, imageUrl, token));
                 }
                 return messages;
             }, []);
             return messageList;
         });
-
         return notifications;
     }
     async firstAddProduct(productCode: string) {
