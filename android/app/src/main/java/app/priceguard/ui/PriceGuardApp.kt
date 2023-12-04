@@ -4,7 +4,7 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import app.priceguard.ui.home.ThemeDialogFragment
+import app.priceguard.ui.home.theme.ThemeDialogFragment
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
 
