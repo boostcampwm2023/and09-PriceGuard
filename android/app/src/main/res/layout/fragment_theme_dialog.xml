@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="다이나믹 컬러 사용"
+            android:text="@string/use_dynamic_color"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,13 +35,13 @@
                 android:id="@+id/rb_yes"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="예" />
+                android:text="@string/yes" />
 
             <RadioButton
                 android:id="@+id/rb_no"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="아니오" />
+                android:text="@string/no" />
 
         </RadioGroup>
 
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="다크 모드 설정"
+            android:text="@string/dark_mode_setting"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/rg_dynamic_color" />
@@ -68,19 +68,19 @@
                 android:id="@+id/rb_system"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="시스템 설정 사용" />
+                android:text="@string/use_system_setting" />
 
             <RadioButton
                 android:id="@+id/rb_light"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="라이트 모드" />
+                android:text="@string/light_mode" />
 
             <RadioButton
                 android:id="@+id/rb_dark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="다크 모드" />
+                android:text="@string/dark_mode" />
 
         </RadioGroup>
 
