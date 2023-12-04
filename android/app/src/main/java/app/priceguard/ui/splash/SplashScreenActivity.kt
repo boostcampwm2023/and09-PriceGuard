@@ -9,12 +9,10 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnCreated
-import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")

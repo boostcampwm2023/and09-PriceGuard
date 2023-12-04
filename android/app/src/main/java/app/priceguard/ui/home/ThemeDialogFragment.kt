@@ -30,7 +30,7 @@ class ThemeDialogFragment : DialogFragment() {
                     R.id.rb_yes -> {
                         DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
                         requireActivity().recreate()
-                        "dynamicColor"
+                        MODE_DYNAMIC
                     }
 
                     else -> {
@@ -40,28 +40,28 @@ class ThemeDialogFragment : DialogFragment() {
                                 .setThemeOverlay(R.style.Base_Theme_PriceGuard).build()
                         )
                         requireActivity().recreate()
-                        "default"
+                        MODE_DYNAMIC_NO
                     }
                 }
 
                 val darkMode = when (binding.rgDarkMode.checkedRadioButtonId) {
                     R.id.rb_system -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        "system"
+                        MODE_SYSTEM
                     }
 
                     R.id.rb_light -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        "light"
+                        MODE_LIGHT
                     }
 
                     R.id.rb_dark -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        "dark"
+                        MODE_DARK
                     }
 
                     else -> {
-                        "system"
+                        MODE_SYSTEM
                     }
                 }
                 saveModeWithPreference(dynamicMode, darkMode)
@@ -71,13 +71,13 @@ class ThemeDialogFragment : DialogFragment() {
         }.create()
     }
 
-    private fun saveModeWithPreference(dynamicMode: String, darkMode: String) {
+    private fun saveModeWithPreference(dynamicMode: Int, darkMode: Int) {
         val sharedPreferences =
             requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
         val editor = sharedPreferences.edit()
-        editor.putString("DynamicColor", dynamicMode)
-        editor.putString("DarkMode", darkMode)
+        editor.putInt("DynamicColor", dynamicMode)
+        editor.putInt("DarkMode", darkMode)
         editor.apply()
     }
 
@@ -85,12 +85,12 @@ class ThemeDialogFragment : DialogFragment() {
         val sharedPreferences =
             requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
-        val dynamicColorMode = sharedPreferences.getString("DynamicColor", "default")
-        val darkMode = sharedPreferences.getString("DarkMode", "system")
+        val dynamicColorMode = sharedPreferences.getInt("DynamicColor", MODE_DYNAMIC_NO)
+        val darkMode = sharedPreferences.getInt("DarkMode", MODE_SYSTEM)
 
         binding.rgDynamicColor.check(
             when (dynamicColorMode) {
-                "dynamicColor" -> {
+                MODE_DYNAMIC -> {
                     R.id.rb_yes
                 }
 
@@ -102,11 +102,11 @@ class ThemeDialogFragment : DialogFragment() {
 
         binding.rgDarkMode.check(
             when (darkMode) {
-                "light" -> {
+                MODE_LIGHT -> {
                     R.id.rb_light
                 }
 
-                "dark" -> {
+                MODE_DARK -> {
                     R.id.rb_dark
                 }
 
@@ -115,5 +115,14 @@ class ThemeDialogFragment : DialogFragment() {
                 }
             }
         )
+    }
+
+    companion object {
+        const val MODE_SYSTEM = 0
+        const val MODE_LIGHT = 1
+        const val MODE_DARK = 2
+
+        const val MODE_DYNAMIC_NO = 0
+        const val MODE_DYNAMIC = 1
     }
 }
