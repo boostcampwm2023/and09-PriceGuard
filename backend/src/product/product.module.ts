@@ -8,6 +8,7 @@ import { ProductRepository } from './product.repository';
 import { TrackingProductRepository } from './trackingProduct.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Module({
     imports: [
@@ -15,6 +16,6 @@ import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
         MongooseModule.forFeature([{ name: ProductPrice.name, schema: ProductPriceSchema }]),
     ],
     controllers: [ProductController],
-    providers: [ProductService, ProductRepository, TrackingProductRepository],
+    providers: [ProductService, ProductRepository, TrackingProductRepository, FirebaseService],
 })
 export class ProductModule {}

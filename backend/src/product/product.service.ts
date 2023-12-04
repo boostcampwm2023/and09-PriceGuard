@@ -15,6 +15,7 @@ import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
 import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
+import { FirebaseService } from '../firebase/firebase.service';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -28,6 +29,7 @@ export class ProductService {
         private productRepository: ProductRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
+        private readonly firebaseService: FirebaseService,
     ) {
         this.initCache();
     }
