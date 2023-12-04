@@ -56,7 +56,7 @@ class RecommendedProductViewModel @Inject constructor(
                             data.productName,
                             data.price,
                             data.productCode,
-                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.QUARTER),
+                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
                             data.rank
                         )
                     }

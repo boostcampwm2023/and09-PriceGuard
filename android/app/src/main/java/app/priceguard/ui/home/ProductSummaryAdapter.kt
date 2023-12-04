@@ -116,7 +116,7 @@ class ProductSummaryAdapter :
                 showXAxis = false,
                 showYAxis = false,
                 isInteractive = false,
-                graphMode = GraphMode.QUARTER,
+                graphMode = GraphMode.WEEK,
                 data = data,
                 gridLines = listOf()
             )
