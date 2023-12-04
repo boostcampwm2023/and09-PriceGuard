@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -14,6 +15,7 @@ import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
@@ -36,11 +38,18 @@ class DetailActivity : AppCompatActivity() {
         binding.viewModel = productDetailViewModel
         setContentView(binding.root)
 
+        setBackPressedCallback()
         initListener()
         setNavigationButton()
         setGraph()
         checkProductCode(intent)
         observeEvent()
+    }
+
+    private fun setBackPressedCallback() {
+        onBackPressedDispatcher.addCallback(this) {
+            goToHomeActivityIfDeepLinked()
+        }
     }
 
     override fun onStart() {
@@ -228,6 +237,17 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setNavigationButton() {
         binding.mtDetailTopbar.setNavigationOnClickListener {
+            goToHomeActivityIfDeepLinked()
+        }
+    }
+
+    private fun goToHomeActivityIfDeepLinked() {
+        if (intent.data != null && intent.data?.getQueryParameter("code") != null) {
+            val intent = Intent(this@DetailActivity, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        } else {
             finish()
         }
     }

@@ -4,20 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.priceguard.R
-import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
-import java.text.NumberFormat
-import kotlinx.serialization.json.Json
 
 class ConfirmItemLinkFragment : Fragment() {
 
     private var _binding: FragmentConfirmItemLinkBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var productInfo: ProductVerifyDTO
+    private val confirmItemLinkViewModel: ConfirmItemLinkViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,23 +27,20 @@ class ConfirmItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.viewModel = confirmItemLinkViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.initListener()
-        binding.initView()
+        initView()
     }
 
-    private fun FragmentConfirmItemLinkBinding.initView() {
-        val productJson = requireArguments().getString("product") ?: return
-        productInfo = Json.decodeFromString(productJson)
-
-        tvConfirmItemPrice.text =
-            String.format(
-                resources.getString(R.string.won),
-                NumberFormat.getNumberInstance().format(productInfo.productPrice)
-            )
-        tvConfirmItemBrand.text = productInfo.shop
-        tvConfirmItemItemTitle.text = productInfo.productName
-        imageUrl = productInfo.imageUrl
+    private fun initView() {
+        val arguments = requireArguments()
+        confirmItemLinkViewModel.setUIState(
+            price = arguments.getInt("productPrice"),
+            brand = arguments.getString("shop") ?: return,
+            name = arguments.getString("productName") ?: return,
+            imageUrl = arguments.getString("imageUrl") ?: return
+        )
     }
 
     override fun onDestroyView() {
@@ -55,12 +49,14 @@ class ConfirmItemLinkFragment : Fragment() {
     }
 
     private fun FragmentConfirmItemLinkBinding.initListener() {
+        val arguments = requireArguments()
+
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
-                    productInfo.productCode ?: "",
-                    productInfo.productName ?: "",
-                    productInfo.productPrice ?: 0,
+                    arguments.getString("productCode") ?: "",
+                    arguments.getString("productName") ?: "",
+                    arguments.getInt("productPrice"),
                     true
                 )
             findNavController().navigate(action)
