@@ -7,17 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.dto.ProductVerifyDTO
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
 import java.text.NumberFormat
-import kotlinx.serialization.json.Json
 
 class ConfirmItemLinkFragment : Fragment() {
 
     private var _binding: FragmentConfirmItemLinkBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var productInfo: ProductVerifyDTO
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,17 +32,20 @@ class ConfirmItemLinkFragment : Fragment() {
     }
 
     private fun FragmentConfirmItemLinkBinding.initView() {
-        val productJson = requireArguments().getString("product") ?: return
-        productInfo = Json.decodeFromString(productJson)
+        val arguments = requireArguments()
+        val productPrice = arguments.getInt("productPrice")
+        val shop = arguments.getString("shop") ?: return
+        val productName = arguments.getString("productName") ?: return
+        val imageUrlString = arguments.getString("imageUrl") ?: return
 
         tvConfirmItemPrice.text =
             String.format(
                 resources.getString(R.string.won),
-                NumberFormat.getNumberInstance().format(productInfo.productPrice)
+                NumberFormat.getNumberInstance().format(productPrice)
             )
-        tvConfirmItemBrand.text = productInfo.shop
-        tvConfirmItemItemTitle.text = productInfo.productName
-        imageUrl = productInfo.imageUrl
+        tvConfirmItemBrand.text = shop
+        tvConfirmItemItemTitle.text = productName
+        imageUrl = imageUrlString
     }
 
     override fun onDestroyView() {
@@ -55,12 +54,14 @@ class ConfirmItemLinkFragment : Fragment() {
     }
 
     private fun FragmentConfirmItemLinkBinding.initListener() {
+        val arguments = requireArguments()
+
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
-                    productInfo.productCode ?: "",
-                    productInfo.productName ?: "",
-                    productInfo.productPrice ?: 0,
+                    arguments.getString("productCode") ?: "",
+                    arguments.getString("productName") ?: "",
+                    arguments.getInt("productPrice"),
                     true
                 )
             findNavController().navigate(action)

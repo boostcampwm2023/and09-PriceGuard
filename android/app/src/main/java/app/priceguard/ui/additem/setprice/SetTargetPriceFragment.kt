@@ -57,9 +57,11 @@ class SetTargetPriceFragment : Fragment() {
             }
         }
 
-        val productCode = requireArguments().getString("productCode") ?: ""
-        val title = requireArguments().getString("productTitle") ?: ""
-        val price = requireArguments().getInt("productPrice")
+        val arguments = requireArguments()
+
+        val productCode = arguments.getString("productCode") ?: ""
+        val title = arguments.getString("productTitle") ?: ""
+        val price = arguments.getInt("productPrice")
 
         viewModel.updateTargetPrice((price * 0.8).toInt())
 

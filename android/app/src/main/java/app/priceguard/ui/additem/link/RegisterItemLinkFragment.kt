@@ -17,8 +17,6 @@ import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class RegisterItemLinkFragment : Fragment() {
@@ -66,7 +64,11 @@ class RegisterItemLinkFragment : Fragment() {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
                         val action =
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                                Json.encodeToString(event.product)
+                                event.product.productCode ?: "",
+                                event.product.productPrice ?: 0,
+                                event.product.shop ?: "",
+                                event.product.productName ?: "",
+                                event.product.imageUrl ?: ""
                             )
                         findNavController().safeNavigate(action)
                     }
