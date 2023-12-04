@@ -3,6 +3,8 @@ package app.priceguard.ui.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.GraphDataConverter
+import app.priceguard.data.graph.ProductChartData
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
@@ -20,8 +22,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ProductDetailViewModel @Inject constructor(val productRepository: ProductRepository) :
-    ViewModel() {
+class ProductDetailViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val graphDataConverter: GraphDataConverter
+) : ViewModel() {
 
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
@@ -38,7 +42,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
-        val chartPeriod: GraphMode = GraphMode.DAY,
+        val graphMode: GraphMode = GraphMode.DAY,
         val chartData: ProductChartDataset? = null
     )
 
@@ -53,6 +57,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     }
 
     lateinit var productCode: String
+    private var productGraphData: List<ProductChartData> = listOf()
 
     private var _event: MutableSharedFlow<ProductDetailEvent> = MutableSharedFlow()
     val event: SharedFlow<ProductDetailEvent> = _event.asSharedFlow()
@@ -91,6 +96,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
 
             when (result) {
                 is ProductRepositoryResult.Success -> {
+                    productGraphData = result.data.priceData
                     _state.update {
                         it.copy(
                             isReady = true,
@@ -112,13 +118,15 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                                 )
                             },
                             formattedLowestPrice = formatPrice(result.data.lowestPrice),
-                            chartPeriod = GraphMode.DAY,
                             chartData = ProductChartDataset(
                                 showXAxis = true,
                                 showYAxis = true,
                                 isInteractive = true,
-                                graphMode = GraphMode.DAY,
-                                data = result.data.priceData,
+                                graphMode = state.value.graphMode,
+                                data = graphDataConverter.packWithEdgeData(
+                                    result.data.priceData,
+                                    state.value.graphMode
+                                ),
                                 gridLines = listOf()
                             )
                         )
@@ -145,15 +153,19 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     }
 
     fun changePeriod(period: GraphMode) {
+        if (productGraphData.isEmpty()) {
+            return
+        }
+
         _state.update {
             it.copy(
-                chartPeriod = period,
+                graphMode = period,
                 chartData = ProductChartDataset(
                     showXAxis = true,
                     showYAxis = true,
                     isInteractive = true,
                     graphMode = period,
-                    data = it.chartData?.data ?: listOf(),
+                    data = graphDataConverter.packWithEdgeData(productGraphData, period),
                     gridLines = listOf()
                 )
             )

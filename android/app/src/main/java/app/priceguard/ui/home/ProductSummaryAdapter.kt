@@ -115,7 +115,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 showXAxis = false,
                 showYAxis = false,
                 isInteractive = false,
-                graphMode = GraphMode.DAY,
+                graphMode = GraphMode.WEEK,
                 data = data,
                 gridLines = listOf()
             )
