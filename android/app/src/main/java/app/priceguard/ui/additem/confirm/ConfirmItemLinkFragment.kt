@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.priceguard.R
 import app.priceguard.databinding.FragmentConfirmItemLinkBinding
-import java.text.NumberFormat
 
 class ConfirmItemLinkFragment : Fragment() {
 
     private var _binding: FragmentConfirmItemLinkBinding? = null
     private val binding get() = _binding!!
+    private val confirmItemLinkViewModel: ConfirmItemLinkViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,26 +27,20 @@ class ConfirmItemLinkFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.viewModel = confirmItemLinkViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.initListener()
-        binding.initView()
+        initView()
     }
 
-    private fun FragmentConfirmItemLinkBinding.initView() {
+    private fun initView() {
         val arguments = requireArguments()
-        val productPrice = arguments.getInt("productPrice")
-        val shop = arguments.getString("shop") ?: return
-        val productName = arguments.getString("productName") ?: return
-        val imageUrlString = arguments.getString("imageUrl") ?: return
-
-        tvConfirmItemPrice.text =
-            String.format(
-                resources.getString(R.string.won),
-                NumberFormat.getNumberInstance().format(productPrice)
-            )
-        tvConfirmItemBrand.text = shop
-        tvConfirmItemItemTitle.text = productName
-        imageUrl = imageUrlString
+        confirmItemLinkViewModel.setUIState(
+            price = arguments.getInt("productPrice"),
+            brand = arguments.getString("shop") ?: return,
+            name = arguments.getString("productName") ?: return,
+            imageUrl = arguments.getString("imageUrl") ?: return
+        )
     }
 
     override fun onDestroyView() {
