@@ -48,14 +48,7 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setBackPressedCallback() {
         onBackPressedDispatcher.addCallback(this) {
-            if (intent.data != null && intent.data?.getQueryParameter("code") != null) {
-                val intent = Intent(this@DetailActivity, HomeActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-            } else {
-                finish()
-            }
+            goToHomeActivityIfDeepLinked()
         }
     }
 
@@ -244,6 +237,17 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setNavigationButton() {
         binding.mtDetailTopbar.setNavigationOnClickListener {
+            goToHomeActivityIfDeepLinked()
+        }
+    }
+
+    private fun goToHomeActivityIfDeepLinked() {
+        if (intent.data != null && intent.data?.getQueryParameter("code") != null) {
+            val intent = Intent(this@DetailActivity, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        } else {
             finish()
         }
     }
