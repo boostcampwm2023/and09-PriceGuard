@@ -49,14 +49,23 @@ class SetTargetPriceFragment : Fragment() {
         binding.vm = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        setBackPressedCallback()
+        binding.initView()
+        binding.initListener()
+        handleEvent()
+    }
+
+    private fun setBackPressedCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (requireActivity().intent.hasExtra("isAdding")) {
                 requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
         }
+    }
 
+    private fun FragmentSetTargetPriceBinding.initView() {
         val arguments = requireArguments()
 
         val productCode = arguments.getString("productCode") ?: ""
@@ -73,9 +82,6 @@ class SetTargetPriceFragment : Fragment() {
 
         viewModel.setProductInfo(productCode, title, price)
         binding.etTargetPrice.setText((price * 0.8).toInt().toString())
-
-        binding.initListener()
-        handleEvent()
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
