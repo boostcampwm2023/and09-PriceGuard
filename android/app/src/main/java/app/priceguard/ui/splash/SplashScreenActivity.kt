@@ -26,7 +26,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppTheme()
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observeState()
@@ -69,28 +68,5 @@ class SplashScreenActivity : AppCompatActivity() {
         val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { splashViewModel.isReady.value }
         val content: View = findViewById(android.R.id.content)
         content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
-    }
-
-    private fun initAppTheme() {
-        val sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-
-        val dynamicColorMode = sharedPreferences.getString("DynamicColor", "default")
-        val darkMode = sharedPreferences.getString("DarkMode", "system")
-
-        when (dynamicColorMode) {
-            "dynamicColor" -> {
-                DynamicColors.applyToActivitiesIfAvailable(application)
-            }
-        }
-
-        when (darkMode) {
-            "light" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-
-            "dark" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-        }
     }
 }
