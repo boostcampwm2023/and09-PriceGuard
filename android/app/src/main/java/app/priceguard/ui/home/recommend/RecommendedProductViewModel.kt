@@ -21,10 +21,6 @@ class RecommendedProductViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    sealed class RecommendedProductEvent {
-        data object PermissionDenied : RecommendedProductEvent()
-    }
-
     private var _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 

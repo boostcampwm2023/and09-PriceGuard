@@ -17,8 +17,6 @@ import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class RegisterItemLinkFragment : Fragment() {
@@ -28,7 +26,7 @@ class RegisterItemLinkFragment : Fragment() {
 
     private var _binding: FragmentRegisterItemLinkBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: RegisterItemLinkViewModel by viewModels()
+    private val registerItemLinkViewModel: RegisterItemLinkViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,14 +40,14 @@ class RegisterItemLinkFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
+        binding.viewModel = registerItemLinkViewModel
         initCollector()
         initEvent()
     }
 
     private fun initCollector() {
         repeatOnStarted {
-            viewModel.state.collect { state ->
+            registerItemLinkViewModel.state.collect { state ->
                 if (state.isLinkError) {
                     updateLinkError(getString(R.string.not_link))
                 } else {
@@ -61,12 +59,16 @@ class RegisterItemLinkFragment : Fragment() {
 
     private fun initEvent() {
         repeatOnStarted {
-            viewModel.event.collect { event ->
+            registerItemLinkViewModel.event.collect { event ->
                 when (event) {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
                         val action =
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                                Json.encodeToString(event.product)
+                                event.product.productCode ?: "",
+                                event.product.productPrice ?: 0,
+                                event.product.shop ?: "",
+                                event.product.productName ?: "",
+                                event.product.imageUrl ?: ""
                             )
                         findNavController().safeNavigate(action)
                     }
