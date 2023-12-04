@@ -93,35 +93,33 @@ class ThemeDialogFragment : DialogFragment() {
             val dynamicColorMode = configDataSource.getDynamicMode()
             val darkMode = configDataSource.getDarkMode()
 
-            withContext(Dispatchers.Main) {
-                binding.rgDynamicColor.check(
-                    when (dynamicColorMode) {
-                        PriceGuardApp.MODE_DYNAMIC -> {
-                            R.id.rb_yes
-                        }
-
-                        else -> {
-                            R.id.rb_no
-                        }
+            binding.rgDynamicColor.check(
+                when (dynamicColorMode) {
+                    PriceGuardApp.MODE_DYNAMIC -> {
+                        R.id.rb_yes
                     }
-                )
 
-                binding.rgDarkMode.check(
-                    when (darkMode) {
-                        PriceGuardApp.MODE_LIGHT -> {
-                            R.id.rb_light
-                        }
-
-                        PriceGuardApp.MODE_DARK -> {
-                            R.id.rb_dark
-                        }
-
-                        else -> {
-                            R.id.rb_system
-                        }
+                    else -> {
+                        R.id.rb_no
                     }
-                )
-            }
+                }
+            )
+
+            binding.rgDarkMode.check(
+                when (darkMode) {
+                    PriceGuardApp.MODE_LIGHT -> {
+                        R.id.rb_light
+                    }
+
+                    PriceGuardApp.MODE_DARK -> {
+                        R.id.rb_dark
+                    }
+
+                    else -> {
+                        R.id.rb_system
+                    }
+                }
+            )
         }
     }
 }
