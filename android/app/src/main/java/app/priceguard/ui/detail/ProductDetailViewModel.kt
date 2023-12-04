@@ -42,6 +42,7 @@ class ProductDetailViewModel @Inject constructor(
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
+        val graphMode: GraphMode = GraphMode.DAY,
         val chartData: ProductChartDataset? = null
     )
 
@@ -121,8 +122,11 @@ class ProductDetailViewModel @Inject constructor(
                                 showXAxis = true,
                                 showYAxis = true,
                                 isInteractive = true,
-                                graphMode = GraphMode.DAY,
-                                data = graphDataConverter.packWithEdgeData(result.data.priceData),
+                                graphMode = state.value.graphMode,
+                                data = graphDataConverter.packWithEdgeData(
+                                    result.data.priceData,
+                                    state.value.graphMode
+                                ),
                                 gridLines = listOf()
                             )
                         )
@@ -155,6 +159,7 @@ class ProductDetailViewModel @Inject constructor(
 
         _state.update {
             it.copy(
+                graphMode = period,
                 chartData = ProductChartDataset(
                     showXAxis = true,
                     showYAxis = true,
