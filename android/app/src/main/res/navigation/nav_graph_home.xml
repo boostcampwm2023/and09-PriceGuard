@@ -36,5 +36,6 @@
     <dialog
         android:id="@+id/themeDialogFragment"
         android:name="app.priceguard.ui.home.mypage.ThemeDialogFragment"
-        android:label="ThemeDialogFragment" />
+        android:label="ThemeDialogFragment"
+        tools:layout="@layout/fragment_theme_dialog"/>
 </navigation>
