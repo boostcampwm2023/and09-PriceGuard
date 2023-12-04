@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import app.priceguard.R
 import app.priceguard.data.datastore.ConfigDataSource
 import app.priceguard.databinding.FragmentThemeDialogBinding
+import app.priceguard.ui.PriceGuardApp
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -40,7 +41,7 @@ class ThemeDialogFragment : DialogFragment() {
                     R.id.rb_yes -> {
                         DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
                         requireActivity().recreate()
-                        MODE_DYNAMIC
+                        PriceGuardApp.MODE_DYNAMIC
                     }
 
                     else -> {
@@ -50,28 +51,28 @@ class ThemeDialogFragment : DialogFragment() {
                                 .setThemeOverlay(R.style.Theme_PriceGuard).build()
                         )
                         requireActivity().recreate()
-                        MODE_DYNAMIC_NO
+                        PriceGuardApp.MODE_DYNAMIC_NO
                     }
                 }
 
                 val darkMode = when (binding.rgDarkMode.checkedRadioButtonId) {
                     R.id.rb_system -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        MODE_SYSTEM
+                        PriceGuardApp.MODE_SYSTEM
                     }
 
                     R.id.rb_light -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        MODE_LIGHT
+                        PriceGuardApp.MODE_LIGHT
                     }
 
                     R.id.rb_dark -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        MODE_DARK
+                        PriceGuardApp.MODE_DARK
                     }
 
                     else -> {
-                        MODE_SYSTEM
+                        PriceGuardApp.MODE_SYSTEM
                     }
                 }
                 saveTheme(dynamicMode, darkMode)
@@ -81,7 +82,7 @@ class ThemeDialogFragment : DialogFragment() {
     }
 
     private fun saveTheme(dynamicMode: Int, darkMode: Int) {
-        this.lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             configDataSource.saveDynamicMode(dynamicMode)
             configDataSource.saveDarkMode(darkMode)
         }
@@ -95,7 +96,7 @@ class ThemeDialogFragment : DialogFragment() {
             withContext(Dispatchers.Main) {
                 binding.rgDynamicColor.check(
                     when (dynamicColorMode) {
-                        MODE_DYNAMIC -> {
+                        PriceGuardApp.MODE_DYNAMIC -> {
                             R.id.rb_yes
                         }
 
@@ -107,11 +108,11 @@ class ThemeDialogFragment : DialogFragment() {
 
                 binding.rgDarkMode.check(
                     when (darkMode) {
-                        MODE_LIGHT -> {
+                        PriceGuardApp.MODE_LIGHT -> {
                             R.id.rb_light
                         }
 
-                        MODE_DARK -> {
+                        PriceGuardApp.MODE_DARK -> {
                             R.id.rb_dark
                         }
 
@@ -122,14 +123,5 @@ class ThemeDialogFragment : DialogFragment() {
                 )
             }
         }
-    }
-
-    companion object {
-        const val MODE_SYSTEM = 0
-        const val MODE_LIGHT = 1
-        const val MODE_DARK = 2
-
-        const val MODE_DYNAMIC_NO = 0
-        const val MODE_DYNAMIC = 1
     }
 }
