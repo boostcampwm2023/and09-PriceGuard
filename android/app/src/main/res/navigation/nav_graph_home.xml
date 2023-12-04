@@ -19,7 +19,11 @@
         android:id="@+id/myPageFragment"
         android:name="app.priceguard.ui.home.mypage.MyPageFragment"
         android:label="MyPageFragment"
-        tools:layout="@layout/fragment_my_page"/>
+        tools:layout="@layout/fragment_my_page">
+        <action
+            android:id="@+id/action_myPageFragment_to_themeDialogFragment"
+            app:destination="@id/themeDialogFragment" />
+    </fragment>
     <action
         android:id="@+id/action_global_listFragment"
         app:destination="@id/productListFragment" />
@@ -29,4 +33,8 @@
     <action
         android:id="@+id/action_global_myPageFragment"
         app:destination="@id/myPageFragment" />
+    <dialog
+        android:id="@+id/themeDialogFragment"
+        android:name="app.priceguard.ui.home.mypage.ThemeDialogFragment"
+        android:label="ThemeDialogFragment" />
 </navigation>
