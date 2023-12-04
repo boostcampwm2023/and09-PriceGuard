@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import app.priceguard.R
 import app.priceguard.databinding.FragmentThemeDialogBinding
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -19,69 +20,65 @@ class ThemeDialogFragment : DialogFragment() {
             FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
         val view = binding.root
 
-//        setCheckedButton(binding)
-        initListener(binding)
+        setCheckedButton(binding)
 
         return MaterialAlertDialogBuilder(
             requireActivity(),
             R.style.ThemeOverlay_App_MaterialAlertDialog
         ).apply {
             setView(view)
-            setPositiveButton(R.string.confirm) { _, _ -> dismiss() }
+            setPositiveButton(R.string.confirm) { _, _ ->
+                val dynamicMode = when (binding.rgDynamicColor.checkedRadioButtonId) {
+                    R.id.rb_yes -> {
+                        DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
+                        requireActivity().recreate()
+                        "dynamicColor"
+                    }
+
+                    else -> {
+                        DynamicColors.applyToActivitiesIfAvailable(requireActivity().application,
+                            DynamicColorsOptions.Builder()
+                                .setThemeOverlay(R.style.Base_Theme_PriceGuard).build()
+                        )
+                        requireActivity().recreate()
+                        "default"
+                    }
+                }
+
+                val darkMode = when (binding.rgDarkMode.checkedRadioButtonId) {
+                    R.id.rb_system -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        "system"
+                    }
+
+                    R.id.rb_light -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        "light"
+                    }
+
+                    R.id.rb_dark -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        "dark"
+                    }
+
+                    else -> {
+                        "system"
+                    }
+                }
+                saveModeWithPreference(dynamicMode, darkMode)
+
+                dismiss()
+            }
         }.create()
     }
 
-    private fun initListener(binding: FragmentThemeDialogBinding) {
-        binding.rgDynamicColor.setOnCheckedChangeListener { _, checkedId ->
-            val mode = when (checkedId) {
-                R.id.rb_yes -> {
-                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
-                    "dynamicColor"
-                }
-
-                R.id.rb_no -> {
-                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
-                    "default"
-                }
-
-                else -> {
-                    "default"
-                }
-            }
-            saveModeWithPreference(mode)
-        }
-
-        binding.rgDarkMode.setOnCheckedChangeListener { _, checkedId ->
-            val mode = when (checkedId) {
-                R.id.rb_system -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                    "system"
-                }
-
-                R.id.rb_light -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    "light"
-                }
-
-                R.id.rb_dark -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    "dark"
-                }
-
-                else -> {
-                    "system"
-                }
-            }
-            saveModeWithPreference(mode)
-        }
-    }
-
-    private fun saveModeWithPreference(mode: String) {
+    private fun saveModeWithPreference(dynamicMode: String, darkMode: String) {
         val sharedPreferences =
             requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
         val editor = sharedPreferences.edit()
-        editor.putString("DynamicColor", mode)
+        editor.putString("DynamicColor", dynamicMode)
+        editor.putString("DarkMode", darkMode)
         editor.apply()
     }
 

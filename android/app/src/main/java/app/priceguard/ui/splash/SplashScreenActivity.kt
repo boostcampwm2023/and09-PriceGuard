@@ -14,6 +14,7 @@ import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnCreated
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
@@ -78,7 +79,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         when (dynamicColorMode) {
             "dynamicColor" -> {
-
+                DynamicColors.applyToActivitiesIfAvailable(application)
             }
         }
 
