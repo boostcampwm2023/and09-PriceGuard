@@ -14,6 +14,7 @@ import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.openNotificationSettings
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +63,7 @@ class MyPageFragment : Fragment() {
                     override fun onClick(setting: Setting) {
                         when (setting) {
                             Setting.NOTIFICATION -> {
-                                // TODO: 알람 설정
+                                requireContext().openNotificationSettings()
                             }
 
                             Setting.THEME -> {
