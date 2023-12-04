@@ -16,6 +16,7 @@ import { PriceDataDto } from 'src/dto/price.data.dto';
 import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 import { FirebaseService } from '../firebase/firebase.service';
+import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -210,25 +211,59 @@ export class ProductService {
     async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
-        const results = (await Promise.all(productCodeList)).map(({ productId, productPrice, isSoldOut }) => {
-            return { productId, price: productPrice, isSoldOut };
-        });
-        const updatedDataInfo = results.filter(({ productId, price, isSoldOut }) => {
+        const results = await Promise.all(productCodeList);
+        const updatedDataInfo = results.filter(({ productId, productPrice, isSoldOut }) => {
             const cache = this.productDataCache.get(productId);
-            if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== price) {
-                const lowestPrice = cache ? Math.min(cache.lowestPrice, price) : price;
+            if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
+                const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
                 this.productDataCache.set(productId, {
                     isSoldOut,
-                    price,
+                    price: productPrice,
                     lowestPrice,
                 });
                 return true;
             }
             return false;
         });
-        await this.productPriceModel.insertMany(updatedDataInfo);
+        await this.productPriceModel.insertMany(
+            updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
+                return { productId, price: productPrice, isSoldOut };
+            }),
+        );
+        const message: Message[] = await this.getNotifications(updatedDataInfo);
+        await this.firebaseService.getMessaging().sendEach(message);
     }
-
+    getMessage(productName: string, productPrice: number, imageUrl: string, token: string): Message {
+        return {
+            notification: {
+                title: '목표 가격 이하로 내려갔습니다!',
+                body: `${productName}의 현재 가격은 ${productPrice}원 입니다.`,
+            },
+            android: {
+                notification: {
+                    imageUrl,
+                },
+            },
+            token,
+        };
+    }
+    async getNotifications(productInfo: ProductInfoDto[]): Promise<Message[]> {
+        const notifications = productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
+            const trackingList = await this.trackingProductRepository.find({
+                where: { productId: productId },
+            });
+            const messageList = [];
+            for (let index = 0; index < trackingList.length; index++) {
+                const { targetPrice } = trackingList[index];
+                if (targetPrice < productPrice) continue;
+                const token = `example token value`;
+                const message = this.getMessage(productName, productPrice, imageUrl, token);
+                messageList.push(message);
+            }
+            return messageList;
+        });
+        return (await Promise.all(notifications)).flat();
+    }
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);
         const product = await this.productRepository.saveProduct(productInfo);
