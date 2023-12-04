@@ -24,6 +24,10 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
+    <style name="Theme.PriceGuard.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?attr/colorPrimaryInverse</item>
+    </style>
+
     <style name="Widget.App.Button" parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>

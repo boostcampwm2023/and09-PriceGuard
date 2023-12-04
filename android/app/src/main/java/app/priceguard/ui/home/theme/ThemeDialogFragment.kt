@@ -47,7 +47,7 @@ class ThemeDialogFragment : DialogFragment() {
                         DynamicColors.applyToActivitiesIfAvailable(
                             requireActivity().application,
                             DynamicColorsOptions.Builder()
-                                .setThemeOverlay(R.style.Base_Theme_PriceGuard).build()
+                                .setThemeOverlay(R.style.Theme_PriceGuard).build()
                         )
                         requireActivity().recreate()
                         MODE_DYNAMIC_NO
