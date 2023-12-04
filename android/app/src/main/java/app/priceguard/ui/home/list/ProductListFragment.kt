@@ -13,7 +13,9 @@ import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showConfirmationDialog
@@ -59,7 +61,15 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
-        val adapter = ProductSummaryAdapter()
+        val listener = object : ProductSummaryClickListener {
+            override fun onClick(productCode: String) {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("productCode", productCode)
+                startActivity(intent)
+            }
+        }
+
+        val adapter = ProductSummaryAdapter(listener)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->

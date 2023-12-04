@@ -1,6 +1,5 @@
 package app.priceguard.ui.home
 
-import android.content.Intent
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -13,15 +12,14 @@ import app.priceguard.data.graph.ProductChartData
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.databinding.ItemProductSummaryBinding
 import app.priceguard.materialchart.data.GraphMode
-import app.priceguard.ui.detail.DetailActivity
 
-class ProductSummaryAdapter :
+class ProductSummaryAdapter(private val productSummaryClickListener: ProductSummaryClickListener) :
     ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemProductSummaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+        return ViewHolder(binding, productSummaryClickListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -29,7 +27,10 @@ class ProductSummaryAdapter :
         holder.bind(item)
     }
 
-    class ViewHolder(private val binding: ItemProductSummaryBinding) :
+    class ViewHolder(
+        private val binding: ItemProductSummaryBinding,
+        private val productSummaryClickListener: ProductSummaryClickListener
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ProductSummary) {
@@ -105,9 +106,7 @@ class ProductSummaryAdapter :
 
         private fun ItemProductSummaryBinding.setClickListener(code: String) {
             cvProduct.setOnClickListener {
-                val intent = Intent(binding.root.context, DetailActivity::class.java)
-                intent.putExtra("productCode", code)
-                binding.root.context.startActivity(intent)
+                productSummaryClickListener.onClick(code)
             }
         }
 

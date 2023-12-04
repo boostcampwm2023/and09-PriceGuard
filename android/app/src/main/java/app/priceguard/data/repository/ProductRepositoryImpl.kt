@@ -27,10 +27,7 @@ class ProductRepositoryImpl @Inject constructor(
     private suspend fun renew(): Boolean {
         val refreshToken = tokenRepository.getRefreshToken() ?: return false
         val renewResult = tokenRepository.renewTokens(refreshToken)
-        if (renewResult != RenewResult.SUCCESS) {
-            return false
-        }
-        return true
+        return renewResult == RenewResult.SUCCESS
     }
 
     private suspend fun <T> handleError(

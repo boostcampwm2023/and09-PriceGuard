@@ -67,6 +67,6 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
-        return round((price - targetPrice).toFloat() / (if (targetPrice == 0) 1 else targetPrice) * 1000) / 10
+        return round((price - targetPrice).toFloat() / (if (price == 0) 1 else price) * 1000) / 10
     }
 }
