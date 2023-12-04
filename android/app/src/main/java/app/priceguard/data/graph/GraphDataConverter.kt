@@ -38,17 +38,8 @@ class GraphDataConverter {
 
         return if (sortedList.isEmpty()) {
             listOf(
-                ProductChartData(
-                    startTime,
-                    list.last().y,
-                    list.last().valid
-                )
-            ).plus(
-                ProductChartData(
-                    currentTime,
-                    list.last().y,
-                    list.last().valid
-                )
+                ProductChartData(startTime, list.last().y, list.last().valid),
+                ProductChartData(currentTime, list.last().y, list.last().valid)
             )
         } else {
             listOf(
@@ -57,12 +48,10 @@ class GraphDataConverter {
                     sortedList.first().y,
                     sortedList.first().valid
                 )
-            ).plus(sortedList).plus(
-                ProductChartData(
-                    currentTime,
-                    sortedList.last().y,
-                    sortedList.last().valid
-                )
+            ) + sortedList + ProductChartData(
+                currentTime,
+                sortedList.last().y,
+                sortedList.last().valid
             )
         }
     }
