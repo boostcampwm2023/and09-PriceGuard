@@ -50,14 +50,17 @@ export class ProductService {
                 },
             ])
             .exec();
+        const userCountList = await this.trackingProductRepository.getAllUserCount();
+        const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
         latestData.forEach((data) => {
+            const matchProduct = userCountList.find((product) => product.id === data._id);
             this.productDataCache.set(data._id, {
                 price: data.price,
                 isSoldOut: data.isSoldOut,
                 lowestPrice: data.lowestPrice,
+                userCount: matchProduct ? parseInt(matchProduct.userCount) : 0,
             });
         });
-        const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
         rankList.forEach((product) => {
             this.productRankCache.put(product.id, product);
         });
@@ -86,16 +89,20 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const userCount = await this.trackingProductRepository.getUserCount(product.id);
+        const cacheData = await this.productDataCache.get(product.id);
         const productRanck = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
             shop: product.shop,
             imageUrl: product.imageUrl,
-            userCount: userCount,
+            userCount: cacheData.userCount,
         };
         this.productRankCache.updatePost(productRanck);
+        this.productDataCache.set(product.id, {
+            ...cacheData,
+            userCount: cacheData.userCount + 1,
+        });
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
@@ -141,6 +148,7 @@ export class ProductService {
                 priceData,
             };
         });
+        console.log(this.productDataCache);
         const result = await Promise.all(recommendListInfo);
         return result;
     }
