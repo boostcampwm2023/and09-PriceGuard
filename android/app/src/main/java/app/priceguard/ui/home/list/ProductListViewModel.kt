@@ -3,8 +3,10 @@ package app.priceguard.ui.home.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,7 +21,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
     private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -49,7 +52,7 @@ class ProductListViewModel @Inject constructor(
                             data.productName,
                             data.price,
                             data.productCode,
-                            data.priceData,
+                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
                             calculateDiscountRate(data.targetPrice, data.price),
                             true
                         )
