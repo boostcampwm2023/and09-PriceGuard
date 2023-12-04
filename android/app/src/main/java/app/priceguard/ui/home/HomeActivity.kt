@@ -13,6 +13,8 @@ import androidx.navigation.ui.setupWithNavController
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
 import app.priceguard.ui.util.ui.openNotificationSettings
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,12 +29,15 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initSnackBar()
+        checkForGooglePlayServices()
         setBottomNavigationBar()
         askNotificationPermission()
     }
 
     override fun onResume() {
         super.onResume()
+        checkForGooglePlayServices()
+
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -41,6 +46,14 @@ class HomeActivity : AppCompatActivity() {
             dismissSnackbar()
         } else {
             showNotificationOffSnackbar()
+        }
+    }
+
+    private fun checkForGooglePlayServices() {
+        val availability = GoogleApiAvailability().isGooglePlayServicesAvailable(this)
+
+        if (availability != ConnectionResult.SUCCESS) {
+            GoogleApiAvailability().makeGooglePlayServicesAvailable(this)
         }
     }
 
