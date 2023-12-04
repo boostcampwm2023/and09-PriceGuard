@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
@@ -24,6 +25,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initAppTheme()
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observeState()
@@ -66,5 +68,28 @@ class SplashScreenActivity : AppCompatActivity() {
         val onPreDrawListener = ViewTreeObserver.OnPreDrawListener { splashViewModel.isReady.value }
         val content: View = findViewById(android.R.id.content)
         content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
+    }
+
+    private fun initAppTheme() {
+        val sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
+        val dynamicColorMode = sharedPreferences.getString("DynamicColor", "default")
+        val darkMode = sharedPreferences.getString("DarkMode", "system")
+
+        when (dynamicColorMode) {
+            "dynamicColor" -> {
+
+            }
+        }
+
+        when (darkMode) {
+            "light" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+
+            "dark" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
     }
 }

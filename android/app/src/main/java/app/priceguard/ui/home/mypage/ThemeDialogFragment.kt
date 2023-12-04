@@ -1,23 +1,26 @@
 package app.priceguard.ui.home.mypage
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
 import app.priceguard.R
-import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.databinding.FragmentThemeDialogBinding
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+
 
 class ThemeDialogFragment : DialogFragment() {
 
-    private var _binding: FragmentThemeDialogBinding? = null
-    private val binding get() = _binding!!
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = layoutInflater.inflate(R.layout.fragment_theme_dialog, null)
+        val binding: FragmentThemeDialogBinding =
+            FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
+        val view = binding.root
+
+//        setCheckedButton(binding)
+        initListener(binding)
 
         return MaterialAlertDialogBuilder(
             requireActivity(),
@@ -28,21 +31,93 @@ class ThemeDialogFragment : DialogFragment() {
         }.create()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentThemeDialogBinding.inflate(layoutInflater, container, false)
-        return binding.root
+    private fun initListener(binding: FragmentThemeDialogBinding) {
+        binding.rgDynamicColor.setOnCheckedChangeListener { _, checkedId ->
+            val mode = when (checkedId) {
+                R.id.rb_yes -> {
+                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
+                    "dynamicColor"
+                }
+
+                R.id.rb_no -> {
+                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
+                    "default"
+                }
+
+                else -> {
+                    "default"
+                }
+            }
+            saveModeWithPreference(mode)
+        }
+
+        binding.rgDarkMode.setOnCheckedChangeListener { _, checkedId ->
+            val mode = when (checkedId) {
+                R.id.rb_system -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    "system"
+                }
+
+                R.id.rb_light -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    "light"
+                }
+
+                R.id.rb_dark -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    "dark"
+                }
+
+                else -> {
+                    "system"
+                }
+            }
+            saveModeWithPreference(mode)
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun saveModeWithPreference(mode: String) {
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
+        val editor = sharedPreferences.edit()
+        editor.putString("DynamicColor", mode)
+        editor.apply()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setCheckedButton(binding: FragmentThemeDialogBinding) {
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
+        val dynamicColorMode = sharedPreferences.getString("DynamicColor", "default")
+        val darkMode = sharedPreferences.getString("DarkMode", "system")
+
+        binding.rgDynamicColor.check(
+            when (dynamicColorMode) {
+                "dynamicColor" -> {
+                    R.id.rb_yes
+                }
+
+                else -> {
+                    R.id.rb_no
+                }
+            }
+        )
+
+        binding.rgDarkMode.check(
+            when (darkMode) {
+                "light" -> {
+                    R.id.rb_light
+                }
+
+                "dark" -> {
+                    R.id.rb_dark
+                }
+
+                else -> {
+                    R.id.rb_system
+                }
+            }
+        )
     }
 }

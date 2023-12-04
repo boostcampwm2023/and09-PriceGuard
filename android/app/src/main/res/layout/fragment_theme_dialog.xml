@@ -28,7 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:checkedButton="@+id/rb_no"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/tv_dynamic_color">
 
@@ -61,7 +60,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:checkedButton="@+id/rb_system"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/tv_dark_mode">
