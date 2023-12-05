@@ -3,6 +3,7 @@ import * as convert from 'xml-js';
 import * as iconv from 'iconv-lite';
 import axios from 'axios';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { ProductInfoDto } from 'src/dto/product.info.dto';
 
 function xmlConvert11st(xml: Buffer) {
     const xmlUtf8 = iconv.decode(xml, 'EUC-KR').toString();
@@ -25,7 +26,7 @@ function productInfoUrl11st(productCode: string) {
     return shopUrl.toString();
 }
 
-export async function getProductInfo11st(productCode: string, productId?: string) {
+export async function getProductInfo11st(productCode: string, productId?: string): Promise<ProductInfoDto> {
     const openApiUrl = productInfoUrl11st(productCode);
     try {
         const xml = await axios.get(openApiUrl, { responseType: 'arraybuffer' });
