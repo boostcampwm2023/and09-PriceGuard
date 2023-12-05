@@ -4,4 +4,6 @@ export class ProductInfoDto {
     productPrice: number;
     shop: string;
     imageUrl: string;
+    isSoldOut: boolean;
+    productId?: string;
 }

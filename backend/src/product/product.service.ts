@@ -19,6 +19,10 @@ import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { FirebaseService } from '../firebase/firebase.service';
+import { Message } from 'firebase-admin/lib/messaging/messaging-api';
+import { TrackingProduct } from 'src/entities/trackingProduct.entity';
+import { FirebaseRepository } from '../firebase/firebase.repository';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -31,9 +35,12 @@ export class ProductService {
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
+        @InjectRepository(FirebaseRepository)
+        private firebaseRepository: FirebaseRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        private readonly firebaseService: FirebaseService,
     ) {
         this.initCache();
     }
@@ -285,25 +292,81 @@ export class ProductService {
     async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
-        const results = (await Promise.all(productCodeList)).map(({ productId, productPrice, isSoldOut }) => {
-            return { productId, price: productPrice, isSoldOut };
-        });
-        const updatedDataInfo = results.filter(({ productId, price, isSoldOut }) => {
+        const results = await Promise.all(productCodeList);
+        const updatedDataInfo = results.filter(({ productId, productPrice, isSoldOut }) => {
             const cache = this.productDataCache.get(productId);
-            if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== price) {
-                const lowestPrice = cache ? Math.min(cache.lowestPrice, price) : price;
+            if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
+                const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
                 this.productDataCache.set(productId, {
                     isSoldOut,
-                    price,
+                    price: productPrice,
                     lowestPrice,
                 });
                 return true;
             }
             return false;
         });
-        await this.productPriceModel.insertMany(updatedDataInfo);
+        if (updatedDataInfo.length > 0) {
+            await this.productPriceModel.insertMany(
+                updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
+                    return { productId, price: productPrice, isSoldOut };
+                }),
+            );
+            const notifications: Message[] = await this.getNotifications(updatedDataInfo);
+            if (notifications.length > 0) {
+                await this.firebaseService.getMessaging().sendEach(notifications);
+            }
+        }
     }
+    getMessage(productName: string, productPrice: number, imageUrl: string, token: string): Message {
+        return {
+            notification: {
+                title: '목표 가격 이하로 내려갔습니다!',
+                body: `${productName}의 현재 가격은 ${productPrice}원 입니다.`,
+            },
+            android: {
+                notification: {
+                    imageUrl,
+                },
+            },
+            token,
+        };
+    }
+    async getNotifications(productInfo: ProductInfoDto[]): Promise<Message[]> {
+        const productIds = productInfo.map((p) => p.productId);
 
+        const trackingProducts = await this.trackingProductRepository
+            .createQueryBuilder('tracking_product')
+            .where('tracking_product.productId IN (:...productIds)', { productIds })
+            .getMany();
+
+        const trackingMap = new Map<string, TrackingProduct[]>();
+        trackingProducts.forEach((tracking) => {
+            const { productId } = tracking;
+            const products = trackingMap.get(productId) || [];
+            products.push(tracking);
+            trackingMap.set(productId, products);
+        });
+
+        const notifications = await Promise.all(
+            productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
+                const trackingList = productId ? trackingMap.get(productId) || [] : [];
+                const messageList: Message[] = [];
+
+                for (const { userId, targetPrice } of trackingList) {
+                    if (targetPrice >= productPrice) {
+                        const deviceInfo = await this.firebaseRepository.findOne({ where: { userId: userId } });
+                        if (deviceInfo) {
+                            const { token } = deviceInfo;
+                            messageList.push(this.getMessage(productName, productPrice, imageUrl, token));
+                        }
+                    }
+                }
+                return messageList;
+            }),
+        );
+        return notifications.flat();
+    }
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);
         const product = await this.productRepository.saveProduct(productInfo);

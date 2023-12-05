@@ -11,9 +11,13 @@ import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
 import { CacheModule } from '@nestjs/cache-manager';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from 'src/constants';
 import * as redisStore from 'cache-manager-redis-store';
+import { FirebaseService } from 'src/firebase/firebase.service';
+import { FirebaseRepository } from 'src/firebase/firebase.repository';
+import { FirebaseToken } from 'src/entities/firebase.token.entity';
+
 @Module({
     imports: [
-        TypeOrmModule.forFeature([TrackingProduct, Product]),
+        TypeOrmModule.forFeature([TrackingProduct, Product, FirebaseToken]),
         MongooseModule.forFeature([{ name: ProductPrice.name, schema: ProductPriceSchema }]),
         CacheModule.register({
             store: redisStore,
@@ -24,6 +28,6 @@ import * as redisStore from 'cache-manager-redis-store';
         }),
     ],
     controllers: [ProductController],
-    providers: [ProductService, ProductRepository, TrackingProductRepository],
+    providers: [ProductService, ProductRepository, TrackingProductRepository, FirebaseService, FirebaseRepository],
 })
 export class ProductModule {}
