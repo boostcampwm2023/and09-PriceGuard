@@ -10,8 +10,3 @@ data class UserDataDTO(
     val iat: Int,
     val exp: Int
 )
-
-data class UserDataResult(
-    val email: String,
-    val name: String
-)

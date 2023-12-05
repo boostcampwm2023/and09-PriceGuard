@@ -9,10 +9,3 @@ data class RenewResponse(
     val accessToken: String,
     val refreshToken: String
 )
-
-enum class RenewResult {
-    SUCCESS,
-    EXPIRED,
-    UNAUTHORIZED,
-    UNKNOWN_ERROR
-}

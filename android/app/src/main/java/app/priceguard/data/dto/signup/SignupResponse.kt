@@ -9,16 +9,3 @@ data class SignupResponse(
     val accessToken: String,
     val refreshToken: String
 )
-
-data class SignupResult(
-    val signUpState: SignupState,
-    val accessToken: String?,
-    val refreshToken: String?
-)
-
-enum class SignupState {
-    SUCCESS,
-    INVALID_PARAMETER,
-    DUPLICATE_EMAIL,
-    UNDEFINED_ERROR
-}

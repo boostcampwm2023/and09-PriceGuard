@@ -9,15 +9,3 @@ data class LoginResponse(
     val accessToken: String,
     val refreshToken: String
 )
-
-data class LoginResult(
-    val loginState: LoginState,
-    val accessToken: String?,
-    val refreshToken: String?
-)
-
-enum class LoginState {
-    SUCCESS,
-    INVALID_PARAMETER,
-    UNDEFINED_ERROR
-}
