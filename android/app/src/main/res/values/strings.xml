@@ -106,4 +106,6 @@
     <string name="use_system_setting">시스템 설정 사용</string>
     <string name="light_mode">라이트 모드</string>
     <string name="dark_mode">다크 모드</string>
+    <string name="price_text">가격</string>
+    <string name="date_text">시간</string>
 </resources>

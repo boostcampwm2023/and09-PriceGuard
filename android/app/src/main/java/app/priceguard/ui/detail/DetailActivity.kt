@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.graph.ProductChartGridLine
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
@@ -41,7 +42,6 @@ class DetailActivity : AppCompatActivity() {
         setBackPressedCallback()
         initListener()
         setNavigationButton()
-        setGraph()
         checkProductCode(intent)
         observeEvent()
     }
@@ -149,19 +149,25 @@ class DetailActivity : AppCompatActivity() {
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
                 state.targetPrice ?: return@collect
-                binding.chGraphDetail.dataset =
-                    if (state.targetPrice < 0) {
-                        state.chartData
+                binding.chGraphDetail.dataset = ProductChartDataset(
+                    showXAxis = true,
+                    showYAxis = true,
+                    isInteractive = true,
+                    graphMode = state.graphMode,
+                    xLabel = getString(R.string.date_text),
+                    yLabel = getString(R.string.price_text),
+                    data = state.chartData,
+                    gridLines = if (state.targetPrice < 0) {
+                        listOf()
                     } else {
-                        state.chartData?.copy(
-                            gridLines = listOf(
-                                ProductChartGridLine(
-                                    resources.getString(R.string.target_price),
-                                    state.targetPrice.toFloat()
-                                )
+                        listOf(
+                            ProductChartGridLine(
+                                resources.getString(R.string.target_price),
+                                state.targetPrice.toFloat()
                             )
                         )
                     }
+                )
             }
         }
         repeatOnStarted {
@@ -252,10 +258,6 @@ class DetailActivity : AppCompatActivity() {
         } else {
             finish()
         }
-    }
-
-    private fun setGraph() {
-        binding.chGraphDetail.setXAxisMargin(48F)
     }
 
     private fun showConfirmationDialog(
