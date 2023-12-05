@@ -354,3 +354,15 @@ export class TrackingProductsNotFound {
     })
     message: string;
 }
+export class ToggleAlertSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '알림 설정 성공',
+        description: '메시지',
+    })
+    message: string;
+}

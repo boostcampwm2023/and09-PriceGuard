@@ -388,4 +388,10 @@ export class ProductService {
         this.productPriceModel.create(updatedDataInfo);
         return product;
     }
+
+    async toggleProductAlert(userId: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, productCode);
+        product.isAlert = !product.isAlert;
+        await this.trackingProductRepository.save(product);
+    }
 }
