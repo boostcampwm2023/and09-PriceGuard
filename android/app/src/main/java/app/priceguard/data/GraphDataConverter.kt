@@ -1,6 +1,7 @@
-package app.priceguard.data.graph
+package app.priceguard.data
 
 import app.priceguard.data.dto.PriceDataDTO
+import app.priceguard.data.graph.ProductChartData
 import app.priceguard.materialchart.data.GraphMode
 
 class GraphDataConverter {

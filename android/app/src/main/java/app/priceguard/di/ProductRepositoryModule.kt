@@ -1,6 +1,6 @@
 package app.priceguard.di
 
-import app.priceguard.data.graph.GraphDataConverter
+import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.ProductRepositoryImpl

@@ -2,8 +2,8 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.graph.ProductChartData
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.network.ProductRepositoryResult

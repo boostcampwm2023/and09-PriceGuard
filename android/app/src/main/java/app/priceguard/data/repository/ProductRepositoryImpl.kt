@@ -1,5 +1,6 @@
 package app.priceguard.data.repository
 
+import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.add.ProductAddResponse
@@ -11,7 +12,6 @@ import app.priceguard.data.dto.recommend.RecommendProductData
 import app.priceguard.data.dto.renew.RenewResult
 import app.priceguard.data.dto.verify.ProductVerifyDTO
 import app.priceguard.data.dto.verify.ProductVerifyRequest
-import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.ProductRepositoryResult

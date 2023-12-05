@@ -2,8 +2,8 @@ package app.priceguard.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
