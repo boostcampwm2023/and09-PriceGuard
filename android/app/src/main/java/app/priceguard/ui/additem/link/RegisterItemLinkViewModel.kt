@@ -3,8 +3,8 @@ package app.priceguard.ui.additem.link
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.dto.verify.ProductVerifyDTO
 import app.priceguard.data.dto.verify.ProductVerifyRequest
+import app.priceguard.data.dto.verify.ProductVerifyResult
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,13 +21,13 @@ class RegisterItemLinkViewModel
 
     data class RegisterLinkUIState(
         val link: String = "",
-        val product: ProductVerifyDTO? = null,
+        val product: ProductVerifyResult? = null,
         val isNextReady: Boolean = true,
         val isLinkError: Boolean = false
     )
 
     sealed class RegisterLinkEvent {
-        data class SuccessVerification(val product: ProductVerifyDTO) : RegisterLinkEvent()
+        data class SuccessVerification(val product: ProductVerifyResult) : RegisterLinkEvent()
         data class FailureVerification(val errorType: ProductErrorState) : RegisterLinkEvent()
     }
 

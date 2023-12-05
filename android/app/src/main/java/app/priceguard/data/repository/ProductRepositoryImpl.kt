@@ -3,15 +3,15 @@ package app.priceguard.data.repository
 import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.add.ProductAddRequest
-import app.priceguard.data.dto.add.ProductAddResponse
+import app.priceguard.data.dto.add.ProductAddResult
 import app.priceguard.data.dto.detail.ProductDetailResult
 import app.priceguard.data.dto.list.ProductData
 import app.priceguard.data.dto.patch.PricePatchRequest
-import app.priceguard.data.dto.patch.PricePatchResponse
+import app.priceguard.data.dto.patch.PricePatchResult
 import app.priceguard.data.dto.recommend.RecommendProductData
 import app.priceguard.data.dto.renew.RenewResult
-import app.priceguard.data.dto.verify.ProductVerifyDTO
 import app.priceguard.data.dto.verify.ProductVerifyRequest
+import app.priceguard.data.dto.verify.ProductVerifyResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
 import app.priceguard.data.network.ProductRepositoryResult
@@ -73,19 +73,19 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun verifyLink(
         productUrl: ProductVerifyRequest,
         isRenewed: Boolean
-    ): ProductRepositoryResult<ProductVerifyDTO> {
+    ): ProductRepositoryResult<ProductVerifyResult> {
         val response = getApiResult {
             productAPI.verifyLink(productUrl)
         }
         return when (response) {
             is APIResult.Success -> {
                 ProductRepositoryResult.Success(
-                    ProductVerifyDTO(
-                        response.data.productName,
-                        response.data.productCode,
-                        response.data.productPrice,
-                        response.data.shop,
-                        response.data.imageUrl
+                    ProductVerifyResult(
+                        response.data.productName ?: "",
+                        response.data.productCode ?: "",
+                        response.data.productPrice ?: 0,
+                        response.data.shop ?: "",
+                        response.data.imageUrl ?: ""
                     )
                 )
             }
@@ -101,14 +101,14 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun addProduct(
         productAddRequest: ProductAddRequest,
         isRenewed: Boolean
-    ): ProductRepositoryResult<ProductAddResponse> {
+    ): ProductRepositoryResult<ProductAddResult> {
         val response = getApiResult {
             productAPI.addProduct(productAddRequest)
         }
         return when (response) {
             is APIResult.Success -> {
                 ProductRepositoryResult.Success(
-                    ProductAddResponse(
+                    ProductAddResult(
                         response.data.statusCode,
                         response.data.message
                     )
@@ -234,14 +234,14 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun updateTargetPrice(
         pricePatchRequest: PricePatchRequest,
         isRenewed: Boolean
-    ): ProductRepositoryResult<PricePatchResponse> {
+    ): ProductRepositoryResult<PricePatchResult> {
         val response = getApiResult {
             productAPI.updateTargetPrice(pricePatchRequest)
         }
         return when (response) {
             is APIResult.Success -> {
                 ProductRepositoryResult.Success(
-                    PricePatchResponse(
+                    PricePatchResult(
                         response.data.statusCode,
                         response.data.message
                     )
