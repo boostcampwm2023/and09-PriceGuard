@@ -9,8 +9,8 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.graph.ProductChartGridLine
+import app.priceguard.data.network.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode

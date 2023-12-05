@@ -1,7 +1,6 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.GraphDataConverter
-import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.add.ProductAddResult
 import app.priceguard.data.dto.detail.ProductDetailResult
@@ -14,6 +13,7 @@ import app.priceguard.data.dto.verify.ProductVerifyRequest
 import app.priceguard.data.dto.verify.ProductVerifyResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
+import app.priceguard.data.network.ProductErrorState
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.network.getApiResult
 import javax.inject.Inject
