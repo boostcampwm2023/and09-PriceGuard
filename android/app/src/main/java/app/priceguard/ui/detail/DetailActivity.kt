@@ -148,18 +148,20 @@ class DetailActivity : AppCompatActivity() {
     private fun observeEvent() {
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
-                binding.chGraphDetail.dataset = state.chartData?.copy(
-                    gridLines = listOf(
-                        ProductChartGridLine(
-                            resources.getString(R.string.target_price),
-                            state.targetPrice?.toFloat() ?: 0F
-                        ),
-                        ProductChartGridLine(
-                            resources.getString(R.string.lowest_price),
-                            state.lowestPrice?.toFloat() ?: 0F
+                state.targetPrice ?: return@collect
+                binding.chGraphDetail.dataset =
+                    if (state.targetPrice < 0) {
+                        state.chartData
+                    } else {
+                        state.chartData?.copy(
+                            gridLines = listOf(
+                                ProductChartGridLine(
+                                    resources.getString(R.string.target_price),
+                                    state.targetPrice.toFloat()
+                                )
+                            )
                         )
-                    )
-                )
+                    }
             }
         }
         repeatOnStarted {
