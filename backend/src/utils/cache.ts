@@ -5,7 +5,7 @@ class CacheNode {
     value: ProductRankCacheDto;
     prev: CacheNode;
     next: CacheNode;
-    constructor(key: string, value: any) {
+    constructor(key: string, value: ProductRankCacheDto) {
         this.key = key;
         this.value = value;
     }
@@ -19,8 +19,8 @@ export class ProductRankCache {
     hashTable = new Map<string, CacheNode>();
     constructor(size: number) {
         this.maxSize = size;
-        this.head = new CacheNode('head', 'head');
-        this.tail = new CacheNode('tail', 'tail');
+        this.head = new CacheNode('head', new ProductRankCacheDto());
+        this.tail = new CacheNode('tail', new ProductRankCacheDto());
         this.head.next = this.tail;
         this.tail.prev = this.head;
         this.count = 0;

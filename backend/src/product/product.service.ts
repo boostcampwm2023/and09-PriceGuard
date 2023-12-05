@@ -95,7 +95,7 @@ export class ProductService {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
         const cacheData = await this.productDataCache.get(product.id);
-        const productRanck = {
+        const productRank = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
@@ -103,7 +103,7 @@ export class ProductService {
             imageUrl: product.imageUrl,
             userCount: cacheData.userCount + 1,
         };
-        this.productRankCache.update(productRanck);
+        this.productRankCache.update(productRank);
         this.productDataCache.set(product.id, {
             ...cacheData,
             userCount: cacheData.userCount + 1,
