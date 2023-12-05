@@ -20,6 +20,7 @@ import app.priceguard.ui.util.ui.openNotificationSettings
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -34,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        receiveToken()
         enqueueWorker()
         initSnackBar()
         checkForGooglePlayServices()
@@ -53,6 +55,18 @@ class HomeActivity : AppCompatActivity() {
             dismissSnackbar()
         } else {
             showNotificationOffSnackbar()
+        }
+    }
+
+    private fun receiveToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("FCM Token", token ?: "Token not available")
+                // Send this token to your server to send messages to this device
+            } else {
+                Log.e("FCM Token", "Fetching FCM token failed", task.exception)
+            }
         }
     }
 
