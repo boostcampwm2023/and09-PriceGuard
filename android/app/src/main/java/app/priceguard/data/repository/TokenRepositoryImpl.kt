@@ -5,7 +5,7 @@ import app.priceguard.data.datastore.TokenDataSource
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.AuthAPI
 import app.priceguard.data.network.getApiResult
-import app.priceguard.ui.data.RenewResult
+import app.priceguard.ui.data.RenewState
 import app.priceguard.ui.data.UserDataResult
 import java.util.*
 import javax.inject.Inject
@@ -43,25 +43,25 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun renewTokens(refreshToken: String): RenewResult {
+    override suspend fun renewTokens(refreshToken: String): RenewState {
         when (val response = getApiResult { authAPI.renewTokens("Bearer $refreshToken") }) {
             is APIResult.Success -> {
                 storeTokens(response.data.accessToken, response.data.refreshToken)
-                return RenewResult.SUCCESS
+                return RenewState.SUCCESS
             }
 
             is APIResult.Error -> {
                 return when (response.code) {
                     401 -> {
-                        RenewResult.UNAUTHORIZED
+                        RenewState.UNAUTHORIZED
                     }
 
                     410 -> {
-                        RenewResult.EXPIRED
+                        RenewState.EXPIRED
                     }
 
                     else -> {
-                        RenewResult.UNKNOWN_ERROR
+                        RenewState.UNKNOWN_ERROR
                     }
                 }
             }

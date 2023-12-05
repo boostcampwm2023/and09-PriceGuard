@@ -15,7 +15,7 @@ import app.priceguard.ui.data.ProductData
 import app.priceguard.ui.data.ProductDetailResult
 import app.priceguard.ui.data.ProductVerifyResult
 import app.priceguard.ui.data.RecommendProductData
-import app.priceguard.ui.data.RenewResult
+import app.priceguard.ui.data.RenewState
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
@@ -27,7 +27,7 @@ class ProductRepositoryImpl @Inject constructor(
     private suspend fun renew(): Boolean {
         val refreshToken = tokenRepository.getRefreshToken() ?: return false
         val renewResult = tokenRepository.renewTokens(refreshToken)
-        return renewResult == RenewResult.SUCCESS
+        return renewResult == RenewState.SUCCESS
     }
 
     private suspend fun <T> handleError(

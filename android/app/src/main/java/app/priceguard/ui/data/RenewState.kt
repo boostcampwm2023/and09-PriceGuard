@@ -1,6 +1,6 @@
 package app.priceguard.ui.data
 
-enum class RenewResult {
+enum class RenewState {
     SUCCESS,
     EXPIRED,
     UNAUTHORIZED,
