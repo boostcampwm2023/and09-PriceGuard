@@ -105,6 +105,9 @@ dependencies {
     // Pull to Refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    // Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
     // Material chart
     implementation(project(":materialchart"))
 }

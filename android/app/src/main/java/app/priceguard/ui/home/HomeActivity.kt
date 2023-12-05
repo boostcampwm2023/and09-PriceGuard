@@ -10,13 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
+import app.priceguard.service.UpdateTokenWorker
 import app.priceguard.ui.util.ui.openNotificationSettings
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -28,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        enqueueWorker()
         initSnackBar()
         checkForGooglePlayServices()
         setBottomNavigationBar()
@@ -47,6 +54,18 @@ class HomeActivity : AppCompatActivity() {
         } else {
             showNotificationOffSnackbar()
         }
+    }
+
+    private fun enqueueWorker() {
+        val saveRequest =
+            PeriodicWorkRequestBuilder<UpdateTokenWorker>(730, TimeUnit.HOURS)
+                .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "saveRequest",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            saveRequest
+        )
     }
 
     private fun checkForGooglePlayServices() {
