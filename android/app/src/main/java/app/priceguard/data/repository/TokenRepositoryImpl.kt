@@ -3,7 +3,6 @@ package app.priceguard.data.repository
 import android.util.Log
 import app.priceguard.data.datastore.TokenDataSource
 import app.priceguard.data.dto.renew.RenewResult
-import app.priceguard.data.dto.signup.UserDataDTO
 import app.priceguard.data.dto.signup.UserDataResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.AuthAPI
@@ -34,7 +33,7 @@ class TokenRepositoryImpl @Inject constructor(
         val parts = accessToken.split(".")
         return try {
             val charset = charset("UTF-8")
-            val payload = Json.decodeFromString<UserDataDTO>(
+            val payload = Json.decodeFromString<TokenUserData>(
                 String(Base64.getUrlDecoder().decode(parts[1].toByteArray(charset)), charset)
             )
             UserDataResult(payload.email, payload.name)

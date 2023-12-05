@@ -1,9 +1,9 @@
-package app.priceguard.data.dto.signup
+package app.priceguard.data.repository
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserDataDTO(
+data class TokenUserData(
     val id: String,
     val email: String,
     val name: String,
