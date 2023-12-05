@@ -195,6 +195,7 @@ export class ProductService {
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
         const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
         product.targetPrice = productAddDto.targetPrice;
+        product.isFirst = true;
         await this.trackingProductRepository.save(product);
     }
 
