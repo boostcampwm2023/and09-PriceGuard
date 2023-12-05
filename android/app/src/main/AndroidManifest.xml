@@ -21,7 +21,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_priceguard_original" />
+            android:resource="@drawable/ic_priceguard_notification" />
 
         <activity
             android:name=".ui.splash.SplashScreenActivity"
