@@ -1,24 +1,23 @@
-package app.priceguard.data.dto
+package app.priceguard.data.dto.login
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignupResponse(
+data class LoginResponse(
     val statusCode: Int,
     val message: String,
     val accessToken: String,
     val refreshToken: String
 )
 
-data class SignupResult(
-    val signUpState: SignupState,
+data class LoginResult(
+    val loginState: LoginState,
     val accessToken: String?,
     val refreshToken: String?
 )
 
-enum class SignupState {
+enum class LoginState {
     SUCCESS,
     INVALID_PARAMETER,
-    DUPLICATE_EMAIL,
     UNDEFINED_ERROR
 }

@@ -1,4 +1,4 @@
-package app.priceguard.data.dto
+package app.priceguard.data.dto.patch
 
 import kotlinx.serialization.Serializable
 

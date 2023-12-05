@@ -2,9 +2,9 @@ package app.priceguard.ui.additem.setprice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.PricePatchRequest
-import app.priceguard.data.dto.ProductAddRequest
 import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.dto.add.ProductAddRequest
+import app.priceguard.data.dto.patch.PricePatchRequest
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

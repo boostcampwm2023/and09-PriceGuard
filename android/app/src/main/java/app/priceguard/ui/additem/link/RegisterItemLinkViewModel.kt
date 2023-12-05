@@ -3,8 +3,8 @@ package app.priceguard.ui.additem.link
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.dto.ProductVerifyDTO
-import app.priceguard.data.dto.ProductVerifyRequest
+import app.priceguard.data.dto.verify.ProductVerifyDTO
+import app.priceguard.data.dto.verify.ProductVerifyRequest
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

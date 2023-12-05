@@ -1,14 +1,14 @@
 package app.priceguard.data.repository
 
-import app.priceguard.data.dto.PricePatchRequest
-import app.priceguard.data.dto.PricePatchResponse
-import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.dto.ProductAddResponse
-import app.priceguard.data.dto.ProductData
-import app.priceguard.data.dto.ProductDetailResult
-import app.priceguard.data.dto.ProductVerifyDTO
-import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.dto.RecommendProductData
+import app.priceguard.data.dto.add.ProductAddRequest
+import app.priceguard.data.dto.add.ProductAddResponse
+import app.priceguard.data.dto.detail.ProductDetailResult
+import app.priceguard.data.dto.list.ProductData
+import app.priceguard.data.dto.patch.PricePatchRequest
+import app.priceguard.data.dto.patch.PricePatchResponse
+import app.priceguard.data.dto.recommend.RecommendProductData
+import app.priceguard.data.dto.verify.ProductVerifyDTO
+import app.priceguard.data.dto.verify.ProductVerifyRequest
 import app.priceguard.data.network.ProductRepositoryResult
 
 interface ProductRepository {

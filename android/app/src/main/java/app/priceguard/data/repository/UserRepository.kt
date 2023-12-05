@@ -1,7 +1,7 @@
 package app.priceguard.data.repository
 
-import app.priceguard.data.dto.LoginResult
-import app.priceguard.data.dto.SignupResult
+import app.priceguard.data.dto.login.LoginResult
+import app.priceguard.data.dto.signup.SignupResult
 
 interface UserRepository {
 

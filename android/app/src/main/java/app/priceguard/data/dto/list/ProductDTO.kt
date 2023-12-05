@@ -1,25 +1,26 @@
-package app.priceguard.data.dto
+package app.priceguard.data.dto.list
 
+import app.priceguard.data.dto.PriceDataDTO
 import app.priceguard.data.graph.ProductChartData
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecommendProductDTO(
+data class ProductDTO(
     val productName: String? = null,
     val productCode: String? = null,
     val shop: String? = null,
     val imageUrl: String? = null,
+    val targetPrice: Int? = null,
     val price: Int? = null,
-    val rank: Int? = null,
     val priceData: List<PriceDataDTO>? = null
 )
 
-data class RecommendProductData(
+data class ProductData(
     val productName: String,
     val productCode: String,
     val shop: String,
     val imageUrl: String,
+    val targetPrice: Int,
     val price: Int,
-    val rank: Int,
     val priceData: List<ProductChartData>
 )
