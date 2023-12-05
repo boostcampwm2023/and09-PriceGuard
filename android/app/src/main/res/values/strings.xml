@@ -57,7 +57,7 @@
     <string name="quarter">분기</string>
     <string name="logout_confirm_title">로그아웃 확인</string>
     <string name="logout_confirm_message">정말로 로그아웃 하시겠습니까?</string>
-    <string name="yes">네</string>
+    <string name="yes">예</string>
     <string name="no">아니오</string>
     <string name="opensource_license">오픈소스 라이선스</string>
     <string name="current_price_percent">현재 가격의 %d%%</string>
@@ -104,4 +104,9 @@
     <string name="price_notification">상품 가격 알림</string>
     <string name="currently_notification_disabled">현재 알림 설정이 비활성화되어 있습니다.</string>
     <string name="setting">설정</string>
+    <string name="use_dynamic_color">다이나믹 컬러 사용</string>
+    <string name="dark_mode_setting">다크 모드 설정</string>
+    <string name="use_system_setting">시스템 설정 사용</string>
+    <string name="light_mode">라이트 모드</string>
+    <string name="dark_mode">다크 모드</string>
 </resources>

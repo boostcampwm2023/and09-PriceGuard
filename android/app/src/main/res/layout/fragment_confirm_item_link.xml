@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="imageUrl"
-            type="String" />
+            name="viewModel"
+            type="app.priceguard.ui.additem.confirm.ConfirmItemLinkViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,10 +61,10 @@
                     android:layout_width="0dp"
                     android:layout_height="248dp"
                     android:scaleType="fitXY"
+                    app:imageFromUrl="@{viewModel.state.imageUrl}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:imageFromUrl="@{imageUrl}"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_confirm_item_item_title"
@@ -73,6 +73,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
                     android:maxLines="3"
+                    android:text="@{viewModel.state.name}"
                     android:textAppearance="?attr/textAppearanceBodyLarge"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:text="@{viewModel.state.brand}"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     app:layout_constraintStart_toStartOf="@id/tv_confirm_item_item_title"
                     app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_item_title" />
@@ -100,6 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
+                    android:text="@{@string/won(@string/comma_number(viewModel.state.price))}"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_confirm_item_shop_logo" />

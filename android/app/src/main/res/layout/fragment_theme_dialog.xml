@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_vertical_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="28dp" />
+
+        <TextView
+            android:id="@+id/tv_dynamic_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/use_dynamic_color"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/rg_dynamic_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/tv_dynamic_color">
+
+            <RadioButton
+                android:id="@+id/rb_yes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/yes" />
+
+            <RadioButton
+                android:id="@+id/rb_no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/no" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_dark_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/dark_mode_setting"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/rg_dynamic_color" />
+
+        <RadioGroup
+            android:id="@+id/rg_dark_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/tv_dark_mode">
+
+            <RadioButton
+                android:id="@+id/rb_system"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/use_system_setting" />
+
+            <RadioButton
+                android:id="@+id/rb_light"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/light_mode" />
+
+            <RadioButton
+                android:id="@+id/rb_dark"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/dark_mode" />
+
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

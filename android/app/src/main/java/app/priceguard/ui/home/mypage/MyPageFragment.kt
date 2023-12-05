@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
@@ -67,7 +68,7 @@ class MyPageFragment : Fragment() {
                             }
 
                             Setting.THEME -> {
-                                // TODO: 테마 설정
+                                findNavController().navigate(R.id.action_myPageFragment_to_themeDialogFragment)
                             }
 
                             Setting.LICENSE -> {
