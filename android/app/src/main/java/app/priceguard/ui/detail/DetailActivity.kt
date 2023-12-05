@@ -157,16 +157,7 @@ class DetailActivity : AppCompatActivity() {
                     xLabel = getString(R.string.date_text),
                     yLabel = getString(R.string.price_text),
                     data = state.chartData,
-                    gridLines = if (state.targetPrice < 0) {
-                        listOf()
-                    } else {
-                        listOf(
-                            ProductChartGridLine(
-                                resources.getString(R.string.target_price),
-                                state.targetPrice.toFloat()
-                            )
-                        )
-                    }
+                    gridLines = getGridLines(state.targetPrice.toFloat())
                 )
             }
         }
@@ -240,6 +231,19 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getGridLines(targetPrice: Float): List<ProductChartGridLine> {
+        return if (targetPrice < 0) {
+            listOf()
+        } else {
+            listOf(
+                ProductChartGridLine(
+                    resources.getString(R.string.target_price),
+                    targetPrice
+                )
+            )
         }
     }
 
