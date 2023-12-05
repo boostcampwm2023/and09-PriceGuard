@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.patch.PricePatchRequest
-import app.priceguard.data.network.ProductErrorState
-import app.priceguard.data.network.ProductRepositoryResult
+import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.data.repository.ProductRepositoryResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

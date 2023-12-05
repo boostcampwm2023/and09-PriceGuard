@@ -4,11 +4,7 @@ import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.patch.PricePatchRequest
 import app.priceguard.data.dto.verify.ProductVerifyRequest
-import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.ProductAPI
-import app.priceguard.data.network.ProductErrorState
-import app.priceguard.data.network.ProductRepositoryResult
-import app.priceguard.data.network.getApiResult
 import app.priceguard.ui.data.PricePatchResult
 import app.priceguard.ui.data.ProductAddResult
 import app.priceguard.ui.data.ProductData

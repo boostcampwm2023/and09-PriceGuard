@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.network.ProductErrorState
+import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted

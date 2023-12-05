@@ -1,4 +1,4 @@
-package app.priceguard.data.network
+package app.priceguard.data.repository
 
 sealed class ProductRepositoryResult<out T> {
 

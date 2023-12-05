@@ -2,9 +2,7 @@ package app.priceguard.data.repository
 
 import android.util.Log
 import app.priceguard.data.datastore.TokenDataSource
-import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.AuthAPI
-import app.priceguard.data.network.getApiResult
 import app.priceguard.ui.data.RenewState
 import app.priceguard.ui.data.UserDataResult
 import java.util.*

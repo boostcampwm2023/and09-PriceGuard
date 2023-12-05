@@ -1,4 +1,4 @@
-package app.priceguard.data.network
+package app.priceguard.data.repository
 
 enum class AuthErrorState {
     INVALID_REQUEST,

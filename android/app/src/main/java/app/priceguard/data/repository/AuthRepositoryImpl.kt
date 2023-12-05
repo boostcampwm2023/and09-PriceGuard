@@ -2,11 +2,7 @@ package app.priceguard.data.repository
 
 import app.priceguard.data.dto.login.LoginRequest
 import app.priceguard.data.dto.signup.SignupRequest
-import app.priceguard.data.network.APIResult
-import app.priceguard.data.network.AuthErrorState
-import app.priceguard.data.network.AuthRepositoryResult
 import app.priceguard.data.network.UserAPI
-import app.priceguard.data.network.getApiResult
 import app.priceguard.ui.data.LoginResult
 import app.priceguard.ui.data.SignupResult
 import javax.inject.Inject

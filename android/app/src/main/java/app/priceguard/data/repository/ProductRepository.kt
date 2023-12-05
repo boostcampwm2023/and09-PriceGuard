@@ -3,7 +3,6 @@ package app.priceguard.data.repository
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.patch.PricePatchRequest
 import app.priceguard.data.dto.verify.ProductVerifyRequest
-import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.ui.data.PricePatchResult
 import app.priceguard.ui.data.ProductAddResult
 import app.priceguard.ui.data.ProductData

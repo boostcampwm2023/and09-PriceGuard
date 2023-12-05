@@ -9,7 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.priceguard.R
-import app.priceguard.data.network.ProductErrorState
+import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
 import app.priceguard.ui.additem.AddItemActivity
