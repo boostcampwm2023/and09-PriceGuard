@@ -16,7 +16,7 @@ export class ProductRankCache {
     count: number;
     head: CacheNode;
     tail: CacheNode;
-    hashTable = new Map();
+    hashTable = new Map<string, CacheNode>();
     constructor(size: number) {
         this.maxSize = size;
         this.head = new CacheNode('head', 'head');
@@ -94,7 +94,7 @@ export class ProductRankCache {
         this.put(product.id, product);
     }
 
-    get(key: string) {
+    get(key: string): CacheNode | null {
         const node = this.hashTable.get(key);
         return node ? node : null;
     }

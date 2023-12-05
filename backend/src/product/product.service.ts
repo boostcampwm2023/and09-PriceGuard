@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductAddDto } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +17,8 @@ import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/const
 import { Cron } from '@nestjs/schedule';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -31,6 +33,7 @@ export class ProductService {
         private productRepository: ProductRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {
         this.initCache();
     }
