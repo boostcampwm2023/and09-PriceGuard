@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.patch
+package app.priceguard.ui.data
 
 data class PricePatchResult(
     val statusCode: Int,

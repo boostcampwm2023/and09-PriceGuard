@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.list
+package app.priceguard.ui.data
 
 import app.priceguard.data.graph.ProductChartData
 

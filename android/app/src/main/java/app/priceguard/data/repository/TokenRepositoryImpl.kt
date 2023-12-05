@@ -2,11 +2,11 @@ package app.priceguard.data.repository
 
 import android.util.Log
 import app.priceguard.data.datastore.TokenDataSource
-import app.priceguard.data.dto.renew.RenewResult
-import app.priceguard.data.dto.signup.UserDataResult
 import app.priceguard.data.network.APIResult
 import app.priceguard.data.network.AuthAPI
 import app.priceguard.data.network.getApiResult
+import app.priceguard.ui.data.RenewResult
+import app.priceguard.ui.data.UserDataResult
 import java.util.*
 import javax.inject.Inject
 import kotlinx.serialization.json.Json

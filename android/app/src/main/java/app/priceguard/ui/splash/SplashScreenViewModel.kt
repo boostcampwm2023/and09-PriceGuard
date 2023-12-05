@@ -2,8 +2,8 @@ package app.priceguard.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.renew.RenewResult
 import app.priceguard.data.repository.TokenRepository
+import app.priceguard.ui.data.RenewResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

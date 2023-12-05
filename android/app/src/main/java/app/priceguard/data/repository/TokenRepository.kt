@@ -1,7 +1,7 @@
 package app.priceguard.data.repository
 
-import app.priceguard.data.dto.renew.RenewResult
-import app.priceguard.data.dto.signup.UserDataResult
+import app.priceguard.ui.data.RenewResult
+import app.priceguard.ui.data.UserDataResult
 
 interface TokenRepository {
     suspend fun storeTokens(accessToken: String, refreshToken: String)

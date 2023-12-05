@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.signup
+package app.priceguard.ui.data
 
 data class UserDataResult(
     val email: String,

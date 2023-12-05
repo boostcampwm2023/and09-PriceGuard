@@ -3,10 +3,10 @@ package app.priceguard.ui.additem.link
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.verify.ProductVerifyRequest
-import app.priceguard.data.dto.verify.ProductVerifyResult
 import app.priceguard.data.network.ProductErrorState
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
+import app.priceguard.ui.data.ProductVerifyResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

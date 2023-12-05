@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.verify
+package app.priceguard.ui.data
 
 data class ProductVerifyResult(
     val productName: String,

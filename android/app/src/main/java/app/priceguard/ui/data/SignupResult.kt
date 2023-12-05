@@ -1,4 +1,6 @@
-package app.priceguard.data.dto.signup
+package app.priceguard.ui.data
+
+import app.priceguard.data.dto.signup.SignupState
 
 data class SignupResult(
     val signUpState: SignupState,

@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.renew
+package app.priceguard.ui.data
 
 enum class RenewResult {
     SUCCESS,

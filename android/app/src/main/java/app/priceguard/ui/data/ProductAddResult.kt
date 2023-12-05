@@ -1,4 +1,4 @@
-package app.priceguard.data.dto.add
+package app.priceguard.ui.data
 
 data class ProductAddResult(
     val statusCode: Int,
