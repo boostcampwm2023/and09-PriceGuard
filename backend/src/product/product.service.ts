@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductAddDto } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,8 +13,12 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
+import { ProductRankCache } from 'src/utils/cache';
+import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
@@ -24,7 +28,8 @@ const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
-    private productDataCache = new Map();
+    private productDataCache = new Map(); //Redis 대체 예정
+    private productRankCache = new ProductRankCache(MAX_TRACKING_RANK);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -34,6 +39,7 @@ export class ProductService {
         private firebaseRepository: FirebaseRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private readonly firebaseService: FirebaseService,
     ) {
         this.initCache();
@@ -54,13 +60,22 @@ export class ProductService {
                     },
                 },
             ])
+            .sort('_id')
             .exec();
-        latestData.forEach((data) => {
+        const userCountList = await this.trackingProductRepository.getAllUserCount();
+        const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
+        latestData.forEach((data, idx) => {
+            const matchProduct = userCountList.find((product) => product.id === data._id);
             this.productDataCache.set(data._id, {
                 price: data.price,
                 isSoldOut: data.isSoldOut,
                 lowestPrice: data.lowestPrice,
+                userCount: matchProduct ? parseInt(matchProduct.userCount) : 0,
+                updateAt: Date.now() + idx,
             });
+        });
+        rankList.forEach((product) => {
+            this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
         });
     }
 
@@ -79,14 +94,29 @@ export class ProductService {
         const existProduct = await this.productRepository.findOne({
             where: { productCode: productCode },
         });
-        const productId = existProduct ? existProduct.id : await this.firstAddProduct(productCode);
+        const product = existProduct ?? (await this.firstAddProduct(productCode));
         const trackingProduct = await this.trackingProductRepository.findOne({
-            where: { productId: productId, userId: userId },
+            where: { productId: product.id, userId: userId },
         });
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        await this.trackingProductRepository.saveTrackingProduct(userId, productId, targetPrice);
+        const cacheData = await this.productDataCache.get(product.id);
+        const productRank = {
+            id: product.id,
+            productName: product.productName,
+            productCode: product.productCode,
+            shop: product.shop,
+            imageUrl: product.imageUrl,
+            userCount: cacheData.userCount + 1,
+        };
+        this.productRankCache.update(productRank);
+        this.productDataCache.set(product.id, {
+            ...cacheData,
+            userCount: cacheData.userCount + 1,
+            updateAt: Date.now(),
+        });
+        await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
@@ -114,7 +144,7 @@ export class ProductService {
     }
 
     async getRecommendList() {
-        const recommendList = await this.trackingProductRepository.getTotalInfoRankingList();
+        const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
             const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
@@ -169,7 +199,54 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
+        const cacheData = await this.productDataCache.get(product.productId);
+        const prevProduct = this.productRankCache.get(product.productId)?.value;
+        this.productDataCache.set(product.productId, {
+            ...cacheData,
+            userCount: cacheData.userCount - 1,
+            updateAt: Date.now(),
+        });
+        if (!prevProduct) {
+            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        prevProduct.userCount--;
+        if (this.productDataCache.size > MAX_TRACKING_RANK) {
+            await this.deleteUpdateCache(prevProduct);
+        } else {
+            this.productRankCache.update(prevProduct);
+        }
         await this.trackingProductRepository.remove(product);
+    }
+
+    async deleteUpdateCache(prevProduct: ProductRankCacheDto) {
+        //Redis 연산으로 대체 예정
+        const rankList = [...this.productDataCache.entries()].sort((a, b) => {
+            const [, infoA] = a;
+            const [, infoB] = b;
+            if (infoB.userCount === infoA.userCount) {
+                return infoB.updateAt - infoA.updateAt;
+            }
+            return infoB.userCount - infoB.userCount;
+        });
+        const [nextDataId, nextDataInfo] = rankList[MAX_TRACKING_RANK];
+
+        if (nextDataInfo.userCount > prevProduct.userCount) {
+            const newProduct = await this.productRepository.findOne({
+                where: { id: nextDataId },
+            });
+            if (!newProduct) {
+                throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+            }
+            const newProductRanck = {
+                id: newProduct.id,
+                productName: newProduct.productName,
+                productCode: newProduct.productCode,
+                shop: newProduct.shop,
+                imageUrl: newProduct.imageUrl,
+                userCount: nextDataInfo.userCount,
+            };
+            this.productRankCache.update(prevProduct, newProductRanck);
+        }
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
@@ -300,11 +377,12 @@ export class ProductService {
         };
 
         this.productDataCache.set(product.id, {
-            isSoldOut: productInfo.isSoldOut,
             price: productInfo.productPrice,
+            isSoldOut: productInfo.isSoldOut,
             lowestPrice: productInfo.productPrice,
+            userCount: 0,
         });
         this.productPriceModel.create(updatedDataInfo);
-        return product.id;
+        return product;
     }
 }

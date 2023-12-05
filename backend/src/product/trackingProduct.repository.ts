@@ -35,7 +35,7 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .groupBy('tracking_product.productId')
             .orderBy('userCount', 'DESC')
             .addOrderBy('MAX(tracking_product.productId)', 'DESC')
-            .take(MAX_TRACKING_RANK)
+            .limit(MAX_TRACKING_RANK)
             .getRawMany();
         return recommendList;
     }
@@ -47,8 +47,17 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .groupBy('tracking_product.productId')
             .orderBy('COUNT(tracking_product.userId)', 'DESC')
             .addOrderBy('MAX(tracking_product.productId)', 'DESC')
-            .take(MAX_TRACKING_RANK)
+            .limit(MAX_TRACKING_RANK)
             .getRawMany();
         return rankList;
+    }
+
+    async getAllUserCount() {
+        const raw = await this.repository
+            .createQueryBuilder('tracking_product')
+            .select(['tracking_product.productId as id', 'COUNT(tracking_product.userId) as userCount'])
+            .groupBy('tracking_product.productId')
+            .getRawMany();
+        return raw;
     }
 }
