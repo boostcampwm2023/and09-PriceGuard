@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.dto.ProductErrorState
 import app.priceguard.data.graph.GraphDataConverter
 import app.priceguard.data.graph.ProductChartData
-import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
@@ -43,7 +42,7 @@ class ProductDetailViewModel @Inject constructor(
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
         val graphMode: GraphMode = GraphMode.DAY,
-        val chartData: ProductChartDataset? = null
+        val chartData: List<ProductChartData> = listOf()
     )
 
     sealed class ProductDetailEvent {
@@ -118,16 +117,9 @@ class ProductDetailViewModel @Inject constructor(
                                 )
                             },
                             formattedLowestPrice = formatPrice(result.data.lowestPrice),
-                            chartData = ProductChartDataset(
-                                showXAxis = true,
-                                showYAxis = true,
-                                isInteractive = true,
-                                graphMode = state.value.graphMode,
-                                data = graphDataConverter.packWithEdgeData(
-                                    result.data.priceData,
-                                    state.value.graphMode
-                                ),
-                                gridLines = listOf()
+                            chartData = graphDataConverter.packWithEdgeData(
+                                result.data.priceData,
+                                state.value.graphMode
                             )
                         )
                     }
@@ -160,14 +152,7 @@ class ProductDetailViewModel @Inject constructor(
         _state.update {
             it.copy(
                 graphMode = period,
-                chartData = ProductChartDataset(
-                    showXAxis = true,
-                    showYAxis = true,
-                    isInteractive = true,
-                    graphMode = period,
-                    data = graphDataConverter.packWithEdgeData(productGraphData, period),
-                    gridLines = listOf()
-                )
+                chartData = graphDataConverter.packWithEdgeData(productGraphData, period)
             )
         }
     }
