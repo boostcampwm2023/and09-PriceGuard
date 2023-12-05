@@ -40,6 +40,7 @@ export class UsersController {
         const user = await this.userService.registerUser(userDto);
         const accessToken = await this.authService.getAccessToken(user);
         const refreshToken = await this.authService.getRefreshToken(user);
+        await this.authService.addFirebaseToken(user.id, userDto.firebaseToken);
         return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
     }
 
@@ -49,8 +50,9 @@ export class UsersController {
     @ApiBadRequestResponse({ type: LoginFailError, description: '로그인 실패' })
     @Post('login')
     async loginUser(@Body() loginDto: LoginDto): Promise<LoginSuccess> {
-        const { email, password } = loginDto;
-        const { accessToken, refreshToken } = await this.authService.validateUser(email, password);
+        const { email, password, firebaseToken } = loginDto;
+        const { userId, accessToken, refreshToken } = await this.authService.validateUser(email, password);
+        await this.authService.addFirebaseToken(userId, firebaseToken);
         return { statusCode: HttpStatus.OK, message: '로그인 성공', accessToken, refreshToken };
     }
 }
