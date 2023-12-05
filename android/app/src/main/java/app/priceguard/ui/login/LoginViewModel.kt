@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.network.AuthErrorState
 import app.priceguard.data.network.AuthRepositoryResult
+import app.priceguard.data.repository.AuthRepository
 import app.priceguard.data.repository.TokenRepository
-import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
@@ -75,7 +75,7 @@ class LoginViewModel @Inject constructor(
                 return@launch
             }
 
-            when (val result = userRepository.login(_state.value.email, _state.value.password)) {
+            when (val result = authRepository.login(_state.value.email, _state.value.password)) {
                 is AuthRepositoryResult.Success -> {
                     if (result.data.accessToken.isEmpty() || result.data.refreshToken.isEmpty()) {
                         sendLoginEvent(LoginEvent.UndefinedError)

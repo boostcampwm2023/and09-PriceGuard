@@ -11,7 +11,7 @@ import app.priceguard.ui.data.LoginResult
 import app.priceguard.ui.data.SignupResult
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : UserRepository {
+class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : AuthRepository {
 
     private fun <T> handleError(
         code: Int?

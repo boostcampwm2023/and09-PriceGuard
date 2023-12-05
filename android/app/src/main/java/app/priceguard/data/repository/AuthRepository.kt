@@ -4,7 +4,7 @@ import app.priceguard.data.network.AuthRepositoryResult
 import app.priceguard.ui.data.LoginResult
 import app.priceguard.ui.data.SignupResult
 
-interface UserRepository {
+interface AuthRepository {
 
     suspend fun signUp(email: String, userName: String, password: String): AuthRepositoryResult<SignupResult>
 
