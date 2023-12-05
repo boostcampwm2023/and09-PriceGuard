@@ -18,6 +18,7 @@ import { Cron } from '@nestjs/schedule';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
+import { FirebaseRepository } from '../firebase/firebase.repository';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -29,6 +30,8 @@ export class ProductService {
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
+        @InjectRepository(FirebaseRepository)
+        private firebaseRepository: FirebaseRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
         private readonly firebaseService: FirebaseService,
@@ -268,18 +271,24 @@ export class ProductService {
             trackingMap.set(productId, products);
         });
 
-        const notifications = productInfo.flatMap(({ productId, productName, productPrice, imageUrl }) => {
-            const trackingList = productId ? trackingMap.get(productId) || [] : [];
-            const messageList = trackingList.reduce((messages: Message[], { targetPrice }) => {
-                if (targetPrice >= productPrice) {
-                    const token = `example token value`;
-                    messages.push(this.getMessage(productName, productPrice, imageUrl, token));
+        const notifications = await Promise.all(
+            productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
+                const trackingList = productId ? trackingMap.get(productId) || [] : [];
+                const messageList: Message[] = [];
+
+                for (const { userId, targetPrice } of trackingList) {
+                    if (targetPrice >= productPrice) {
+                        const deviceInfo = await this.firebaseRepository.findOne({ where: { userId: userId } });
+                        if (deviceInfo) {
+                            const { token } = deviceInfo;
+                            messageList.push(this.getMessage(productName, productPrice, imageUrl, token));
+                        }
+                    }
                 }
-                return messages;
-            }, []);
-            return messageList;
-        });
-        return notifications;
+                return messageList;
+            }),
+        );
+        return notifications.flat();
     }
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);

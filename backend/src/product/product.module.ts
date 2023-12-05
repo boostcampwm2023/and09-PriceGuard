@@ -9,13 +9,15 @@ import { TrackingProductRepository } from './trackingProduct.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
 import { FirebaseService } from 'src/firebase/firebase.service';
+import { FirebaseRepository } from 'src/firebase/firebase.repository';
+import { FirebaseToken } from 'src/entities/firebase.token.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([TrackingProduct, Product]),
+        TypeOrmModule.forFeature([TrackingProduct, Product, FirebaseToken]),
         MongooseModule.forFeature([{ name: ProductPrice.name, schema: ProductPriceSchema }]),
     ],
     controllers: [ProductController],
-    providers: [ProductService, ProductRepository, TrackingProductRepository, FirebaseService],
+    providers: [ProductService, ProductRepository, TrackingProductRepository, FirebaseService, FirebaseRepository],
 })
 export class ProductModule {}
