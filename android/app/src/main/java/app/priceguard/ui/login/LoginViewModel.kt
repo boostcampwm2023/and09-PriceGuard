@@ -47,14 +47,14 @@ class LoginViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     var state: StateFlow<State> = _state.asStateFlow()
 
-    fun setID(s: CharSequence, start: Int, before: Int, count: Int) {
+    fun setEmail(s: String) {
         if (_state.value.isLoading) return
-        _state.value = _state.value.copy(email = s.toString())
+        _state.value = _state.value.copy(email = s)
     }
 
-    fun setPassword(s: CharSequence, start: Int, before: Int, count: Int) {
+    fun setPassword(s: String) {
         if (_state.value.isLoading) return
-        _state.value = _state.value.copy(password = s.toString())
+        _state.value = _state.value.copy(password = s)
     }
 
     fun login() {
