@@ -1,10 +1,10 @@
 package app.priceguard.data.repository
 
 import app.priceguard.data.dto.login.LoginRequest
-import app.priceguard.data.dto.login.LoginState
 import app.priceguard.data.dto.signup.SignupRequest
-import app.priceguard.data.dto.signup.SignupState
 import app.priceguard.data.network.APIResult
+import app.priceguard.data.network.AuthErrorState
+import app.priceguard.data.network.AuthRepositoryResult
 import app.priceguard.data.network.UserAPI
 import app.priceguard.data.network.getApiResult
 import app.priceguard.ui.data.LoginResult
@@ -13,52 +13,64 @@ import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : UserRepository {
 
-    override suspend fun signUp(email: String, userName: String, password: String): SignupResult {
-        val response = getApiResult {
-            userAPI.register(SignupRequest(email, userName, password))
-        }
-        when (response) {
-            is APIResult.Success -> {
-                return SignupResult(SignupState.SUCCESS, response.data.accessToken, response.data.refreshToken)
+    private fun <T> handleError(
+        code: Int?
+    ): AuthRepositoryResult<T> {
+        return when (code) {
+            400 -> {
+                AuthRepositoryResult.Error(AuthErrorState.INVALID_REQUEST)
             }
 
-            is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        SignupResult(SignupState.INVALID_PARAMETER, null, null)
-                    }
+            409 -> {
+                AuthRepositoryResult.Error(AuthErrorState.DUPLICATED_EMAIL)
+            }
 
-                    409 -> {
-                        SignupResult(SignupState.DUPLICATE_EMAIL, null, null)
-                    }
-
-                    else -> {
-                        SignupResult(SignupState.UNDEFINED_ERROR, null, null)
-                    }
-                }
+            else -> {
+                AuthRepositoryResult.Error(AuthErrorState.UNDEFINED_ERROR)
             }
         }
     }
 
-    override suspend fun login(email: String, password: String): LoginResult {
+    override suspend fun signUp(
+        email: String,
+        userName: String,
+        password: String
+    ): AuthRepositoryResult<SignupResult> {
         val response = getApiResult {
-            userAPI.login(LoginRequest(email, password))
+            userAPI.register(SignupRequest(email, userName, password))
         }
-        when (response) {
+        return when (response) {
             is APIResult.Success -> {
-                return LoginResult(LoginState.SUCCESS, response.data.accessToken, response.data.refreshToken)
+                AuthRepositoryResult.Success(
+                    SignupResult(
+                        response.data.accessToken ?: "",
+                        response.data.refreshToken ?: ""
+                    )
+                )
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    400 -> {
-                        LoginResult(LoginState.INVALID_PARAMETER, null, null)
-                    }
+                handleError(response.code)
+            }
+        }
+    }
 
-                    else -> {
-                        LoginResult(LoginState.UNDEFINED_ERROR, null, null)
-                    }
-                }
+    override suspend fun login(email: String, password: String): AuthRepositoryResult<LoginResult> {
+        val response = getApiResult {
+            userAPI.login(LoginRequest(email, password))
+        }
+        return when (response) {
+            is APIResult.Success -> {
+                AuthRepositoryResult.Success(
+                    LoginResult(
+                        response.data.accessToken ?: "",
+                        response.data.refreshToken ?: ""
+                    )
+                )
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
             }
         }
     }

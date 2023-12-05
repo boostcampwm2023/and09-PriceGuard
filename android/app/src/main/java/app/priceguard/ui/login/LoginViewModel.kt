@@ -3,7 +3,8 @@ package app.priceguard.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.login.LoginState
+import app.priceguard.data.network.AuthErrorState
+import app.priceguard.data.network.AuthRepositoryResult
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +34,8 @@ class LoginViewModel @Inject constructor(
         data object LoginStart : LoginEvent()
         data object Invalid : LoginEvent()
         data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent()
-        data class LoginFailure(val status: LoginState) : LoginEvent()
+        data object LoginFailure : LoginEvent()
+        data object UndefinedError : LoginEvent()
         data object LoginInfoSaved : LoginEvent()
     }
 
@@ -73,24 +75,36 @@ class LoginViewModel @Inject constructor(
                 return@launch
             }
 
-            val result = userRepository.login(_state.value.email, _state.value.password)
-
-            if (result.accessToken == null || result.refreshToken == null) {
-                sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
-                setLoading(false)
-                return@launch
-            }
-
-            when (result.loginState) {
-                LoginState.SUCCESS -> {
+            when (val result = userRepository.login(_state.value.email, _state.value.password)) {
+                is AuthRepositoryResult.Success -> {
+                    if (result.data.accessToken.isEmpty() || result.data.refreshToken.isEmpty()) {
+                        sendLoginEvent(LoginEvent.UndefinedError)
+                        setLoading(false)
+                        return@launch
+                    }
                     setLoginFinished(true)
-                    sendLoginEvent(LoginEvent.LoginSuccess(result.accessToken, result.refreshToken))
-                    saveTokens(result.accessToken, result.refreshToken)
+                    sendLoginEvent(
+                        LoginEvent.LoginSuccess(
+                            result.data.accessToken,
+                            result.data.refreshToken
+                        )
+                    )
+                    saveTokens(result.data.accessToken, result.data.refreshToken)
                     sendLoginEvent(LoginEvent.LoginInfoSaved)
                 }
 
-                else -> {
-                    sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
+                is AuthRepositoryResult.Error -> {
+                    sendLoginEvent(
+                        when (result.authErrorState) {
+                            AuthErrorState.INVALID_REQUEST -> {
+                                LoginEvent.LoginFailure
+                            }
+
+                            else -> {
+                                LoginEvent.UndefinedError
+                            }
+                        }
+                    )
                 }
             }
             setLoading(false)

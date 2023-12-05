@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class LoginResponse(
     val statusCode: Int,
     val message: String,
-    val accessToken: String,
-    val refreshToken: String
+    val accessToken: String? = null,
+    val refreshToken: String? = null
 )

@@ -3,7 +3,8 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.signup.SignupState
+import app.priceguard.data.network.AuthErrorState
+import app.priceguard.data.network.AuthRepositoryResult
 import app.priceguard.data.repository.TokenRepository
 import app.priceguard.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +40,9 @@ class SignupViewModel @Inject constructor(
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
         data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
-        data class SignupFailure(val errorState: SignupState) : SignupEvent()
+        data object InvalidRequest : SignupEvent()
+        data object DuplicatedEmail : SignupEvent()
+        data object UndefinedError : SignupEvent()
         data object SignupInfoSaved : SignupEvent()
     }
 
@@ -67,28 +70,42 @@ class SignupViewModel @Inject constructor(
             val result =
                 userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
-            if (result.accessToken == null || result.refreshToken == null) {
-                sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
-                updateSignupStarted(false)
-                return@launch
-            }
+            when (result) {
+                is AuthRepositoryResult.Success -> {
+                    if (result.data.accessToken.isEmpty() || result.data.refreshToken.isEmpty()) {
+                        sendSignupEvent(SignupEvent.UndefinedError)
+                        updateSignupStarted(false)
+                        return@launch
+                    }
 
-            when (result.signUpState) {
-                SignupState.SUCCESS -> {
                     updateSignupFinished(true)
                     sendSignupEvent(
                         SignupEvent.SignupSuccess(
-                            result.accessToken,
-                            result.refreshToken
+                            result.data.accessToken,
+                            result.data.refreshToken
                         )
                     )
-                    saveTokens(result.accessToken, result.refreshToken)
+                    saveTokens(result.data.accessToken, result.data.refreshToken)
                     sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")
                 }
 
-                else -> {
-                    sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
+                is AuthRepositoryResult.Error -> {
+                    sendSignupEvent(
+                        when (result.authErrorState) {
+                            AuthErrorState.INVALID_REQUEST -> {
+                                SignupEvent.InvalidRequest
+                            }
+
+                            AuthErrorState.DUPLICATED_EMAIL -> {
+                                SignupEvent.DuplicatedEmail
+                            }
+
+                            AuthErrorState.UNDEFINED_ERROR -> {
+                                SignupEvent.UndefinedError
+                            }
+                        }
+                    )
                 }
             }
             updateSignupStarted(false)

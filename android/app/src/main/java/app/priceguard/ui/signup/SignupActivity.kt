@@ -8,7 +8,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import app.priceguard.R
-import app.priceguard.data.dto.signup.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
@@ -71,31 +70,27 @@ class SignupActivity : AppCompatActivity() {
                 (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
             }
 
-            is SignupEvent.SignupSuccess -> {
+            else -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
-            }
-
-            is SignupEvent.SignupFailure -> {
-                (binding.btnSignupSignup as MaterialButton).icon = null
-                when (event.errorState) {
-                    SignupState.INVALID_PARAMETER -> {
-                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                when (event) {
+                    SignupEvent.SignupInfoSaved -> {
+                        gotoHomeActivity()
                     }
 
-                    SignupState.DUPLICATE_EMAIL -> {
+                    SignupEvent.DuplicatedEmail -> {
                         showDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
-                    SignupState.UNDEFINED_ERROR -> {
+                    SignupEvent.InvalidRequest -> {
+                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                    }
+
+                    SignupEvent.UndefinedError -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
                     }
 
                     else -> {}
                 }
-            }
-
-            SignupEvent.SignupInfoSaved -> {
-                gotoHomeActivity()
             }
         }
     }
