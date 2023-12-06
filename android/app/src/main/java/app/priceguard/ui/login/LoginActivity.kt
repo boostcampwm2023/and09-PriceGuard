@@ -45,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun collectEvent() {
         repeatOnStarted {
-            loginViewModel.event.collect { eventType ->
-                when (eventType) {
+            loginViewModel.event.collect { event ->
+                when (event) {
                     LoginEvent.LoginStart -> {
                         (binding.btnLoginLogin as MaterialButton).icon =
                             getCircularProgressIndicatorDrawable(this@LoginActivity)
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
 
                     else -> {
                         (binding.btnLoginLogin as MaterialButton).icon = null
-                        setDialogMessageAndShow(eventType)
+                        setDialogMessageAndShow(event)
                     }
                 }
             }
@@ -72,6 +72,10 @@ class LoginActivity : AppCompatActivity() {
 
             is LoginEvent.LoginFailure -> {
                 showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
+            }
+
+            is LoginEvent.UndefinedError -> {
+                showDialog(getString(R.string.login_fail), getString(R.string.undefined_error))
             }
 
             is LoginEvent.LoginInfoSaved -> {

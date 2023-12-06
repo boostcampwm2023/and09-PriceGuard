@@ -10,8 +10,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
@@ -64,11 +64,11 @@ class RegisterItemLinkFragment : Fragment() {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
                         val action =
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
-                                event.product.productCode ?: "",
-                                event.product.productPrice ?: 0,
-                                event.product.shop ?: "",
-                                event.product.productName ?: "",
-                                event.product.imageUrl ?: ""
+                                event.product.productCode,
+                                event.product.productPrice,
+                                event.product.shop,
+                                event.product.productName,
+                                event.product.imageUrl
                             )
                         findNavController().safeNavigate(action)
                     }

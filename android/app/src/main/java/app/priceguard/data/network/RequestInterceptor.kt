@@ -1,6 +1,6 @@
 package app.priceguard.data.network
 
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.token.TokenRepository
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
