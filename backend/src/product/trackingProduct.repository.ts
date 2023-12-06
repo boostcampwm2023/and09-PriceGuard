@@ -60,4 +60,14 @@ export class TrackingProductRepository extends Repository<TrackingProduct> {
             .getRawMany();
         return raw;
     }
+
+    async getUserCount(productId: string) {
+        const raw = await this.repository
+            .createQueryBuilder('tracking_product')
+            .select('COUNT(tracking_product.userId) as userCount')
+            .where('tracking_product.productId = :productId', { productId })
+            .getRawOne();
+        console.log(raw.userCount);
+        return raw.userCount;
+    }
 }

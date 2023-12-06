@@ -23,6 +23,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import { FirebaseRepository } from '../firebase/firebase.repository';
+import { ProductCacheDto } from 'src/dto/product.cache.dto';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
@@ -66,7 +67,7 @@ export class ProductService {
         const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
         latestData.forEach((data, idx) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
-            this.productDataCache.set(data._id, {
+            this.cacheManager.set(data._id, {
                 price: data.price,
                 isSoldOut: data.isSoldOut,
                 lowestPrice: data.lowestPrice,
@@ -101,19 +102,20 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const cacheData = await this.productDataCache.get(product.id);
+        const cacheData = await this.cacheManager.get<ProductCacheDto>(product.id);
+        const userCount = cacheData ? cacheData.userCount : NO_CACHE;
         const productRank = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
             shop: product.shop,
             imageUrl: product.imageUrl,
-            userCount: cacheData.userCount + 1,
+            userCount: userCount + 1,
         };
         this.productRankCache.update(productRank);
-        this.productDataCache.set(product.id, {
+        this.cacheManager.set(product.id, {
             ...cacheData,
-            userCount: cacheData.userCount + 1,
+            userCount: userCount + 1,
             updateAt: Date.now(),
         });
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
@@ -127,7 +129,7 @@ export class ProductService {
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const { price } = (await this.cacheManager.get<ProductCacheDto>(id)) ?? { price: NO_CACHE };
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
@@ -148,7 +150,7 @@ export class ProductService {
         const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const { price } = (await this.cacheManager.get<ProductCacheDto>(id)) ?? { price: NO_CACHE };
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
@@ -174,11 +176,12 @@ export class ProductService {
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
+        await this.trackingProductRepository.getUserCount(selectProduct.id);
         const ranklist = await this.trackingProductRepository.getRankingList();
         const idx = ranklist.findIndex(({ id }) => id === selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
-        const { price, lowestPrice } = this.productDataCache.get(selectProduct.id);
+        const { price, lowestPrice } = await this.getProductCurrentData(selectProduct.id);
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
@@ -201,18 +204,22 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
-        const cacheData = await this.productDataCache.get(product.productId);
+        const cacheData = await this.cacheManager.get<ProductCacheDto>(product.productId);
         const prevProduct = this.productRankCache.get(product.productId)?.value;
-        this.productDataCache.set(product.productId, {
+        const userCount = cacheData
+            ? cacheData.userCount
+            : await this.trackingProductRepository.getUserCount(product.productId);
+        this.cacheManager.set(product.productId, {
             ...cacheData,
-            userCount: cacheData.userCount - 1,
+            userCount: userCount - 1,
             updateAt: Date.now(),
         });
         if (!prevProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         prevProduct.userCount--;
-        if (this.productDataCache.size > MAX_TRACKING_RANK) {
+        const productCount = (await this.cacheManager.store.keys()).length;
+        if (productCount > MAX_TRACKING_RANK) {
             await this.deleteUpdateCache(prevProduct);
         } else {
             this.productRankCache.update(prevProduct);
@@ -295,11 +302,14 @@ export class ProductService {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
         const results = await Promise.all(productCodeList);
-        const updatedDataInfo = results.filter(({ productId, productPrice, isSoldOut }) => {
-            const cache = this.productDataCache.get(productId);
+        const updatedDataInfo = results.filter(async ({ productId, productPrice, isSoldOut }) => {
+            if (!productId) {
+                return;
+            }
+            const cache = await this.cacheManager.get<ProductCacheDto>(productId);
             if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
                 const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
-                this.productDataCache.set(productId, {
+                this.cacheManager.set(productId, {
                     isSoldOut,
                     price: productPrice,
                     lowestPrice,
@@ -398,7 +408,7 @@ export class ProductService {
             isSoldOut: productInfo.isSoldOut,
         };
 
-        this.productDataCache.set(product.id, {
+        this.cacheManager.set(product.id, {
             price: productInfo.productPrice,
             isSoldOut: productInfo.isSoldOut,
             lowestPrice: productInfo.productPrice,
@@ -412,5 +422,33 @@ export class ProductService {
         const product = await this.findTrackingProductByCode(userId, productCode);
         product.isAlert = !product.isAlert;
         await this.trackingProductRepository.save(product);
+    }
+
+    async getProductCurrentData(productId: string) {
+        const cacheData = await this.cacheManager.get<ProductCacheDto>(productId);
+        if (cacheData) {
+            const { price, lowestPrice } = cacheData;
+            return { price, lowestPrice };
+        }
+        const latestData = await this.productPriceModel
+            .aggregate([
+                {
+                    $match: { productId: productId },
+                },
+                {
+                    $sort: { time: -1 },
+                },
+                {
+                    $group: {
+                        _id: '$productId',
+                        price: { $first: '$price' },
+                        isSoldOut: { $first: '$isSoldOut' },
+                        lowestPrice: { $min: '$price' },
+                    },
+                },
+            ])
+            .exec();
+        const { price, lowestPrice } = latestData[0];
+        return { price, lowestPrice };
     }
 }
