@@ -11,18 +11,18 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
 
     private fun <T> handleError(
         code: Int?
-    ): AuthRepositoryResult<T> {
+    ): RepositoryResult<T, AuthErrorState> {
         return when (code) {
             400 -> {
-                AuthRepositoryResult.Error(AuthErrorState.INVALID_REQUEST)
+                RepositoryResult.Error(AuthErrorState.INVALID_REQUEST)
             }
 
             409 -> {
-                AuthRepositoryResult.Error(AuthErrorState.DUPLICATED_EMAIL)
+                RepositoryResult.Error(AuthErrorState.DUPLICATED_EMAIL)
             }
 
             else -> {
-                AuthRepositoryResult.Error(AuthErrorState.UNDEFINED_ERROR)
+                RepositoryResult.Error(AuthErrorState.UNDEFINED_ERROR)
             }
         }
     }
@@ -31,13 +31,13 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
         email: String,
         userName: String,
         password: String
-    ): AuthRepositoryResult<SignupResult> {
+    ): RepositoryResult<SignupResult, AuthErrorState> {
         val response = getApiResult {
             userAPI.register(SignupRequest(email, userName, password))
         }
         return when (response) {
             is APIResult.Success -> {
-                AuthRepositoryResult.Success(
+                RepositoryResult.Success(
                     SignupResult(
                         response.data.accessToken ?: "",
                         response.data.refreshToken ?: ""
@@ -51,13 +51,13 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
         }
     }
 
-    override suspend fun login(email: String, password: String): AuthRepositoryResult<LoginResult> {
+    override suspend fun login(email: String, password: String): RepositoryResult<LoginResult, AuthErrorState> {
         val response = getApiResult {
             userAPI.login(LoginRequest(email, password))
         }
         return when (response) {
             is APIResult.Success -> {
-                AuthRepositoryResult.Success(
+                RepositoryResult.Success(
                     LoginResult(
                         response.data.accessToken ?: "",
                         response.data.refreshToken ?: ""

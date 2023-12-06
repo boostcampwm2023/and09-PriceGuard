@@ -5,7 +5,7 @@ import app.priceguard.ui.data.SignupResult
 
 interface AuthRepository {
 
-    suspend fun signUp(email: String, userName: String, password: String): AuthRepositoryResult<SignupResult>
+    suspend fun signUp(email: String, userName: String, password: String): RepositoryResult<SignupResult, AuthErrorState>
 
-    suspend fun login(email: String, password: String): AuthRepositoryResult<LoginResult>
+    suspend fun login(email: String, password: String): RepositoryResult<LoginResult, AuthErrorState>
 }

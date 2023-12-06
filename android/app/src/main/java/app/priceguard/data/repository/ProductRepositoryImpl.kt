@@ -22,11 +22,11 @@ class ProductRepositoryImpl @Inject constructor(
     private suspend fun renew(): Boolean {
         val refreshToken = tokenRepository.getRefreshToken() ?: return false
         return when (tokenRepository.renewTokens(refreshToken)) {
-            is TokenRepositoryResult.Success -> {
+            is RepositoryResult.Success -> {
                 true
             }
 
-            is TokenRepositoryResult.Error -> {
+            is RepositoryResult.Error -> {
                 false
             }
         }
@@ -35,39 +35,39 @@ class ProductRepositoryImpl @Inject constructor(
     private suspend fun <T> handleError(
         code: Int?,
         isRenewed: Boolean,
-        repoFun: suspend () -> ProductRepositoryResult<T>
-    ): ProductRepositoryResult<T> {
+        repoFun: suspend () -> RepositoryResult<T, ProductErrorState>
+    ): RepositoryResult<T, ProductErrorState> {
         return when (code) {
             400 -> {
-                ProductRepositoryResult.Error(ProductErrorState.INVALID_REQUEST)
+                RepositoryResult.Error(ProductErrorState.INVALID_REQUEST)
             }
 
             401 -> {
-                ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+                RepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
             }
 
             404 -> {
-                ProductRepositoryResult.Error(ProductErrorState.NOT_FOUND)
+                RepositoryResult.Error(ProductErrorState.NOT_FOUND)
             }
 
             409 -> {
-                ProductRepositoryResult.Error(ProductErrorState.EXIST)
+                RepositoryResult.Error(ProductErrorState.EXIST)
             }
 
             410 -> {
                 if (isRenewed) {
-                    ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+                    RepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
                 } else {
                     if (renew()) {
                         repoFun.invoke()
                     } else {
-                        ProductRepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
+                        RepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
                     }
                 }
             }
 
             else -> {
-                ProductRepositoryResult.Error(ProductErrorState.UNDEFINED_ERROR)
+                RepositoryResult.Error(ProductErrorState.UNDEFINED_ERROR)
             }
         }
     }
@@ -75,13 +75,13 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun verifyLink(
         productUrl: String,
         isRenewed: Boolean
-    ): ProductRepositoryResult<ProductVerifyResult> {
+    ): RepositoryResult<ProductVerifyResult, ProductErrorState> {
         val response = getApiResult {
             productAPI.verifyLink(ProductVerifyRequest(productUrl))
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductVerifyResult(
                         response.data.productName ?: "",
                         response.data.productCode ?: "",
@@ -104,13 +104,13 @@ class ProductRepositoryImpl @Inject constructor(
         productCode: String,
         targetPrice: Int,
         isRenewed: Boolean
-    ): ProductRepositoryResult<ProductAddResult> {
+    ): RepositoryResult<ProductAddResult, ProductErrorState> {
         val response = getApiResult {
             productAPI.addProduct(ProductAddRequest(productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductAddResult(
                         response.data.statusCode,
                         response.data.message
@@ -126,13 +126,13 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProductList(isRenewed: Boolean): ProductRepositoryResult<List<ProductData>> {
+    override suspend fun getProductList(isRenewed: Boolean): RepositoryResult<List<ProductData>, ProductErrorState> {
         val response = getApiResult {
             productAPI.getProductList()
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     response.data.trackingList?.map { dto ->
                         ProductData(
                             dto.productName ?: "",
@@ -155,13 +155,13 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRecommendedProductList(isRenewed: Boolean): ProductRepositoryResult<List<RecommendProductData>> {
+    override suspend fun getRecommendedProductList(isRenewed: Boolean): RepositoryResult<List<RecommendProductData>, ProductErrorState> {
         val response = getApiResult {
             productAPI.getRecommendedProductList()
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     response.data.recommendList?.map { dto ->
                         RecommendProductData(
                             dto.productName ?: "",
@@ -187,13 +187,13 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun getProductDetail(
         productCode: String,
         isRenewed: Boolean
-    ): ProductRepositoryResult<ProductDetailResult> {
+    ): RepositoryResult<ProductDetailResult, ProductErrorState> {
         val response = getApiResult {
             productAPI.getProductDetail(productCode)
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     ProductDetailResult(
                         productName = response.data.productName ?: "",
                         productCode = response.data.productCode ?: "",
@@ -220,10 +220,10 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun deleteProduct(
         productCode: String,
         isRenewed: Boolean
-    ): ProductRepositoryResult<Boolean> {
+    ): RepositoryResult<Boolean, ProductErrorState> {
         return when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(true)
+                RepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
@@ -238,13 +238,13 @@ class ProductRepositoryImpl @Inject constructor(
         productCode: String,
         targetPrice: Int,
         isRenewed: Boolean
-    ): ProductRepositoryResult<PricePatchResult> {
+    ): RepositoryResult<PricePatchResult, ProductErrorState> {
         val response = getApiResult {
             productAPI.updateTargetPrice(PricePatchRequest(productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
-                ProductRepositoryResult.Success(
+                RepositoryResult.Success(
                     PricePatchResult(
                         response.data.statusCode,
                         response.data.message

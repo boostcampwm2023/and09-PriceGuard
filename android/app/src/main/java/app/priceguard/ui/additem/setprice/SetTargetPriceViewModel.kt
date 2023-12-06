@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.ProductRepository
-import app.priceguard.data.repository.ProductRepositoryResult
+import app.priceguard.data.repository.RepositoryResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,12 +44,12 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 _state.value.targetPrice
             )
             when (response) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessProductAdd)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.errorState))
                 }
             }
         }
@@ -62,12 +62,12 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                 _state.value.targetPrice
             )
             when (response) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.errorState))
                 }
             }
         }

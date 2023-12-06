@@ -9,17 +9,17 @@ import app.priceguard.ui.data.RecommendProductData
 
 interface ProductRepository {
 
-    suspend fun verifyLink(productUrl: String, isRenewed: Boolean = false): ProductRepositoryResult<ProductVerifyResult>
+    suspend fun verifyLink(productUrl: String, isRenewed: Boolean = false): RepositoryResult<ProductVerifyResult, ProductErrorState>
 
-    suspend fun addProduct(productCode: String, targetPrice: Int, isRenewed: Boolean = false): ProductRepositoryResult<ProductAddResult>
+    suspend fun addProduct(productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<ProductAddResult, ProductErrorState>
 
-    suspend fun getProductList(isRenewed: Boolean = false): ProductRepositoryResult<List<ProductData>>
+    suspend fun getProductList(isRenewed: Boolean = false): RepositoryResult<List<ProductData>, ProductErrorState>
 
-    suspend fun getRecommendedProductList(isRenewed: Boolean = false): ProductRepositoryResult<List<RecommendProductData>>
+    suspend fun getRecommendedProductList(isRenewed: Boolean = false): RepositoryResult<List<RecommendProductData>, ProductErrorState>
 
-    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<ProductDetailResult>
+    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): RepositoryResult<ProductDetailResult, ProductErrorState>
 
-    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<Boolean>
+    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
 
-    suspend fun updateTargetPrice(productCode: String, targetPrice: Int, isRenewed: Boolean = false): ProductRepositoryResult<PricePatchResult>
+    suspend fun updateTargetPrice(productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<PricePatchResult, ProductErrorState>
 }

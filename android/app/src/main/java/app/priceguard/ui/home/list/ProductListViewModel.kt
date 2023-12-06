@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.ProductRepository
-import app.priceguard.data.repository.ProductRepositoryResult
+import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +45,7 @@ class ProductListViewModel @Inject constructor(
             _isRefreshing.value = false
 
             when (result) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _productList.value = result.data.map { data ->
                         UserProductSummary(
                             data.shop,
@@ -59,8 +59,8 @@ class ProductListViewModel @Inject constructor(
                     }
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _events.emit(result.productErrorState)
+                is RepositoryResult.Error -> {
+                    _events.emit(result.errorState)
                 }
             }
         }

@@ -7,6 +7,6 @@ interface TokenRepository {
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun getUserData(): UserDataResult
-    suspend fun renewTokens(refreshToken: String): TokenRepositoryResult<Boolean>
+    suspend fun renewTokens(refreshToken: String): RepositoryResult<Boolean, TokenErrorState>
     suspend fun clearTokens()
 }
