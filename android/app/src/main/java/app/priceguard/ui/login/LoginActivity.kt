@@ -2,6 +2,7 @@ package app.priceguard.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -50,6 +51,14 @@ class LoginActivity : AppCompatActivity() {
                     LoginEvent.LoginStart -> {
                         (binding.btnLoginLogin as MaterialButton).icon =
                             getCircularProgressIndicatorDrawable(this@LoginActivity)
+                    }
+
+                    LoginEvent.TokenUpdateError, LoginEvent.FirebaseError -> {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            getString(R.string.push_notification_not_working),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     else -> {

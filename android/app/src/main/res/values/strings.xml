@@ -111,4 +111,5 @@
     <string name="dark_mode">다크 모드</string>
     <string name="price_text">가격</string>
     <string name="date_text">시간</string>
+    <string name="push_notification_not_working">푸시 알림이 정상작동하지 않을 수 있습니다.</string>
 </resources>
