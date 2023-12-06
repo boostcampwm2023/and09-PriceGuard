@@ -33,6 +33,9 @@ class ProductListFragment : Fragment() {
     private val binding get() = _binding!!
     private val productListViewModel: ProductListViewModel by viewModels()
 
+    private var _listener: ProductSummaryClickListener? = null
+    private val listener: ProductSummaryClickListener get() = _listener!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,7 +64,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
-        val listener = object : ProductSummaryClickListener {
+        _listener = object : ProductSummaryClickListener {
             override fun onClick(productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra("productCode", productCode)
@@ -128,6 +131,9 @@ class ProductListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvProductList.adapter = null
+        binding.lifecycleOwner = null
+        _listener = null
         _binding = null
     }
 }
