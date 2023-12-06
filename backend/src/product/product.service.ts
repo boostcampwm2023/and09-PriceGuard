@@ -20,7 +20,6 @@ import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
-import { FirebaseRepository } from '../firebase/firebase.repository';
 import Redis from 'ioredis';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 
@@ -34,8 +33,6 @@ export class ProductService {
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
-        @InjectRepository(FirebaseRepository)
-        private firebaseRepository: FirebaseRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
         @InjectRedis() private readonly redis: Redis,
@@ -63,9 +60,9 @@ export class ProductService {
             .exec();
         const userCountList = await this.trackingProductRepository.getAllUserCount();
         const rankList = await this.productRepository.getTotalInfoRankingList();
-        latestData.forEach((data) => {
+        const initPromise = latestData.map(async (data) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
-            this.redis.set(
+            const setPromise = await this.redis.set(
                 `product:${data._id}`,
                 JSON.stringify({
                     isSoldOut: data.isSoldOut,
@@ -73,12 +70,17 @@ export class ProductService {
                     lowestPrice: data.lowestPrice,
                 }),
             );
-            this.redis.zadd('userCount', matchProduct ? parseInt(matchProduct.userCount) : 0, data._id);
+            const zaddPromise = await this.redis.zadd(
+                'userCount',
+                matchProduct ? parseInt(matchProduct.userCount) : 0,
+                data._id,
+            );
+            return Promise.all([setPromise, zaddPromise]);
         });
         rankList.forEach((product) => {
             this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
         });
-        console.log(rankList);
+        await Promise.all(initPromise);
     }
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
@@ -167,7 +169,6 @@ export class ProductService {
                 priceData,
             };
         });
-        console.log(recommendList);
         const result = await Promise.all(recommendListInfo);
         return result;
     }
@@ -217,7 +218,6 @@ export class ProductService {
         }
         prevProduct.userCount--;
         const productCount = await this.redis.zcard('userCount');
-        console.log(productCount);
         if (productCount > MAX_TRACKING_RANK) {
             await this.deleteUpdateCache(prevProduct);
         } else {
@@ -301,7 +301,7 @@ export class ProductService {
                 const cache = JSON.parse(cacheData as string);
                 if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
                     const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
-                    this.redis.set(
+                    await this.redis.set(
                         `product:${productId}`,
                         JSON.stringify({
                             isSoldOut,
@@ -374,14 +374,13 @@ export class ProductService {
                         trackingProduct.isFirst = true;
                         await this.trackingProductRepository.save(trackingProduct);
                     } else if (targetPrice >= productPrice && isFirst && isAlert) {
-                        const deviceInfo = await this.firebaseRepository.findOne({ where: { userId: userId } });
-                        if (deviceInfo) {
-                            notifications.push(this.getMessage(productName, productPrice, imageUrl, deviceInfo.token));
+                        const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
+                        if (firebaseToken) {
+                            notifications.push(this.getMessage(productName, productPrice, imageUrl, firebaseToken));
                             matchedProducts.push(trackingProduct);
                         }
                     }
                 }
-
                 return { notifications, matchedProducts };
             }),
         );
