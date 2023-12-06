@@ -39,7 +39,6 @@ class SignupViewModel @Inject constructor(
 
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
-        data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
         data object InvalidRequest : SignupEvent()
         data object DuplicatedEmail : SignupEvent()
         data object UndefinedError : SignupEvent()
@@ -79,12 +78,6 @@ class SignupViewModel @Inject constructor(
                     }
 
                     updateSignupFinished(true)
-                    sendSignupEvent(
-                        SignupEvent.SignupSuccess(
-                            result.data.accessToken,
-                            result.data.refreshToken
-                        )
-                    )
                     saveTokens(result.data.accessToken, result.data.refreshToken)
                     sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")

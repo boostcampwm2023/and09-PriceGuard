@@ -33,7 +33,6 @@ class LoginViewModel @Inject constructor(
     sealed class LoginEvent {
         data object LoginStart : LoginEvent()
         data object Invalid : LoginEvent()
-        data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent()
         data object LoginFailure : LoginEvent()
         data object UndefinedError : LoginEvent()
         data object LoginInfoSaved : LoginEvent()
@@ -83,12 +82,6 @@ class LoginViewModel @Inject constructor(
                         return@launch
                     }
                     setLoginFinished(true)
-                    sendLoginEvent(
-                        LoginEvent.LoginSuccess(
-                            result.data.accessToken,
-                            result.data.refreshToken
-                        )
-                    )
                     saveTokens(result.data.accessToken, result.data.refreshToken)
                     sendLoginEvent(LoginEvent.LoginInfoSaved)
                 }
