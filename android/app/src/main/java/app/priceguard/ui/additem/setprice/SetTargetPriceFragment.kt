@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted

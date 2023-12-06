@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity

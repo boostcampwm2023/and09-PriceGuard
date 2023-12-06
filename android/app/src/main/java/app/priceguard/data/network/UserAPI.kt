@@ -1,9 +1,9 @@
 package app.priceguard.data.network
 
-import app.priceguard.data.dto.LoginRequest
-import app.priceguard.data.dto.LoginResponse
-import app.priceguard.data.dto.SignupRequest
-import app.priceguard.data.dto.SignupResponse
+import app.priceguard.data.dto.login.LoginRequest
+import app.priceguard.data.dto.login.LoginResponse
+import app.priceguard.data.dto.signup.SignupRequest
+import app.priceguard.data.dto.signup.SignupResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

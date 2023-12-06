@@ -2,12 +2,11 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.graph.GraphDataConverter
+import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.graph.ProductChartData
-import app.priceguard.data.graph.ProductChartDataset
-import app.priceguard.data.network.ProductRepositoryResult
-import app.priceguard.data.repository.ProductRepository
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
@@ -43,7 +42,7 @@ class ProductDetailViewModel @Inject constructor(
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
         val graphMode: GraphMode = GraphMode.DAY,
-        val chartData: ProductChartDataset? = null
+        val chartData: List<ProductChartData> = listOf()
     )
 
     sealed class ProductDetailEvent {
@@ -69,12 +68,12 @@ class ProductDetailViewModel @Inject constructor(
     fun deleteProductTracking() {
         viewModelScope.launch {
             when (val result = productRepository.deleteProduct(productCode)) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(ProductDetailEvent.DeleteFailed(result.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(ProductDetailEvent.DeleteFailed(result.errorState))
                 }
             }
         }
@@ -95,7 +94,7 @@ class ProductDetailViewModel @Inject constructor(
             _state.value = _state.value.copy(isRefreshing = false)
 
             when (result) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     productGraphData = result.data.priceData
                     _state.update {
                         it.copy(
@@ -118,23 +117,16 @@ class ProductDetailViewModel @Inject constructor(
                                 )
                             },
                             formattedLowestPrice = formatPrice(result.data.lowestPrice),
-                            chartData = ProductChartDataset(
-                                showXAxis = true,
-                                showYAxis = true,
-                                isInteractive = true,
-                                graphMode = state.value.graphMode,
-                                data = graphDataConverter.packWithEdgeData(
-                                    result.data.priceData,
-                                    state.value.graphMode
-                                ),
-                                gridLines = listOf()
+                            chartData = graphDataConverter.packWithEdgeData(
+                                result.data.priceData,
+                                state.value.graphMode
                             )
                         )
                     }
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    when (result.productErrorState) {
+                is RepositoryResult.Error -> {
+                    when (result.errorState) {
                         ProductErrorState.PERMISSION_DENIED -> {
                             _event.emit(ProductDetailEvent.Logout)
                         }
@@ -160,14 +152,7 @@ class ProductDetailViewModel @Inject constructor(
         _state.update {
             it.copy(
                 graphMode = period,
-                chartData = ProductChartDataset(
-                    showXAxis = true,
-                    showYAxis = true,
-                    isInteractive = true,
-                    graphMode = period,
-                    data = graphDataConverter.packWithEdgeData(productGraphData, period),
-                    gridLines = listOf()
-                )
+                chartData = graphDataConverter.packWithEdgeData(productGraphData, period)
             )
         }
     }
