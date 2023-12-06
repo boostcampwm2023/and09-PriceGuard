@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.graph.ProductChartData
 import app.priceguard.data.repository.ProductErrorState
-import app.priceguard.data.network.ProductRepositoryResult
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.ProductRepositoryResult
 import app.priceguard.materialchart.data.GraphMode
