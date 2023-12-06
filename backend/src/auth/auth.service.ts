@@ -6,12 +6,17 @@ import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
 import { JWTRepository } from './jwt/jwt.repository';
+import { FirebaseRepository } from 'src/firebase/firebase.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+
 @Injectable()
 export class AuthService {
     constructor(
         @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
         private readonly jwtService: JwtService,
         private jwtRepository: JWTRepository,
+        @InjectRepository(FirebaseRepository)
+        private firebaseRepository: FirebaseRepository,
     ) {}
 
     async getAccessToken(user: User): Promise<string> {
@@ -46,5 +51,13 @@ export class AuthService {
             accessToken: await this.getAccessToken(user),
             refreshToken: await this.getRefreshToken(user),
         };
+    }
+
+    async addFirebaseToken(userId: string, token: string) {
+        try {
+            return await this.firebaseRepository.saveToken(userId, token);
+        } catch (e) {
+            throw new HttpException('Firebase 토큰 등록 실패', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

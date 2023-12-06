@@ -7,5 +7,6 @@ export class TrackingProductDto {
     imageUrl: string;
     targetPrice: number;
     price: number;
+    isAlert: boolean;
     priceData: PriceDataDto[];
 }
