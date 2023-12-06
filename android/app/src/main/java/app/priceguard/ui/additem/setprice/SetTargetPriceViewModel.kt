@@ -2,9 +2,9 @@ package app.priceguard.ui.additem.setprice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.repository.ProductErrorState
-import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

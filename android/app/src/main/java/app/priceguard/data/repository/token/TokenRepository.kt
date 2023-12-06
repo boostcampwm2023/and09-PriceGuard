@@ -1,5 +1,6 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.token
 
+import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.ui.data.UserDataResult
 
 interface TokenRepository {

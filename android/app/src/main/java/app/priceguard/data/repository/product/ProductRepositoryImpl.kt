@@ -1,10 +1,14 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.product
 
 import app.priceguard.data.GraphDataConverter
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.patch.PricePatchRequest
 import app.priceguard.data.dto.verify.ProductVerifyRequest
 import app.priceguard.data.network.ProductAPI
+import app.priceguard.data.repository.APIResult
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.getApiResult
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.ui.data.PricePatchResult
 import app.priceguard.ui.data.ProductAddResult
 import app.priceguard.ui.data.ProductData

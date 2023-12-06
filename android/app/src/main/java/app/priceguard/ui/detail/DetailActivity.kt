@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.graph.ProductChartGridLine
-import app.priceguard.data.repository.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity

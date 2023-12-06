@@ -2,8 +2,8 @@ package app.priceguard.di
 
 import app.priceguard.data.datastore.TokenDataSource
 import app.priceguard.data.network.AuthAPI
-import app.priceguard.data.repository.TokenRepository
-import app.priceguard.data.repository.TokenRepositoryImpl
+import app.priceguard.data.repository.token.TokenRepository
+import app.priceguard.data.repository.token.TokenRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

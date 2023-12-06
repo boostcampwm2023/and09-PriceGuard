@@ -1,8 +1,11 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.auth
 
 import app.priceguard.data.dto.login.LoginRequest
 import app.priceguard.data.dto.signup.SignupRequest
 import app.priceguard.data.network.UserAPI
+import app.priceguard.data.repository.APIResult
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.getApiResult
 import app.priceguard.ui.data.LoginResult
 import app.priceguard.ui.data.SignupResult
 import javax.inject.Inject

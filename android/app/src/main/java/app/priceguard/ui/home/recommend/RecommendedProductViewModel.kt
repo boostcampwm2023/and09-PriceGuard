@@ -3,9 +3,9 @@ package app.priceguard.ui.home.recommend
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.GraphDataConverter
-import app.priceguard.data.repository.ProductErrorState
-import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.home.ProductSummary.RecommendedProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel

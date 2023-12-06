@@ -3,10 +3,10 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.repository.AuthErrorState
-import app.priceguard.data.repository.AuthRepository
 import app.priceguard.data.repository.RepositoryResult
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.auth.AuthErrorState
+import app.priceguard.data.repository.auth.AuthRepository
+import app.priceguard.data.repository.token.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

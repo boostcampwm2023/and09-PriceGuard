@@ -1,5 +1,6 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.product
 
+import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.ui.data.PricePatchResult
 import app.priceguard.ui.data.ProductAddResult
 import app.priceguard.ui.data.ProductData

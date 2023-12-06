@@ -1,8 +1,11 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.token
 
 import android.util.Log
 import app.priceguard.data.datastore.TokenDataSource
 import app.priceguard.data.network.AuthAPI
+import app.priceguard.data.repository.APIResult
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.getApiResult
 import app.priceguard.ui.data.UserDataResult
 import java.util.*
 import javax.inject.Inject

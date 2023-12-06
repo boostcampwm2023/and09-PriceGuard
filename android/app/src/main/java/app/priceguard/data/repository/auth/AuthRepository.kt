@@ -1,5 +1,6 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.auth
 
+import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.ui.data.LoginResult
 import app.priceguard.ui.data.SignupResult
 

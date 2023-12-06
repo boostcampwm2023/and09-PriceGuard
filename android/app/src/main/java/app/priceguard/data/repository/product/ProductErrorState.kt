@@ -1,4 +1,4 @@
-package app.priceguard.data.repository
+package app.priceguard.data.repository.product
 
 enum class ProductErrorState {
     PERMISSION_DENIED,
