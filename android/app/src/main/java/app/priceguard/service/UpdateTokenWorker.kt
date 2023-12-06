@@ -12,11 +12,10 @@ class UpdateTokenWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val token = Firebase.messaging.token.await()
-        val result = storeToken(token)
-        return result
+        return storeToken(token)
     }
 
-    fun storeToken(token: String): Result {
+    private fun storeToken(token: String): Result {
         // TODO: 토큰과 현재 타임스탬프 서버로 전송 및 응답 반환
         return Result.success()
     }
