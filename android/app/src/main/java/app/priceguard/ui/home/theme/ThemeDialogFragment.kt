@@ -24,66 +24,69 @@ class ThemeDialogFragment : DialogFragment() {
     lateinit var configDataSource: ConfigDataSource
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val binding: FragmentThemeDialogBinding =
-            FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
+        val binding = FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
         val view = binding.root
 
         setCheckedButton(binding)
+        initListener(binding)
 
         return MaterialAlertDialogBuilder(
             requireActivity(),
             R.style.ThemeOverlay_App_MaterialAlertDialog
         ).apply {
             setView(view)
-            setPositiveButton(R.string.confirm) { _, _ ->
-                val dynamicMode = when (binding.rgDynamicColor.checkedRadioButtonId) {
-                    R.id.rb_yes -> {
-                        DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
-                        requireActivity().recreate()
-                        PriceGuardApp.MODE_DYNAMIC
-                    }
-
-                    else -> {
-                        DynamicColors.applyToActivitiesIfAvailable(
-                            requireActivity().application,
-                            DynamicColorsOptions.Builder()
-                                .setThemeOverlay(R.style.Theme_PriceGuard).build()
-                        )
-                        requireActivity().recreate()
-                        PriceGuardApp.MODE_DYNAMIC_NO
-                    }
-                }
-
-                val darkMode = when (binding.rgDarkMode.checkedRadioButtonId) {
-                    R.id.rb_system -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        PriceGuardApp.MODE_SYSTEM
-                    }
-
-                    R.id.rb_light -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        PriceGuardApp.MODE_LIGHT
-                    }
-
-                    R.id.rb_dark -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        PriceGuardApp.MODE_DARK
-                    }
-
-                    else -> {
-                        PriceGuardApp.MODE_SYSTEM
-                    }
-                }
-                saveTheme(dynamicMode, darkMode)
-                dismiss()
-            }
+            setPositiveButton(R.string.confirm) { _, _ -> dismiss() }
         }.create()
     }
 
-    private fun saveTheme(dynamicMode: Int, darkMode: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            configDataSource.saveDynamicMode(dynamicMode)
-            configDataSource.saveDarkMode(darkMode)
+    private fun initListener(binding: FragmentThemeDialogBinding) {
+        binding.rgDynamicColor.setOnCheckedChangeListener { _, checkedId ->
+            val dynamicMode = when (binding.rgDynamicColor.checkedRadioButtonId) {
+                R.id.rb_yes -> {
+                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
+                    requireActivity().recreate()
+                    PriceGuardApp.MODE_DYNAMIC
+                }
+
+                else -> {
+                    DynamicColors.applyToActivitiesIfAvailable(
+                        requireActivity().application,
+                        DynamicColorsOptions.Builder()
+                            .setThemeOverlay(R.style.Theme_PriceGuard).build()
+                    )
+                    requireActivity().recreate()
+                    PriceGuardApp.MODE_DYNAMIC_NO
+                }
+            }
+            lifecycleScope.launch(Dispatchers.IO) {
+                configDataSource.saveDynamicMode(dynamicMode)
+            }
+        }
+
+        binding.rgDarkMode.setOnCheckedChangeListener { _, checkedId ->
+            val darkMode = when (binding.rgDarkMode.checkedRadioButtonId) {
+                R.id.rb_system -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    PriceGuardApp.MODE_SYSTEM
+                }
+
+                R.id.rb_light -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    PriceGuardApp.MODE_LIGHT
+                }
+
+                R.id.rb_dark -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    PriceGuardApp.MODE_DARK
+                }
+
+                else -> {
+                    PriceGuardApp.MODE_SYSTEM
+                }
+            }
+            lifecycleScope.launch(Dispatchers.IO) {
+                configDataSource.saveDarkMode(darkMode)
+            }
         }
     }
 
