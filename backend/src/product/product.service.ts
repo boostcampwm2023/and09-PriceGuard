@@ -314,9 +314,17 @@ export class ProductService {
                     return { productId, price: productPrice, isSoldOut };
                 }),
             );
-            const notifications: Message[] = await this.getNotifications(updatedDataInfo);
-            if (notifications.length > 0) {
-                await this.firebaseService.getMessaging().sendEach(notifications);
+            const { messages, products } = await this.getNotifications(updatedDataInfo);
+            if (messages.length > 0) {
+                const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
+                await Promise.all(
+                    responses.map(async ({ success }, index) => {
+                        if (success) {
+                            products[index].isFirst = false;
+                            await this.trackingProductRepository.save(products[index]);
+                        }
+                    }),
+                );
             }
         }
     }
@@ -334,7 +342,9 @@ export class ProductService {
             token,
         };
     }
-    async getNotifications(productInfo: ProductInfoDto[]): Promise<Message[]> {
+    async getNotifications(
+        productInfo: ProductInfoDto[],
+    ): Promise<{ messages: Message[]; products: TrackingProduct[] }> {
         const productIds = productInfo.map((p) => p.productId);
 
         const trackingProducts = await this.trackingProductRepository
@@ -347,11 +357,11 @@ export class ProductService {
             const products = trackingMap.get(tracking.productId) || [];
             trackingMap.set(tracking.productId, [...products, tracking]);
         });
-
-        const notifications = await Promise.all(
+        const results = await Promise.all(
             productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
                 const trackingList = productId ? trackingMap.get(productId) || [] : [];
-                const messageList: Message[] = [];
+                const notifications = [];
+                const matchedProducts = [];
 
                 for (const trackingProduct of trackingList) {
                     const { userId, targetPrice, isFirst, isAlert } = trackingProduct;
@@ -361,16 +371,23 @@ export class ProductService {
                     } else if (targetPrice >= productPrice && isFirst && isAlert) {
                         const deviceInfo = await this.firebaseRepository.findOne({ where: { userId: userId } });
                         if (deviceInfo) {
-                            trackingProduct.isFirst = false;
-                            await this.trackingProductRepository.save(trackingProduct);
-                            messageList.push(this.getMessage(productName, productPrice, imageUrl, deviceInfo.token));
+                            notifications.push(this.getMessage(productName, productPrice, imageUrl, deviceInfo.token));
+                            matchedProducts.push(trackingProduct);
                         }
                     }
                 }
-                return messageList;
+
+                return { notifications, matchedProducts };
             }),
         );
-        return notifications.flat();
+
+        const allNotifications = results.flatMap((result) => result.notifications);
+        const allMatchedProducts = results.flatMap((result) => result.matchedProducts);
+
+        return {
+            messages: allNotifications,
+            products: allMatchedProducts,
+        };
     }
     async firstAddProduct(productCode: string) {
         const productInfo = await getProductInfo11st(productCode);
