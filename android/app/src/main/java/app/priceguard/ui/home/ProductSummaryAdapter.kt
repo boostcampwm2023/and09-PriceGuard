@@ -116,6 +116,8 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 showYAxis = false,
                 isInteractive = false,
                 graphMode = GraphMode.WEEK,
+                xLabel = chGraph.context.getString(R.string.date_text),
+                yLabel = chGraph.context.getString(R.string.price_text),
                 data = data,
                 gridLines = listOf()
             )
