@@ -75,26 +75,14 @@ class TokenRepositoryImpl @Inject constructor(
     }
 
     override suspend fun renewTokens(refreshToken: String): RepositoryResult<Boolean, TokenErrorState> {
-        when (val response = getApiResult { authAPI.renewTokens("Bearer $refreshToken") }) {
+        return when (val response = getApiResult { authAPI.renewTokens("Bearer $refreshToken") }) {
             is APIResult.Success -> {
                 storeTokens(response.data.accessToken, response.data.refreshToken)
-                return RepositoryResult.Success(true)
+                RepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
-                return when (response.code) {
-                    401 -> {
-                        RepositoryResult.Error(TokenErrorState.UNAUTHORIZED)
-                    }
-
-                    410 -> {
-                        RepositoryResult.Error(TokenErrorState.EXPIRED)
-                    }
-
-                    else -> {
-                        RepositoryResult.Error(TokenErrorState.UNDEFINED_ERROR)
-                    }
-                }
+                handleError(response.code)
             }
         }
     }
