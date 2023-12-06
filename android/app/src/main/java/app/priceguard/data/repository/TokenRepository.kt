@@ -1,6 +1,5 @@
 package app.priceguard.data.repository
 
-import app.priceguard.ui.data.RenewState
 import app.priceguard.ui.data.UserDataResult
 
 interface TokenRepository {
@@ -8,6 +7,6 @@ interface TokenRepository {
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun getUserData(): UserDataResult
-    suspend fun renewTokens(refreshToken: String): RenewState
+    suspend fun renewTokens(refreshToken: String): TokenRepositoryResult<Boolean>
     suspend fun clearTokens()
 }
