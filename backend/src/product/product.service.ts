@@ -317,14 +317,14 @@ export class ProductService {
             const { messages, products } = await this.getNotifications(updatedDataInfo);
             if (messages.length > 0) {
                 const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
-                await Promise.all(
-                    responses.map(async ({ success }, index) => {
-                        if (success) {
-                            products[index].isFirst = false;
-                            await this.trackingProductRepository.save(products[index]);
-                        }
-                    }),
-                );
+                const successProducts = products.filter((item, index) => {
+                    const { success } = responses[index];
+                    item.isFirst = false;
+                    return success;
+                });
+                if (successProducts.length > 0) {
+                    await this.trackingProductRepository.save(successProducts);
+                }
             }
         }
     }
