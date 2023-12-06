@@ -85,3 +85,16 @@ export class LoginFailError {
     })
     message: string;
 }
+
+export class FirebaseTokenSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: 'FCM 토큰 등록 성공',
+        description: '메시지',
+    })
+    message: string;
+}
