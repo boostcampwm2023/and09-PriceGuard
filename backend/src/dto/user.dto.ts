@@ -25,12 +25,4 @@ export class UserDto {
     })
     @IsString()
     password: string;
-
-    @ApiProperty({
-        example: 'firebase cloud messaging registeration token',
-        description: 'FCM 등록 토큰',
-        required: true,
-    })
-    @IsString()
-    firebaseToken: string;
 }
