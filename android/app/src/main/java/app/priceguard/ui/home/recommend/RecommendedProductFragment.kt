@@ -32,6 +32,9 @@ class RecommendedProductFragment : Fragment() {
     private val binding get() = _binding!!
     private val recommendedProductViewModel: RecommendedProductViewModel by viewModels()
 
+    private var _listener: ProductSummaryClickListener? = null
+    private val listener: ProductSummaryClickListener get() = _listener!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,7 +63,7 @@ class RecommendedProductFragment : Fragment() {
     }
 
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
-        val listener = object : ProductSummaryClickListener {
+        _listener = object : ProductSummaryClickListener {
             override fun onClick(productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra("productCode", productCode)
@@ -118,6 +121,9 @@ class RecommendedProductFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvRecommendedProduct.adapter = null
+        binding.lifecycleOwner = null
+        _listener = null
         _binding = null
     }
 }
