@@ -12,7 +12,7 @@
     <string name="notification_setting">알림 설정</string>
     <string name="theme_setting">테마 설정</string>
     <string name="logout">로그아웃</string>
-    <string name="name_required">이름은 필수 입력 사항입니다.</string>
+    <string name="invalid_name">이름은 16자 이내로 입력해 주세요.</string>
     <string name="invalid_email">유효하지 않은 이메일입니다.</string>
     <string name="valid_email">유효한 이메일입니다.</string>
     <string name="invalid_password">비밀번호는 영문 대소문자, 숫자, 특수문자가 포함된 8~16자 사이어야 합니다.</string>

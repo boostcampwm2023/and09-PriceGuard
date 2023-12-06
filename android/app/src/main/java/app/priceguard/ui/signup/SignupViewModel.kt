@@ -135,7 +135,7 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun isValidName(): Boolean {
-        return _state.value.name.isNotBlank()
+        return _state.value.name.isNotBlank() && _state.value.name.length <= 16
     }
 
     private fun isValidEmail(): Boolean {
