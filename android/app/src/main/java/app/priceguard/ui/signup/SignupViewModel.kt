@@ -43,6 +43,8 @@ class SignupViewModel @Inject constructor(
         data object DuplicatedEmail : SignupEvent()
         data object UndefinedError : SignupEvent()
         data object SignupInfoSaved : SignupEvent()
+        data object FirebaseError : SignupEvent()
+        data object TokenUpdateError : SignupEvent()
     }
 
     private val emailPattern =
@@ -76,6 +78,9 @@ class SignupViewModel @Inject constructor(
                         updateSignupStarted(false)
                         return@launch
                     }
+
+                    val firebaseToken = tokenRepository.getFirebaseToken()
+                    updateFirebaseToken(firebaseToken)
 
                     updateSignupFinished(true)
                     saveTokens(result.data.accessToken, result.data.refreshToken)
@@ -156,6 +161,20 @@ class SignupViewModel @Inject constructor(
 
     private suspend fun sendSignupEvent(event: SignupEvent) {
         _eventFlow.emit(event)
+    }
+
+    private suspend fun updateFirebaseToken(firebaseToken: String?) {
+        if (firebaseToken != null) {
+            when (tokenRepository.updateFirebaseToken(firebaseToken)) {
+                is RepositoryResult.Error -> {
+                    sendSignupEvent(SignupEvent.TokenUpdateError)
+                }
+
+                else -> {}
+            }
+        } else {
+            sendSignupEvent(SignupEvent.FirebaseError)
+        }
     }
 
     private fun updateIsSignupReady() {
