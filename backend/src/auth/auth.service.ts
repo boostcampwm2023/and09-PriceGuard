@@ -37,7 +37,6 @@ export class AuthService {
             throw new ValidationException('로그인 실패');
         }
         return {
-            userId: user.id,
             accessToken: await this.getAccessToken(user),
             refreshToken: await this.getRefreshToken(user),
         };

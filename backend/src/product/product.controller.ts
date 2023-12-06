@@ -170,7 +170,7 @@ export class ProductController {
     @ApiOkResponse({ type: ToggleAlertSuccess, description: '알림 설정 성공' })
     @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
-    @Patch(':productCode')
+    @Patch('/alert/:productCode')
     async toggleAlert(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
         await this.productService.toggleProductAlert(req.user.id, productCode);
         return { statusCode: HttpStatus.OK, message: '알림 설정 성공' };
