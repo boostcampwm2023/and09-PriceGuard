@@ -137,7 +137,7 @@ class SignupActivity : AppCompatActivity() {
     private fun updateNameTextFieldUI(state: SignupUIState) {
         when (state.isNameError) {
             true -> {
-                binding.tilSignupName.error = getString(R.string.name_required)
+                binding.tilSignupName.error = getString(R.string.invalid_name)
             }
 
             else -> {
