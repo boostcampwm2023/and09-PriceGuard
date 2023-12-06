@@ -2,8 +2,6 @@ package app.priceguard.ui.additem.setprice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.add.ProductAddRequest
-import app.priceguard.data.dto.patch.PricePatchRequest
 import app.priceguard.data.repository.ProductErrorState
 import app.priceguard.data.repository.ProductRepository
 import app.priceguard.data.repository.ProductRepositoryResult
@@ -42,10 +40,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     fun addProduct() {
         viewModelScope.launch {
             val response = productRepository.addProduct(
-                ProductAddRequest(
-                    _state.value.productCode,
-                    _state.value.targetPrice
-                )
+                _state.value.productCode,
+                _state.value.targetPrice
             )
             when (response) {
                 is ProductRepositoryResult.Success -> {
@@ -62,10 +58,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     fun patchProduct() {
         viewModelScope.launch {
             val response = productRepository.updateTargetPrice(
-                PricePatchRequest(
-                    _state.value.productCode,
-                    _state.value.targetPrice
-                )
+                _state.value.productCode,
+                _state.value.targetPrice
             )
             when (response) {
                 is ProductRepositoryResult.Success -> {

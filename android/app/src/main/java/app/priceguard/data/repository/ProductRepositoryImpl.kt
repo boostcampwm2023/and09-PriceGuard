@@ -67,11 +67,11 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun verifyLink(
-        productUrl: ProductVerifyRequest,
+        productUrl: String,
         isRenewed: Boolean
     ): ProductRepositoryResult<ProductVerifyResult> {
         val response = getApiResult {
-            productAPI.verifyLink(productUrl)
+            productAPI.verifyLink(ProductVerifyRequest(productUrl))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -95,11 +95,12 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addProduct(
-        productAddRequest: ProductAddRequest,
+        productCode: String,
+        targetPrice: Int,
         isRenewed: Boolean
     ): ProductRepositoryResult<ProductAddResult> {
         val response = getApiResult {
-            productAPI.addProduct(productAddRequest)
+            productAPI.addProduct(ProductAddRequest(productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -113,7 +114,7 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    addProduct(productAddRequest, true)
+                    addProduct(productCode, targetPrice, true)
                 }
             }
         }
@@ -228,11 +229,12 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTargetPrice(
-        pricePatchRequest: PricePatchRequest,
+        productCode: String,
+        targetPrice: Int,
         isRenewed: Boolean
     ): ProductRepositoryResult<PricePatchResult> {
         val response = getApiResult {
-            productAPI.updateTargetPrice(pricePatchRequest)
+            productAPI.updateTargetPrice(PricePatchRequest(productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -246,7 +248,7 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    updateTargetPrice(pricePatchRequest, true)
+                    updateTargetPrice(productCode, targetPrice, true)
                 }
             }
         }

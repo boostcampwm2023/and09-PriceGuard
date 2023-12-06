@@ -1,8 +1,5 @@
 package app.priceguard.data.repository
 
-import app.priceguard.data.dto.add.ProductAddRequest
-import app.priceguard.data.dto.patch.PricePatchRequest
-import app.priceguard.data.dto.verify.ProductVerifyRequest
 import app.priceguard.ui.data.PricePatchResult
 import app.priceguard.ui.data.ProductAddResult
 import app.priceguard.ui.data.ProductData
@@ -12,9 +9,9 @@ import app.priceguard.ui.data.RecommendProductData
 
 interface ProductRepository {
 
-    suspend fun verifyLink(productUrl: ProductVerifyRequest, isRenewed: Boolean = false): ProductRepositoryResult<ProductVerifyResult>
+    suspend fun verifyLink(productUrl: String, isRenewed: Boolean = false): ProductRepositoryResult<ProductVerifyResult>
 
-    suspend fun addProduct(productAddRequest: ProductAddRequest, isRenewed: Boolean = false): ProductRepositoryResult<ProductAddResult>
+    suspend fun addProduct(productCode: String, targetPrice: Int, isRenewed: Boolean = false): ProductRepositoryResult<ProductAddResult>
 
     suspend fun getProductList(isRenewed: Boolean = false): ProductRepositoryResult<List<ProductData>>
 
@@ -24,5 +21,5 @@ interface ProductRepository {
 
     suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): ProductRepositoryResult<Boolean>
 
-    suspend fun updateTargetPrice(pricePatchRequest: PricePatchRequest, isRenewed: Boolean = false): ProductRepositoryResult<PricePatchResult>
+    suspend fun updateTargetPrice(productCode: String, targetPrice: Int, isRenewed: Boolean = false): ProductRepositoryResult<PricePatchResult>
 }
