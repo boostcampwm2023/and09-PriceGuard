@@ -117,7 +117,7 @@ export class ProductService {
         };
         this.productRankCache.update(productRank);
         if (cacheData) {
-            this.redis.zincrby('userCount', 1, product.id);
+            await this.redis.zincrby('userCount', 1, product.id);
         }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
