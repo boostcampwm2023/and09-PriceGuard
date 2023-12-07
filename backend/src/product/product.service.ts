@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { CHANNEL_ID, MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { Cron } from '@nestjs/schedule';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
@@ -341,6 +341,7 @@ export class ProductService {
             },
             android: {
                 notification: {
+                    channelId: CHANNEL_ID,
                     imageUrl,
                 },
             },
