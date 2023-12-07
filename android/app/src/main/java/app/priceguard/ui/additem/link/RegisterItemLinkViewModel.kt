@@ -21,7 +21,7 @@ class RegisterItemLinkViewModel
     data class RegisterLinkUIState(
         val link: String = "",
         val product: ProductVerifyResult? = null,
-        val isNextReady: Boolean = true,
+        val isNextReady: Boolean = false,
         val isLinkError: Boolean = false
     )
 
