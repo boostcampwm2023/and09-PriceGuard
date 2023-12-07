@@ -83,7 +83,7 @@ class SignupViewModel @Inject constructor(
 
                     updateSignupFinished(true)
                     saveTokens(result.data.accessToken, result.data.refreshToken)
-                    updateFirebaseToken(firebaseToken)
+                    updateFirebaseToken(result.data.accessToken, firebaseToken)
                     sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")
                 }
@@ -163,8 +163,7 @@ class SignupViewModel @Inject constructor(
         _eventFlow.emit(event)
     }
 
-    private suspend fun updateFirebaseToken(firebaseToken: String?) {
-        val accessToken = tokenRepository.getAccessToken() ?: return
+    private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
         if (firebaseToken != null) {
             when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
                 is RepositoryResult.Error -> {
