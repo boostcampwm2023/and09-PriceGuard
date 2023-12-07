@@ -56,7 +56,7 @@ class TokenRepositoryImpl @Inject constructor(
         return try {
             FirebaseMessaging.getInstance().token.await()
         } catch (e: Exception) {
-            Log.e("ERROR", e.toString())
+            Log.e("FCM Token", e.toString())
             null
         }
     }
