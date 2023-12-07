@@ -67,7 +67,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
             msProduct.setOnCheckedChangeListener { _, isChecked ->
-                productSummaryClickListener.onToggle(productCode)
+                productSummaryClickListener.onToggle(productCode, msProduct.isChecked)
                 if (isChecked) {
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
                 } else {
@@ -130,7 +130,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem.productCode == newItem.productCode
         }
     }
 }
