@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
@@ -32,6 +34,8 @@ class ProductListFragment : Fragment() {
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
     private val productListViewModel: ProductListViewModel by viewModels()
+
+    private var workRequestMap: MutableMap<String, OneTimeWorkRequest> = mutableMapOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +73,11 @@ class ProductListFragment : Fragment() {
             }
 
             override fun onToggle(productCode: String) {
-                productListViewModel.switchAlert(productCode)
+                if (workRequestMap.containsKey(productCode)) {
+                    workRequestMap.remove(productCode)
+                } else {
+                    workRequestMap[productCode] = UpdateAlarmWorker.createWorkRequest(productCode)
+                }
             }
         }
 
@@ -132,6 +140,10 @@ class ProductListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        workRequestMap.values.forEach { workRequest ->
+            WorkManager.getInstance(requireContext()).enqueue(workRequest)
+        }
+        workRequestMap.clear()
         _binding = null
     }
 }

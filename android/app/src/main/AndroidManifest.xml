@@ -49,14 +49,17 @@
             android:exported="false" />
         <activity
             android:name=".ui.detail.DetailActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="priceguard"
-                    android:host="product" />
+
+                <data
+                    android:host="product"
+                    android:scheme="priceguard" />
             </intent-filter>
 
         </activity>
@@ -74,6 +77,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
     </application>
 
