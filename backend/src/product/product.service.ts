@@ -21,7 +21,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import Redis from 'ioredis';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { InjectRedis } from '@songkeys/nestjs-redis';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;

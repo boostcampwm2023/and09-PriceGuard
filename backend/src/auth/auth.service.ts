@@ -5,7 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { RedisModuleOptions } from '@songkeys/nestjs-redis';
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from 'src/constants';
 
 export const RedisConfig: RedisModuleOptions = {

@@ -12,7 +12,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MONGODB_URL } from './constants';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfig } from './configs/redis.config';
 
 @Module({

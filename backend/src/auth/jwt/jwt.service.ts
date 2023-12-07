@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { INVALIDATED_REFRESHTOKEN, REFRESH_TOKEN_SECRETS } from 'src/constants';
 import Redis from 'ioredis';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { InjectRedis } from '@songkeys/nestjs-redis';
 
 @Injectable()
 export class JWTService {
