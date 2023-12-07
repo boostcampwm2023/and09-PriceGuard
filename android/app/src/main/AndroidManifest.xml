@@ -32,21 +32,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.signup.SignupActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.home.HomeActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.additem.AddItemActivity"
-            android:exported="false" />
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="true"
@@ -62,10 +77,16 @@
                     android:scheme="priceguard" />
             </intent-filter>
 
+                <data
+                    android:host="product"
+                    android:scheme="priceguard" />
+            </intent-filter>
         </activity>
+
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />
+
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />

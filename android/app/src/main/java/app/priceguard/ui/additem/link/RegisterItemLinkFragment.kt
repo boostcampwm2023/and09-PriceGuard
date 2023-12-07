@@ -1,9 +1,11 @@
 package app.priceguard.ui.additem.link
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -13,6 +15,7 @@ import app.priceguard.R
 import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +44,35 @@ class RegisterItemLinkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = registerItemLinkViewModel
+
+        setBackPressedCallback()
+        setLinkText()
+
         initCollector()
         initEvent()
+    }
+
+    private fun setLinkText() {
+        arguments?.getString("link")?.let { linkText ->
+            binding.etRegisterItemLink.setText(linkText)
+            registerItemLinkViewModel.updateLink(linkText)
+        }
+    }
+
+    private fun setBackPressedCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            goToHomeActivity()
+        }
+    }
+
+    private fun goToHomeActivity() {
+        val activityIntent = requireActivity().intent
+        if (activityIntent?.action == Intent.ACTION_SEND) {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        requireActivity().finish()
     }
 
     private fun initCollector() {
