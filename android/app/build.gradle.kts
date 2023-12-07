@@ -105,7 +105,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Material chart
-    implementation(project(":materialchart"))
+    implementation("app.priceguard:materialchart:0.1.2")
 }
 
 kapt {
