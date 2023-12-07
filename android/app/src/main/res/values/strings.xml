@@ -117,4 +117,11 @@
     <string name="product_11st">11번가 상품</string>
     <string name="my_name_info">내 이름, %s</string>
     <string name="my_email_info">내 E-mail, %s</string>
+    <string name="link_confirm_button">링크 확인 버튼</string>
+    <string name="selected_product_image">선택한 상품의 이미지</string>
+    <string name="product_name_info">상품명 %s</string>
+    <string name="shopping_mall_name_info">쇼핑몰 이름, %s</string>
+    <string name="target_price_input">목표가격 입력란</string>
+    <string name="target_price_percent_and_price">목표가격 %1$s, %2$s으로 설정됨</string>
+    <string name="target_price_80">현재 가격의 80%</string>
 </resources>
