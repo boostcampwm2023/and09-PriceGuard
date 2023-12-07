@@ -15,6 +15,8 @@ import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 
+const isDefined = <T>(x: T | undefined): x is T => x !== undefined;
+
 @Injectable()
 export class CronService {
     constructor(
@@ -27,39 +29,38 @@ export class CronService {
         @InjectRedis() private readonly redis: Redis,
         private readonly firebaseService: FirebaseService,
     ) {}
-
+    async getUpdatedProduct(data: ProductInfoDto) {
+        const { productId, productPrice, isSoldOut } = data;
+        const cacheData = await this.redis.get(`product:${productId}`);
+        const cache = JSON.parse(cacheData as string);
+        if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
+            const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
+            await this.redis.set(
+                `product:${productId}`,
+                JSON.stringify({
+                    isSoldOut,
+                    price: productPrice,
+                    lowestPrice,
+                }),
+            );
+            return data;
+        }
+    }
     @Cron('* */10 * * * *')
     async cyclicPriceChecker() {
-        const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
-        const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
-        const results = await Promise.all(productCodeList);
-        const updatedDataInfo: ProductInfoDto[] = [];
-        await Promise.all(
-            results.map(async (data) => {
-                const { productId, productPrice, isSoldOut } = data;
-                const cacheData = await this.redis.get(`product:${productId}`);
-                const cache = JSON.parse(cacheData as string);
-                if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
-                    const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
-                    await this.redis.set(
-                        `product:${productId}`,
-                        JSON.stringify({
-                            isSoldOut,
-                            price: productPrice,
-                            lowestPrice,
-                        }),
-                    );
-                    updatedDataInfo.push(data);
-                }
-            }),
+        const totalProducts = await this.productRepository.find({ select: { id: true, productCode: true } });
+        const recentProductInfo = await Promise.all(
+            totalProducts.map(({ productCode, id }) => getProductInfo11st(productCode, id)),
         );
-        if (updatedDataInfo.length > 0) {
+        const checkProducts = await Promise.all(recentProductInfo.map((data) => this.getUpdatedProduct(data)));
+        const updatedProducts = checkProducts.filter(isDefined);
+        if (updatedProducts.length > 0) {
             await this.productPriceModel.insertMany(
-                updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
+                updatedProducts.map(({ productId, productPrice, isSoldOut }) => {
                     return { productId, price: productPrice, isSoldOut };
                 }),
             );
-            const { messages, products } = await this.getNotifications(updatedDataInfo);
+            const { messages, products } = await this.getNotifications(updatedProducts);
             if (messages.length > 0) {
                 const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
                 const successProducts = products.filter((item, index) => {
