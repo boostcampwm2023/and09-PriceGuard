@@ -60,21 +60,23 @@ export class CronService {
                     return { productId, price: productPrice, isSoldOut };
                 }),
             );
-            const { messages, products } = await this.getNotifications(updatedProducts);
-            if (messages.length > 0) {
-                const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
-                const successProducts = products.filter((item, index) => {
-                    const { success } = responses[index];
-                    item.isFirst = false;
-                    return success;
-                });
-                if (successProducts.length > 0) {
-                    await this.trackingProductRepository.save(successProducts);
-                }
-            }
+            await this.pushNotifications(updatedProducts);
         }
     }
 
+    async pushNotifications(updatedProducts: ProductInfoDto[]) {
+        const { messages, products } = await this.getNotifications(updatedProducts);
+        if (messages.length === 0) return;
+        const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
+        const successProducts = products.filter((item, index) => {
+            const { success } = responses[index];
+            item.isFirst = false;
+            return success;
+        });
+        if (successProducts.length > 0) {
+            await this.trackingProductRepository.save(successProducts);
+        }
+    }
     private getMessage(
         productCode: string,
         productName: string,
