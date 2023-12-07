@@ -12,6 +12,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MONGODB_URL } from './constants';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RedisModule } from '@songkeys/nestjs-redis';
+import { RedisConfig } from './configs/redis.config';
 
 @Module({
     imports: [
@@ -22,6 +24,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         ProductModule,
         MongooseModule.forRoot(MONGODB_URL),
         ScheduleModule.forRoot(),
+        RedisModule.forRoot(RedisConfig),
     ],
     controllers: [AppController],
     providers: [AppService],

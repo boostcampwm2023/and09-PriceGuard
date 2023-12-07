@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
 import { ProductAddDto } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,29 +17,25 @@ import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/const
 import { Cron } from '@nestjs/schedule';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
-import { FirebaseRepository } from '../firebase/firebase.repository';
+import Redis from 'ioredis';
+import { InjectRedis } from '@songkeys/nestjs-redis';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
-    private productDataCache = new Map(); //Redis 대체 예정
     private productRankCache = new ProductRankCache(MAX_TRACKING_RANK);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
-        @InjectRepository(FirebaseRepository)
-        private firebaseRepository: FirebaseRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @InjectRedis() private readonly redis: Redis,
         private readonly firebaseService: FirebaseService,
     ) {
         this.initCache();
@@ -63,20 +59,28 @@ export class ProductService {
             .sort('_id')
             .exec();
         const userCountList = await this.trackingProductRepository.getAllUserCount();
-        const rankList = await this.trackingProductRepository.getTotalInfoRankingList();
-        latestData.forEach((data, idx) => {
+        const rankList = await this.productRepository.getTotalInfoRankingList();
+        const initPromise = latestData.map(async (data) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
-            this.productDataCache.set(data._id, {
-                price: data.price,
-                isSoldOut: data.isSoldOut,
-                lowestPrice: data.lowestPrice,
-                userCount: matchProduct ? parseInt(matchProduct.userCount) : 0,
-                updateAt: Date.now() + idx,
-            });
+            const setUserCount = await this.redis.set(
+                `product:${data._id}`,
+                JSON.stringify({
+                    isSoldOut: data.isSoldOut,
+                    price: data.price,
+                    lowestPrice: data.lowestPrice,
+                }),
+            );
+            const zaddUserCount = await this.redis.zadd(
+                'userCount',
+                matchProduct ? parseInt(matchProduct.userCount) : 0,
+                data._id,
+            );
+            return Promise.all([setUserCount, zaddUserCount]);
         });
         rankList.forEach((product) => {
             this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
         });
+        await Promise.all(initPromise);
     }
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
@@ -101,21 +105,20 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const cacheData = await this.productDataCache.get(product.id);
+        const cacheData = await this.redis.zscore('userCount', product.id);
+        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
         const productRank = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
             shop: product.shop,
             imageUrl: product.imageUrl,
-            userCount: cacheData.userCount + 1,
+            userCount: userCount + 1,
         };
         this.productRankCache.update(productRank);
-        this.productDataCache.set(product.id, {
-            ...cacheData,
-            userCount: cacheData.userCount + 1,
-            updateAt: Date.now(),
-        });
+        if (cacheData) {
+            await this.redis.zincrby('userCount', 1, product.id);
+        }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
@@ -127,7 +130,10 @@ export class ProductService {
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const cacheData = await this.redis.get(`product:${id}`);
+            const { price } = cacheData
+                ? JSON.parse(cacheData)
+                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
@@ -148,7 +154,10 @@ export class ProductService {
         const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const { price } = this.productDataCache.get(id) ?? { price: NO_CACHE };
+            const cacheData = await this.redis.get(`product:${id}`);
+            const { price } = cacheData
+                ? JSON.parse(cacheData)
+                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
             return {
                 productName,
@@ -174,11 +183,11 @@ export class ProductService {
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
-        const ranklist = await this.trackingProductRepository.getRankingList();
-        const idx = ranklist.findIndex(({ id }) => id === selectProduct.id);
+        await this.trackingProductRepository.getUserCount(selectProduct.id);
+        const idx = this.productRankCache.findIndex(selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
-        const { price, lowestPrice } = this.productDataCache.get(selectProduct.id);
+        const { price, lowestPrice } = await this.getProductCurrentData(selectProduct.id);
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
@@ -201,18 +210,15 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
-        const cacheData = await this.productDataCache.get(product.productId);
         const prevProduct = this.productRankCache.get(product.productId)?.value;
-        this.productDataCache.set(product.productId, {
-            ...cacheData,
-            userCount: cacheData.userCount - 1,
-            updateAt: Date.now(),
-        });
+        await this.redis.zincrby('userCount', -1, product.productId);
+
         if (!prevProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         prevProduct.userCount--;
-        if (this.productDataCache.size > MAX_TRACKING_RANK) {
+        const productCount = await this.redis.zcard('userCount');
+        if (productCount > MAX_TRACKING_RANK) {
             await this.deleteUpdateCache(prevProduct);
         } else {
             this.productRankCache.update(prevProduct);
@@ -221,18 +227,10 @@ export class ProductService {
     }
 
     async deleteUpdateCache(prevProduct: ProductRankCacheDto) {
-        //Redis 연산으로 대체 예정
-        const rankList = [...this.productDataCache.entries()].sort((a, b) => {
-            const [, infoA] = a;
-            const [, infoB] = b;
-            if (infoB.userCount === infoA.userCount) {
-                return infoB.updateAt - infoA.updateAt;
-            }
-            return infoB.userCount - infoB.userCount;
-        });
-        const [nextDataId, nextDataInfo] = rankList[MAX_TRACKING_RANK];
-
-        if (nextDataInfo.userCount > prevProduct.userCount) {
+        const nextDataId = (await this.redis.zrevrange('userCount', MAX_TRACKING_RANK, MAX_TRACKING_RANK))[0];
+        const cacheData = await this.redis.zscore('userCount', nextDataId);
+        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
+        if (userCount >= prevProduct.userCount) {
             const newProduct = await this.productRepository.findOne({
                 where: { id: nextDataId },
             });
@@ -245,7 +243,7 @@ export class ProductService {
                 productCode: newProduct.productCode,
                 shop: newProduct.shop,
                 imageUrl: newProduct.imageUrl,
-                userCount: nextDataInfo.userCount,
+                userCount: userCount,
             };
             this.productRankCache.update(prevProduct, newProductRanck);
         }
@@ -295,19 +293,26 @@ export class ProductService {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));
         const results = await Promise.all(productCodeList);
-        const updatedDataInfo = results.filter(({ productId, productPrice, isSoldOut }) => {
-            const cache = this.productDataCache.get(productId);
-            if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
-                const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
-                this.productDataCache.set(productId, {
-                    isSoldOut,
-                    price: productPrice,
-                    lowestPrice,
-                });
-                return true;
-            }
-            return false;
-        });
+        const updatedDataInfo: ProductInfoDto[] = [];
+        await Promise.all(
+            results.map(async (data) => {
+                const { productId, productPrice, isSoldOut } = data;
+                const cacheData = await this.redis.get(`product:${productId}`);
+                const cache = JSON.parse(cacheData as string);
+                if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
+                    const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
+                    await this.redis.set(
+                        `product:${productId}`,
+                        JSON.stringify({
+                            isSoldOut,
+                            price: productPrice,
+                            lowestPrice,
+                        }),
+                    );
+                    updatedDataInfo.push(data);
+                }
+            }),
+        );
         if (updatedDataInfo.length > 0) {
             await this.productPriceModel.insertMany(
                 updatedDataInfo.map(({ productId, productPrice, isSoldOut }) => {
@@ -369,14 +374,13 @@ export class ProductService {
                         trackingProduct.isFirst = true;
                         await this.trackingProductRepository.save(trackingProduct);
                     } else if (targetPrice >= productPrice && isFirst && isAlert) {
-                        const deviceInfo = await this.firebaseRepository.findOne({ where: { userId: userId } });
-                        if (deviceInfo) {
-                            notifications.push(this.getMessage(productName, productPrice, imageUrl, deviceInfo.token));
+                        const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
+                        if (firebaseToken) {
+                            notifications.push(this.getMessage(productName, productPrice, imageUrl, firebaseToken));
                             matchedProducts.push(trackingProduct);
                         }
                     }
                 }
-
                 return { notifications, matchedProducts };
             }),
         );
@@ -397,13 +401,14 @@ export class ProductService {
             price: productInfo.productPrice,
             isSoldOut: productInfo.isSoldOut,
         };
-
-        this.productDataCache.set(product.id, {
-            price: productInfo.productPrice,
-            isSoldOut: productInfo.isSoldOut,
-            lowestPrice: productInfo.productPrice,
-            userCount: 0,
-        });
+        this.redis.set(
+            `product:${product.id}`,
+            JSON.stringify({
+                price: productInfo.productPrice,
+                isSoldOut: productInfo.isSoldOut,
+                lowestPrice: productInfo.productPrice,
+            }),
+        );
         this.productPriceModel.create(updatedDataInfo);
         return product;
     }
@@ -412,5 +417,33 @@ export class ProductService {
         const product = await this.findTrackingProductByCode(userId, productCode);
         product.isAlert = !product.isAlert;
         await this.trackingProductRepository.save(product);
+    }
+
+    async getProductCurrentData(productId: string) {
+        const cacheData = await this.redis.get(`product:${productId}`);
+        if (cacheData) {
+            const { price, lowestPrice } = JSON.parse(cacheData);
+            return { price, lowestPrice };
+        }
+        const latestData = await this.productPriceModel
+            .aggregate([
+                {
+                    $match: { productId: productId },
+                },
+                {
+                    $sort: { time: -1 },
+                },
+                {
+                    $group: {
+                        _id: '$productId',
+                        price: { $first: '$price' },
+                        isSoldOut: { $first: '$isSoldOut' },
+                        lowestPrice: { $min: '$price' },
+                    },
+                },
+            ])
+            .exec();
+        const { price, lowestPrice } = latestData[0];
+        return { price, lowestPrice };
     }
 }

@@ -5,18 +5,15 @@ import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
-import { JWTRepository } from './jwt/jwt.repository';
-import { FirebaseRepository } from 'src/firebase/firebase.repository';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRedis } from '@songkeys/nestjs-redis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AuthService {
     constructor(
         @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
         private readonly jwtService: JwtService,
-        private jwtRepository: JWTRepository,
-        @InjectRepository(FirebaseRepository)
-        private firebaseRepository: FirebaseRepository,
+        @InjectRedis() private readonly redis: Redis,
     ) {}
 
     async getAccessToken(user: User): Promise<string> {
@@ -28,7 +25,8 @@ export class AuthService {
 
     async getRefreshToken(user: User): Promise<string> {
         const refreshToken = this.jwtService.sign({ id: user.id }, { secret: REFRESH_TOKEN_SECRETS, expiresIn: '2w' });
-        return this.jwtRepository.saveToken(user.id, refreshToken);
+        await this.redis.set(`refreshToken:${user.id}`, refreshToken);
+        return refreshToken;
     }
 
     async validateUser(email: string, password: string): Promise<Record<string, string>> {
@@ -55,7 +53,8 @@ export class AuthService {
 
     async addFirebaseToken(userId: string, token: string) {
         try {
-            return await this.firebaseRepository.saveToken(userId, token);
+            await this.redis.set(`firebaseToken:${userId}`, token);
+            return token;
         } catch (e) {
             throw new HttpException('Firebase 토큰 등록 실패', HttpStatus.INTERNAL_SERVER_ERROR);
         }

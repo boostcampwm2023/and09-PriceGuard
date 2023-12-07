@@ -38,6 +38,9 @@ export class ProductRankCache {
     private add(node: CacheNode) {
         let prev = this.tail.prev;
         while (prev.value.userCount <= node.value.userCount) {
+            if (prev.value.userCount === node.value.userCount && prev.value.id > node.value.id) {
+                break;
+            }
             if (prev === this.head) {
                 break;
             }
@@ -70,7 +73,7 @@ export class ProductRankCache {
 
     findIndex(key: string) {
         let node = this.head.next;
-        let idx = -1;
+        let idx = 0;
         while (node.key !== key) {
             idx++;
             if (this.count <= idx) {
