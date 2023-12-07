@@ -1,4 +1,4 @@
-package app.priceguard.ui.home.list
+package app.priceguard.service
 
 import android.content.Context
 import android.util.Log

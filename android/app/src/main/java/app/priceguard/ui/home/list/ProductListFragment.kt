@@ -13,6 +13,7 @@ import app.priceguard.R
 import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
+import app.priceguard.service.UpdateAlarmWorker
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
