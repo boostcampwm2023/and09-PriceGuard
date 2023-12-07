@@ -108,4 +108,6 @@
     <string name="dark_mode">다크 모드</string>
     <string name="price_text">가격</string>
     <string name="date_text">시간</string>
+    <string name="edit_period">그래프 주기 설정</string>
+    <string name="go_back">뒤로가기</string>
 </resources>
