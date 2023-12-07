@@ -145,7 +145,7 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.imageUrl ?: "",
                             dto.targetPrice ?: 0,
                             dto.price ?: 0,
-                            dto.isAlert ?: false,
+                            dto.isAlert ?: true,
                             GraphDataConverter().toDataset(dto.priceData)
                         )
                     } ?: listOf()
