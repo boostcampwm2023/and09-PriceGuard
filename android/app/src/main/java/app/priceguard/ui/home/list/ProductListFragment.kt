@@ -107,7 +107,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun collectEvent() {
-        repeatOnStarted {
+        viewLifecycleOwner.repeatOnStarted {
             productListViewModel.events.collect { event ->
                 when (event) {
                     ProductErrorState.PERMISSION_DENIED -> {
