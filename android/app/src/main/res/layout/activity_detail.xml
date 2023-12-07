@@ -30,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
+                app:navigationContentDescription="@string/go_back"
                 app:navigationIcon="@drawable/ic_back" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -94,6 +95,7 @@
                             android:layout_height="48dp"
                             android:layout_marginTop="12dp"
                             android:layout_marginEnd="12dp"
+                            android:contentDescription="@string/share_product"
                             app:icon="@drawable/ic_share"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/iv_detail_product" />
@@ -118,6 +120,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/current_price_info(@string/price(viewModel.state.formattedPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -210,6 +213,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:importantForAccessibility="no"
                             android:text="@string/lowest_price"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -220,6 +224,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/lowest_price_info(@string/price(viewModel.state.formattedLowestPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedLowestPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textStyle="bold"
@@ -232,6 +237,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:importantForAccessibility="no"
                             android:text="@string/target_price"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
@@ -243,6 +249,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/target_price_info(@string/price(viewModel.state.formattedTargetPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedTargetPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textStyle="bold"
@@ -267,6 +274,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@string/edit_period"
                             app:checkedButton="@+id/btn_period_day"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -314,6 +322,7 @@
                             android:layout_width="0dp"
                             android:layout_height="300dp"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@string/price_track_graph"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/mbtg_graph_period" />

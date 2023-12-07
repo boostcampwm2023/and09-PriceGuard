@@ -34,7 +34,7 @@
     <string name="fragment_recommend_title">인기 상품</string>
     <string name="fragment_list_title">상품 목록</string>
     <string name="menu_refresh">refresh</string>
-    <string name="product_list_add_product">add product</string>
+    <string name="product_list_add_product">상품 추가</string>
     <string name="recommand_rank">#%1$d</string>
     <string name="back">뒤로</string>
     <string name="next">다음</string>
@@ -108,4 +108,22 @@
     <string name="dark_mode">다크 모드</string>
     <string name="price_text">가격</string>
     <string name="date_text">시간</string>
+    <string name="edit_period">그래프 주기 설정</string>
+    <string name="go_back">뒤로가기</string>
+    <string name="single_product_notification_toggle">상품 %s 에 대한 개별 알림 토글</string>
+    <string name="target_price_delta">현재가격은 설정한 목표가격의 %s</string>
+    <string name="current_price_info">현재가격 %s</string>
+    <string name="current_rank_info">인기 순위 %d위</string>
+    <string name="product_11st">11번가 상품</string>
+    <string name="my_name_info">내 이름, %s</string>
+    <string name="my_email_info">내 E-mail, %s</string>
+    <string name="link_confirm_button">링크 확인 버튼</string>
+    <string name="selected_product_image">선택한 상품의 이미지</string>
+    <string name="product_name_info">상품명 %s</string>
+    <string name="shopping_mall_name_info">쇼핑몰 이름, %s</string>
+    <string name="target_price_input">목표가격 입력란</string>
+    <string name="target_price_percent_and_price">목표가격 %1$s, %2$s으로 설정됨</string>
+    <string name="target_price_80">현재 가격의 80%</string>
+    <string name="lowest_price_info">역대 최저가 %s</string>
+    <string name="target_price_info">목표 가격 %s 으로 설정됨</string>
 </resources>
