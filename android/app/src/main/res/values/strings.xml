@@ -124,4 +124,6 @@
     <string name="target_price_input">목표가격 입력란</string>
     <string name="target_price_percent_and_price">목표가격 %1$s, %2$s으로 설정됨</string>
     <string name="target_price_80">현재 가격의 80%</string>
+    <string name="lowest_price_info">역대 최저가 %s</string>
+    <string name="target_price_info">목표 가격 %s 으로 설정됨</string>
 </resources>
