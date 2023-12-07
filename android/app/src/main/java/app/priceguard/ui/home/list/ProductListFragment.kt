@@ -67,6 +67,10 @@ class ProductListFragment : Fragment() {
                 intent.putExtra("productCode", productCode)
                 startActivity(intent)
             }
+
+            override fun onToggle(productCode: String) {
+                productListViewModel.switchAlert(productCode)
+            }
         }
 
         val adapter = ProductSummaryAdapter(listener)

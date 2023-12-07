@@ -264,4 +264,18 @@ class ProductRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun switchAlert(productCode: String, isRenewed: Boolean): RepositoryResult<Boolean, ProductErrorState> {
+        return when (val response = getApiResult { productAPI.updateAlert(productCode) }) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code, isRenewed) {
+                    deleteProduct(productCode, true)
+                }
+            }
+        }
+    }
 }

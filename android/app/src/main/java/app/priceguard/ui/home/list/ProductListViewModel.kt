@@ -66,6 +66,18 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
+    fun switchAlert(productCode: String) {
+        viewModelScope.launch {
+            when (val result = productRepository.switchAlert(productCode)) {
+                is RepositoryResult.Error -> {
+                    _events.emit(result.errorState)
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
         return round((price - targetPrice).toFloat() / (if (price == 0) 1 else price) * 1000) / 10
     }

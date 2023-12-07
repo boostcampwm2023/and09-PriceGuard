@@ -57,21 +57,20 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                     msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
                     setDisCount(item.discountPercent)
-                    setSwitchListener()
+                    setSwitchListener(item.productCode)
                 }
             }
         }
 
-        private fun ItemProductSummaryBinding.setSwitchListener() {
+        private fun ItemProductSummaryBinding.setSwitchListener(productCode: String) {
             if (msProduct.isChecked.not()) {
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
             msProduct.setOnCheckedChangeListener { _, isChecked ->
+                productSummaryClickListener.onToggle(productCode)
                 if (isChecked) {
-                    // TODO: 푸쉬 알람 설정 추가
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
                 } else {
-                    // TODO: 푸쉬 알람 설정 제거
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
                 }
             }
