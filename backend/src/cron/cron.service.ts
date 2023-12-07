@@ -101,7 +101,28 @@ export class CronService {
             token,
         };
     }
+    async findMatchedProducts(trackingList: TrackingProduct[], product: ProductInfoDto) {
+        const { productPrice, productCode, productName, imageUrl } = product;
+        const notifications = [];
+        const matchedProducts = [];
 
+        for (const trackingProduct of trackingList) {
+            const { userId, targetPrice, isFirst, isAlert } = trackingProduct;
+            if (!isFirst && targetPrice < productPrice) {
+                trackingProduct.isFirst = true;
+                await this.trackingProductRepository.save(trackingProduct);
+            } else if (targetPrice >= productPrice && isFirst && isAlert) {
+                const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
+                if (firebaseToken) {
+                    notifications.push(
+                        this.getMessage(productCode, productName, productPrice, imageUrl, firebaseToken),
+                    );
+                    matchedProducts.push(trackingProduct);
+                }
+            }
+        }
+        return { notifications, matchedProducts };
+    }
     async getNotifications(
         productInfo: ProductInfoDto[],
     ): Promise<{ messages: Message[]; products: TrackingProduct[] }> {
@@ -118,27 +139,9 @@ export class CronService {
             trackingMap.set(tracking.productId, [...products, tracking]);
         });
         const results = await Promise.all(
-            productInfo.map(async ({ productId, productCode, productName, productPrice, imageUrl }) => {
-                const trackingList = productId ? trackingMap.get(productId) || [] : [];
-                const notifications = [];
-                const matchedProducts = [];
-
-                for (const trackingProduct of trackingList) {
-                    const { userId, targetPrice, isFirst, isAlert } = trackingProduct;
-                    if (!isFirst && targetPrice < productPrice) {
-                        trackingProduct.isFirst = true;
-                        await this.trackingProductRepository.save(trackingProduct);
-                    } else if (targetPrice >= productPrice && isFirst && isAlert) {
-                        const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
-                        if (firebaseToken) {
-                            notifications.push(
-                                this.getMessage(productCode, productName, productPrice, imageUrl, firebaseToken),
-                            );
-                            matchedProducts.push(trackingProduct);
-                        }
-                    }
-                }
-                return { notifications, matchedProducts };
+            productInfo.map(async (product) => {
+                const trackingList = product.productId ? trackingMap.get(product.productId) || [] : [];
+                return await this.findMatchedProducts(trackingList, product);
             }),
         );
 
