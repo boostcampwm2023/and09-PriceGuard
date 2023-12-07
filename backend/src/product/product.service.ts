@@ -124,11 +124,8 @@ export class ProductService {
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const cacheData = await this.redis.get(`product:${id}`);
-            const { price } = cacheData
-                ? JSON.parse(cacheData)
-                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
+            const { price } = priceData[priceData.length - 1];
             return {
                 productName,
                 productCode,
@@ -148,11 +145,8 @@ export class ProductService {
         const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const cacheData = await this.redis.get(`product:${id}`);
-            const { price } = cacheData
-                ? JSON.parse(cacheData)
-                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
+            const { price } = priceData[priceData.length - 1];
             return {
                 productName,
                 productCode,
@@ -164,7 +158,6 @@ export class ProductService {
             };
         });
         const result = await Promise.all(recommendListInfo);
-        console.log(recommendList);
         return result;
     }
 
@@ -182,7 +175,8 @@ export class ProductService {
         const idx = this.productRankCache.findIndex(selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
-        const { price, lowestPrice } = await this.getProductCurrentData(selectProduct.id);
+        const { price } = priceData[priceData.length - 1];
+        const lowestPrice = Math.min(...priceData.map((item) => item.price));
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
