@@ -1,5 +1,6 @@
 package app.priceguard.ui.additem.setprice
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -212,10 +214,20 @@ class SetTargetPriceFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(R.string.confirm) { _, _ -> requireActivity().finish() }
-            .setOnDismissListener { requireActivity().finish() }
+            .setPositiveButton(R.string.confirm) { _, _ -> goToHomeActivity() }
+            .setOnDismissListener { goToHomeActivity() }
             .create()
             .show()
+    }
+
+    private fun goToHomeActivity() {
+        val activityIntent = requireActivity().intent
+        if (activityIntent?.action == Intent.ACTION_SEND) {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        requireActivity().finish()
     }
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
