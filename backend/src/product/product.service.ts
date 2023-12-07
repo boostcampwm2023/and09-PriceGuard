@@ -164,6 +164,7 @@ export class ProductService {
             };
         });
         const result = await Promise.all(recommendListInfo);
+        console.log(recommendList);
         return result;
     }
 
@@ -206,16 +207,14 @@ export class ProductService {
         const product = await this.findTrackingProductByCode(userId, productCode);
         const prevProduct = this.productRankCache.get(product.productId)?.value;
         await this.redis.zincrby('userCount', -1, product.productId);
-
-        if (!prevProduct) {
-            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
-        prevProduct.userCount--;
-        const productCount = await this.redis.zcard('userCount');
-        if (productCount > MAX_TRACKING_RANK) {
-            await this.deleteUpdateCache(prevProduct);
-        } else {
-            this.productRankCache.update(prevProduct);
+        if (prevProduct) {
+            prevProduct.userCount--;
+            const productCount = await this.redis.zcard('userCount');
+            if (productCount > MAX_TRACKING_RANK) {
+                await this.deleteUpdateCache(prevProduct);
+            } else {
+                this.productRankCache.update(prevProduct);
+            }
         }
         await this.trackingProductRepository.remove(product);
     }
@@ -240,7 +239,9 @@ export class ProductService {
                 userCount: userCount,
             };
             this.productRankCache.update(prevProduct, newProductRanck);
+            return;
         }
+        this.productRankCache.update(prevProduct);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
