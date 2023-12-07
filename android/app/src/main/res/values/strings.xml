@@ -42,7 +42,7 @@
     <string name="confirm_product_title">선택하신 상품을\n확인해 주세요</string>
     <string name="set_price_title">알림받을 목표가격을\n설정해 주세요</string>
     <string name="register_link">링크를 입력하세요.</string>
-    <string name="how_get_product_link">상품 링크는 어떻게 얻나요?</string>
+    <string name="how_get_product_link">\uD83D\uDD3A상품 링크는 어떻게 얻나요?</string>
     <string name="want_notification">에 알람을 받고 싶습니다.</string>
     <string name="goto_shopping_mall">쇼핑몰로 이동</string>
     <string name="add_to_tracking_list">트래킹 목록에 추가</string>
