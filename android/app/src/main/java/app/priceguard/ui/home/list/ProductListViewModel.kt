@@ -54,7 +54,7 @@ class ProductListViewModel @Inject constructor(
                             data.productCode,
                             graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
                             calculateDiscountRate(data.targetPrice, data.price),
-                            true
+                            data.isAlert
                         )
                     }
                 }

@@ -54,6 +54,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
                     setDisCount(item.discountPercent)
                     setSwitchListener()
