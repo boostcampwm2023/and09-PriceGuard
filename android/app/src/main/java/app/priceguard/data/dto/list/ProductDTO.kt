@@ -11,5 +11,6 @@ data class ProductDTO(
     val imageUrl: String? = null,
     val targetPrice: Int? = null,
     val price: Int? = null,
+    val isAlert: Boolean? = null,
     val priceData: List<PriceDataDTO>? = null
 )
