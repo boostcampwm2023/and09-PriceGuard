@@ -19,7 +19,7 @@ export class UserExceptionFilter implements ExceptionFilter {
             this.setResponse(response, exception.getStatus(), exception.getMessage());
             return;
         }
-        this.setResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, '서버 내부 에러');
+        this.setResponse(response, exception.getStatus(), exception.message);
     }
 
     private setResponse(response: Response, statusCode: number, msg: string) {

@@ -140,6 +140,7 @@ const trackingProductListExample = [
         imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B091516D2Z/B.jpg?1700527038699',
         targetPrice: 30000,
         price: 20000,
+        isAlert: true,
         priceData: priceDataExample,
     },
     {
@@ -149,6 +150,7 @@ const trackingProductListExample = [
         imageUrl: 'https://cdn.011st.com/11dims/strip/false/11src/asin/B01HZ0YT2C/B.jpg?1700390686058',
         targetPrice: 20000,
         price: 15000,
+        isAlert: true,
         priceData: priceDataExample,
     },
 ];
@@ -350,6 +352,18 @@ export class TrackingProductsNotFound {
     statusCode: number;
     @ApiProperty({
         example: '상품을 찾을 수 없습니다.',
+        description: '메시지',
+    })
+    message: string;
+}
+export class ToggleAlertSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '알림 설정 성공',
         description: '메시지',
     })
     message: string;
