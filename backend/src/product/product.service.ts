@@ -333,11 +333,20 @@ export class ProductService {
             }
         }
     }
-    getMessage(productName: string, productPrice: number, imageUrl: string, token: string): Message {
+    getMessage(
+        productCode: string,
+        productName: string,
+        productPrice: number,
+        imageUrl: string,
+        token: string,
+    ): Message {
         return {
             notification: {
                 title: '목표 가격 이하로 내려갔습니다!',
                 body: `${productName}의 현재 가격은 ${productPrice}원 입니다.`,
+            },
+            data: {
+                productCode,
             },
             android: {
                 notification: {
@@ -364,7 +373,7 @@ export class ProductService {
             trackingMap.set(tracking.productId, [...products, tracking]);
         });
         const results = await Promise.all(
-            productInfo.map(async ({ productId, productName, productPrice, imageUrl }) => {
+            productInfo.map(async ({ productId, productCode, productName, productPrice, imageUrl }) => {
                 const trackingList = productId ? trackingMap.get(productId) || [] : [];
                 const notifications = [];
                 const matchedProducts = [];
@@ -377,7 +386,9 @@ export class ProductService {
                     } else if (targetPrice >= productPrice && isFirst && isAlert) {
                         const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
                         if (firebaseToken) {
-                            notifications.push(this.getMessage(productName, productPrice, imageUrl, firebaseToken));
+                            notifications.push(
+                                this.getMessage(productCode, productName, productPrice, imageUrl, firebaseToken),
+                            );
                             matchedProducts.push(trackingProduct);
                         }
                     }
