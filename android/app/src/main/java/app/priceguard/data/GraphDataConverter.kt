@@ -35,24 +35,31 @@ class GraphDataConverter {
     ): List<ProductChartData> {
         val currentTime = getCurrentTime()
         val startTime = getStartTime(period, currentTime)
-        val sortedList = list.sortedBy { it.x }.filter { it.x in startTime..currentTime }
+        val sortedList = list.sortedBy { it.x }
+        val filteredList = sortedList.filter { it.x in startTime..currentTime }
+        val sievedList = sortedList.filter { it.x !in startTime..currentTime }
+        val startData = if (sievedList.none()) {
+            list.first()
+        } else {
+            sievedList.last()
+        }
 
-        return if (sortedList.isEmpty()) {
+        return if (filteredList.isEmpty()) {
             listOf(
-                ProductChartData(startTime, list.last().y, list.last().valid),
+                ProductChartData(startTime, startData.y, startData.valid),
                 ProductChartData(currentTime, list.last().y, list.last().valid)
             )
         } else {
             listOf(
                 ProductChartData(
                     startTime,
-                    sortedList.first().y,
-                    sortedList.first().valid
+                    startData.y,
+                    startData.valid
                 )
-            ) + sortedList + ProductChartData(
+            ) + filteredList + ProductChartData(
                 currentTime,
-                sortedList.last().y,
-                sortedList.last().valid
+                filteredList.last().y,
+                filteredList.last().valid
             )
         }
     }
