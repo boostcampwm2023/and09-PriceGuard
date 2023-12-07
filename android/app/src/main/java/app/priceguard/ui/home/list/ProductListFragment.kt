@@ -73,6 +73,7 @@ class ProductListFragment : Fragment() {
             }
 
             override fun onToggle(productCode: String) {
+                productListViewModel.updateProductAlarmToggle(productCode)
                 if (workRequestSet.contains(productCode)) {
                     workRequestSet.remove(productCode)
                 } else {

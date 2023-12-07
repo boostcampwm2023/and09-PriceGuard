@@ -66,6 +66,16 @@ class ProductListViewModel @Inject constructor(
         }
     }
 
+    fun updateProductAlarmToggle(productCode: String) {
+        _productList.value = productList.value.mapIndexed { i, product ->
+            if (product.productCode == productCode) {
+                product.copy(isAlarmOn = productList.value[i].isAlarmOn.not())
+            } else {
+                product
+            }
+        }
+    }
+
     private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
         return round((price - targetPrice).toFloat() / (if (price == 0) 1 else price) * 1000) / 10
     }
