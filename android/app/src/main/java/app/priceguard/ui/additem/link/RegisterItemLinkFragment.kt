@@ -41,8 +41,18 @@ class RegisterItemLinkFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = registerItemLinkViewModel
+
+        setLinkText()
+
         initCollector()
         initEvent()
+    }
+
+    private fun setLinkText() {
+        arguments?.getString("link")?.let { linkText ->
+            binding.etRegisterItemLink.setText(linkText)
+            registerItemLinkViewModel.updateLink(linkText)
+        }
     }
 
     private fun initCollector() {
