@@ -66,6 +66,10 @@ class RecommendedProductFragment : Fragment() {
                 intent.putExtra("productCode", productCode)
                 startActivity(intent)
             }
+
+            override fun onToggle(productCode: String) {
+                return
+            }
         }
 
         val adapter = ProductSummaryAdapter(listener)
