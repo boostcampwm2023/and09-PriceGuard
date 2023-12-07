@@ -1,4 +1,0 @@
-[submodule "android/materialchart"]
-	path = android/materialchart
-	url = https://github.com/Taewan-P/material-android-chart
-	branch = release
