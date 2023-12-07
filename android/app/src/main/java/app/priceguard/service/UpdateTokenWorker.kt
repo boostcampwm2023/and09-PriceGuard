@@ -1,13 +1,24 @@
 package app.priceguard.service
 
 import android.content.Context
+import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.token.TokenRepository
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
 
-class UpdateTokenWorker(appContext: Context, workerParams: WorkerParameters) :
+@HiltWorker
+class UpdateTokenWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val tokenRepository: TokenRepository
+) :
     CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -15,8 +26,20 @@ class UpdateTokenWorker(appContext: Context, workerParams: WorkerParameters) :
         return storeToken(token)
     }
 
-    private fun storeToken(token: String): Result {
-        // TODO: 토큰과 현재 타임스탬프 서버로 전송 및 응답 반환
-        return Result.success()
+    private suspend fun storeToken(token: String): Result {
+        return try {
+            when (tokenRepository.updateFirebaseToken(token)) {
+                is RepositoryResult.Error -> {
+                    Result.failure()
+                }
+
+                is RepositoryResult.Success -> {
+                    Result.success()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Update Token Error", e.message.toString())
+            Result.failure()
+        }
     }
 }
