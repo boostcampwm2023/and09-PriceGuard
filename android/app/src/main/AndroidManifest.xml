@@ -76,11 +76,6 @@
                     android:host="product"
                     android:scheme="priceguard" />
             </intent-filter>
-
-                <data
-                    android:host="product"
-                    android:scheme="priceguard" />
-            </intent-filter>
         </activity>
 
         <activity
