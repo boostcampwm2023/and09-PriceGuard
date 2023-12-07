@@ -145,13 +145,17 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
+        super.onStop()
         workRequestSet.forEach { productCode ->
             WorkManager.getInstance(requireContext())
                 .enqueue(UpdateAlarmWorker.createWorkRequest(productCode))
         }
         workRequestSet.clear()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

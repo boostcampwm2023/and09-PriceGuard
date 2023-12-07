@@ -67,7 +67,7 @@ class RecommendedProductFragment : Fragment() {
                 startActivity(intent)
             }
 
-            override fun onToggle(productCode: String) {
+            override fun onToggle(productCode: String, checked: Boolean) {
                 return
             }
         }
