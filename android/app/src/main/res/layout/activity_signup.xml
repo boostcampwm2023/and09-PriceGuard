@@ -38,6 +38,7 @@
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
                     app:navigationIcon="@drawable/ic_back"
+                    app:navigationContentDescription="@string/go_back"
                     app:title="@string/sign_up" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
