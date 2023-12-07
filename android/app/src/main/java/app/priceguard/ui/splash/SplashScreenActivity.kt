@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.viewModels
@@ -77,7 +76,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun receivePushAlarm() {
         val productCode = intent.getStringExtra("productCode") ?: return
-        Log.d("FCM Data", productCode)
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra("productCode", productCode)
         intent.putExtra("directed", true)
