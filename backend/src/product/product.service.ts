@@ -62,7 +62,7 @@ export class ProductService {
         const rankList = await this.productRepository.getTotalInfoRankingList();
         const initPromise = latestData.map(async (data) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
-            const setPromise = await this.redis.set(
+            const setUserCount = await this.redis.set(
                 `product:${data._id}`,
                 JSON.stringify({
                     isSoldOut: data.isSoldOut,
@@ -70,12 +70,12 @@ export class ProductService {
                     lowestPrice: data.lowestPrice,
                 }),
             );
-            const zaddPromise = await this.redis.zadd(
+            const zaddUserCount = await this.redis.zadd(
                 'userCount',
                 matchProduct ? parseInt(matchProduct.userCount) : 0,
                 data._id,
             );
-            return Promise.all([setPromise, zaddPromise]);
+            return Promise.all([setUserCount, zaddUserCount]);
         });
         rankList.forEach((product) => {
             this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
@@ -288,7 +288,7 @@ export class ProductService {
         });
     }
 
-    @Cron('*/10 * * * * *')
+    @Cron('* */10 * * * *')
     async cyclicPriceChecker() {
         const productList = await this.productRepository.find({ select: { id: true, productCode: true } });
         const productCodeList = productList.map(({ productCode, id }) => getProductInfo11st(productCode, id));

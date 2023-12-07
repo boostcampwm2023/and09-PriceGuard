@@ -32,7 +32,6 @@ export class ProductRankCache {
         if (this.count > this.maxSize) {
             const lowestNode = this.getLowestNode();
             this.delete(lowestNode);
-            console.log(node);
         }
     }
 
