@@ -74,6 +74,7 @@
                             android:layout_margin="16dp"
                             android:background="@drawable/bg_circle"
                             android:gravity="center"
+                            android:importantForAccessibility="no"
                             android:text="@{viewModel.state.firstName}"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:textColor="?attr/colorSurface"
@@ -87,6 +88,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:text="@{viewModel.state.name}"
+                            android:contentDescription="@{@string/my_name_info(viewModel.state.name)}"
                             android:textAppearance="?attr/textAppearanceBodyLarge"
                             app:layout_constraintBottom_toTopOf="@id/tv_my_page_email"
                             app:layout_constraintStart_toEndOf="@id/tv_my_page_profile"
@@ -97,6 +99,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@{viewModel.state.email}"
+                            android:contentDescription="@{@string/my_email_info(viewModel.state.email)}"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
@@ -114,7 +117,8 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/view_my_page_background" />
+                    app:layout_constraintTop_toBottomOf="@id/view_my_page_background"
+                    tools:listitem="@layout/item_my_page_list" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

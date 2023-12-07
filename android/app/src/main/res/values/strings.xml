@@ -115,4 +115,6 @@
     <string name="current_price_info">현재가격 %s</string>
     <string name="current_rank_info">인기 순위 %d위</string>
     <string name="product_11st">11번가 상품</string>
+    <string name="my_name_info">내 이름, %s</string>
+    <string name="my_email_info">내 E-mail, %s</string>
 </resources>
