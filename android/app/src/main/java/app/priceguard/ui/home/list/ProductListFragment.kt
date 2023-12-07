@@ -22,14 +22,12 @@ import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.Job
 
 @AndroidEntryPoint
 class ProductListFragment : Fragment() {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
-    private lateinit var flowCollectJob: Job
 
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
@@ -96,7 +94,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun collectEvent() {
-        flowCollectJob = repeatOnStarted {
+        viewLifecycleOwner.repeatOnStarted {
             productListViewModel.events.collect { event ->
                 when (event) {
                     ProductErrorState.PERMISSION_DENIED -> {
@@ -130,7 +128,6 @@ class ProductListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        flowCollectJob.cancel()
         _binding = null
     }
 }
