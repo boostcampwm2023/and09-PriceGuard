@@ -27,8 +27,9 @@ class UpdateTokenWorker @AssistedInject constructor(
     }
 
     private suspend fun storeToken(token: String): Result {
+        val accessToken = tokenRepository.getAccessToken() ?: return Result.failure()
         return try {
-            when (tokenRepository.updateFirebaseToken(token)) {
+            when (tokenRepository.updateFirebaseToken(accessToken, token)) {
                 is RepositoryResult.Error -> {
                     Result.failure()
                 }

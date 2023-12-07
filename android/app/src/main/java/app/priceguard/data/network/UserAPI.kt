@@ -8,6 +8,7 @@ import app.priceguard.data.dto.signup.SignupRequest
 import app.priceguard.data.dto.signup.SignupResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
@@ -25,6 +26,7 @@ interface UserAPI {
 
     @PUT("firebase/token")
     suspend fun updateFirebaseToken(
+        @Header("Authorization") authToken: String,
         @Body request: FirebaseTokenUpdateRequest
     ): Response<FirebaseTokenUpdateResponse>
 }

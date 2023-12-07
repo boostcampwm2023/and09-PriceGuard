@@ -22,6 +22,23 @@ class TokenRepositoryImpl @Inject constructor(
     private val authAPI: AuthAPI,
     private val userAPI: UserAPI
 ) : TokenRepository {
+    private fun <T> handleError(
+        code: Int?
+    ): RepositoryResult<T, TokenErrorState> {
+        return when (code) {
+            401 -> {
+                RepositoryResult.Error(TokenErrorState.UNAUTHORIZED)
+            }
+
+            410 -> {
+                RepositoryResult.Error(TokenErrorState.EXPIRED)
+            }
+
+            else -> {
+                RepositoryResult.Error(TokenErrorState.UNDEFINED_ERROR)
+            }
+        }
+    }
 
     override suspend fun storeTokens(accessToken: String, refreshToken: String) {
         tokenDataSource.saveTokens(accessToken, refreshToken)
@@ -44,10 +61,10 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateFirebaseToken(firebaseToken: String): RepositoryResult<Boolean, TokenErrorState> {
+    override suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String): RepositoryResult<Boolean, TokenErrorState> {
         return when (
             val response =
-                getApiResult { userAPI.updateFirebaseToken(FirebaseTokenUpdateRequest(firebaseToken)) }
+                getApiResult { userAPI.updateFirebaseToken("Bearer $accessToken", FirebaseTokenUpdateRequest(firebaseToken)) }
         ) {
             is APIResult.Success -> {
                 RepositoryResult.Success(true)
@@ -90,23 +107,5 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun clearTokens() {
         Firebase.messaging.deleteToken()
         tokenDataSource.clearTokens()
-    }
-
-    private fun <T> handleError(
-        code: Int?
-    ): RepositoryResult<T, TokenErrorState> {
-        return when (code) {
-            401 -> {
-                RepositoryResult.Error(TokenErrorState.UNAUTHORIZED)
-            }
-
-            410 -> {
-                RepositoryResult.Error(TokenErrorState.EXPIRED)
-            }
-
-            else -> {
-                RepositoryResult.Error(TokenErrorState.UNDEFINED_ERROR)
-            }
-        }
     }
 }
