@@ -46,8 +46,8 @@ class UpdateAlarmWorker @AssistedInject constructor(
 
     companion object {
         const val ARGUMENT_KEY = "productCode"
-        fun createWorkRequest(inputData: String): OneTimeWorkRequest {
-            val inputData = Data.Builder().putString(ARGUMENT_KEY, inputData).build()
+        fun createWorkRequest(inputString: String): OneTimeWorkRequest {
+            val inputData = Data.Builder().putString(ARGUMENT_KEY, inputString).build()
             val constraints = Constraints.Builder().build()
             return OneTimeWorkRequestBuilder<UpdateAlarmWorker>()
                 .setInputData(inputData)
