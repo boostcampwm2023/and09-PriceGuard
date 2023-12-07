@@ -34,3 +34,4 @@ export const TOKEN_URI = process.env.TOKEN_URI;
 export const AUTH_PROVIDER_X509_CERT_URL = process.env.AUTH_PROVIDER_X509_CERT_URL;
 export const CLIENT_X509_CERT_URL = process.env.CLIENT_X509_CERT_URL;
 export const UNIVERSE_DOMAIN = process.env.UNIVERSE_DOMAIN;
+export const CHANNEL_ID = process.env.CHANNEL_ID;
