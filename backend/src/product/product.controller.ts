@@ -48,7 +48,6 @@ import {
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
-import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
 
 @ApiBearerAuth()
@@ -158,12 +157,6 @@ export class ProductController {
     async deleteProduct(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
         await this.productService.deleteProduct(req.user.id, productCode);
         return { statusCode: HttpStatus.OK, message: '추적 상품 삭제 성공' };
-    }
-
-    @Post('/mongoTest')
-    async testMongo(@Body() productPriceDto: ProductPriceDto) {
-        await this.productService.mongo(productPriceDto);
-        return { statusCode: HttpStatus.OK, message: 'mongoDB 연결 테스트 성공' };
     }
 
     @ApiOperation({ summary: '추적 상품 알림 설정 API', description: '추적 상품에 대한 알림을 설정한다.' })

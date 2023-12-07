@@ -11,7 +11,6 @@ import { ProductDetailsDto } from 'src/dto/product.details.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
-import { ProductPriceDto } from 'src/dto/product.price.dto';
 import { PriceDataDto } from 'src/dto/price.data.dto';
 import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
 import { ProductRankCache } from 'src/utils/cache';
@@ -258,11 +257,6 @@ export class ProductService {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         return trackingProduct;
-    }
-
-    async mongo(productPriceDto: ProductPriceDto) {
-        const newData = new this.productPriceModel(productPriceDto);
-        return newData.save();
     }
 
     async getPriceData(productId: string, days: number): Promise<PriceDataDto[]> {
