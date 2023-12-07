@@ -16,6 +16,14 @@ import app.priceguard.materialchart.data.GraphMode
 class ProductSummaryAdapter(private val productSummaryClickListener: ProductSummaryClickListener) :
     ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
 
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).productCode.toLong()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemProductSummaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
