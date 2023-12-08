@@ -76,18 +76,21 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
         }
 
         private fun ItemProductSummaryBinding.setSwitchListener(item: ProductSummary) {
-            if (msProduct.isChecked.not()) {
-                msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
-            }
+            updateThumbIcon(msProduct.isChecked)
+
             msProduct.setOnCheckedChangeListener { _, isChecked ->
-                productSummaryClickListener.onToggle(item.productCode, msProduct.isChecked)
-                if (isChecked) {
-                    msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
-                } else {
-                    msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
-                }
+                productSummaryClickListener.onToggle(item.productCode, isChecked)
+                updateThumbIcon(isChecked)
             }
             msProduct.contentDescription = msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
+        }
+
+        private fun ItemProductSummaryBinding.updateThumbIcon(checked: Boolean) {
+            if (checked) {
+                msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
+            } else {
+                msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
+            }
         }
 
         private fun ItemProductSummaryBinding.setDiscount(discount: Float) {
