@@ -199,25 +199,25 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
-        const prevProduct = this.productRankCache.get(product.productId)?.value;
+        const currentProduct = this.productRankCache.get(product.productId)?.value;
         await this.redis.zincrby('userCount', -1, product.productId);
-        if (prevProduct) {
-            prevProduct.userCount--;
+        if (currentProduct) {
+            currentProduct.userCount--;
             const productCount = await this.redis.zcard('userCount');
             if (productCount > MAX_TRACKING_RANK) {
-                await this.deleteUpdateCache(prevProduct);
+                await this.deleteUpdateCache(currentProduct);
             } else {
-                this.productRankCache.update(prevProduct);
+                this.productRankCache.update(currentProduct);
             }
         }
         await this.trackingProductRepository.remove(product);
     }
 
-    async deleteUpdateCache(prevProduct: ProductRankCacheDto) {
+    async deleteUpdateCache(currentProduct: ProductRankCacheDto) {
         const nextDataId = (await this.redis.zrevrange('userCount', MAX_TRACKING_RANK, MAX_TRACKING_RANK))[0];
         const cacheData = await this.redis.zscore('userCount', nextDataId);
         const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
-        if (userCount >= prevProduct.userCount) {
+        if (userCount >= currentProduct.userCount) {
             const newProduct = await this.productRepository.findOne({
                 where: { id: nextDataId },
             });
@@ -232,10 +232,10 @@ export class ProductService {
                 imageUrl: newProduct.imageUrl,
                 userCount: userCount,
             };
-            this.productRankCache.update(prevProduct, newProductRanck);
+            this.productRankCache.update(currentProduct, newProductRanck);
             return;
         }
-        this.productRankCache.update(prevProduct);
+        this.productRankCache.update(currentProduct);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
