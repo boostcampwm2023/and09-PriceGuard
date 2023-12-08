@@ -2,10 +2,11 @@ package app.priceguard.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.graph.ProductChartDataset
-import app.priceguard.data.network.ProductRepositoryResult
-import app.priceguard.data.repository.ProductRepository
+import app.priceguard.data.GraphDataConverter
+import app.priceguard.data.graph.ProductChartData
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.NumberFormat
@@ -20,8 +21,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ProductDetailViewModel @Inject constructor(val productRepository: ProductRepository) :
-    ViewModel() {
+class ProductDetailViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val graphDataConverter: GraphDataConverter
+) : ViewModel() {
 
     data class ProductDetailUIState(
         val isTracking: Boolean = false,
@@ -38,8 +41,8 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
-        val chartPeriod: GraphMode = GraphMode.DAY,
-        val chartData: ProductChartDataset? = null
+        val graphMode: GraphMode = GraphMode.DAY,
+        val chartData: List<ProductChartData> = listOf()
     )
 
     sealed class ProductDetailEvent {
@@ -53,6 +56,7 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     }
 
     lateinit var productCode: String
+    private var productGraphData: List<ProductChartData> = listOf()
 
     private var _event: MutableSharedFlow<ProductDetailEvent> = MutableSharedFlow()
     val event: SharedFlow<ProductDetailEvent> = _event.asSharedFlow()
@@ -64,12 +68,12 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     fun deleteProductTracking() {
         viewModelScope.launch {
             when (val result = productRepository.deleteProduct(productCode)) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(ProductDetailEvent.DeleteFailed(result.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(ProductDetailEvent.DeleteFailed(result.errorState))
                 }
             }
         }
@@ -90,7 +94,8 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
             _state.value = _state.value.copy(isRefreshing = false)
 
             when (result) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
+                    productGraphData = result.data.priceData
                     _state.update {
                         it.copy(
                             isReady = true,
@@ -112,21 +117,16 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
                                 )
                             },
                             formattedLowestPrice = formatPrice(result.data.lowestPrice),
-                            chartPeriod = GraphMode.DAY,
-                            chartData = ProductChartDataset(
-                                showXAxis = true,
-                                showYAxis = true,
-                                isInteractive = true,
-                                graphMode = GraphMode.DAY,
-                                data = result.data.priceData,
-                                gridLines = listOf()
+                            chartData = graphDataConverter.packWithEdgeData(
+                                result.data.priceData,
+                                state.value.graphMode
                             )
                         )
                     }
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    when (result.productErrorState) {
+                is RepositoryResult.Error -> {
+                    when (result.errorState) {
                         ProductErrorState.PERMISSION_DENIED -> {
                             _event.emit(ProductDetailEvent.Logout)
                         }
@@ -145,17 +145,14 @@ class ProductDetailViewModel @Inject constructor(val productRepository: ProductR
     }
 
     fun changePeriod(period: GraphMode) {
+        if (productGraphData.isEmpty()) {
+            return
+        }
+
         _state.update {
             it.copy(
-                chartPeriod = period,
-                chartData = ProductChartDataset(
-                    showXAxis = true,
-                    showYAxis = true,
-                    isInteractive = true,
-                    graphMode = period,
-                    data = it.chartData?.data ?: listOf(),
-                    gridLines = listOf()
-                )
+                graphMode = period,
+                chartData = graphDataConverter.packWithEdgeData(productGraphData, period)
             )
         }
     }

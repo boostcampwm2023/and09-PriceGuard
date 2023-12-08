@@ -3,9 +3,10 @@ package app.priceguard.ui.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.LoginState
-import app.priceguard.data.repository.TokenRepository
-import app.priceguard.data.repository.UserRepository
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.auth.AuthErrorState
+import app.priceguard.data.repository.auth.AuthRepository
+import app.priceguard.data.repository.token.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
@@ -32,29 +33,31 @@ class LoginViewModel @Inject constructor(
     sealed class LoginEvent {
         data object LoginStart : LoginEvent()
         data object Invalid : LoginEvent()
-        data class LoginSuccess(val accessToken: String, val refreshToken: String) : LoginEvent()
-        data class LoginFailure(val status: LoginState) : LoginEvent()
+        data object LoginFailure : LoginEvent()
+        data object UndefinedError : LoginEvent()
         data object LoginInfoSaved : LoginEvent()
+        data object FirebaseError : LoginEvent()
+        data object TokenUpdateError : LoginEvent()
     }
 
     private val emailPattern =
         """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
     private val passwordPattern =
-        """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
+        """^(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*\d)(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[a-z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/])[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]{8,16}$""".toRegex()
 
     private var _event = MutableSharedFlow<LoginEvent>()
     val event: SharedFlow<LoginEvent> = _event.asSharedFlow()
     private val _state = MutableStateFlow(State())
     var state: StateFlow<State> = _state.asStateFlow()
 
-    fun setID(s: CharSequence, start: Int, before: Int, count: Int) {
+    fun setEmail(s: String) {
         if (_state.value.isLoading) return
-        _state.value = _state.value.copy(email = s.toString())
+        _state.value = _state.value.copy(email = s)
     }
 
-    fun setPassword(s: CharSequence, start: Int, before: Int, count: Int) {
+    fun setPassword(s: String) {
         if (_state.value.isLoading) return
-        _state.value = _state.value.copy(password = s.toString())
+        _state.value = _state.value.copy(password = s)
     }
 
     fun login() {
@@ -73,27 +76,49 @@ class LoginViewModel @Inject constructor(
                 return@launch
             }
 
-            val result = userRepository.login(_state.value.email, _state.value.password)
+            when (val result = authRepository.login(_state.value.email, _state.value.password)) {
+                is RepositoryResult.Success -> {
+                    if (result.data.accessToken.isEmpty() || result.data.refreshToken.isEmpty()) {
+                        sendLoginEvent(LoginEvent.UndefinedError)
+                        setLoading(false)
+                        return@launch
+                    }
 
-            if (result.accessToken == null || result.refreshToken == null) {
-                sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
-                setLoading(false)
-                return@launch
-            }
-
-            when (result.loginState) {
-                LoginState.SUCCESS -> {
+                    val firebaseToken = tokenRepository.getFirebaseToken()
                     setLoginFinished(true)
-                    sendLoginEvent(LoginEvent.LoginSuccess(result.accessToken, result.refreshToken))
-                    saveTokens(result.accessToken, result.refreshToken)
+                    saveTokens(result.data.accessToken, result.data.refreshToken)
+                    updateFirebaseToken(result.data.accessToken, firebaseToken)
                     sendLoginEvent(LoginEvent.LoginInfoSaved)
                 }
 
-                else -> {
-                    sendLoginEvent(LoginEvent.LoginFailure(result.loginState))
+                is RepositoryResult.Error -> {
+                    sendLoginEvent(
+                        when (result.errorState) {
+                            AuthErrorState.INVALID_REQUEST -> {
+                                LoginEvent.LoginFailure
+                            }
+
+                            else -> {
+                                LoginEvent.UndefinedError
+                            }
+                        }
+                    )
                 }
             }
             setLoading(false)
+        }
+    }
+
+    private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
+        if (firebaseToken != null) {
+            when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
+                is RepositoryResult.Error -> {
+                    sendLoginEvent(LoginEvent.TokenUpdateError)
+                }
+                else -> {}
+            }
+        } else {
+            sendLoginEvent(LoginEvent.FirebaseError)
         }
     }
 

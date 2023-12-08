@@ -2,7 +2,7 @@ package app.priceguard.ui.home.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.token.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -3,7 +3,7 @@ import { UserDto } from '../dto/user.dto';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ValidationException } from 'src/exceptions/validation.exception';
+import { ValidationException } from '../exceptions/validation.exception';
 
 @Injectable()
 export class UsersService {

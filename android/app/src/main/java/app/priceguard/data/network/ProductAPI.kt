@@ -1,15 +1,16 @@
 package app.priceguard.data.network
 
-import app.priceguard.data.dto.PricePatchRequest
-import app.priceguard.data.dto.PricePatchResponse
-import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.dto.ProductAddResponse
-import app.priceguard.data.dto.ProductDeleteResponse
-import app.priceguard.data.dto.ProductListResponse
-import app.priceguard.data.dto.ProductResponse
-import app.priceguard.data.dto.ProductVerifyRequest
-import app.priceguard.data.dto.ProductVerifyResponse
-import app.priceguard.data.dto.RecommendProductResponse
+import app.priceguard.data.dto.add.ProductAddRequest
+import app.priceguard.data.dto.add.ProductAddResponse
+import app.priceguard.data.dto.alert.AlertUpdateResponse
+import app.priceguard.data.dto.delete.ProductDeleteResponse
+import app.priceguard.data.dto.detail.ProductResponse
+import app.priceguard.data.dto.list.ProductListResponse
+import app.priceguard.data.dto.patch.PricePatchRequest
+import app.priceguard.data.dto.patch.PricePatchResponse
+import app.priceguard.data.dto.recommend.RecommendProductResponse
+import app.priceguard.data.dto.verify.ProductVerifyRequest
+import app.priceguard.data.dto.verify.ProductVerifyResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -50,4 +51,9 @@ interface ProductAPI {
     suspend fun updateTargetPrice(
         @Body pricePatchRequest: PricePatchRequest
     ): Response<PricePatchResponse>
+
+    @PATCH("alert/{productCode}")
+    suspend fun updateAlert(
+        @Path("productCode") productCode: String
+    ): Response<AlertUpdateResponse>
 }

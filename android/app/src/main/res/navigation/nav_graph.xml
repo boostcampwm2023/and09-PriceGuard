@@ -9,12 +9,28 @@
         android:name="app.priceguard.ui.additem.confirm.ConfirmItemLinkFragment"
         android:label="ConfirmItemLinkFragment"
         tools:layout="@layout/fragment_confirm_item_link">
-        <argument
-            android:name="product"
-            app:argType="string" />
         <action
             android:id="@+id/action_confirmItemLinkFragment_to_setTargetPriceFragment"
-            app:destination="@id/setTargetPriceFragment"/>
+            app:destination="@id/setTargetPriceFragment"
+            app:enterAnim="@anim/from_right_enter"
+            app:exitAnim="@anim/to_left_exit"
+            app:popEnterAnim="@anim/from_left_enter"
+            app:popExitAnim="@anim/to_right_exit" />
+        <argument
+            android:name="productCode"
+            app:argType="string" />
+        <argument
+            android:name="productPrice"
+            app:argType="integer" />
+        <argument
+            android:name="shop"
+            app:argType="string" />
+        <argument
+            android:name="productName"
+            app:argType="string" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/setTargetPriceFragment"
@@ -41,7 +57,11 @@
         tools:layout="@layout/fragment_register_item_link">
         <action
             android:id="@+id/action_registerItemLinkFragment_to_confirmItemLinkFragment"
-            app:destination="@id/confirmItemLinkFragment" />
+            app:destination="@id/confirmItemLinkFragment"
+            app:enterAnim="@anim/from_right_enter"
+            app:exitAnim="@anim/to_left_exit"
+            app:popEnterAnim="@anim/from_left_enter"
+            app:popExitAnim="@anim/to_right_exit" />
         <action
             android:id="@+id/action_registerItemLinkFragment_to_setTargetPriceFragment"
             app:destination="@id/setTargetPriceFragment" />

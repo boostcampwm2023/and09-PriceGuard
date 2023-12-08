@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.work.WorkManager
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentProductListBinding
+import app.priceguard.service.UpdateAlarmWorker
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showConfirmationDialog
@@ -30,6 +35,8 @@ class ProductListFragment : Fragment() {
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
     private val productListViewModel: ProductListViewModel by viewModels()
+
+    private var workRequestSet: MutableSet<String> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +66,29 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
-        val adapter = ProductSummaryAdapter()
+        val animator = rvProductList.itemAnimator
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+
+        val listener = object : ProductSummaryClickListener {
+            override fun onClick(productCode: String) {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("productCode", productCode)
+                startActivity(intent)
+            }
+
+            override fun onToggle(productCode: String, checked: Boolean) {
+                productListViewModel.updateProductAlarmToggle(productCode, checked)
+                if (workRequestSet.contains(productCode)) {
+                    workRequestSet.remove(productCode)
+                } else {
+                    workRequestSet.add(productCode)
+                }
+            }
+        }
+
+        val adapter = ProductSummaryAdapter(listener)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
@@ -84,7 +113,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun collectEvent() {
-        repeatOnStarted {
+        viewLifecycleOwner.repeatOnStarted {
             productListViewModel.events.collect { event ->
                 when (event) {
                     ProductErrorState.PERMISSION_DENIED -> {
@@ -114,6 +143,15 @@ class ProductListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        workRequestSet.forEach { productCode ->
+            WorkManager.getInstance(requireContext())
+                .enqueue(UpdateAlarmWorker.createWorkRequest(productCode))
+        }
+        workRequestSet.clear()
     }
 
     override fun onDestroyView() {

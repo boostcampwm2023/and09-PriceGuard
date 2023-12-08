@@ -2,11 +2,9 @@ package app.priceguard.ui.additem.setprice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.PricePatchRequest
-import app.priceguard.data.dto.ProductAddRequest
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.network.ProductRepositoryResult
-import app.priceguard.data.repository.ProductRepository
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,18 +40,16 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     fun addProduct() {
         viewModelScope.launch {
             val response = productRepository.addProduct(
-                ProductAddRequest(
-                    _state.value.productCode,
-                    _state.value.targetPrice
-                )
+                _state.value.productCode,
+                _state.value.targetPrice
             )
             when (response) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessProductAdd)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.errorState))
                 }
             }
         }
@@ -62,18 +58,16 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     fun patchProduct() {
         viewModelScope.launch {
             val response = productRepository.updateTargetPrice(
-                PricePatchRequest(
-                    _state.value.productCode,
-                    _state.value.targetPrice
-                )
+                _state.value.productCode,
+                _state.value.targetPrice
             )
             when (response) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _event.emit(SetTargetPriceEvent.SuccessPriceUpdate)
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.productErrorState))
+                is RepositoryResult.Error -> {
+                    _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.errorState))
                 }
             }
         }

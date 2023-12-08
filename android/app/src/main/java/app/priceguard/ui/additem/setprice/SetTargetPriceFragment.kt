@@ -1,5 +1,6 @@
 package app.priceguard.ui.additem.setprice
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -11,10 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,7 +34,7 @@ class SetTargetPriceFragment : Fragment() {
 
     private var _binding: FragmentSetTargetPriceBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SetTargetPriceViewModel by viewModels()
+    private val setTargetPriceViewModel: SetTargetPriceViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,34 +48,44 @@ class SetTargetPriceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.vm = viewModel
+        binding.viewModel = setTargetPriceViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        setBackPressedCallback()
+        binding.initView()
+        binding.initListener()
+        handleEvent()
+    }
+
+    private fun setBackPressedCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (requireActivity().intent.hasExtra("isAdding")) {
                 requireActivity().finish()
             } else {
                 findNavController().navigateUp()
             }
         }
+    }
 
-        val productCode = requireArguments().getString("productCode") ?: ""
-        val title = requireArguments().getString("productTitle") ?: ""
-        val price = requireArguments().getInt("productPrice")
+    private fun FragmentSetTargetPriceBinding.initView() {
+        val arguments = requireArguments()
 
-        viewModel.updateTargetPrice((price * 0.8).toInt())
+        val productCode = arguments.getString("productCode") ?: ""
+        val title = arguments.getString("productTitle") ?: ""
+        val price = arguments.getInt("productPrice")
 
-        binding.tvSetPriceCurrentPrice.text =
+        setTargetPriceViewModel.updateTargetPrice((price * 0.8).toInt())
+
+        tvSetPriceCurrentPrice.text =
             String.format(
                 resources.getString(R.string.won),
                 NumberFormat.getNumberInstance().format(price)
             )
+        tvSetPriceCurrentPrice.contentDescription =
+            getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
-        viewModel.setProductInfo(productCode, title, price)
-        binding.etTargetPrice.setText((price * 0.8).toInt().toString())
-
-        binding.initListener()
-        handleEvent()
+        setTargetPriceViewModel.setProductInfo(productCode, title, price)
+        etTargetPrice.setText((price * 0.8).toInt().toString())
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -86,7 +98,7 @@ class SetTargetPriceFragment : Fragment() {
         }
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
-            if (isAdding) viewModel.addProduct() else viewModel.patchProduct()
+            if (isAdding) setTargetPriceViewModel.addProduct() else setTargetPriceViewModel.patchProduct()
         }
         slTargetPrice.addOnChangeListener { _, value, _ ->
             if (!etTargetPrice.isFocused) {
@@ -115,13 +127,19 @@ class SetTargetPriceFragment : Fragment() {
                 0F
             }
 
-            viewModel.updateTargetPrice(targetPrice.toInt())
+            setTargetPriceViewModel.updateTargetPrice(targetPrice.toInt())
 
             val percent =
-                ((targetPrice / viewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+                ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt()
 
             binding.tvTargetPricePercent.text =
                 String.format(getString(R.string.current_price_percent), percent)
+
+            binding.tvTargetPricePercent.contentDescription = getString(
+                R.string.target_price_percent_and_price,
+                binding.tvTargetPricePercent.text,
+                binding.tvSetPriceCurrentPrice.text
+            )
 
             binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
         }
@@ -132,18 +150,18 @@ class SetTargetPriceFragment : Fragment() {
     }
 
     private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
-        val targetPrice = ((viewModel.state.value.productPrice) * value.toInt() / 100)
+        val targetPrice = ((setTargetPriceViewModel.state.value.productPrice) * value.toInt() / 100)
         tvTargetPricePercent.text =
             String.format(getString(R.string.current_price_percent), value.toInt())
         etTargetPrice.setText(
             targetPrice.toString()
         )
-        viewModel.updateTargetPrice(targetPrice)
+        setTargetPriceViewModel.updateTargetPrice(targetPrice)
     }
 
     private fun handleEvent() {
         repeatOnStarted {
-            viewModel.event.collect { event ->
+            setTargetPriceViewModel.event.collect { event ->
                 when (event) {
                     is SetTargetPriceEvent.SuccessProductAdd -> {
                         showActivityFinishDialog(
@@ -204,10 +222,20 @@ class SetTargetPriceFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(R.string.confirm) { _, _ -> requireActivity().finish() }
-            .setOnDismissListener { requireActivity().finish() }
+            .setPositiveButton(R.string.confirm) { _, _ -> goToHomeActivity() }
+            .setOnDismissListener { goToHomeActivity() }
             .create()
             .show()
+    }
+
+    private fun goToHomeActivity() {
+        val activityIntent = requireActivity().intent
+        if (activityIntent?.action == Intent.ACTION_SEND) {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        requireActivity().finish()
     }
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
@@ -215,7 +243,7 @@ class SetTargetPriceFragment : Fragment() {
         percent: Int
     ) {
         val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
-        if (targetPrice > viewModel.state.value.productPrice) {
+        if (targetPrice > setTargetPriceViewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
         }
         slTargetPrice.value = pricePercent.toFloat()

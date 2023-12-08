@@ -16,6 +16,6 @@ object TokenDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideTokenDataSource(dataStore: DataStore<Preferences>): TokenDataSource =
+    fun provideTokenDataSource(@TokensQualifier dataStore: DataStore<Preferences>): TokenDataSource =
         TokenDataSourceImpl(dataStore)
 }

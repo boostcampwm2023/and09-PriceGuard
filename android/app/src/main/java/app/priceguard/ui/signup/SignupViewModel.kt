@@ -3,9 +3,10 @@ package app.priceguard.ui.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.SignupState
-import app.priceguard.data.repository.TokenRepository
-import app.priceguard.data.repository.UserRepository
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.auth.AuthErrorState
+import app.priceguard.data.repository.auth.AuthRepository
+import app.priceguard.data.repository.token.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
@@ -38,15 +39,18 @@ class SignupViewModel @Inject constructor(
 
     sealed class SignupEvent {
         data object SignupStart : SignupEvent()
-        data class SignupSuccess(val accessToken: String, val refreshToken: String) : SignupEvent()
-        data class SignupFailure(val errorState: SignupState) : SignupEvent()
+        data object InvalidRequest : SignupEvent()
+        data object DuplicatedEmail : SignupEvent()
+        data object UndefinedError : SignupEvent()
         data object SignupInfoSaved : SignupEvent()
+        data object FirebaseError : SignupEvent()
+        data object TokenUpdateError : SignupEvent()
     }
 
     private val emailPattern =
         """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
     private val passwordPattern =
-        """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
+        """^(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*\d)(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[a-z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/])[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]{8,16}$""".toRegex()
 
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
@@ -65,30 +69,41 @@ class SignupViewModel @Inject constructor(
             Log.d("ViewModel", "Event Start Sent")
             updateSignupStarted(true)
             val result =
-                userRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
+                authRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
-            if (result.accessToken == null || result.refreshToken == null) {
-                sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
-                updateSignupStarted(false)
-                return@launch
-            }
+            when (result) {
+                is RepositoryResult.Success -> {
+                    if (result.data.accessToken.isEmpty() || result.data.refreshToken.isEmpty()) {
+                        sendSignupEvent(SignupEvent.UndefinedError)
+                        updateSignupStarted(false)
+                        return@launch
+                    }
 
-            when (result.signUpState) {
-                SignupState.SUCCESS -> {
+                    val firebaseToken = tokenRepository.getFirebaseToken()
+
                     updateSignupFinished(true)
-                    sendSignupEvent(
-                        SignupEvent.SignupSuccess(
-                            result.accessToken,
-                            result.refreshToken
-                        )
-                    )
-                    saveTokens(result.accessToken, result.refreshToken)
+                    saveTokens(result.data.accessToken, result.data.refreshToken)
+                    updateFirebaseToken(result.data.accessToken, firebaseToken)
                     sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")
                 }
 
-                else -> {
-                    sendSignupEvent(SignupEvent.SignupFailure(result.signUpState))
+                is RepositoryResult.Error -> {
+                    sendSignupEvent(
+                        when (result.errorState) {
+                            AuthErrorState.INVALID_REQUEST -> {
+                                SignupEvent.InvalidRequest
+                            }
+
+                            AuthErrorState.DUPLICATED_EMAIL -> {
+                                SignupEvent.DuplicatedEmail
+                            }
+
+                            AuthErrorState.UNDEFINED_ERROR -> {
+                                SignupEvent.UndefinedError
+                            }
+                        }
+                    )
                 }
             }
             updateSignupStarted(false)
@@ -125,7 +140,7 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun isValidName(): Boolean {
-        return _state.value.name.isNotBlank()
+        return _state.value.name.isNotBlank() && _state.value.name.length <= 16
     }
 
     private fun isValidEmail(): Boolean {
@@ -146,6 +161,20 @@ class SignupViewModel @Inject constructor(
 
     private suspend fun sendSignupEvent(event: SignupEvent) {
         _eventFlow.emit(event)
+    }
+
+    private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
+        if (firebaseToken != null) {
+            when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
+                is RepositoryResult.Error -> {
+                    sendSignupEvent(SignupEvent.TokenUpdateError)
+                }
+
+                else -> {}
+            }
+        } else {
+            sendSignupEvent(SignupEvent.FirebaseError)
+        }
     }
 
     private fun updateIsSignupReady() {

@@ -81,7 +81,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:onTextChanged="@{viewModel::setID}" />
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.setEmail(content.toString())}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -106,7 +106,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:onTextChanged="@{viewModel::setPassword}" />
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.setPassword(content.toString())}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

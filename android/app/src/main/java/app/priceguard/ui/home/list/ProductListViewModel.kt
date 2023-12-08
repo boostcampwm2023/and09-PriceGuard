@@ -2,9 +2,11 @@ package app.priceguard.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.network.ProductRepositoryResult
-import app.priceguard.data.repository.ProductRepository
+import app.priceguard.data.GraphDataConverter
+import app.priceguard.data.repository.RepositoryResult
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.product.ProductRepository
+import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,7 +21,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
     private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -42,28 +45,38 @@ class ProductListViewModel @Inject constructor(
             _isRefreshing.value = false
 
             when (result) {
-                is ProductRepositoryResult.Success -> {
+                is RepositoryResult.Success -> {
                     _productList.value = result.data.map { data ->
                         UserProductSummary(
                             data.shop,
                             data.productName,
                             data.price,
                             data.productCode,
-                            data.priceData,
+                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
                             calculateDiscountRate(data.targetPrice, data.price),
-                            true
+                            data.isAlert
                         )
                     }
                 }
 
-                is ProductRepositoryResult.Error -> {
-                    _events.emit(result.productErrorState)
+                is RepositoryResult.Error -> {
+                    _events.emit(result.errorState)
                 }
             }
         }
     }
 
+    fun updateProductAlarmToggle(productCode: String, checked: Boolean) {
+        _productList.value = productList.value.mapIndexed { _, product ->
+            if (product.productCode == productCode) {
+                product.copy(isAlarmOn = checked)
+            } else {
+                product
+            }
+        }
+    }
+
     private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
-        return round((price - targetPrice).toFloat() / (if (targetPrice == 0) 1 else targetPrice) * 1000) / 10
+        return round((price - targetPrice).toFloat() / (if (price == 0) 1 else price) * 1000) / 10
     }
 }

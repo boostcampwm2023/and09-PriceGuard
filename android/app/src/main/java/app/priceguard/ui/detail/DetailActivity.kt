@@ -5,15 +5,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
+import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.graph.ProductChartGridLine
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
@@ -36,11 +39,17 @@ class DetailActivity : AppCompatActivity() {
         binding.viewModel = productDetailViewModel
         setContentView(binding.root)
 
+        setBackPressedCallback()
         initListener()
         setNavigationButton()
-        setGraph()
-        checkProductCode()
+        checkProductCode(intent)
         observeEvent()
+    }
+
+    private fun setBackPressedCallback() {
+        onBackPressedDispatcher.addCallback(this) {
+            goToHomeActivityIfDeepLinked()
+        }
     }
 
     override fun onStart() {
@@ -90,15 +99,48 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.btnDetailShare.setOnClickListener {
+            val shareLink =
+                getString(R.string.share_link_template, productDetailViewModel.productCode)
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TITLE, getString(R.string.share_product))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message_template, shareLink))
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
     }
 
-    private fun checkProductCode() {
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            checkProductCode(intent)
+        }
+    }
+
+    private fun checkProductCode(intent: Intent) {
         val productCode = intent.getStringExtra("productCode")
-        if (productCode == null) {
-            // Invalid access
+        val deepLink = intent.data
+        val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
+
+        if (productCode == null && productCodeFromDeepLink == null) {
             showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
-        } else {
-            productDetailViewModel.productCode = productCode
+            return
+        }
+
+        productCode?.let { code ->
+            productDetailViewModel.productCode = code
+            productDetailViewModel.getDetails(false)
+            return
+        }
+
+        productCodeFromDeepLink?.let { code ->
+            productDetailViewModel.productCode = code
             productDetailViewModel.getDetails(false)
         }
     }
@@ -106,17 +148,16 @@ class DetailActivity : AppCompatActivity() {
     private fun observeEvent() {
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
-                binding.chGraphDetail.dataset = state.chartData?.copy(
-                    gridLines = listOf(
-                        ProductChartGridLine(
-                            resources.getString(R.string.target_price),
-                            state.targetPrice?.toFloat() ?: 0F
-                        ),
-                        ProductChartGridLine(
-                            resources.getString(R.string.lowest_price),
-                            state.lowestPrice?.toFloat() ?: 0F
-                        )
-                    )
+                state.targetPrice ?: return@collect
+                binding.chGraphDetail.dataset = ProductChartDataset(
+                    showXAxis = true,
+                    showYAxis = true,
+                    isInteractive = true,
+                    graphMode = state.graphMode,
+                    xLabel = getString(R.string.date_text),
+                    yLabel = getString(R.string.price_text),
+                    data = state.chartData,
+                    gridLines = getGridLines(state.targetPrice.toFloat())
                 )
             }
         }
@@ -193,14 +234,32 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setNavigationButton() {
-        binding.mtDetailTopbar.setNavigationOnClickListener {
-            finish()
+    private fun getGridLines(targetPrice: Float): List<ProductChartGridLine> {
+        return if (targetPrice < 0) {
+            listOf()
+        } else {
+            listOf(
+                ProductChartGridLine(
+                    resources.getString(R.string.target_price),
+                    targetPrice
+                )
+            )
         }
     }
 
-    private fun setGraph() {
-        binding.chGraphDetail.setXAxisMargin(48F)
+    private fun setNavigationButton() {
+        binding.mtDetailTopbar.setNavigationOnClickListener {
+            goToHomeActivityIfDeepLinked()
+        }
+    }
+
+    private fun goToHomeActivityIfDeepLinked() {
+        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra("directed", false)) {
+            val intent = Intent(this@DetailActivity, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        finish()
     }
 
     private fun showConfirmationDialog(
