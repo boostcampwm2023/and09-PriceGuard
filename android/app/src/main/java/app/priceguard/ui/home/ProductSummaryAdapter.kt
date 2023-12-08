@@ -75,7 +75,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
             msProduct.setOnCheckedChangeListener { _, isChecked ->
-                productSummaryClickListener.onToggle(productCode, msProduct.isChecked)
+                productSummaryClickListener.onToggle(item.productCode, msProduct.isChecked)
                 if (isChecked) {
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
                 } else {
