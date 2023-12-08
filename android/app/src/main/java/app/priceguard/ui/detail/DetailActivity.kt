@@ -254,7 +254,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun goToHomeActivityIfDeepLinked() {
-        if (intent.data != null && intent.data?.getQueryParameter("code") != null) {
+        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra("directed", false)) {
             val intent = Intent(this@DetailActivity, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

@@ -2,6 +2,7 @@ package app.priceguard.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -87,6 +88,14 @@ class SignupActivity : AppCompatActivity() {
 
                     SignupEvent.UndefinedError -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                    }
+
+                    SignupEvent.TokenUpdateError, SignupEvent.FirebaseError -> {
+                        Toast.makeText(
+                            this@SignupActivity,
+                            getString(R.string.push_notification_not_working),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     else -> {}

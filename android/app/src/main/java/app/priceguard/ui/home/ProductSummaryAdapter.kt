@@ -16,6 +16,14 @@ import app.priceguard.materialchart.data.GraphMode
 class ProductSummaryAdapter(private val productSummaryClickListener: ProductSummaryClickListener) :
     ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
 
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).productCode.toLong()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemProductSummaryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -54,8 +62,9 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
-                    setDisCount(item.discountPercent)
+                    setDiscount(item.discountPercent)
                     setSwitchListener(item)
                 }
             }
@@ -66,18 +75,17 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
             msProduct.setOnCheckedChangeListener { _, isChecked ->
+                productSummaryClickListener.onToggle(item.productCode, msProduct.isChecked)
                 if (isChecked) {
-                    // TODO: 푸쉬 알람 설정 추가
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
                 } else {
-                    // TODO: 푸쉬 알람 설정 제거
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
                 }
             }
             msProduct.contentDescription = msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
         }
 
-        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+        private fun ItemProductSummaryBinding.setDiscount(discount: Float) {
             tvProductDiscountPercent.text =
                 if (discount > 0) {
                     tvProductDiscountPercent.context.getString(
@@ -133,7 +141,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem.productCode == newItem.productCode
         }
     }
 }

@@ -2,6 +2,7 @@ package app.priceguard.data.network
 
 import app.priceguard.data.dto.add.ProductAddRequest
 import app.priceguard.data.dto.add.ProductAddResponse
+import app.priceguard.data.dto.alert.AlertUpdateResponse
 import app.priceguard.data.dto.delete.ProductDeleteResponse
 import app.priceguard.data.dto.detail.ProductResponse
 import app.priceguard.data.dto.list.ProductListResponse
@@ -50,4 +51,9 @@ interface ProductAPI {
     suspend fun updateTargetPrice(
         @Body pricePatchRequest: PricePatchRequest
     ): Response<PricePatchResponse>
+
+    @PATCH("alert/{productCode}")
+    suspend fun updateAlert(
+        @Path("productCode") productCode: String
+    ): Response<AlertUpdateResponse>
 }

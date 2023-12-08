@@ -36,6 +36,8 @@ class LoginViewModel @Inject constructor(
         data object LoginFailure : LoginEvent()
         data object UndefinedError : LoginEvent()
         data object LoginInfoSaved : LoginEvent()
+        data object FirebaseError : LoginEvent()
+        data object TokenUpdateError : LoginEvent()
     }
 
     private val emailPattern =
@@ -81,8 +83,11 @@ class LoginViewModel @Inject constructor(
                         setLoading(false)
                         return@launch
                     }
+
+                    val firebaseToken = tokenRepository.getFirebaseToken()
                     setLoginFinished(true)
                     saveTokens(result.data.accessToken, result.data.refreshToken)
+                    updateFirebaseToken(result.data.accessToken, firebaseToken)
                     sendLoginEvent(LoginEvent.LoginInfoSaved)
                 }
 
@@ -101,6 +106,19 @@ class LoginViewModel @Inject constructor(
                 }
             }
             setLoading(false)
+        }
+    }
+
+    private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
+        if (firebaseToken != null) {
+            when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
+                is RepositoryResult.Error -> {
+                    sendLoginEvent(LoginEvent.TokenUpdateError)
+                }
+                else -> {}
+            }
+        } else {
+            sendLoginEvent(LoginEvent.FirebaseError)
         }
     }
 

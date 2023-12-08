@@ -54,7 +54,7 @@ class ProductListViewModel @Inject constructor(
                             data.productCode,
                             graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
                             calculateDiscountRate(data.targetPrice, data.price),
-                            true
+                            data.isAlert
                         )
                     }
                 }
@@ -62,6 +62,16 @@ class ProductListViewModel @Inject constructor(
                 is RepositoryResult.Error -> {
                     _events.emit(result.errorState)
                 }
+            }
+        }
+    }
+
+    fun updateProductAlarmToggle(productCode: String, checked: Boolean) {
+        _productList.value = productList.value.mapIndexed { _, product ->
+            if (product.productCode == productCode) {
+                product.copy(isAlarmOn = checked)
+            } else {
+                product
             }
         }
     }
