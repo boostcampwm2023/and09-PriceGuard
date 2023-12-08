@@ -64,7 +64,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                     msProduct.visibility = View.VISIBLE
                     msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
-                    setDisCount(item.discountPercent)
+                    setDiscount(item.discountPercent)
                     setSwitchListener(item)
                 }
             }
@@ -85,7 +85,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
             msProduct.contentDescription = msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
         }
 
-        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+        private fun ItemProductSummaryBinding.setDiscount(discount: Float) {
             tvProductDiscountPercent.text =
                 if (discount > 0) {
                     tvProductDiscountPercent.context.getString(
