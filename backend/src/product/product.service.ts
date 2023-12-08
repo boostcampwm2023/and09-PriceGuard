@@ -124,11 +124,8 @@ export class ProductService {
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const cacheData = await this.redis.get(`product:${id}`);
-            const { price } = cacheData
-                ? JSON.parse(cacheData)
-                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
+            const { price } = priceData[priceData.length - 1];
             return {
                 productName,
                 productCode,
@@ -148,11 +145,8 @@ export class ProductService {
         const recommendList = this.productRankCache.getAll();
         const recommendListInfo = recommendList.map(async (product, index) => {
             const { id, productName, productCode, shop, imageUrl } = product;
-            const cacheData = await this.redis.get(`product:${id}`);
-            const { price } = cacheData
-                ? JSON.parse(cacheData)
-                : await this.productRepository.findOne({ where: { id: id } });
             const priceData = await this.getPriceData(id, THIRTY_DAYS);
+            const { price } = priceData[priceData.length - 1];
             return {
                 productName,
                 productCode,
@@ -181,7 +175,8 @@ export class ProductService {
         const idx = this.productRankCache.findIndex(selectProduct.id);
         const rank = idx === -1 ? idx : idx + 1;
         const priceData = await this.getPriceData(selectProduct.id, NINETY_DAYS);
-        const { price, lowestPrice } = await this.getProductCurrentData(selectProduct.id);
+        const { price } = priceData[priceData.length - 1];
+        const lowestPrice = Math.min(...priceData.map((item) => item.price));
         return {
             productName: selectProduct.productName,
             shop: selectProduct.shop,
@@ -204,27 +199,25 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
-        const prevProduct = this.productRankCache.get(product.productId)?.value;
+        const currentProduct = this.productRankCache.get(product.productId)?.value;
         await this.redis.zincrby('userCount', -1, product.productId);
-
-        if (!prevProduct) {
-            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
-        prevProduct.userCount--;
-        const productCount = await this.redis.zcard('userCount');
-        if (productCount > MAX_TRACKING_RANK) {
-            await this.deleteUpdateCache(prevProduct);
-        } else {
-            this.productRankCache.update(prevProduct);
+        if (currentProduct) {
+            currentProduct.userCount--;
+            const productCount = await this.redis.zcard('userCount');
+            if (productCount > MAX_TRACKING_RANK) {
+                await this.deleteUpdateCache(currentProduct);
+            } else {
+                this.productRankCache.update(currentProduct);
+            }
         }
         await this.trackingProductRepository.remove(product);
     }
 
-    async deleteUpdateCache(prevProduct: ProductRankCacheDto) {
+    async deleteUpdateCache(currentProduct: ProductRankCacheDto) {
         const nextDataId = (await this.redis.zrevrange('userCount', MAX_TRACKING_RANK, MAX_TRACKING_RANK))[0];
         const cacheData = await this.redis.zscore('userCount', nextDataId);
         const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
-        if (userCount >= prevProduct.userCount) {
+        if (userCount >= currentProduct.userCount) {
             const newProduct = await this.productRepository.findOne({
                 where: { id: nextDataId },
             });
@@ -239,8 +232,10 @@ export class ProductService {
                 imageUrl: newProduct.imageUrl,
                 userCount: userCount,
             };
-            this.productRankCache.update(prevProduct, newProductRanck);
+            this.productRankCache.update(currentProduct, newProductRanck);
+            return;
         }
+        this.productRankCache.update(currentProduct);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
