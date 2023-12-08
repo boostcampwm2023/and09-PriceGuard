@@ -32,7 +32,6 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = currentList[position]
-        holder.setIsRecyclable(false)
         holder.bind(item)
     }
 
