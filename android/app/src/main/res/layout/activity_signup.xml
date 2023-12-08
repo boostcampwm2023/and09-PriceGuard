@@ -37,6 +37,7 @@
                     android:fitsSystemWindows="true"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
+                    app:navigationContentDescription="@string/go_back"
                     app:navigationIcon="@drawable/ic_back"
                     app:title="@string/sign_up" />
 

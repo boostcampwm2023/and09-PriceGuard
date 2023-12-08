@@ -18,11 +18,13 @@
         <meta-data
             android:name="com.google.firebase.messaging.price_notification"
             android:value="@string/price_notification" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_priceguard_notification" />
 
+        <activity
+            android:name=".ui.additem.link.LinkHelperWebViewActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:exported="true">
@@ -32,27 +34,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.signup.SignupActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.home.HomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.additem.AddItemActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -61,7 +57,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="true"
@@ -77,11 +72,9 @@
                     android:scheme="priceguard" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />
-
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />

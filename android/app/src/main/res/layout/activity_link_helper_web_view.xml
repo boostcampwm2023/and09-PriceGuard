@@ -6,14 +6,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
-        tools:context=".ui.splash.SplashScreenActivity">
+        tools:context=".ui.additem.link.LinkHelperWebViewActivity">
 
-        <ImageView
-            android:id="@+id/iv_splash_logo"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:src="@drawable/ic_priceguard_original"
+        <WebView
+            android:id="@+id/wb_link_helper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
