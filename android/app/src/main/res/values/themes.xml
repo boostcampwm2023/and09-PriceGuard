@@ -31,7 +31,9 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.PriceGuard" parent="Base.Theme.PriceGuard" />
+    <style name="Theme.PriceGuard" parent="Base.Theme.PriceGuard">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+    </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="alertDialogStyle">@style/MaterialAlertDialog.App</item>
@@ -45,7 +47,7 @@
         <item name="colorOnPrimary">?attr/colorOnPrimary</item>
         <item name="colorSecondary">?attr/colorSecondary</item>
         <item name="colorError">?attr/colorError</item>
-        <item name="colorSurface">?attr/colorSurfaceContainer</item>
+        <item name="colorSurface">?attr/colorSurfaceContainerHigh</item>
         <item name="colorOnSurface">?attr/colorOnSurface</item>
     </style>
 

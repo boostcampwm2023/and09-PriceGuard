@@ -3,7 +3,7 @@ package app.priceguard.ui.util.ui
 import android.app.Activity
 import android.content.Intent
 import app.priceguard.R
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.ui.login.LoginActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope

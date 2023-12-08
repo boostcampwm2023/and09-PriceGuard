@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="?attr/colorSurfaceContainer"
+        android:backgroundTint="?attr/colorSurfaceContainerHigh"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp">
 
@@ -37,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
+                android:contentDescription="@string/product_11st"
                 android:src="@drawable/ic_11st_logo"
                 app:layout_constraintBottom_toBottomOf="@id/tv_my_page_item_title"
                 app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:contentDescription="@{@string/current_price_info(@string/won(@string/comma_number(summary.price)))}"
                 android:text="@{@string/won(@string/comma_number(summary.price))}"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 app:layout_constraintStart_toStartOf="@+id/iv_item_icon"

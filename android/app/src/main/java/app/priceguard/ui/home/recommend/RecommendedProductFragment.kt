@@ -1,5 +1,6 @@
 package app.priceguard.ui.home.recommend
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,12 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import app.priceguard.R
-import app.priceguard.data.dto.ProductErrorState
-import app.priceguard.data.repository.TokenRepository
+import app.priceguard.data.repository.product.ProductErrorState
+import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentRecommendedProductBinding
+import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
+import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showConfirmationDialog
@@ -57,7 +60,19 @@ class RecommendedProductFragment : Fragment() {
     }
 
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
-        val adapter = ProductSummaryAdapter()
+        val listener = object : ProductSummaryClickListener {
+            override fun onClick(productCode: String) {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("productCode", productCode)
+                startActivity(intent)
+            }
+
+            override fun onToggle(productCode: String, checked: Boolean) {
+                return
+            }
+        }
+
+        val adapter = ProductSummaryAdapter(listener)
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.recommendedProductList.collect { list ->

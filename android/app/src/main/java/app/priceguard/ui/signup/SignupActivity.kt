@@ -2,13 +2,13 @@ package app.priceguard.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import app.priceguard.R
-import app.priceguard.data.dto.SignupState
 import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
@@ -71,31 +71,35 @@ class SignupActivity : AppCompatActivity() {
                 (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
             }
 
-            is SignupEvent.SignupSuccess -> {
+            else -> {
                 (binding.btnSignupSignup as MaterialButton).icon = null
-            }
-
-            is SignupEvent.SignupFailure -> {
-                (binding.btnSignupSignup as MaterialButton).icon = null
-                when (event.errorState) {
-                    SignupState.INVALID_PARAMETER -> {
-                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                when (event) {
+                    SignupEvent.SignupInfoSaved -> {
+                        gotoHomeActivity()
                     }
 
-                    SignupState.DUPLICATE_EMAIL -> {
+                    SignupEvent.DuplicatedEmail -> {
                         showDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
-                    SignupState.UNDEFINED_ERROR -> {
+                    SignupEvent.InvalidRequest -> {
+                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                    }
+
+                    SignupEvent.UndefinedError -> {
                         showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                    }
+
+                    SignupEvent.TokenUpdateError, SignupEvent.FirebaseError -> {
+                        Toast.makeText(
+                            this@SignupActivity,
+                            getString(R.string.push_notification_not_working),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     else -> {}
                 }
-            }
-
-            SignupEvent.SignupInfoSaved -> {
-                gotoHomeActivity()
             }
         }
     }
@@ -142,7 +146,7 @@ class SignupActivity : AppCompatActivity() {
     private fun updateNameTextFieldUI(state: SignupUIState) {
         when (state.isNameError) {
             true -> {
-                binding.tilSignupName.error = getString(R.string.name_required)
+                binding.tilSignupName.error = getString(R.string.invalid_name)
             }
 
             else -> {
