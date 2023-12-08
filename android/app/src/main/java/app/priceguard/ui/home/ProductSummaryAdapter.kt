@@ -43,11 +43,16 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
 
         fun bind(item: ProductSummary) {
             with(binding) {
+                resetListener()
                 summary = item
                 setViewType(item)
                 setClickListener(item.productCode)
                 setGraph(item.priceData)
             }
+        }
+
+        private fun ItemProductSummaryBinding.resetListener() {
+            msProduct.setOnCheckedChangeListener(null)
         }
 
         private fun ItemProductSummaryBinding.setViewType(item: ProductSummary) {
