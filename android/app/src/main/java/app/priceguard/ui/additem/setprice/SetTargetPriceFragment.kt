@@ -76,14 +76,16 @@ class SetTargetPriceFragment : Fragment() {
 
         setTargetPriceViewModel.updateTargetPrice((price * 0.8).toInt())
 
-        binding.tvSetPriceCurrentPrice.text =
+        tvSetPriceCurrentPrice.text =
             String.format(
                 resources.getString(R.string.won),
                 NumberFormat.getNumberInstance().format(price)
             )
+        tvSetPriceCurrentPrice.contentDescription =
+            getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
         setTargetPriceViewModel.setProductInfo(productCode, title, price)
-        binding.etTargetPrice.setText((price * 0.8).toInt().toString())
+        etTargetPrice.setText((price * 0.8).toInt().toString())
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -132,6 +134,12 @@ class SetTargetPriceFragment : Fragment() {
 
             binding.tvTargetPricePercent.text =
                 String.format(getString(R.string.current_price_percent), percent)
+
+            binding.tvTargetPricePercent.contentDescription = getString(
+                R.string.target_price_percent_and_price,
+                binding.tvTargetPricePercent.text,
+                binding.tvSetPriceCurrentPrice.text
+            )
 
             binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
         }

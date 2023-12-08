@@ -50,6 +50,11 @@ class RegisterItemLinkFragment : Fragment() {
 
         initCollector()
         initEvent()
+
+        binding.tvRegisterItemHelper.setOnClickListener {
+            val intent = Intent(requireActivity(), LinkHelperWebViewActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setLinkText() {

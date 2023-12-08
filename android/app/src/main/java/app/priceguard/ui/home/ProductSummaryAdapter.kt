@@ -65,12 +65,12 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                     msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
                     setDisCount(item.discountPercent)
-                    setSwitchListener(item.productCode)
+                    setSwitchListener(item)
                 }
             }
         }
 
-        private fun ItemProductSummaryBinding.setSwitchListener(productCode: String) {
+        private fun ItemProductSummaryBinding.setSwitchListener(item: ProductSummary) {
             if (msProduct.isChecked.not()) {
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
@@ -82,6 +82,7 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                     msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
                 }
             }
+            msProduct.contentDescription = msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
         }
 
         private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
@@ -104,12 +105,14 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 true
             )
             tvProductDiscountPercent.setTextColor(value.data)
+            tvProductDiscountPercent.contentDescription = tvProductDiscountPercent.context.getString(R.string.target_price_delta, tvProductDiscountPercent.text)
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
             tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
                 R.string.recommand_rank, item.recommendRank
             )
+            tvProductRecommendRank.contentDescription = tvProductRecommendRank.context.getString(R.string.current_rank_info, item.recommendRank)
         }
 
         private fun ItemProductSummaryBinding.setClickListener(code: String) {
