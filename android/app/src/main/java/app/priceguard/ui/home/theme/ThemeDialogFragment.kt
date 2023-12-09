@@ -1,6 +1,7 @@
 package app.priceguard.ui.home.theme
 
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.DialogFragment
@@ -22,13 +23,15 @@ class ThemeDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var configDataSource: ConfigDataSource
+    private var _binding: FragmentThemeDialogBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val binding: FragmentThemeDialogBinding =
-            FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
+        _binding = FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
         val view = binding.root
 
         setCheckedButton(binding)
+        checkDynamicThemeSupport()
 
         return MaterialAlertDialogBuilder(
             requireActivity(),
@@ -78,6 +81,20 @@ class ThemeDialogFragment : DialogFragment() {
                 dismiss()
             }
         }.create()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun checkDynamicThemeSupport() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // Disable Dynamic Theme Radio Group
+            (0 until binding.rgDynamicColor.childCount).forEach { idx ->
+                binding.rgDynamicColor.getChildAt(idx).isEnabled = false
+            }
+        }
     }
 
     private fun saveTheme(dynamicMode: Int, darkMode: Int) {
