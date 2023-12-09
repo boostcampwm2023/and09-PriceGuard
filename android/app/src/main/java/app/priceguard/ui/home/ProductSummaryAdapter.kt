@@ -13,8 +13,11 @@ import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.databinding.ItemProductSummaryBinding
 import app.priceguard.materialchart.data.GraphMode
 
-class ProductSummaryAdapter(private val productSummaryClickListener: ProductSummaryClickListener) :
-    ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
+class ProductSummaryAdapter<T : ProductSummary>(
+    private val productSummaryClickListener: ProductSummaryClickListener,
+    diffUtil: DiffUtil.ItemCallback<T>
+) :
+    ListAdapter<T, ProductSummaryAdapter.ViewHolder>(diffUtil) {
 
     init {
         setHasStableIds(true)
@@ -82,7 +85,8 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 productSummaryClickListener.onToggle(item.productCode, isChecked)
                 updateThumbIcon(isChecked)
             }
-            msProduct.contentDescription = msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
+            msProduct.contentDescription =
+                msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
         }
 
         private fun ItemProductSummaryBinding.updateThumbIcon(checked: Boolean) {
@@ -113,14 +117,21 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 true
             )
             tvProductDiscountPercent.setTextColor(value.data)
-            tvProductDiscountPercent.contentDescription = tvProductDiscountPercent.context.getString(R.string.target_price_delta, tvProductDiscountPercent.text)
+            tvProductDiscountPercent.contentDescription =
+                tvProductDiscountPercent.context.getString(
+                    R.string.target_price_delta,
+                    tvProductDiscountPercent.text
+                )
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
             tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
                 R.string.recommand_rank, item.recommendRank
             )
-            tvProductRecommendRank.contentDescription = tvProductRecommendRank.context.getString(R.string.current_rank_info, item.recommendRank)
+            tvProductRecommendRank.contentDescription = tvProductRecommendRank.context.getString(
+                R.string.current_rank_info,
+                item.recommendRank
+            )
         }
 
         private fun ItemProductSummaryBinding.setClickListener(code: String) {
@@ -144,12 +155,28 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<ProductSummary>() {
-            override fun areContentsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem == newItem
+        val userDiffUtil = object : DiffUtil.ItemCallback<ProductSummary.UserProductSummary>() {
+            override fun areContentsTheSame(
+                oldItem: ProductSummary.UserProductSummary,
+                newItem: ProductSummary.UserProductSummary
+            ) = oldItem.productCode == newItem.productCode &&
+                oldItem.price == newItem.price &&
+                oldItem.discountPercent == newItem.discountPercent &&
+                oldItem.title == newItem.title
 
-            override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem.productCode == newItem.productCode
+            override fun areItemsTheSame(
+                oldItem: ProductSummary.UserProductSummary,
+                newItem: ProductSummary.UserProductSummary
+            ) = oldItem.productCode == newItem.productCode
         }
+
+        val diffUtil =
+            object : DiffUtil.ItemCallback<ProductSummary>() {
+                override fun areContentsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
+                    oldItem == newItem
+
+                override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
+                    oldItem.productCode == newItem.productCode
+            }
     }
 }
