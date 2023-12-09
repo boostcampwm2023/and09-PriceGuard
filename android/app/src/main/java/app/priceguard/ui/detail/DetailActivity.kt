@@ -204,16 +204,14 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                             ProductErrorState.NOT_FOUND -> {
                                 showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.product_not_found),
-                                    DialogConfirmAction.FINISH
+                                    getString(R.string.product_not_found)
                                 )
                             }
 
                             ProductErrorState.INVALID_REQUEST -> {
                                 showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.invalid_request),
-                                    DialogConfirmAction.FINISH
+                                    getString(R.string.invalid_request)
                                 )
                             }
 
@@ -224,8 +222,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                             else -> {
                                 showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.undefined_error),
-                                    DialogConfirmAction.FINISH
+                                    getString(R.string.undefined_error)
                                 )
                             }
                         }
