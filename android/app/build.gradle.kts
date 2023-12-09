@@ -111,7 +111,7 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.1.0")
 
     // Material chart
-    implementation("app.priceguard:materialchart:0.1.2")
+    implementation("app.priceguard:materialchart:0.2.0")
 }
 
 kapt {
