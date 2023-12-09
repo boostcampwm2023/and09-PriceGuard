@@ -15,6 +15,8 @@ import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.showDialogWithAction
+import app.priceguard.ui.util.ui.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
