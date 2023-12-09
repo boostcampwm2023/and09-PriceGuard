@@ -48,6 +48,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsv_product_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -96,6 +97,7 @@
                             android:layout_marginTop="12dp"
                             android:layout_marginEnd="12dp"
                             android:contentDescription="@string/share_product"
+                            android:enabled="@{viewModel.state.isReady}"
                             app:icon="@drawable/ic_share"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/iv_detail_product" />
@@ -157,6 +159,7 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_marginTop="8dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:text="@string/add_to_tracking_list"
                             android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
                             app:icon="@drawable/ic_track"
@@ -184,6 +187,7 @@
                             android:layout_height="48dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="4dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:text="@string/edit_target_price"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
                             app:icon="@drawable/ic_edit"
@@ -199,6 +203,7 @@
                             android:layout_height="48dp"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="8dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:onClick="@{() -> viewModel.sendDeleteTrackingEvent()}"
                             android:text="@string/delete_tracking"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
@@ -288,6 +293,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/day" />
 
                             <Button
@@ -296,6 +302,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/week" />
 
                             <Button
@@ -304,6 +311,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/month" />
 
                             <Button
@@ -312,6 +320,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/quarter" />
 
                         </com.google.android.material.button.MaterialButtonToggleGroup>

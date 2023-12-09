@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.data.repository.product.ProductErrorState
@@ -20,7 +18,6 @@ import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showDialogWithAction
 import app.priceguard.ui.util.ui.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,10 +51,6 @@ class ProductListFragment : Fragment() {
         binding.initSettingAdapter()
         binding.initListener()
         collectEvent()
-        disableAppBarRecyclerView(
-            binding.ablProductList.layoutParams as CoordinatorLayout.LayoutParams,
-            binding.rvProductList
-        )
     }
 
     override fun onStart() {
@@ -66,11 +59,6 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
-        val animator = rvProductList.itemAnimator
-        if (animator is SimpleItemAnimator) {
-            animator.supportsChangeAnimations = false
-        }
-
         val listener = object : ProductSummaryClickListener {
             override fun onClick(productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
@@ -88,7 +76,7 @@ class ProductListFragment : Fragment() {
             }
         }
 
-        val adapter = ProductSummaryAdapter(listener)
+        val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.userDiffUtil)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
