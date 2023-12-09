@@ -30,7 +30,7 @@ class ThemeDialogFragment : DialogFragment() {
         _binding = FragmentThemeDialogBinding.inflate(requireActivity().layoutInflater)
         val view = binding.root
 
-        setCheckedButton(binding)
+        setCheckedButton()
         checkDynamicThemeSupport()
 
         return MaterialAlertDialogBuilder(
@@ -108,7 +108,7 @@ class ThemeDialogFragment : DialogFragment() {
         }
     }
 
-    private fun setCheckedButton(binding: FragmentThemeDialogBinding) {
+    private fun setCheckedButton() {
         lifecycleScope.launch {
             val dynamicColorMode = configDataSource.getDynamicMode()
             val darkMode = configDataSource.getDarkMode()
