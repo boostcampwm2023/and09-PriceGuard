@@ -30,9 +30,9 @@ class ErrorDialogFragment : DialogFragment() {
         }.create()
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        goBackToLoginActivity(tokenRepository)
+    override fun onStart() {
+        super.onStart()
+        dialog?.setCancelable(false)
     }
 
     private fun goBackToLoginActivity(tokenRepository: TokenRepository) {
