@@ -70,12 +70,12 @@ class ConfirmDialogFragment : DialogFragment() {
             dialog?.setCancelable(false)
         }
     }
+    
+    fun setOnDialogResultListener(listener: OnDialogResultListener) {
+        resultListener = listener
+    }
 
     interface OnDialogResultListener {
         fun onDialogResult(result: Boolean)
-    }
-
-    fun setOnDialogResultListener(listener: OnDialogResultListener) {
-        resultListener = listener
     }
 }

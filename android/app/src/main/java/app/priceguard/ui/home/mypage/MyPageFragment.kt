@@ -29,7 +29,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
     lateinit var tokenRepository: TokenRepository
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MyPageViewModel by viewModels()
+    private val myPageViewModel: MyPageViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyPageBinding.inflate(layoutInflater, container, false)
-        binding.viewModel = viewModel
+        binding.viewModel = myPageViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -48,7 +48,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         initSettingAdapter()
 
         repeatOnStarted {
-            viewModel.event.collect { event ->
+            myPageViewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
                 }
@@ -129,7 +129,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
 
     override fun onDialogResult(result: Boolean) {
         if (result) {
-            viewModel.logout()
+            myPageViewModel.logout()
         }
     }
 
