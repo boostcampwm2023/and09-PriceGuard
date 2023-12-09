@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
@@ -99,8 +99,7 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const cacheData = await this.redis.zscore('userCount', product.id);
-        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
+        const userCount = parseInt(await this.redis.zincrby('userCount', 1, product.id));
         const productRank = {
             id: product.id,
             productName: product.productName,
@@ -110,9 +109,6 @@ export class ProductService {
             userCount: userCount + 1,
         };
         this.productRankCache.update(productRank);
-        if (cacheData) {
-            await this.redis.zincrby('userCount', 1, product.id);
-        }
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
