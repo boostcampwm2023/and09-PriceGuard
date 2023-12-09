@@ -19,6 +19,7 @@
         app:refreshing="@{viewModel.isRefreshing}">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/cl_product_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.home.list.ProductListFragment">
