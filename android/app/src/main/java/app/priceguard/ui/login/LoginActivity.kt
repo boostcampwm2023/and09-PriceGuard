@@ -12,8 +12,8 @@ import app.priceguard.ui.login.LoginViewModel.LoginEvent
 import app.priceguard.ui.signup.SignupActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.ui.showConfirmDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,18 +73,18 @@ class LoginActivity : AppCompatActivity() {
     private fun setDialogMessageAndShow(eventType: LoginEvent) {
         when (eventType) {
             LoginEvent.Invalid -> {
-                showDialog(
+                showConfirmDialog(
                     getString(R.string.login_invalid),
                     getString(R.string.login_invalid_message)
                 )
             }
 
             is LoginEvent.LoginFailure -> {
-                showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
+                showConfirmDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
             }
 
             is LoginEvent.UndefinedError -> {
-                showDialog(getString(R.string.login_fail), getString(R.string.undefined_error))
+                showConfirmDialog(getString(R.string.login_fail), getString(R.string.undefined_error))
             }
 
             is LoginEvent.LoginInfoSaved -> {
@@ -93,15 +93,6 @@ class LoginActivity : AppCompatActivity() {
 
             else -> {}
         }
-    }
-
-    private fun showDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
-            .create()
-            .show()
     }
 
     private fun gotoSignUp() {
