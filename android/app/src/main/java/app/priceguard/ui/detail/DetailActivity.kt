@@ -1,6 +1,5 @@
 package app.priceguard.ui.detail
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,18 +14,18 @@ import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
+import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.showConfirmDialog
 import app.priceguard.ui.util.ui.showDialogWithLogout
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResultListener {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
@@ -197,10 +196,7 @@ class DetailActivity : AppCompatActivity() {
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
-                        showConfirmationDialog(
-                            getString(R.string.stop_tracking_confirm),
-                            getString(R.string.stop_tracking_detail)
-                        ) { _, _ -> productDetailViewModel.deleteProductTracking() }
+                        showConfirmationDialogForResult()
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
@@ -276,21 +272,24 @@ class DetailActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showConfirmationDialog(
-        title: String,
-        message: String,
-        onConfirm: DialogInterface.OnClickListener
-    ) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm), onConfirm)
-            .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
-            .create()
-            .show()
+    private fun showConfirmationDialogForResult() {
+        val dialogFragment = ConfirmDialogFragment()
+        val bundle = Bundle()
+        bundle.putString("title", getString(R.string.stop_tracking_confirm))
+        bundle.putString("message", getString(R.string.stop_tracking_detail))
+        bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
+        dialogFragment.arguments = bundle
+        dialogFragment.setOnDialogResultListener(this)
+        dialogFragment.show(supportFragmentManager, "confirm_dialog_fragment_from_fragment")
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDialogResult(result: Boolean) {
+        if (result) {
+            productDetailViewModel.deleteProductTracking()
+        }
     }
 }
