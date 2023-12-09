@@ -13,9 +13,11 @@ fun disableAppBarRecyclerView(
     val enabledAblBehavior = getAblBehavior(true)
 
     viewTreeObserver.addOnGlobalLayoutListener {
-        if (recyclerView.childCount == 0 || recyclerView.measuredHeight - recyclerView.getChildAt(0).height >= 0) {
+        if (recyclerView.canScrollVertically(-1).not()) {
             layoutParams.behavior = disabledAblBehavior
-        } else {
+        }
+
+        if (recyclerView.canScrollVertically(1)) {
             layoutParams.behavior = enabledAblBehavior
         }
     }
