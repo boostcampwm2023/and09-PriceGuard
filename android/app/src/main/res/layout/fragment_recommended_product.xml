@@ -20,6 +20,7 @@
         tools:context=".ui.home.recommend.RecommendedProductFragment">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/cl_recommended_product"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
