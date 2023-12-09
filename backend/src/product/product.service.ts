@@ -214,28 +214,36 @@ export class ProductService {
     }
 
     async deleteUpdateCache(currentProduct: ProductRankCacheDto) {
-        const nextDataId = (await this.redis.zrevrange('userCount', MAX_TRACKING_RANK, MAX_TRACKING_RANK))[0];
-        const cacheData = await this.redis.zscore('userCount', nextDataId);
-        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
-        if (userCount >= currentProduct.userCount) {
-            const newProduct = await this.productRepository.findOne({
-                where: { id: nextDataId },
-            });
-            if (!newProduct) {
-                throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-            }
-            const newProductRanck = {
-                id: newProduct.id,
-                productName: newProduct.productName,
-                productCode: newProduct.productCode,
-                shop: newProduct.shop,
-                imageUrl: newProduct.imageUrl,
-                userCount: userCount,
-            };
-            this.productRankCache.update(currentProduct, newProductRanck);
+        const nextProductData = await this.redis.zrevrange(
+            'userCount',
+            MAX_TRACKING_RANK,
+            MAX_TRACKING_RANK,
+            'WITHSCORES',
+        );
+        const [nextDataId, userCount] = [nextProductData[0], parseInt(nextProductData[1])];
+        if (userCount < currentProduct.userCount) {
+            this.productRankCache.update(currentProduct);
             return;
         }
-        this.productRankCache.update(currentProduct);
+        if (nextDataId < currentProduct.id) {
+            this.productRankCache.update(currentProduct);
+            return;
+        }
+        const newProduct = await this.productRepository.findOne({
+            where: { id: nextDataId },
+        });
+        if (!newProduct) {
+            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        const newProductRanck = {
+            id: newProduct.id,
+            productName: newProduct.productName,
+            productCode: newProduct.productCode,
+            shop: newProduct.shop,
+            imageUrl: newProduct.imageUrl,
+            userCount: userCount,
+        };
+        this.productRankCache.update(currentProduct, newProductRanck);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
