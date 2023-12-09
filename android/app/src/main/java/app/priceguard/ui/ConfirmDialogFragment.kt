@@ -63,7 +63,13 @@ class ConfirmDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.setCancelable(false)
+
+        if (action == DialogConfirmAction.NOTHING || action == DialogConfirmAction.CUSTOM) {
+            dialog?.setCancelable(true)
+        } else {
+            dialog?.setCancelable(false)
+        }
+    }
 
     interface OnDialogResultListener {
         fun onDialogResult(result: Boolean)
