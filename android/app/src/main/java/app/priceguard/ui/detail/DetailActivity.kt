@@ -16,10 +16,11 @@ import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showConfirmationDialog
-import app.priceguard.ui.util.ui.showPermissionDeniedDialog
+import app.priceguard.ui.util.ui.showConfirmDialog
+import app.priceguard.ui.util.ui.showDialogWithLogout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -129,7 +130,11 @@ class DetailActivity : AppCompatActivity() {
         val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
 
         if (productCode == null && productCodeFromDeepLink == null) {
-            showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
+            showConfirmDialog(
+                getString(R.string.error),
+                getString(R.string.invalid_access),
+                DialogConfirmAction.FINISH
+            )
             return
         }
 
@@ -165,20 +170,22 @@ class DetailActivity : AppCompatActivity() {
             productDetailViewModel.event.collect { event ->
                 when (event) {
                     ProductDetailViewModel.ProductDetailEvent.Logout -> {
-                        showDialogAndExit(getString(R.string.error), getString(R.string.logged_out))
+                        showDialogWithLogout()
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.NotFound -> {
-                        showDialogAndExit(
+                        showConfirmDialog(
                             getString(R.string.error),
-                            getString(R.string.product_not_found)
+                            getString(R.string.product_not_found),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.UnknownError -> {
-                        showDialogAndExit(
+                        showConfirmDialog(
                             getString(R.string.error),
-                            getString(R.string.undefined_error)
+                            getString(R.string.undefined_error),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
@@ -199,27 +206,30 @@ class DetailActivity : AppCompatActivity() {
                     is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
                         when (event.errorType) {
                             ProductErrorState.NOT_FOUND -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.product_not_found)
+                                    getString(R.string.product_not_found),
+                                    DialogConfirmAction.FINISH
                                 )
                             }
 
                             ProductErrorState.INVALID_REQUEST -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.invalid_request)
+                                    getString(R.string.invalid_request),
+                                    DialogConfirmAction.FINISH
                                 )
                             }
 
                             ProductErrorState.PERMISSION_DENIED -> {
-                                showPermissionDeniedDialog(tokenRepository)
+                                showDialogWithLogout()
                             }
 
                             else -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
-                                    getString(R.string.undefined_error)
+                                    getString(R.string.undefined_error),
+                                    DialogConfirmAction.FINISH
                                 )
                             }
                         }
@@ -254,7 +264,11 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun goToHomeActivityIfDeepLinked() {
-        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra("directed", false)) {
+        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra(
+                "directed",
+                false
+            )
+        ) {
             val intent = Intent(this@DetailActivity, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -272,16 +286,6 @@ class DetailActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton(getString(R.string.confirm), onConfirm)
             .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
-            .create()
-            .show()
-    }
-
-    private fun showDialogAndExit(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> finish() }
-            .setCancelable(false)
             .create()
             .show()
     }

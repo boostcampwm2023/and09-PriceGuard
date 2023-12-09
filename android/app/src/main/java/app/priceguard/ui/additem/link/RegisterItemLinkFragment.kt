@@ -17,7 +17,7 @@ import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showPermissionDeniedDialog
+import app.priceguard.ui.util.ui.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -111,7 +111,7 @@ class RegisterItemLinkFragment : Fragment() {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.FailureVerification -> {
                         when (event.errorType) {
                             ProductErrorState.PERMISSION_DENIED -> {
-                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                                showDialogWithLogout()
                             }
 
                             ProductErrorState.INVALID_REQUEST -> {

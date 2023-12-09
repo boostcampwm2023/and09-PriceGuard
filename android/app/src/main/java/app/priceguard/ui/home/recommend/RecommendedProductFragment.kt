@@ -17,8 +17,8 @@ import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.disableAppBarRecyclerView
-import app.priceguard.ui.util.ui.showConfirmationDialog
-import app.priceguard.ui.util.ui.showPermissionDeniedDialog
+import app.priceguard.ui.util.ui.showDialogWithAction
+import app.priceguard.ui.util.ui.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -92,25 +92,25 @@ class RecommendedProductFragment : Fragment() {
             recommendedProductViewModel.events.collect { event ->
                 when (event) {
                     ProductErrorState.PERMISSION_DENIED -> {
-                        requireActivity().showPermissionDeniedDialog(tokenRepository)
+                        showDialogWithLogout()
                     }
 
                     ProductErrorState.INVALID_REQUEST -> {
-                        requireActivity().showConfirmationDialog(
+                        showDialogWithAction(
                             getString(R.string.recommended_product_failed),
                             getString(R.string.invalid_request)
                         )
                     }
 
                     ProductErrorState.NOT_FOUND -> {
-                        requireActivity().showConfirmationDialog(
+                        showDialogWithAction(
                             getString(R.string.recommended_product_failed),
                             getString(R.string.not_found)
                         )
                     }
 
                     else -> {
-                        requireActivity().showConfirmationDialog(
+                        showDialogWithAction(
                             getString(R.string.recommended_product_failed),
                             getString(R.string.undefined_error)
                         )
