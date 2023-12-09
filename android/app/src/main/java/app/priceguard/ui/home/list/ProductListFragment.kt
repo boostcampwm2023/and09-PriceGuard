@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.work.WorkManager
@@ -19,7 +18,6 @@ import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.disableAppBarRecyclerView
 import app.priceguard.ui.util.ui.showConfirmationDialog
 import app.priceguard.ui.util.ui.showPermissionDeniedDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,10 +51,6 @@ class ProductListFragment : Fragment() {
         binding.initSettingAdapter()
         binding.initListener()
         collectEvent()
-        disableAppBarRecyclerView(
-            binding.ablProductList.layoutParams as CoordinatorLayout.LayoutParams,
-            binding.rvProductList
-        )
     }
 
     override fun onStart() {
