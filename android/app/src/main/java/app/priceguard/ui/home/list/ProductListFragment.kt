@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.data.repository.product.ProductErrorState
@@ -66,11 +65,6 @@ class ProductListFragment : Fragment() {
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
-        val animator = rvProductList.itemAnimator
-        if (animator is SimpleItemAnimator) {
-            animator.supportsChangeAnimations = false
-        }
-
         val listener = object : ProductSummaryClickListener {
             override fun onClick(productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
@@ -88,7 +82,7 @@ class ProductListFragment : Fragment() {
             }
         }
 
-        val adapter = ProductSummaryAdapter(listener)
+        val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.userDiffUtil)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
