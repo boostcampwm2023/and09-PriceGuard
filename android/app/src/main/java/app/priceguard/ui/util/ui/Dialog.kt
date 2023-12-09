@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import app.priceguard.ui.ConfirmDialogFragment
+import app.priceguard.ui.ErrorDialogFragment
 import app.priceguard.ui.data.DialogConfirmAction
 
 fun AppCompatActivity.showConfirmDialog(
@@ -35,11 +36,11 @@ fun Fragment.showDialogWithAction(
 }
 
 fun AppCompatActivity.showDialogWithLogout() {
-    val dialogFragment = ConfirmDialogFragment()
+    val dialogFragment = ErrorDialogFragment()
     dialogFragment.show(supportFragmentManager, "error_dialog_fragment_from_activity")
 }
 
 fun Fragment.showDialogWithLogout() {
-    val dialogFragment = ConfirmDialogFragment()
+    val dialogFragment = ErrorDialogFragment()
     dialogFragment.show(requireActivity().supportFragmentManager, "error_dialog_fragment_from_fragment")
 }
