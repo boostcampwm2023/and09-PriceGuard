@@ -72,7 +72,7 @@ class RecommendedProductFragment : Fragment() {
             }
         }
 
-        val adapter = ProductSummaryAdapter(listener)
+        val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.diffUtil)
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.recommendedProductList.collect { list ->
