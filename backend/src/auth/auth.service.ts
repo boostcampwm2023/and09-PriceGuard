@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
-import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
+import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS, TWO_MONTHS_TO_SEC, TWO_WEEKS_TO_SEC } from 'src/constants';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 
@@ -25,7 +25,7 @@ export class AuthService {
 
     async getRefreshToken(user: User): Promise<string> {
         const refreshToken = this.jwtService.sign({ id: user.id }, { secret: REFRESH_TOKEN_SECRETS, expiresIn: '2w' });
-        await this.redis.set(`refreshToken:${user.id}`, refreshToken);
+        await this.redis.set(`refreshToken:${user.id}`, refreshToken, 'EX', TWO_WEEKS_TO_SEC);
         return refreshToken;
     }
 
@@ -53,7 +53,7 @@ export class AuthService {
 
     async addFirebaseToken(userId: string, token: string) {
         try {
-            await this.redis.set(`firebaseToken:${userId}`, token);
+            await this.redis.set(`firebaseToken:${userId}`, token, 'EX', TWO_MONTHS_TO_SEC);
             return token;
         } catch (e) {
             throw new HttpException('Firebase 토큰 등록 실패', HttpStatus.INTERNAL_SERVER_ERROR);

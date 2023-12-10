@@ -19,8 +19,7 @@ export class JWTService {
     }
 
     async isLatestRefreshToken(userId: string, payload: string) {
-        const tokenInfo = await this.findOne(userId);
-        const latestRefreshToken = tokenInfo;
+        const latestRefreshToken = await this.findOne(userId);
         const token = this.jwtService.sign(payload, { secret: REFRESH_TOKEN_SECRETS });
         if (latestRefreshToken !== token) {
             return false;

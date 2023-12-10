@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS, TWENTY_MIN_TO_SEC } from 'src/constants';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
@@ -63,6 +63,8 @@ export class ProductService {
                     price: data.price,
                     lowestPrice: data.lowestPrice,
                 }),
+                'EX',
+                TWENTY_MIN_TO_SEC,
             );
             const zaddUserCount = await this.redis.zadd(
                 'userCount',
@@ -291,6 +293,8 @@ export class ProductService {
                 isSoldOut: productInfo.isSoldOut,
                 lowestPrice: productInfo.productPrice,
             }),
+            'EX',
+            TWENTY_MIN_TO_SEC,
         );
         this.productPriceModel.create(updatedDataInfo);
         return product;
