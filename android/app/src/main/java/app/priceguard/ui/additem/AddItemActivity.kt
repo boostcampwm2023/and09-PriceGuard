@@ -42,7 +42,8 @@ class AddItemActivity : AppCompatActivity() {
                     intent.getStringExtra("productCode") ?: "",
                     intent.getStringExtra("productTitle") ?: "",
                     intent.getIntExtra("productPrice", 0),
-                    intent.getBooleanExtra("isAdding", true)
+                    intent.getBooleanExtra("isAdding", true),
+                    intent.getIntExtra("productTargetPrice", (intent.getIntExtra("productPrice", 0) * 0.8).toInt())
                 )
             navController.safeNavigate(action)
         }
