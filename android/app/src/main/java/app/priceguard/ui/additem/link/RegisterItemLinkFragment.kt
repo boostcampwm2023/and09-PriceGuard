@@ -17,6 +17,7 @@ import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentRegisterItemLinkBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.safeNavigate
 import app.priceguard.ui.util.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -130,10 +131,6 @@ class RegisterItemLinkFragment : Fragment() {
 
     private fun updateLinkError(message: String) {
         binding.tvRegisterItemError.text = message
-    }
-
-    private fun NavController.safeNavigate(direction: NavDirections) {
-        currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
     }
 
     override fun onDestroyView() {

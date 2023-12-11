@@ -18,6 +18,7 @@ import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.openNotificationSettings
+import app.priceguard.ui.util.safeNavigate
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -69,7 +70,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.THEME -> {
-                                findNavController().navigate(R.id.action_myPageFragment_to_themeDialogFragment)
+                                findNavController().safeNavigate(R.id.action_myPageFragment_to_themeDialogFragment)
                             }
 
                             Setting.LICENSE -> {
