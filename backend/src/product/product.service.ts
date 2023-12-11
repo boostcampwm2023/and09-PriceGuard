@@ -102,7 +102,7 @@ export class ProductService {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
         const userCount = parseInt(await this.redis.zincrby('userCount', 1, product.id));
-        const productRank = {
+        const newProductRank = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
@@ -110,7 +110,7 @@ export class ProductService {
             imageUrl: product.imageUrl,
             userCount: userCount,
         };
-        this.productRankCache.update(productRank);
+        this.productRankCache.update(newProductRank);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
@@ -223,7 +223,7 @@ export class ProductService {
             this.productRankCache.update(currentProduct);
             return;
         }
-        if (nextDataId < currentProduct.id) {
+        if (userCount === currentProduct.userCount && nextDataId < currentProduct.id) {
             this.productRankCache.update(currentProduct);
             return;
         }
