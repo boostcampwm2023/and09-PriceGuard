@@ -145,7 +145,8 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.imageUrl ?: "",
                             dto.targetPrice ?: 0,
                             dto.price ?: 0,
-                            graphDataConverter.toDataset(dto.priceData)
+                            dto.isAlert ?: true,
+                            GraphDataConverter().toDataset(dto.priceData)
                         )
                     } ?: listOf()
                 )
@@ -259,6 +260,20 @@ class ProductRepositoryImpl @Inject constructor(
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
                     updateTargetPrice(productCode, targetPrice, true)
+                }
+            }
+        }
+    }
+
+    override suspend fun switchAlert(productCode: String, isRenewed: Boolean): RepositoryResult<Boolean, ProductErrorState> {
+        return when (val response = getApiResult { productAPI.updateAlert(productCode) }) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code, isRenewed) {
+                    deleteProduct(productCode, true)
                 }
             }
         }

@@ -19,6 +19,7 @@
         app:refreshing="@{viewModel.isRefreshing}">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/cl_product_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.home.list.ProductListFragment">
@@ -54,8 +55,8 @@
                 android:id="@+id/rv_product_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_product_summary" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

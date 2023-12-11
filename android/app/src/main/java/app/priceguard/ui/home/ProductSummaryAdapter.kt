@@ -13,8 +13,19 @@ import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.databinding.ItemProductSummaryBinding
 import app.priceguard.materialchart.data.GraphMode
 
-class ProductSummaryAdapter(private val productSummaryClickListener: ProductSummaryClickListener) :
-    ListAdapter<ProductSummary, ProductSummaryAdapter.ViewHolder>(diffUtil) {
+class ProductSummaryAdapter<T : ProductSummary>(
+    private val productSummaryClickListener: ProductSummaryClickListener,
+    diffUtil: DiffUtil.ItemCallback<T>
+) :
+    ListAdapter<T, ProductSummaryAdapter.ViewHolder>(diffUtil) {
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).productCode.toLong()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -35,11 +46,16 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
 
         fun bind(item: ProductSummary) {
             with(binding) {
+                resetListener()
                 summary = item
                 setViewType(item)
                 setClickListener(item.productCode)
                 setGraph(item.priceData)
             }
+        }
+
+        private fun ItemProductSummaryBinding.resetListener() {
+            msProduct.setOnCheckedChangeListener(null)
         }
 
         private fun ItemProductSummaryBinding.setViewType(item: ProductSummary) {
@@ -54,29 +70,34 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 is ProductSummary.UserProductSummary -> {
                     tvProductRecommendRank.visibility = View.GONE
                     msProduct.visibility = View.VISIBLE
+                    msProduct.isChecked = item.isAlarmOn
                     tvProductDiscountPercent.visibility = View.VISIBLE
-                    setDisCount(item.discountPercent)
-                    setSwitchListener()
+                    setDiscount(item.discountPercent)
+                    setSwitchListener(item)
                 }
             }
         }
 
-        private fun ItemProductSummaryBinding.setSwitchListener() {
-            if (msProduct.isChecked.not()) {
+        private fun ItemProductSummaryBinding.setSwitchListener(item: ProductSummary) {
+            updateThumbIcon(msProduct.isChecked)
+
+            msProduct.setOnCheckedChangeListener { _, isChecked ->
+                productSummaryClickListener.onToggle(item.productCode, isChecked)
+                updateThumbIcon(isChecked)
+            }
+            msProduct.contentDescription =
+                msProduct.context.getString(R.string.single_product_notification_toggle, item.title)
+        }
+
+        private fun ItemProductSummaryBinding.updateThumbIcon(checked: Boolean) {
+            if (checked) {
+                msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
+            } else {
                 msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
             }
-            msProduct.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    // TODO: 푸쉬 알람 설정 추가
-                    msProduct.setThumbIconResource(R.drawable.ic_notifications_active)
-                } else {
-                    // TODO: 푸쉬 알람 설정 제거
-                    msProduct.setThumbIconResource(R.drawable.ic_notifications_off)
-                }
-            }
         }
 
-        private fun ItemProductSummaryBinding.setDisCount(discount: Float) {
+        private fun ItemProductSummaryBinding.setDiscount(discount: Float) {
             tvProductDiscountPercent.text =
                 if (discount > 0) {
                     tvProductDiscountPercent.context.getString(
@@ -96,11 +117,20 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
                 true
             )
             tvProductDiscountPercent.setTextColor(value.data)
+            tvProductDiscountPercent.contentDescription =
+                tvProductDiscountPercent.context.getString(
+                    R.string.target_price_delta,
+                    tvProductDiscountPercent.text
+                )
         }
 
         private fun ItemProductSummaryBinding.setRecommendRank(item: ProductSummary.RecommendedProductSummary) {
             tvProductRecommendRank.text = tvProductRecommendRank.context.getString(
                 R.string.recommand_rank, item.recommendRank
+            )
+            tvProductRecommendRank.contentDescription = tvProductRecommendRank.context.getString(
+                R.string.current_rank_info,
+                item.recommendRank
             )
         }
 
@@ -125,12 +155,28 @@ class ProductSummaryAdapter(private val productSummaryClickListener: ProductSumm
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<ProductSummary>() {
-            override fun areContentsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem == newItem
+        val userDiffUtil = object : DiffUtil.ItemCallback<ProductSummary.UserProductSummary>() {
+            override fun areContentsTheSame(
+                oldItem: ProductSummary.UserProductSummary,
+                newItem: ProductSummary.UserProductSummary
+            ) = oldItem.productCode == newItem.productCode &&
+                oldItem.price == newItem.price &&
+                oldItem.discountPercent == newItem.discountPercent &&
+                oldItem.title == newItem.title
 
-            override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                oldItem.hashCode() == newItem.hashCode()
+            override fun areItemsTheSame(
+                oldItem: ProductSummary.UserProductSummary,
+                newItem: ProductSummary.UserProductSummary
+            ) = oldItem.productCode == newItem.productCode
         }
+
+        val diffUtil =
+            object : DiffUtil.ItemCallback<ProductSummary>() {
+                override fun areContentsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
+                    oldItem == newItem
+
+                override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
+                    oldItem.productCode == newItem.productCode
+            }
     }
 }

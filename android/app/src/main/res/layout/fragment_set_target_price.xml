@@ -9,117 +9,131 @@
             type="app.priceguard.ui.additem.setprice.SetTargetPriceViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface">
+        android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_vertical_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurface">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_vertical_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/gl_vertical_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="16dp" />
 
-        <TextView
-            android:id="@+id/tv_confirm_item_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="96dp"
-            android:text="@string/set_price_title"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-            app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/gl_vertical_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="16dp" />
 
-        <TextView
-            android:id="@+id/tv_set_price_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="24dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@{viewModel.state.productName}"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            app:layout_constraintEnd_toStartOf="@id/tv_set_price_current_price"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_title" />
+            <TextView
+                android:id="@+id/tv_confirm_item_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="96dp"
+                android:labelFor="@+id/et_target_price"
+                android:text="@string/set_price_title"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_set_price_current_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-            app:layout_constraintTop_toTopOf="@id/tv_set_price_name" />
+            <TextView
+                android:id="@+id/tv_set_price_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{viewModel.state.productName}"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                app:layout_constraintEnd_toStartOf="@id/tv_set_price_current_price"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_title" />
 
-        <EditText
-            android:id="@+id/et_target_price"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="80dp"
-            android:background="@drawable/bg_round_corner"
-            android:gravity="end|center_vertical"
-            android:inputType="number"
-            android:paddingHorizontal="24dp"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:imeOptions="actionDone"
-            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@id/tv_set_price_name" />
+            <TextView
+                android:id="@+id/tv_set_price_current_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintTop_toTopOf="@id/tv_set_price_name" />
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/sl_target_price"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:stepSize="10"
-            android:value="80"
-            android:valueFrom="0"
-            android:valueTo="100"
-            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@id/et_target_price" />
+            <EditText
+                android:id="@+id/et_target_price"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="80dp"
+                android:background="@drawable/bg_round_corner"
+                android:contentDescription="@string/target_price_input"
+                android:gravity="end|center_vertical"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:paddingHorizontal="24dp"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/tv_set_price_name" />
 
-        <TextView
-            android:id="@+id/tv_target_price_percent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|end"
-            android:paddingHorizontal="16dp"
-            android:text="현재 가격의 80%"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@id/sl_target_price" />
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sl_target_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:stepSize="10"
+                android:value="80"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/et_target_price" />
 
-        <Button
-            android:id="@+id/btn_confirm_item_back"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="@string/back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/gl_vertical_start" />
+            <TextView
+                android:id="@+id/tv_target_price_percent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|end"
+                android:paddingHorizontal="16dp"
+                android:text="@string/target_price_80"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/sl_target_price" />
 
-        <Button
-            android:id="@+id/btn_confirm_item_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/finish"
-            app:layout_constraintBottom_toBottomOf="@id/btn_confirm_item_back"
-            app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />
+            <Button
+                android:id="@+id/btn_confirm_item_back"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@+id/tv_target_price_percent"
+                app:layout_constraintVertical_bias="1.0" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btn_confirm_item_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/finish"
+                app:layout_constraintBottom_toBottomOf="@id/btn_confirm_item_back"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintTop_toTopOf="@+id/btn_confirm_item_back" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

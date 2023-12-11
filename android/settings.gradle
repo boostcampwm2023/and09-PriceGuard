@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PriceGuard"
 include ':app'
-include ':materialchart'

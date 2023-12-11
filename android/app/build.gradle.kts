@@ -19,8 +19,8 @@ android {
         applicationId = "app.priceguard"
         minSdk = 29
         targetSdk = 34
-        versionCode = 3
-        versionName = "0.2.0"
+        versionCode = 4
+        versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -62,6 +62,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-perf")
+    implementation("com.google.firebase:firebase-messaging")
 
     // Android
     implementation("androidx.core:core-ktx:1.12.0")
@@ -104,8 +105,13 @@ dependencies {
     // Pull to Refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    // Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:1.1.0")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
+
     // Material chart
-    implementation(project(":materialchart"))
+    implementation("app.priceguard:materialchart:0.2.0")
 }
 
 kapt {

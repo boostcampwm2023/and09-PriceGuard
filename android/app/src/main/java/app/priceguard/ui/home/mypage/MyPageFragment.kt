@@ -12,22 +12,24 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
+import app.priceguard.ui.ConfirmDialogFragment
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.ui.openNotificationSettings
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyPageFragment : Fragment() {
+class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MyPageViewModel by viewModels()
+    private val myPageViewModel: MyPageViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +37,7 @@ class MyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyPageBinding.inflate(layoutInflater, container, false)
-        binding.viewModel = viewModel
+        binding.viewModel = myPageViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -46,7 +48,7 @@ class MyPageFragment : Fragment() {
         initSettingAdapter()
 
         repeatOnStarted {
-            viewModel.event.collect { event ->
+            myPageViewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
                 }
@@ -63,7 +65,7 @@ class MyPageFragment : Fragment() {
                     override fun onClick(setting: Setting) {
                         when (setting) {
                             Setting.NOTIFICATION -> {
-                                // TODO: 알람 설정
+                                requireContext().openNotificationSettings()
                             }
 
                             Setting.THEME -> {
@@ -75,7 +77,7 @@ class MyPageFragment : Fragment() {
                             }
 
                             Setting.LOGOUT -> {
-                                showLogoutConfirmDialog()
+                                showConfirmationDialogForResult()
                             }
                         }
                     }
@@ -108,19 +110,27 @@ class MyPageFragment : Fragment() {
         )
     }
 
-    private fun showLogoutConfirmDialog() {
-        MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(getString(R.string.logout_confirm_title))
-            .setMessage(getString(R.string.logout_confirm_message))
-            .setPositiveButton(getString(R.string.yes)) { _, _ -> viewModel.logout() }
-            .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
-            .show()
+    private fun showConfirmationDialogForResult() {
+        val dialogFragment = ConfirmDialogFragment()
+        val bundle = Bundle()
+        bundle.putString("title", getString(R.string.logout_confirm_title))
+        bundle.putString("message", getString(R.string.logout_confirm_message))
+        bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
+        dialogFragment.arguments = bundle
+        dialogFragment.setOnDialogResultListener(this)
+        dialogFragment.show(requireActivity().supportFragmentManager, "confirm_dialog_fragment_from_fragment")
     }
 
     private fun startIntroAndExitHome() {
         val intent = Intent(requireActivity(), IntroActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    override fun onDialogResult(result: Boolean) {
+        if (result) {
+            myPageViewModel.logout()
+        }
     }
 
     override fun onDestroyView() {

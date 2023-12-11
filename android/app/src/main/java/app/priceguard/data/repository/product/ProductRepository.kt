@@ -23,4 +23,6 @@ interface ProductRepository {
     suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
 
     suspend fun updateTargetPrice(productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<PricePatchResult, ProductErrorState>
+
+    suspend fun switchAlert(productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
 }

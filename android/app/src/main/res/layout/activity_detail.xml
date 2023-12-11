@@ -30,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
+                app:navigationContentDescription="@string/go_back"
                 app:navigationIcon="@drawable/ic_back" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -47,6 +48,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsv_product_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -94,6 +96,8 @@
                             android:layout_height="48dp"
                             android:layout_marginTop="12dp"
                             android:layout_marginEnd="12dp"
+                            android:contentDescription="@string/share_product"
+                            android:enabled="@{viewModel.state.isReady}"
                             app:icon="@drawable/ic_share"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/iv_detail_product" />
@@ -118,6 +122,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/current_price_info(@string/price(viewModel.state.formattedPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -154,6 +159,7 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_marginTop="8dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:text="@string/add_to_tracking_list"
                             android:visibility="@{viewModel.state.isTracking ? View.GONE : View.VISIBLE}"
                             app:icon="@drawable/ic_track"
@@ -181,6 +187,7 @@
                             android:layout_height="48dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="4dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:text="@string/edit_target_price"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
                             app:icon="@drawable/ic_edit"
@@ -196,6 +203,7 @@
                             android:layout_height="48dp"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="8dp"
+                            android:enabled="@{viewModel.state.isReady}"
                             android:onClick="@{() -> viewModel.sendDeleteTrackingEvent()}"
                             android:text="@string/delete_tracking"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
@@ -210,6 +218,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:importantForAccessibility="no"
                             android:text="@string/lowest_price"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -220,6 +229,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/lowest_price_info(@string/price(viewModel.state.formattedLowestPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedLowestPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textStyle="bold"
@@ -232,6 +242,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:importantForAccessibility="no"
                             android:text="@string/target_price"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:visibility="@{viewModel.state.isTracking ? View.VISIBLE : View.GONE}"
@@ -243,6 +254,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@{@string/target_price_info(@string/price(viewModel.state.formattedTargetPrice))}"
                             android:text="@{@string/price(viewModel.state.formattedTargetPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textStyle="bold"
@@ -267,6 +279,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@string/edit_period"
                             app:checkedButton="@+id/btn_period_day"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
@@ -280,6 +293,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/day" />
 
                             <Button
@@ -288,6 +302,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/week" />
 
                             <Button
@@ -296,6 +311,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/month" />
 
                             <Button
@@ -304,6 +320,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:enabled="@{viewModel.state.isReady}"
                                 android:text="@string/quarter" />
 
                         </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -314,6 +331,7 @@
                             android:layout_width="0dp"
                             android:layout_height="300dp"
                             android:layout_marginTop="8dp"
+                            android:contentDescription="@string/price_track_graph"
                             app:layout_constraintEnd_toStartOf="@id/gl_vertical_end_nested"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/mbtg_graph_period" />

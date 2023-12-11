@@ -9,5 +9,6 @@ data class ProductData(
     val imageUrl: String,
     val targetPrice: Int,
     val price: Int,
+    val isAlert: Boolean,
     val priceData: List<ProductChartData>
 )

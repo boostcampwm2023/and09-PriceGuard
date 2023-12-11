@@ -2,6 +2,7 @@ package app.priceguard.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -14,10 +15,10 @@ import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.ui.showConfirmDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -78,15 +79,23 @@ class SignupActivity : AppCompatActivity() {
                     }
 
                     SignupEvent.DuplicatedEmail -> {
-                        showDialog(getString(R.string.error), getString(R.string.duplicate_email))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
                     SignupEvent.InvalidRequest -> {
-                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.invalid_parameter))
                     }
 
                     SignupEvent.UndefinedError -> {
-                        showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.undefined_error))
+                    }
+
+                    SignupEvent.TokenUpdateError, SignupEvent.FirebaseError -> {
+                        Toast.makeText(
+                            this@SignupActivity,
+                            getString(R.string.push_notification_not_working),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     else -> {}
@@ -106,15 +115,6 @@ class SignupActivity : AppCompatActivity() {
         binding.mtSignupTopbar.setNavigationOnClickListener {
             finish()
         }
-    }
-
-    private fun showDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
-            .create()
-            .show()
     }
 
     private fun observeState() {
@@ -137,7 +137,7 @@ class SignupActivity : AppCompatActivity() {
     private fun updateNameTextFieldUI(state: SignupUIState) {
         when (state.isNameError) {
             true -> {
-                binding.tilSignupName.error = getString(R.string.name_required)
+                binding.tilSignupName.error = getString(R.string.invalid_name)
             }
 
             else -> {

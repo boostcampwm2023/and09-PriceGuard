@@ -15,9 +15,10 @@ import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showPermissionDeniedDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import app.priceguard.ui.util.ui.showDialogWithAction
+import app.priceguard.ui.util.ui.showDialogWithLogout
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,14 +75,16 @@ class SetTargetPriceFragment : Fragment() {
 
         setTargetPriceViewModel.updateTargetPrice((price * 0.8).toInt())
 
-        binding.tvSetPriceCurrentPrice.text =
+        tvSetPriceCurrentPrice.text =
             String.format(
                 resources.getString(R.string.won),
                 NumberFormat.getNumberInstance().format(price)
             )
+        tvSetPriceCurrentPrice.contentDescription =
+            getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
         setTargetPriceViewModel.setProductInfo(productCode, title, price)
-        binding.etTargetPrice.setText((price * 0.8).toInt().toString())
+        etTargetPrice.setText((price * 0.8).toInt().toString())
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -131,6 +134,12 @@ class SetTargetPriceFragment : Fragment() {
             binding.tvTargetPricePercent.text =
                 String.format(getString(R.string.current_price_percent), percent)
 
+            binding.tvTargetPricePercent.contentDescription = getString(
+                R.string.target_price_percent_and_price,
+                binding.tvTargetPricePercent.text,
+                binding.tvSetPriceCurrentPrice.text
+            )
+
             binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
         }
     }
@@ -154,34 +163,36 @@ class SetTargetPriceFragment : Fragment() {
             setTargetPriceViewModel.event.collect { event ->
                 when (event) {
                     is SetTargetPriceEvent.SuccessProductAdd -> {
-                        showActivityFinishDialog(
+                        showDialogWithAction(
                             getString(R.string.success_add),
-                            getString(R.string.success_add_message)
+                            getString(R.string.success_add_message),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
                     is SetTargetPriceEvent.SuccessPriceUpdate -> {
-                        showActivityFinishDialog(
+                        showDialogWithAction(
                             getString(R.string.success_update),
-                            getString(R.string.success_update_message)
+                            getString(R.string.success_update_message),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
                     is SetTargetPriceEvent.FailurePriceAdd -> {
                         when (event.errorType) {
                             ProductErrorState.EXIST -> {
-                                showActivityFinishDialog(
+                                showDialogWithAction(
                                     getString(R.string.error_add_product),
                                     getString(R.string.exist_product)
                                 )
                             }
 
                             ProductErrorState.PERMISSION_DENIED -> {
-                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                                showDialogWithLogout()
                             }
 
                             else -> {
-                                showActivityFinishDialog(
+                                showDialogWithAction(
                                     getString(R.string.error),
                                     getString(R.string.retry)
                                 )
@@ -192,11 +203,11 @@ class SetTargetPriceFragment : Fragment() {
                     is SetTargetPriceEvent.FailurePriceUpdate -> {
                         when (event.errorType) {
                             ProductErrorState.PERMISSION_DENIED -> {
-                                requireActivity().showPermissionDeniedDialog(tokenRepository)
+                                showDialogWithLogout()
                             }
 
                             else -> {
-                                showActivityFinishDialog(
+                                showDialogWithAction(
                                     getString(R.string.error_patch_price),
                                     getString(R.string.retry)
                                 )
@@ -206,16 +217,6 @@ class SetTargetPriceFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun showActivityFinishDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(requireActivity(), R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(R.string.confirm) { _, _ -> requireActivity().finish() }
-            .setOnDismissListener { requireActivity().finish() }
-            .create()
-            .show()
     }
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(

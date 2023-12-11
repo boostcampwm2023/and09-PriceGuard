@@ -7,6 +7,7 @@ import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.product.ProductRepository
 import app.priceguard.materialchart.data.GraphMode
+import app.priceguard.ui.data.ProductData
 import app.priceguard.ui.home.ProductSummary.UserProductSummary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -46,22 +47,41 @@ class ProductListViewModel @Inject constructor(
 
             when (result) {
                 is RepositoryResult.Success -> {
-                    _productList.value = result.data.map { data ->
-                        UserProductSummary(
-                            data.shop,
-                            data.productName,
-                            data.price,
-                            data.productCode,
-                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
-                            calculateDiscountRate(data.targetPrice, data.price),
-                            true
-                        )
-                    }
+                    updateProductList(isRefresh, result.data)
                 }
 
                 is RepositoryResult.Error -> {
                     _events.emit(result.errorState)
                 }
+            }
+        }
+    }
+
+    private fun updateProductList(refresh: Boolean, fetched: List<ProductData>) {
+        val productMap = mutableMapOf<String, Boolean>()
+        _productList.value.forEach { product ->
+            productMap[product.productCode] = product.isAlarmOn
+        }
+
+        _productList.value = fetched.map { data ->
+            UserProductSummary(
+                data.shop,
+                data.productName,
+                data.price,
+                data.productCode,
+                graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
+                calculateDiscountRate(data.targetPrice, data.price),
+                if (refresh) productMap[data.productCode] ?: data.isAlert else data.isAlert
+            )
+        }
+    }
+
+    fun updateProductAlarmToggle(productCode: String, checked: Boolean) {
+        _productList.value = productList.value.mapIndexed { _, product ->
+            if (product.productCode == productCode) {
+                product.copy(isAlarmOn = checked)
+            } else {
+                product
             }
         }
     }

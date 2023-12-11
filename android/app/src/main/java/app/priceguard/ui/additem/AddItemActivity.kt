@@ -1,8 +1,12 @@
 package app.priceguard.ui.additem
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
+import app.priceguard.R
 import app.priceguard.databinding.ActivityAddItemBinding
 import app.priceguard.ui.additem.link.RegisterItemLinkFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,12 +25,19 @@ class AddItemActivity : AppCompatActivity() {
     }
 
     private fun setStartDestination() {
-        if (intent.hasExtra("productCode") &&
+        val navController = binding.fcvAddItem.getFragment<NavHostFragment>().navController
+
+        if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            intent.getStringExtra(Intent.EXTRA_TEXT)?.let { data ->
+                val bundle = Bundle()
+                bundle.putString("link", data)
+                navController.navigate(R.id.registerItemLinkFragment, bundle)
+            }
+        } else if (intent.hasExtra("productCode") &&
             intent.hasExtra("productTitle") &&
             intent.hasExtra("productPrice") &&
             intent.hasExtra("isAdding")
         ) {
-            val navController = binding.fcvAddItem.getFragment<NavHostFragment>().navController
             val action =
                 RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToSetTargetPriceFragment(
                     intent.getStringExtra("productCode") ?: "",
@@ -34,7 +45,11 @@ class AddItemActivity : AppCompatActivity() {
                     intent.getIntExtra("productPrice", 0),
                     intent.getBooleanExtra("isAdding", true)
                 )
-            navController.navigate(action)
+            navController.safeNavigate(action)
         }
+    }
+
+    private fun NavController.safeNavigate(direction: NavDirections) {
+        currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
     }
 }

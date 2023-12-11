@@ -43,12 +43,14 @@ class SignupViewModel @Inject constructor(
         data object DuplicatedEmail : SignupEvent()
         data object UndefinedError : SignupEvent()
         data object SignupInfoSaved : SignupEvent()
+        data object FirebaseError : SignupEvent()
+        data object TokenUpdateError : SignupEvent()
     }
 
     private val emailPattern =
         """^[\w.+-]+@((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$""".toRegex()
     private val passwordPattern =
-        """^(?=[A-Za-z\d!@#$%^&*]*\d)(?=[A-Za-z\d!@#$%^&*]*[a-z])(?=[A-Za-z\d!@#$%^&*]*[A-Z])(?=[A-Za-z\d!@#$%^&*]*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$""".toRegex()
+        """^(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*\d)(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[a-z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/])[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]{8,16}$""".toRegex()
 
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
@@ -77,8 +79,11 @@ class SignupViewModel @Inject constructor(
                         return@launch
                     }
 
+                    val firebaseToken = tokenRepository.getFirebaseToken()
+
                     updateSignupFinished(true)
                     saveTokens(result.data.accessToken, result.data.refreshToken)
+                    updateFirebaseToken(result.data.accessToken, firebaseToken)
                     sendSignupEvent(SignupEvent.SignupInfoSaved)
                     Log.d("ViewModel", "Event Finish Sent")
                 }
@@ -135,7 +140,7 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun isValidName(): Boolean {
-        return _state.value.name.isNotBlank()
+        return _state.value.name.isNotBlank() && _state.value.name.length <= 16
     }
 
     private fun isValidEmail(): Boolean {
@@ -156,6 +161,20 @@ class SignupViewModel @Inject constructor(
 
     private suspend fun sendSignupEvent(event: SignupEvent) {
         _eventFlow.emit(event)
+    }
+
+    private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
+        if (firebaseToken != null) {
+            when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
+                is RepositoryResult.Error -> {
+                    sendSignupEvent(SignupEvent.TokenUpdateError)
+                }
+
+                else -> {}
+            }
+        } else {
+            sendSignupEvent(SignupEvent.FirebaseError)
+        }
     }
 
     private fun updateIsSignupReady() {

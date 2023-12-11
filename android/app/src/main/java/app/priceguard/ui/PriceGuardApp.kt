@@ -4,6 +4,8 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import app.priceguard.data.datastore.ConfigDataSource
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.HiltAndroidApp
@@ -13,10 +15,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @HiltAndroidApp
-class PriceGuardApp : Application() {
+class PriceGuardApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var configDataSource: ConfigDataSource
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()
