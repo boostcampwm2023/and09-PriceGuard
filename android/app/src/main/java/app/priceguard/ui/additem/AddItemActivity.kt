@@ -3,12 +3,11 @@ package app.priceguard.ui.additem
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import app.priceguard.R
 import app.priceguard.databinding.ActivityAddItemBinding
 import app.priceguard.ui.additem.link.RegisterItemLinkFragmentDirections
+import app.priceguard.ui.util.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,9 +48,5 @@ class AddItemActivity : AppCompatActivity() {
                 )
             navController.safeNavigate(action)
         }
-    }
-
-    private fun NavController.safeNavigate(direction: NavDirections) {
-        currentDestination?.getAction(direction.actionId)?.run { navigate(direction) }
     }
 }

@@ -11,13 +11,16 @@ fun AppCompatActivity.showConfirmDialog(
     message: String,
     action: DialogConfirmAction = DialogConfirmAction.NOTHING
 ) {
+    val tag = "confirm_dialog_fragment_from_activity"
+    if (supportFragmentManager.findFragmentByTag(tag) != null) return
+
     val dialogFragment = ConfirmDialogFragment()
     val bundle = Bundle()
     bundle.putString("title", title)
     bundle.putString("message", message)
     bundle.putString("actionString", action.name)
     dialogFragment.arguments = bundle
-    dialogFragment.show(supportFragmentManager, "confirm_dialog_fragment_from_activity")
+    dialogFragment.show(supportFragmentManager, tag)
 }
 
 fun Fragment.showDialogWithAction(
@@ -25,21 +28,30 @@ fun Fragment.showDialogWithAction(
     message: String,
     action: DialogConfirmAction = DialogConfirmAction.NOTHING
 ) {
+    val tag = "confirm_dialog_fragment_from_activity"
+    if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+
     val dialogFragment = ConfirmDialogFragment()
     val bundle = Bundle()
     bundle.putString("title", title)
     bundle.putString("message", message)
     bundle.putString("actionString", action.name)
     dialogFragment.arguments = bundle
-    dialogFragment.show(requireActivity().supportFragmentManager, "confirm_dialog_fragment_from_fragment")
+    dialogFragment.show(requireActivity().supportFragmentManager, tag)
 }
 
 fun AppCompatActivity.showDialogWithLogout() {
+    val tag = "error_dialog_fragment_from_fragment"
+    if (supportFragmentManager.findFragmentByTag(tag) != null) return
+
     val dialogFragment = ErrorDialogFragment()
     dialogFragment.show(supportFragmentManager, "error_dialog_fragment_from_activity")
 }
 
 fun Fragment.showDialogWithLogout() {
+    val tag = "error_dialog_fragment_from_fragment"
+    if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+
     val dialogFragment = ErrorDialogFragment()
-    dialogFragment.show(requireActivity().supportFragmentManager, "error_dialog_fragment_from_fragment")
+    dialogFragment.show(requireActivity().supportFragmentManager, tag)
 }

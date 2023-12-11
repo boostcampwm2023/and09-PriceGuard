@@ -21,7 +21,8 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         val productCode: String = "",
         val targetPrice: Int = 0,
         val productName: String = "",
-        val productPrice: Int = 0
+        val productPrice: Int = 0,
+        val isReady: Boolean = true
     )
 
     sealed class SetTargetPriceEvent {
@@ -39,6 +40,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     fun addProduct() {
         viewModelScope.launch {
+            _state.value = state.value.copy(isReady = false)
             val response = productRepository.addProduct(
                 _state.value.productCode,
                 _state.value.targetPrice
@@ -52,6 +54,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                     _event.emit(SetTargetPriceEvent.FailurePriceAdd(response.errorState))
                 }
             }
+            _state.value = state.value.copy(isReady = true)
         }
     }
 
