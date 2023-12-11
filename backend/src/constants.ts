@@ -35,3 +35,6 @@ export const AUTH_PROVIDER_X509_CERT_URL = process.env.AUTH_PROVIDER_X509_CERT_U
 export const CLIENT_X509_CERT_URL = process.env.CLIENT_X509_CERT_URL;
 export const UNIVERSE_DOMAIN = process.env.UNIVERSE_DOMAIN;
 export const CHANNEL_ID = process.env.CHANNEL_ID;
+export const TWENTY_MIN_TO_SEC = 20 * 60;
+export const TWO_WEEKS_TO_SEC = 2 * 7 * 24 * 60 * 60;
+export const TWO_MONTHS_TO_SEC = 61 * 24 * 60 * 60;

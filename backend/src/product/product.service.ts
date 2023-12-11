@@ -12,7 +12,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, NO_CACHE, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS, TWENTY_MIN_TO_SEC } from 'src/constants';
 import { ProductRankCache } from 'src/utils/cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
@@ -63,6 +63,8 @@ export class ProductService {
                     price: data.price,
                     lowestPrice: data.lowestPrice,
                 }),
+                'EX',
+                TWENTY_MIN_TO_SEC,
             );
             const zaddUserCount = await this.redis.zadd(
                 'userCount',
@@ -99,20 +101,16 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
-        const cacheData = await this.redis.zscore('userCount', product.id);
-        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
-        const productRank = {
+        const userCount = parseInt(await this.redis.zincrby('userCount', 1, product.id));
+        const newProductRank = {
             id: product.id,
             productName: product.productName,
             productCode: product.productCode,
             shop: product.shop,
             imageUrl: product.imageUrl,
-            userCount: userCount + 1,
+            userCount: userCount,
         };
-        this.productRankCache.update(productRank);
-        if (cacheData) {
-            await this.redis.zincrby('userCount', 1, product.id);
-        }
+        this.productRankCache.update(newProductRank);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
@@ -214,28 +212,36 @@ export class ProductService {
     }
 
     async deleteUpdateCache(currentProduct: ProductRankCacheDto) {
-        const nextDataId = (await this.redis.zrevrange('userCount', MAX_TRACKING_RANK, MAX_TRACKING_RANK))[0];
-        const cacheData = await this.redis.zscore('userCount', nextDataId);
-        const userCount = cacheData ? parseInt(cacheData) : NO_CACHE;
-        if (userCount >= currentProduct.userCount) {
-            const newProduct = await this.productRepository.findOne({
-                where: { id: nextDataId },
-            });
-            if (!newProduct) {
-                throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-            }
-            const newProductRanck = {
-                id: newProduct.id,
-                productName: newProduct.productName,
-                productCode: newProduct.productCode,
-                shop: newProduct.shop,
-                imageUrl: newProduct.imageUrl,
-                userCount: userCount,
-            };
-            this.productRankCache.update(currentProduct, newProductRanck);
+        const nextProductData = await this.redis.zrevrange(
+            'userCount',
+            MAX_TRACKING_RANK,
+            MAX_TRACKING_RANK,
+            'WITHSCORES',
+        );
+        const [nextDataId, userCount] = [nextProductData[0], parseInt(nextProductData[1])];
+        if (userCount < currentProduct.userCount) {
+            this.productRankCache.update(currentProduct);
             return;
         }
-        this.productRankCache.update(currentProduct);
+        if (userCount === currentProduct.userCount && nextDataId < currentProduct.id) {
+            this.productRankCache.update(currentProduct);
+            return;
+        }
+        const newProduct = await this.productRepository.findOne({
+            where: { id: nextDataId },
+        });
+        if (!newProduct) {
+            throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        const newProductRanck = {
+            id: newProduct.id,
+            productName: newProduct.productName,
+            productCode: newProduct.productCode,
+            shop: newProduct.shop,
+            imageUrl: newProduct.imageUrl,
+            userCount: userCount,
+        };
+        this.productRankCache.update(currentProduct, newProductRanck);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {
@@ -287,6 +293,8 @@ export class ProductService {
                 isSoldOut: productInfo.isSoldOut,
                 lowestPrice: productInfo.productPrice,
             }),
+            'EX',
+            TWENTY_MIN_TO_SEC,
         );
         this.productPriceModel.create(updatedDataInfo);
         return product;
