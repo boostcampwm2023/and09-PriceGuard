@@ -108,7 +108,7 @@ export class ProductService {
             productCode: product.productCode,
             shop: product.shop,
             imageUrl: product.imageUrl,
-            userCount: userCount + 1,
+            userCount: userCount,
         };
         this.productRankCache.update(productRank);
         await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
