@@ -74,6 +74,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
+            intent.putExtra("productTargetPrice", productDetailViewModel.state.value.targetPrice)
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
         }
