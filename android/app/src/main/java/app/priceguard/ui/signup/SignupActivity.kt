@@ -19,6 +19,8 @@ import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,15 +28,22 @@ class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
     private val signupViewModel: SignupViewModel by viewModels()
+    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
+        circularProgressIndicator = getCircularProgressIndicatorDrawable(this@SignupActivity)
         setNavigationButton()
         disableAppBarScroll()
         observeState()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        circularProgressIndicator.stop()
     }
 
     private fun disableAppBarScroll() {
@@ -64,8 +73,6 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
-        val circularProgressIndicator = getCircularProgressIndicatorDrawable(this)
-
         when (event) {
             is SignupEvent.SignupStart -> {
                 (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator

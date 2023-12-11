@@ -14,12 +14,15 @@ import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,9 +30,15 @@ class LoginActivity : AppCompatActivity() {
         with(binding) {
             viewModel = loginViewModel
         }
+        circularProgressIndicator = getCircularProgressIndicatorDrawable(this@LoginActivity)
         initListener()
         collectEvent()
         setContentView(binding.root)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        circularProgressIndicator.stop()
     }
 
     private fun initListener() {
@@ -45,8 +54,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.event.collect { event ->
                 when (event) {
                     LoginEvent.LoginStart -> {
-                        (binding.btnLoginLogin as MaterialButton).icon =
-                            getCircularProgressIndicatorDrawable(this@LoginActivity)
+                        (binding.btnLoginLogin as MaterialButton).icon = circularProgressIndicator
                     }
 
                     LoginEvent.TokenUpdateError, LoginEvent.FirebaseError -> {
