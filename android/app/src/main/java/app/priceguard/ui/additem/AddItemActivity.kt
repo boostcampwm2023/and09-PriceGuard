@@ -35,7 +35,6 @@ class AddItemActivity : AppCompatActivity() {
         } else if (intent.hasExtra("productCode") &&
             intent.hasExtra("productTitle") &&
             intent.hasExtra("productPrice") &&
-            intent.hasExtra("productTargetPrice") &&
             intent.hasExtra("isAdding")
         ) {
             val action =
@@ -44,7 +43,7 @@ class AddItemActivity : AppCompatActivity() {
                     intent.getStringExtra("productTitle") ?: "",
                     intent.getIntExtra("productPrice", 0),
                     intent.getBooleanExtra("isAdding", true),
-                    intent.getIntExtra("productTargetPrice", -1)
+                    intent.getIntExtra("productTargetPrice", (intent.getIntExtra("productPrice", 0) * 0.8).toInt())
                 )
             navController.safeNavigate(action)
         }

@@ -74,10 +74,6 @@ class SetTargetPriceFragment : Fragment() {
         val price = arguments.getInt("productPrice")
         var targetPrice = arguments.getInt("productTargetPrice")
 
-        if (targetPrice == -1) {
-            targetPrice = (price * 0.8).toInt()
-        }
-
         setTargetPriceViewModel.updateTargetPrice(targetPrice)
 
         tvSetPriceCurrentPrice.text =
