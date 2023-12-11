@@ -1,5 +1,6 @@
 package app.priceguard.ui.home.mypage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.repository.token.TokenRepository
@@ -56,16 +57,8 @@ class MyPageViewModel @Inject constructor(
     }
 
     private fun getFirstName(name: String): String {
-        return if (name.isEmpty()) {
-            ""
-        } else {
-            extractFirstLetter(name)
-        }
-    }
-
-    private fun extractFirstLetter(input: String): String {
-        input.forEach {
-            if (it.isSurrogate().not()) {
+        name.forEach {
+            if (it.isSurrogate().not() && it.toString().isNotBlank()) {
                 return it.uppercase()
             }
         }
