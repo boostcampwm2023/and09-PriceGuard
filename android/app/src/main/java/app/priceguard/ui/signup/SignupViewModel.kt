@@ -65,6 +65,7 @@ class SignupViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            _state.value = state.value.copy(isSignupReady = false)
             sendSignupEvent(SignupEvent.SignupStart)
             Log.d("ViewModel", "Event Start Sent")
             updateSignupStarted(true)
@@ -106,6 +107,7 @@ class SignupViewModel @Inject constructor(
                     )
                 }
             }
+            _state.value = state.value.copy(isSignupReady = true)
             updateSignupStarted(false)
         }
     }

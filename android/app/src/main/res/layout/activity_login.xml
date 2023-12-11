@@ -110,6 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:onClick="@{() -> viewModel.login()}"
+            android:enabled="@{!viewModel.state.loading}"
             android:text="@string/login"
             app:iconGravity="textStart"
             app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
