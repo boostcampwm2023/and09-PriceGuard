@@ -170,6 +170,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="36dp"
+                    android:enabled="@{vm.state.signupReady}"
                     android:onClick="@{() -> vm.signup()}"
                     android:text="@string/register"
                     app:iconGravity="textStart"

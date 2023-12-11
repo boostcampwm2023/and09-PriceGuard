@@ -29,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         with(binding) {
             viewModel = loginViewModel
-            lifecycleOwner = this@LoginActivity
         }
         circularProgressIndicator = getCircularProgressIndicatorDrawable(this@LoginActivity)
         initListener()
