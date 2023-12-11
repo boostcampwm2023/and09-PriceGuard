@@ -1,6 +1,5 @@
 package app.priceguard.ui.home.mypage
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.priceguard.data.repository.token.TokenRepository
