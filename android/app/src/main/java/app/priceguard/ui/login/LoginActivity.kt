@@ -34,10 +34,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initListener() {
         with(binding) {
-            btnLoginLogin.setOnClickListener {
-                (binding.btnLoginLogin as MaterialButton).icon =
-                    getCircularProgressIndicatorDrawable(this@LoginActivity)
-            }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
             }
