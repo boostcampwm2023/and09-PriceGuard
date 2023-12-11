@@ -1,10 +1,10 @@
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 
-class CacheNode {
+class RankCacheNode {
     key: string;
     value: ProductRankCacheDto;
-    prev: CacheNode;
-    next: CacheNode;
+    prev: RankCacheNode;
+    next: RankCacheNode;
     constructor(key: string, value: ProductRankCacheDto) {
         this.key = key;
         this.value = value;
@@ -14,20 +14,20 @@ class CacheNode {
 export class ProductRankCache {
     maxSize: number;
     count: number;
-    head: CacheNode;
-    tail: CacheNode;
-    hashTable = new Map<string, CacheNode>();
+    head: RankCacheNode;
+    tail: RankCacheNode;
+    hashTable = new Map<string, RankCacheNode>();
     constructor(size: number) {
         this.maxSize = size;
-        this.head = new CacheNode('head', new ProductRankCacheDto());
-        this.tail = new CacheNode('tail', new ProductRankCacheDto());
+        this.head = new RankCacheNode('head', new ProductRankCacheDto());
+        this.tail = new RankCacheNode('tail', new ProductRankCacheDto());
         this.head.next = this.tail;
         this.tail.prev = this.head;
         this.count = 0;
     }
 
     put(key: string, value: ProductRankCacheDto) {
-        const node = new CacheNode(key, value);
+        const node = new RankCacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
             const lowestNode = this.getLowestNode();
@@ -35,7 +35,7 @@ export class ProductRankCache {
         }
     }
 
-    private add(node: CacheNode) {
+    private add(node: RankCacheNode) {
         let prev = this.tail.prev;
         while (prev.value.userCount <= node.value.userCount) {
             if (prev.value.userCount === node.value.userCount && prev.value.id > node.value.id) {
@@ -63,7 +63,7 @@ export class ProductRankCache {
         return node;
     }
 
-    delete(node: CacheNode) {
+    delete(node: RankCacheNode) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
@@ -97,7 +97,7 @@ export class ProductRankCache {
         this.put(product.id, product);
     }
 
-    get(key: string): CacheNode | null {
+    get(key: string): RankCacheNode | null {
         const node = this.hashTable.get(key);
         return node ? node : null;
     }

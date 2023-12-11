@@ -13,7 +13,7 @@ import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
 import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS, TWENTY_MIN_TO_SEC } from 'src/constants';
-import { ProductRankCache } from 'src/utils/cache';
+import { ProductRankCache } from 'src/utils/rank.cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
