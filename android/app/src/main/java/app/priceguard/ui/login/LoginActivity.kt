@@ -84,11 +84,17 @@ class LoginActivity : AppCompatActivity() {
             }
 
             is LoginEvent.LoginFailure -> {
-                showConfirmDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
+                showConfirmDialog(
+                    getString(R.string.login_fail),
+                    getString(R.string.login_fail_message)
+                )
             }
 
             is LoginEvent.UndefinedError -> {
-                showConfirmDialog(getString(R.string.login_fail), getString(R.string.undefined_error))
+                showConfirmDialog(
+                    getString(R.string.login_fail),
+                    getString(R.string.undefined_error)
+                )
             }
 
             is LoginEvent.LoginInfoSaved -> {

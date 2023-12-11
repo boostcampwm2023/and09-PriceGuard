@@ -65,9 +65,10 @@ class SignupViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            updateSignupStarted(true)
             sendSignupEvent(SignupEvent.SignupStart)
             Log.d("ViewModel", "Event Start Sent")
-            updateSignupStarted(true)
+
             val result =
                 authRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
 
