@@ -17,12 +17,14 @@ import { ProductRankCache } from 'src/utils/rank.cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
+import { TrackingProductCache } from 'src/utils/tracking.cache';
 
 const REGEXP_11ST =
     /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     private productRankCache = new ProductRankCache(MAX_TRACKING_RANK);
+    private trackingProductCache = new TrackingProductCache(10);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -115,10 +117,14 @@ export class ProductService {
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
-        const trackingProductList = await this.trackingProductRepository.find({
-            where: { userId: userId },
-            relations: ['product'],
-        });
+        let trackingProductList = this.trackingProductCache.get(userId);
+        if (!trackingProductList) {
+            trackingProductList = await this.trackingProductRepository.find({
+                where: { userId: userId },
+                relations: ['product'],
+            });
+            this.trackingProductCache.put(userId, trackingProductList);
+        }
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
