@@ -43,7 +43,7 @@ class MyPageViewModel @Inject constructor(
                 MyPageInfo(
                     userData.name,
                     userData.email,
-                    if (userData.name.isNotEmpty()) userData.name.first().toString() else ""
+                    getFirstName(userData.name)
                 )
         }
     }
@@ -53,5 +53,14 @@ class MyPageViewModel @Inject constructor(
             tokenRepository.clearTokens()
             _event.emit(MyPageEvent.StartIntroAndExitHome)
         }
+    }
+
+    private fun getFirstName(name: String): String {
+        name.forEach {
+            if (it.isSurrogate().not() && it.toString().isNotBlank()) {
+                return it.uppercase()
+            }
+        }
+        return ""
     }
 }
