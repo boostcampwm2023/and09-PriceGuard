@@ -183,7 +183,8 @@ class SetTargetPriceFragment : Fragment() {
                             ProductErrorState.EXIST -> {
                                 showDialogWithAction(
                                     getString(R.string.error_add_product),
-                                    getString(R.string.exist_product)
+                                    getString(R.string.exist_product),
+                                    DialogConfirmAction.FINISH
                                 )
                             }
 
