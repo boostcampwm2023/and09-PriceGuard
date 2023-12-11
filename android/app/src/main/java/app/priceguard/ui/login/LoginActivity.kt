@@ -10,6 +10,8 @@ import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showConfirmDialog
@@ -26,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         with(binding) {
             viewModel = loginViewModel

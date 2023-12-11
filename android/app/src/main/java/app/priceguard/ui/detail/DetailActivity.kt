@@ -19,6 +19,8 @@ import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.util.ConfirmDialogFragment
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showConfirmDialog
 import app.priceguard.ui.util.showDialogWithLogout
@@ -40,6 +42,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = productDetailViewModel

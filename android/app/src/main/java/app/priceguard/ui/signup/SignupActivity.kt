@@ -13,6 +13,8 @@ import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showConfirmDialog
@@ -32,6 +34,7 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
