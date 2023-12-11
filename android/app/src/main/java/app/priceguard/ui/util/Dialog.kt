@@ -12,7 +12,7 @@ fun AppCompatActivity.showConfirmDialog(
     action: DialogConfirmAction = DialogConfirmAction.NOTHING
 ) {
     val tag = "confirm_dialog_fragment_from_activity"
-    if(supportFragmentManager.findFragmentByTag(tag) != null) return
+    if (supportFragmentManager.findFragmentByTag(tag) != null) return
 
     val dialogFragment = ConfirmDialogFragment()
     val bundle = Bundle()
@@ -29,7 +29,7 @@ fun Fragment.showDialogWithAction(
     action: DialogConfirmAction = DialogConfirmAction.NOTHING
 ) {
     val tag = "confirm_dialog_fragment_from_activity"
-    if(requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+    if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 
     val dialogFragment = ConfirmDialogFragment()
     val bundle = Bundle()
@@ -42,7 +42,7 @@ fun Fragment.showDialogWithAction(
 
 fun AppCompatActivity.showDialogWithLogout() {
     val tag = "error_dialog_fragment_from_fragment"
-    if(supportFragmentManager.findFragmentByTag(tag) != null) return
+    if (supportFragmentManager.findFragmentByTag(tag) != null) return
 
     val dialogFragment = ErrorDialogFragment()
     dialogFragment.show(supportFragmentManager, "error_dialog_fragment_from_activity")
@@ -50,7 +50,7 @@ fun AppCompatActivity.showDialogWithLogout() {
 
 fun Fragment.showDialogWithLogout() {
     val tag = "error_dialog_fragment_from_fragment"
-    if(requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+    if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 
     val dialogFragment = ErrorDialogFragment()
     dialogFragment.show(requireActivity().supportFragmentManager, tag)

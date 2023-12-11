@@ -113,7 +113,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
 
     private fun showConfirmationDialogForResult() {
         val tag = "confirm_dialog_fragment_from_activity"
-        if(requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+        if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
