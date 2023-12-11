@@ -12,12 +12,12 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
-import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.openNotificationSettings
+import app.priceguard.ui.util.openNotificationSettings
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

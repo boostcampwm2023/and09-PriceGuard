@@ -16,7 +16,7 @@ import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
 import app.priceguard.service.UpdateTokenWorker
-import app.priceguard.ui.util.ui.openNotificationSettings
+import app.priceguard.ui.util.openNotificationSettings
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
