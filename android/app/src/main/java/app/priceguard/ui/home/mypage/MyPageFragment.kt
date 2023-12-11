@@ -112,6 +112,9 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
     }
 
     private fun showConfirmationDialogForResult() {
+        val tag = "confirm_dialog_fragment_from_activity"
+        if(requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
         bundle.putString("title", getString(R.string.logout_confirm_title))
@@ -119,7 +122,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)
-        dialogFragment.show(requireActivity().supportFragmentManager, "confirm_dialog_fragment_from_fragment")
+        dialogFragment.show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun startIntroAndExitHome() {

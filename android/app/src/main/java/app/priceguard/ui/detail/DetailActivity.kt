@@ -270,6 +270,9 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     }
 
     private fun showConfirmationDialogForResult() {
+        val tag = "confirm_dialog_fragment_from_activity"
+        if(supportFragmentManager.findFragmentByTag(tag) != null) return
+
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
         bundle.putString("title", getString(R.string.stop_tracking_confirm))
@@ -277,7 +280,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)
-        dialogFragment.show(supportFragmentManager, "confirm_dialog_fragment_from_fragment")
+        dialogFragment.show(supportFragmentManager, tag)
     }
 
     private fun showToast(message: String) {
