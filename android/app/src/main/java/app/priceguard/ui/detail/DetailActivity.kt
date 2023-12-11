@@ -14,13 +14,13 @@ import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
-import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
+import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showConfirmDialog
-import app.priceguard.ui.util.ui.showDialogWithLogout
+import app.priceguard.ui.util.showConfirmDialog
+import app.priceguard.ui.util.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

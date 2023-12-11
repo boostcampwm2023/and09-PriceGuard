@@ -1,4 +1,4 @@
-package app.priceguard.ui.util.ui
+package app.priceguard.ui.util
 
 import android.content.Context
 import android.content.Intent

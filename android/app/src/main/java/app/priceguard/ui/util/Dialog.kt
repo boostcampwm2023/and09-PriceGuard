@@ -1,9 +1,8 @@
-package app.priceguard.ui.util.ui
+package app.priceguard.ui.util
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.ErrorDialogFragment
 import app.priceguard.ui.data.DialogConfirmAction
 

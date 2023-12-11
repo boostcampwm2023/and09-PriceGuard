@@ -10,9 +10,9 @@ import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
-import app.priceguard.ui.util.ui.showConfirmDialog
+import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 

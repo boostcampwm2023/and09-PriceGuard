@@ -17,8 +17,8 @@ import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showDialogWithAction
-import app.priceguard.ui.util.ui.showDialogWithLogout
+import app.priceguard.ui.util.showDialogWithAction
+import app.priceguard.ui.util.showDialogWithLogout
 import com.google.android.material.slider.Slider
 import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
