@@ -27,15 +27,12 @@ export class TrackingProductCache {
     }
 
     put(key: string, value: TrackingProduct[]) {
-        const existNode = this.hashMap.get(key);
-        if (existNode) {
-            this.delete(existNode);
-        }
+        this.delete(key);
         const node = new TrackingCacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
             const oldestNode = this.head.next;
-            this.delete(oldestNode);
+            this.remove(oldestNode);
         }
     }
 
@@ -49,7 +46,14 @@ export class TrackingProductCache {
         this.count++;
     }
 
-    delete(node: TrackingCacheNode) {
+    delete(key: string) {
+        const node = this.hashMap.get(key);
+        if (node) {
+            this.remove(node);
+        }
+    }
+
+    private remove(node: TrackingCacheNode) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;

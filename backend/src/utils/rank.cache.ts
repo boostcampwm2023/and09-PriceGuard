@@ -31,7 +31,7 @@ export class ProductRankCache {
         this.add(node);
         if (this.count > this.maxSize) {
             const lowestNode = this.getLowestNode();
-            this.delete(lowestNode);
+            this.remove(lowestNode);
         }
     }
 
@@ -63,7 +63,14 @@ export class ProductRankCache {
         return node;
     }
 
-    delete(node: RankCacheNode) {
+    delete(key: string) {
+        const node = this.hashMap.get(key);
+        if (node) {
+            this.remove(node);
+        }
+    }
+
+    private remove(node: RankCacheNode) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
@@ -88,7 +95,7 @@ export class ProductRankCache {
     update(product: ProductRankCacheDto, newProduct?: ProductRankCacheDto) {
         const node = this.hashMap.get(product.id);
         if (node) {
-            this.delete(node);
+            this.remove(node);
         }
         if (newProduct) {
             this.put(newProduct.id, newProduct);
@@ -97,9 +104,9 @@ export class ProductRankCache {
         this.put(product.id, product);
     }
 
-    get(key: string): RankCacheNode | null {
+    get(key: string): ProductRankCacheDto | null {
         const node = this.hashMap.get(key);
-        return node ? node : null;
+        return node ? node.value : null;
     }
 
     getAll() {
