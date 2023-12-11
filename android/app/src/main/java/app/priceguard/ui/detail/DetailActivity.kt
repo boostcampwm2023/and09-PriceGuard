@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -31,6 +32,11 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     lateinit var tokenRepository: TokenRepository
     private lateinit var binding: ActivityDetailBinding
     private val productDetailViewModel: ProductDetailViewModel by viewModels()
+
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            binding.btnDetailShare.isEnabled = true
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +107,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         }
 
         binding.btnDetailShare.setOnClickListener {
+            binding.btnDetailShare.isEnabled = false
             val shareLink =
                 getString(R.string.share_link_template, productDetailViewModel.productCode)
 
@@ -112,7 +119,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             }
 
             val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+            activityResultLauncher.launch(shareIntent)
         }
     }
 
@@ -271,7 +278,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
     private fun showConfirmationDialogForResult() {
         val tag = "confirm_dialog_fragment_from_activity"
-        if(supportFragmentManager.findFragmentByTag(tag) != null) return
+        if (supportFragmentManager.findFragmentByTag(tag) != null) return
 
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
