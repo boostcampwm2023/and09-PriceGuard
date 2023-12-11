@@ -7,6 +7,8 @@ import androidx.navigation.fragment.NavHostFragment
 import app.priceguard.R
 import app.priceguard.databinding.ActivityAddItemBinding
 import app.priceguard.ui.additem.link.RegisterItemLinkFragmentDirections
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +19,7 @@ class AddItemActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityAddItemBinding.inflate(layoutInflater)
         setStartDestination()
         setContentView(binding.root)

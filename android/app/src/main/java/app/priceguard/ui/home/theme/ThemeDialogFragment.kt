@@ -41,6 +41,7 @@ class ThemeDialogFragment : DialogFragment() {
             setPositiveButton(R.string.confirm) { _, _ ->
                 val dynamicMode = applyDynamicMode()
                 val darkMode = applyDarkMode()
+                requireActivity().recreate()
 
                 saveTheme(dynamicMode, darkMode)
                 dismiss()
@@ -56,7 +57,6 @@ class ThemeDialogFragment : DialogFragment() {
     private fun applyDynamicMode() = when (binding.rgDynamicColor.checkedRadioButtonId) {
         R.id.rb_yes -> {
             DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
-            requireActivity().recreate()
             PriceGuardApp.MODE_DYNAMIC
         }
 
@@ -66,7 +66,6 @@ class ThemeDialogFragment : DialogFragment() {
                 DynamicColorsOptions.Builder()
                     .setThemeOverlay(R.style.Theme_PriceGuard).build()
             )
-            requireActivity().recreate()
             PriceGuardApp.MODE_DYNAMIC_NO
         }
     }

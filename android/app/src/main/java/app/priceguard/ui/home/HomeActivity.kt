@@ -16,6 +16,8 @@ import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
 import app.priceguard.service.UpdateTokenWorker
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.openNotificationSettings
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -31,6 +33,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.BOTTOM_NAVIGATION)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
