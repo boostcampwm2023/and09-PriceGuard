@@ -72,8 +72,9 @@ class SetTargetPriceFragment : Fragment() {
         val productCode = arguments.getString("productCode") ?: ""
         val title = arguments.getString("productTitle") ?: ""
         val price = arguments.getInt("productPrice")
+        var targetPrice = arguments.getInt("productTargetPrice")
 
-        setTargetPriceViewModel.updateTargetPrice((price * 0.8).toInt())
+        setTargetPriceViewModel.updateTargetPrice(targetPrice)
 
         tvSetPriceCurrentPrice.text =
             String.format(
@@ -84,7 +85,9 @@ class SetTargetPriceFragment : Fragment() {
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
         setTargetPriceViewModel.setProductInfo(productCode, title, price)
-        etTargetPrice.setText((price * 0.8).toInt().toString())
+        etTargetPrice.setText(targetPrice.toString())
+
+        updateSlideValueWithPrice(targetPrice.toFloat())
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -127,20 +130,7 @@ class SetTargetPriceFragment : Fragment() {
             }
 
             setTargetPriceViewModel.updateTargetPrice(targetPrice.toInt())
-
-            val percent =
-                ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt()
-
-            binding.tvTargetPricePercent.text =
-                String.format(getString(R.string.current_price_percent), percent)
-
-            binding.tvTargetPricePercent.contentDescription = getString(
-                R.string.target_price_percent_and_price,
-                binding.tvTargetPricePercent.text,
-                binding.tvSetPriceCurrentPrice.text
-            )
-
-            binding.updateSlideValueWithPrice(targetPrice, percent.roundAtFirstDigit())
+            binding.updateSlideValueWithPrice(targetPrice)
         }
     }
 
@@ -220,14 +210,22 @@ class SetTargetPriceFragment : Fragment() {
         }
     }
 
-    private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(
-        targetPrice: Float,
-        percent: Int
-    ) {
+    private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(targetPrice: Float) {
+        val percent =
+            ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt().roundAtFirstDigit()
+
         val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
         if (targetPrice > setTargetPriceViewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
+        } else {
+            tvTargetPricePercent.text =
+                String.format(getString(R.string.current_price_percent), percent)
         }
+        binding.tvTargetPricePercent.contentDescription = getString(
+            R.string.target_price_percent_and_price,
+            binding.tvTargetPricePercent.text,
+            binding.tvSetPriceCurrentPrice.text
+        )
         slTargetPrice.value = pricePercent.toFloat()
     }
 
