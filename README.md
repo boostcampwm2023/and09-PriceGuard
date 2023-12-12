@@ -32,7 +32,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 프로젝트 진행 과정에서 만난 이슈들과 해결 방법에 대해 기술합니다. 아래 링크에서 확인할 수 있습니다.
 
-1. 안드로이드 테마 대응
+1. [안드로이드 테마 적용](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%ED%85%8C%EB%A7%88-%EC%A0%81%EC%9A%A9)
 2. [메모리 누수](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Memory-Leak)
 3. [JWT 인증 처리](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
 4. [HTTPS](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
