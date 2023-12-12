@@ -1,10 +1,12 @@
 package app.priceguard.ui
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import app.priceguard.R
 import app.priceguard.ui.data.DialogConfirmAction
+import app.priceguard.ui.home.HomeActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ConfirmDialogFragment : DialogFragment() {
@@ -36,6 +38,10 @@ class ConfirmDialogFragment : DialogFragment() {
                         resultListener?.onDialogResult(true)
                     }
 
+                    DialogConfirmAction.HOME -> {
+                        goToHomeActivity()
+                    }
+
                     DialogConfirmAction.NOTHING -> {}
                 }
                 dismiss()
@@ -59,6 +65,16 @@ class ConfirmDialogFragment : DialogFragment() {
         } else {
             ""
         }
+    }
+
+    private fun goToHomeActivity() {
+        val activityIntent = requireActivity().intent
+        if (activityIntent?.action == Intent.ACTION_SEND) {
+            val intent = Intent(requireActivity(), HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        requireActivity().finish()
     }
 
     override fun onStart() {
