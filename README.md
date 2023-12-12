@@ -11,6 +11,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 사용자가 목표 가격을 설정해서 목표 가격 이하인 상품이 있으면 알림을 보냅니다.
 ```
 
+어플리케이션은 [링크](https://appdistribution.firebase.google.com/pub/i/b299ae01bd67c829)를 통해 받을 수 있습니다.
 ## 👨‍👨‍👦 팀원 소개
 
 <table>
