@@ -159,6 +159,7 @@ export class ProductService {
         const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
         product.targetPrice = productAddDto.targetPrice;
         product.isFirst = true;
+        this.cacheService.updateValueTrackingProdcut(userId, product);
         await this.trackingProductRepository.save(product);
     }
 
