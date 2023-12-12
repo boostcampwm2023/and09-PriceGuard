@@ -21,6 +21,21 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 2. 다수의 사용자에 대해 짧은 주기로 데이터를 수집해야하는 시나리오에 대한 효율적인 해결책을 찾는다.
 3. 개발한 기능을 보다 일반적인 상황에 쓸 수 있도록 라이브러리화한다.
 
+## 📺︎ 작동 화면
+
+- 로그인/회원가입 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/>
+
+- 상품 추천/ 상품 상세 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/d01030d2-e156-4893-8848-532d3ca69541" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b5b4ba09-dfe9-49ff-ae9d-a352abe9c748" width="200" height="400"/>
+
+- 상품 추가/ 마이페이지 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/>
+
+
 ## :memo: 기술 문서
 - [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
 - [칸반 보드](https://github.com/orgs/boostcampwm2023/projects/47/views/2)
