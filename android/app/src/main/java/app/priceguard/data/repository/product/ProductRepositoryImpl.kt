@@ -175,7 +175,7 @@ class ProductRepositoryImpl @Inject constructor(
                             dto.imageUrl ?: "",
                             dto.price ?: 0,
                             dto.rank ?: 0,
-                            GraphDataConverter().toDataset(dto.priceData)
+                            graphDataConverter.toDataset(dto.priceData)
                         )
                     } ?: listOf()
                 )

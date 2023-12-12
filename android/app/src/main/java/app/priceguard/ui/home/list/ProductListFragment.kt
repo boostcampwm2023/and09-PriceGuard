@@ -18,8 +18,8 @@ import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showDialogWithAction
-import app.priceguard.ui.util.ui.showDialogWithLogout
+import app.priceguard.ui.util.showDialogWithAction
+import app.priceguard.ui.util.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -144,6 +144,7 @@ class ProductListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvProductList.adapter = null
         _binding = null
     }
 }

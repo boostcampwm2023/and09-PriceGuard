@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -14,13 +15,15 @@ import app.priceguard.data.repository.product.ProductErrorState
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
-import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
+import app.priceguard.ui.util.ConfirmDialogFragment
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showConfirmDialog
-import app.priceguard.ui.util.ui.showDialogWithLogout
+import app.priceguard.ui.util.showConfirmDialog
+import app.priceguard.ui.util.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,8 +35,14 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     private lateinit var binding: ActivityDetailBinding
     private val productDetailViewModel: ProductDetailViewModel by viewModels()
 
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            binding.btnDetailShare.isEnabled = true
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = productDetailViewModel
@@ -74,6 +83,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
+            intent.putExtra("productTargetPrice", productDetailViewModel.state.value.targetPrice)
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
         }
@@ -101,6 +111,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         }
 
         binding.btnDetailShare.setOnClickListener {
+            binding.btnDetailShare.isEnabled = false
             val shareLink =
                 getString(R.string.share_link_template, productDetailViewModel.productCode)
 
@@ -112,7 +123,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             }
 
             val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+            activityResultLauncher.launch(shareIntent)
         }
     }
 
@@ -270,6 +281,9 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     }
 
     private fun showConfirmationDialogForResult() {
+        val tag = "confirm_dialog_fragment_from_activity"
+        if (supportFragmentManager.findFragmentByTag(tag) != null) return
+
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
         bundle.putString("title", getString(R.string.stop_tracking_confirm))
@@ -277,7 +291,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)
-        dialogFragment.show(supportFragmentManager, "confirm_dialog_fragment_from_fragment")
+        dialogFragment.show(supportFragmentManager, tag)
     }
 
     private fun showToast(message: String) {

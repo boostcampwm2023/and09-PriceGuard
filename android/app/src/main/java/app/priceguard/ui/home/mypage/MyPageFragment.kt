@@ -12,12 +12,13 @@ import androidx.navigation.fragment.findNavController
 import app.priceguard.R
 import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentMyPageBinding
-import app.priceguard.ui.ConfirmDialogFragment
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.openNotificationSettings
+import app.priceguard.ui.util.openNotificationSettings
+import app.priceguard.ui.util.safeNavigate
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -69,7 +70,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.THEME -> {
-                                findNavController().navigate(R.id.action_myPageFragment_to_themeDialogFragment)
+                                findNavController().safeNavigate(R.id.action_myPageFragment_to_themeDialogFragment)
                             }
 
                             Setting.LICENSE -> {
@@ -111,6 +112,9 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
     }
 
     private fun showConfirmationDialogForResult() {
+        val tag = "confirm_dialog_fragment_from_activity"
+        if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
         bundle.putString("title", getString(R.string.logout_confirm_title))
@@ -118,7 +122,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)
-        dialogFragment.show(requireActivity().supportFragmentManager, "confirm_dialog_fragment_from_fragment")
+        dialogFragment.show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun startIntroAndExitHome() {
