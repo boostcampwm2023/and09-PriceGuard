@@ -111,6 +111,10 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
     </tbody>
 </table>
 
+## 🏛️ 시스템 아키텍처
+
+
+
 ## 👨‍👨‍👦 팀원 소개
 
 <table>
@@ -153,8 +157,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/>
 
 - 알람 확인
-
-https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f2379f31-6755-4a3f-a5b9-f4942ec26a58
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/a43b64c9-2b6b-431c-8fbb-a93d8560f605" width="200" height="400"/>
 
 ## :memo: 기술 문서
 - [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
