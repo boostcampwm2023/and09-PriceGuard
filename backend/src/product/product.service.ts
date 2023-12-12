@@ -31,53 +31,7 @@ export class ProductService {
         private productPriceModel: Model<ProductPrice>,
         @InjectRedis() private readonly redis: Redis,
         private cacheService: CacheService,
-    ) {
-        this.initCache();
-    }
-
-    async initCache() {
-        const latestData = await this.productPriceModel
-            .aggregate([
-                {
-                    $sort: { time: -1 },
-                },
-                {
-                    $group: {
-                        _id: '$productId',
-                        price: { $first: '$price' },
-                        isSoldOut: { $first: '$isSoldOut' },
-                        lowestPrice: { $min: '$price' },
-                    },
-                },
-            ])
-            .sort('_id')
-            .exec();
-        const userCountList = await this.trackingProductRepository.getAllUserCount();
-        const rankList = await this.productRepository.getTotalInfoRankingList();
-        const initPromise = latestData.map(async (data) => {
-            const matchProduct = userCountList.find((product) => product.id === data._id);
-            const setUserCount = await this.redis.set(
-                `product:${data._id}`,
-                JSON.stringify({
-                    isSoldOut: data.isSoldOut,
-                    price: data.price,
-                    lowestPrice: data.lowestPrice,
-                }),
-                'EX',
-                TWENTY_MIN_TO_SEC,
-            );
-            const zaddUserCount = await this.redis.zadd(
-                'userCount',
-                matchProduct ? parseInt(matchProduct.userCount) : 0,
-                data._id,
-            );
-            return Promise.all([setUserCount, zaddUserCount]);
-        });
-        rankList.forEach((product) => {
-            this.cacheService.putProductRank(product.id, { ...product, userCount: parseInt(product.userCount) });
-        });
-        await Promise.all(initPromise);
-    }
+    ) {}
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
