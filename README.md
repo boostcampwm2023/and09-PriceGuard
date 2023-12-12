@@ -35,33 +35,8 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 1. 안드로이드 테마 대응
 2. [메모리 누수](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Memory-Leak)
 3. [JWT 인증 처리](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
-
-## 📺︎ 작동 화면
-
-- 로그인/회원가입 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/>
-
-- 상품 추천/ 상품 상세 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/d01030d2-e156-4893-8848-532d3ca69541" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b5b4ba09-dfe9-49ff-ae9d-a352abe9c748" width="200" height="400"/>
-
-- 상품 추가/ 마이페이지 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/>
-
-- 알람 확인
-
-https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f2379f31-6755-4a3f-a5b9-f4942ec26a58
-
-## :memo: 기술 문서
-- [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
-- [칸반 보드](https://github.com/orgs/boostcampwm2023/projects/47/views/2)
-- [기능 명세](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD-%EB%AA%85%EC%84%B8%EC%84%9C)
-- [디자인](https://www.figma.com/file/lym7gZiLmcpXEKMw7UpSSp/Android-new?type=design&node-id=54696%3A327&mode=design&t=udiVXXmXkEnqYArE-1)
-- [ERD](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/ERD)
-
-더 많은 정보는 [저장소 Wiki](https://github.com/boostcampwm2023/and09-PriceGuard/wiki)를 참고해주세요.
+4. [HTTPS](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
+5. [Navigation 백스택 오류](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
 
 ## 👨‍👨‍👦 팀원 소개
 
@@ -89,3 +64,30 @@ https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f2379f31-675
   </tr>
 </table>
 <br/>
+
+## 📺︎ 작동 화면
+
+- 로그인/회원가입 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/>
+
+- 상품 추천/ 상품 상세 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/d01030d2-e156-4893-8848-532d3ca69541" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b5b4ba09-dfe9-49ff-ae9d-a352abe9c748" width="200" height="400"/>
+
+- 상품 추가/ 마이페이지 화면
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/>
+
+- 알람 확인
+
+https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f2379f31-6755-4a3f-a5b9-f4942ec26a58
+
+## :memo: 기술 문서
+- [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
+- [칸반 보드](https://github.com/orgs/boostcampwm2023/projects/47/views/2)
+- [기능 명세](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD-%EB%AA%85%EC%84%B8%EC%84%9C)
+- [디자인](https://www.figma.com/file/lym7gZiLmcpXEKMw7UpSSp/Android-new?type=design&node-id=54696%3A327&mode=design&t=udiVXXmXkEnqYArE-1)
+- [ERD](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/ERD)
+
+더 많은 정보는 [저장소 Wiki](https://github.com/boostcampwm2023/and09-PriceGuard/wiki)를 참고해주세요.
