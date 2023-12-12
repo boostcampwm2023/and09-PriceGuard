@@ -164,7 +164,7 @@ class SetTargetPriceFragment : Fragment() {
                         showDialogWithAction(
                             getString(R.string.success_update),
                             getString(R.string.success_update_message),
-                            DialogConfirmAction.HOME
+                            DialogConfirmAction.FINISH
                         )
                     }
 
