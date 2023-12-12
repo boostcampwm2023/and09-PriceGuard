@@ -75,6 +75,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                   <img src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/Firebase%20Cloud%20Messaging-FFA000?logo=firebase&logoColor=FFFFFF">
+                  <img src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=000000">
             </td>
         </tr>
         <tr>
