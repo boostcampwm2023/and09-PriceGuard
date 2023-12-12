@@ -1,26 +1,16 @@
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
-
-class TrackingCacheNode {
-    key: string;
-    value: TrackingProduct[];
-    prev: TrackingCacheNode;
-    next: TrackingCacheNode;
-    constructor(key: string, value: TrackingProduct[]) {
-        this.key = key;
-        this.value = value;
-    }
-}
+import { CacheNode } from './cache.node';
 
 export class TrackingProductCache {
     private maxSize: number;
     private count: number;
-    head: TrackingCacheNode;
-    tail: TrackingCacheNode;
-    hashMap = new Map<string, TrackingCacheNode>();
+    head: CacheNode<TrackingProduct[]>;
+    tail: CacheNode<TrackingProduct[]>;
+    hashMap = new Map<string, CacheNode<TrackingProduct[]>>();
     constructor(size: number) {
         this.maxSize = size;
-        this.head = new TrackingCacheNode('head', [new TrackingProduct()]);
-        this.tail = new TrackingCacheNode('tail', [new TrackingProduct()]);
+        this.head = new CacheNode('head', [new TrackingProduct()]);
+        this.tail = new CacheNode('tail', [new TrackingProduct()]);
         this.head.next = this.tail;
         this.tail.prev = this.head;
         this.count = 0;
@@ -28,7 +18,7 @@ export class TrackingProductCache {
 
     put(key: string, value: TrackingProduct[]) {
         this.delete(key);
-        const node = new TrackingCacheNode(key, value);
+        const node = new CacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
             const oldestNode = this.head.next;
@@ -36,7 +26,7 @@ export class TrackingProductCache {
         }
     }
 
-    private add(node: TrackingCacheNode) {
+    private add(node: CacheNode<TrackingProduct[]>) {
         const prev = this.tail.prev;
         prev.next = node;
         node.next = this.tail;
@@ -53,7 +43,7 @@ export class TrackingProductCache {
         }
     }
 
-    private remove(node: TrackingCacheNode) {
+    private remove(node: CacheNode<TrackingProduct[]>) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
@@ -125,6 +115,6 @@ export class TrackingProductCache {
         this.count = 0;
         this.head.next = this.tail;
         this.tail.prev = this.head;
-        this.hashMap = new Map<string, TrackingCacheNode>();
+        this.hashMap = new Map<string, CacheNode<TrackingProduct[]>>();
     }
 }

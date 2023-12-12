@@ -1,33 +1,23 @@
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
-
-class RankCacheNode {
-    key: string;
-    value: ProductRankCacheDto;
-    prev: RankCacheNode;
-    next: RankCacheNode;
-    constructor(key: string, value: ProductRankCacheDto) {
-        this.key = key;
-        this.value = value;
-    }
-}
+import { CacheNode } from './cache.node';
 
 export class ProductRankCache {
     maxSize: number;
     count: number;
-    head: RankCacheNode;
-    tail: RankCacheNode;
-    hashMap = new Map<string, RankCacheNode>();
+    head: CacheNode<ProductRankCacheDto>;
+    tail: CacheNode<ProductRankCacheDto>;
+    hashMap = new Map<string, CacheNode<ProductRankCacheDto>>();
     constructor(size: number) {
         this.maxSize = size;
-        this.head = new RankCacheNode('head', new ProductRankCacheDto());
-        this.tail = new RankCacheNode('tail', new ProductRankCacheDto());
+        this.head = new CacheNode('head', new ProductRankCacheDto());
+        this.tail = new CacheNode('tail', new ProductRankCacheDto());
         this.head.next = this.tail;
         this.tail.prev = this.head;
         this.count = 0;
     }
 
     put(key: string, value: ProductRankCacheDto) {
-        const node = new RankCacheNode(key, value);
+        const node = new CacheNode(key, value);
         this.add(node);
         if (this.count > this.maxSize) {
             const lowestNode = this.getLowestNode();
@@ -35,7 +25,7 @@ export class ProductRankCache {
         }
     }
 
-    private add(node: RankCacheNode) {
+    private add(node: CacheNode<ProductRankCacheDto>) {
         let prev = this.tail.prev;
         while (prev.value.userCount <= node.value.userCount) {
             if (prev.value.userCount === node.value.userCount && prev.value.id > node.value.id) {
@@ -70,7 +60,7 @@ export class ProductRankCache {
         }
     }
 
-    private remove(node: RankCacheNode) {
+    private remove(node: CacheNode<ProductRankCacheDto>) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
