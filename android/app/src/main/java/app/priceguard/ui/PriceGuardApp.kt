@@ -1,8 +1,6 @@
 package app.priceguard.ui
 
 import android.app.Application
-import android.app.UiModeManager
-import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -47,23 +45,15 @@ class PriceGuardApp : Application(), Configuration.Provider {
 
             when (darkMode) {
                 MODE_LIGHT -> {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                        val uiModeManager =
-                            getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
-                        uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
 
                 MODE_DARK -> {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                        val uiModeManager =
-                            getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
-                        uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+
+                else -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 }
             }
         }
