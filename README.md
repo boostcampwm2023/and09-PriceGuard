@@ -21,6 +21,15 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 2. 다수의 사용자에 대해 짧은 주기로 데이터를 수집해야하는 시나리오에 대한 효율적인 해결책을 찾는다.
 3. 개발한 기능을 보다 일반적인 상황에 쓸 수 있도록 라이브러리화한다.
 
+## :memo: 기술 문서
+- [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
+- [칸반 보드](https://github.com/orgs/boostcampwm2023/projects/47/views/2)
+- [기능 명세](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD-%EB%AA%85%EC%84%B8%EC%84%9C)
+- [디자인](https://www.figma.com/file/lym7gZiLmcpXEKMw7UpSSp/Android-new?type=design&node-id=54696%3A327&mode=design&t=udiVXXmXkEnqYArE-1)
+- [ERD](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/ERD)
+
+더 많은 정보는 [저장소 Wiki](https://github.com/boostcampwm2023/and09-PriceGuard/wiki)를 참고해주세요.
+
 ## 👨‍👨‍👦 팀원 소개
 
 <table>
@@ -47,8 +56,3 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
   </tr>
 </table>
 <br/>
-
-
-## :memo: 팀 규칙
-- [팀 규칙](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%ED%8C%80-%EA%B7%9C%EC%B9%99)
-- [Git 규칙](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Git-%EC%82%AC%EC%9A%A9%EB%B2%95)
