@@ -54,9 +54,9 @@
                     android:id="@+id/view_my_page_background"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="80dp"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="24dp"
+                    android:minHeight="80dp"
                     app:cardBackgroundColor="?attr/colorSurfaceContainerHighest"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
@@ -98,13 +98,17 @@
 
                         <TextView
                             android:id="@+id/tv_my_page_email"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@{@string/my_email_info(viewModel.state.email)}"
+                            android:maxLines="1"
                             android:text="@{viewModel.state.email}"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
+                            app:autoSizeTextType="uniform"
+                            app:layout_constrainedWidth="true"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
