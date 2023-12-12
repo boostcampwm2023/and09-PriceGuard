@@ -19,8 +19,8 @@ android {
         applicationId = "app.priceguard"
         minSdk = 29
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.3.0"
+        versionCode = 5
+        versionName = "0.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -111,7 +111,7 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.1.0")
 
     // Material chart
-    implementation("app.priceguard:materialchart:0.1.2")
+    implementation("app.priceguard:materialchart:0.2.0")
 }
 
 kapt {

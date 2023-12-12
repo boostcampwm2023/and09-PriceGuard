@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.databinding.ActivityIntroBinding
 import app.priceguard.ui.login.LoginActivity
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,6 +16,7 @@ class IntroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
