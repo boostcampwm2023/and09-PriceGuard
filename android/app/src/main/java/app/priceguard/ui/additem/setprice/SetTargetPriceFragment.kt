@@ -156,7 +156,7 @@ class SetTargetPriceFragment : Fragment() {
                         showDialogWithAction(
                             getString(R.string.success_add),
                             getString(R.string.success_add_message),
-                            DialogConfirmAction.FINISH
+                            DialogConfirmAction.HOME
                         )
                     }
 
@@ -174,7 +174,7 @@ class SetTargetPriceFragment : Fragment() {
                                 showDialogWithAction(
                                     getString(R.string.error_add_product),
                                     getString(R.string.exist_product),
-                                    DialogConfirmAction.FINISH
+                                    DialogConfirmAction.HOME
                                 )
                             }
 
