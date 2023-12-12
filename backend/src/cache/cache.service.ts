@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProductRankCache } from './rank.cache';
-import { MAX_TRACKING_PRODUCT_CACHE, MAX_TRACKING_RANK, TWENTY_MIN_TO_SEC } from 'src/constants';
+import { MAX_TRACKING_PRODUCT_CACHE, MAX_TRACKING_RANK } from 'src/constants';
 import { TrackingProductCache } from './tracking.cache';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
@@ -57,8 +57,6 @@ export class CacheService {
                     price: data.price,
                     lowestPrice: data.lowestPrice,
                 }),
-                'EX',
-                TWENTY_MIN_TO_SEC,
             );
             const zaddUserCount = await this.redis.zadd(
                 'userCount',
