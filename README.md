@@ -72,8 +72,8 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/>
 
 - 상품 추천/ 상품 상세 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/d01030d2-e156-4893-8848-532d3ca69541" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b5b4ba09-dfe9-49ff-ae9d-a352abe9c748" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/7c418d77-eca0-437c-b220-22ad89fdc76d" width="200" height="400"/>
+<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/4a111411-46b6-4f86-b750-5827948d246b" width="200" height="400"/>
 
 - 상품 추가/ 마이페이지 화면
 <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/>
