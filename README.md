@@ -145,21 +145,9 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 <br/>
 
 ## 📺︎ 작동 화면
-
-- 로그인/회원가입 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/>
-
-- 상품 추천/ 상품 상세 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/7c418d77-eca0-437c-b220-22ad89fdc76d" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/4a111411-46b6-4f86-b750-5827948d246b" width="200" height="400"/>
-
-- 상품 추가/ 마이페이지 화면
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/>
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/>
-
-- 알람 확인
-<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/a43b64c9-2b6b-431c-8fbb-a93d8560f605" width="200" height="400"/>
+| 로그인/회원가입 | 상품 추천/상품 상세 | 상품 추가 / 마이페이지 | 알람 확인 |
+| ----------- | --------------- | ----------------- | ------- |
+|<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/7c418d77-eca0-437c-b220-22ad89fdc76d" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/4a111411-46b6-4f86-b750-5827948d246b" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/a43b64c9-2b6b-431c-8fbb-a93d8560f605" width="200"/> |
 
 ## :memo: 기술 문서
 - [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)
