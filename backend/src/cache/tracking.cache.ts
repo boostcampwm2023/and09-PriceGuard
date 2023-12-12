@@ -108,7 +108,6 @@ export class TrackingProductCache {
 
     updateValue(key: string, value: TrackingProduct) {
         const node = this.hashMap.get(key);
-        console.log(value.productId);
         if (node) {
             node.value.forEach((product, idx) => {
                 if (product.productId === value.productId) {
