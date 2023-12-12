@@ -1,11 +1,11 @@
 package app.priceguard.ui.detail
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -16,24 +16,33 @@ import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.ActivityDetailBinding
 import app.priceguard.materialchart.data.GraphMode
 import app.priceguard.ui.additem.AddItemActivity
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.HomeActivity
+import app.priceguard.ui.util.ConfirmDialogFragment
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.showConfirmationDialog
-import app.priceguard.ui.util.ui.showPermissionDeniedDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import app.priceguard.ui.util.showConfirmDialog
+import app.priceguard.ui.util.showDialogWithLogout
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResultListener {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
     private lateinit var binding: ActivityDetailBinding
     private val productDetailViewModel: ProductDetailViewModel by viewModels()
 
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            binding.btnDetailShare.isEnabled = true
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = productDetailViewModel
@@ -74,6 +83,7 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
+            intent.putExtra("productTargetPrice", productDetailViewModel.state.value.targetPrice)
             intent.putExtra("isAdding", false)
             this@DetailActivity.startActivity(intent)
         }
@@ -101,6 +111,7 @@ class DetailActivity : AppCompatActivity() {
         }
 
         binding.btnDetailShare.setOnClickListener {
+            binding.btnDetailShare.isEnabled = false
             val shareLink =
                 getString(R.string.share_link_template, productDetailViewModel.productCode)
 
@@ -112,7 +123,7 @@ class DetailActivity : AppCompatActivity() {
             }
 
             val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+            activityResultLauncher.launch(shareIntent)
         }
     }
 
@@ -129,7 +140,11 @@ class DetailActivity : AppCompatActivity() {
         val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
 
         if (productCode == null && productCodeFromDeepLink == null) {
-            showDialogAndExit(getString(R.string.error), getString(R.string.invalid_access))
+            showConfirmDialog(
+                getString(R.string.error),
+                getString(R.string.invalid_access),
+                DialogConfirmAction.FINISH
+            )
             return
         }
 
@@ -165,20 +180,22 @@ class DetailActivity : AppCompatActivity() {
             productDetailViewModel.event.collect { event ->
                 when (event) {
                     ProductDetailViewModel.ProductDetailEvent.Logout -> {
-                        showDialogAndExit(getString(R.string.error), getString(R.string.logged_out))
+                        showDialogWithLogout()
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.NotFound -> {
-                        showDialogAndExit(
+                        showConfirmDialog(
                             getString(R.string.error),
-                            getString(R.string.product_not_found)
+                            getString(R.string.product_not_found),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.UnknownError -> {
-                        showDialogAndExit(
+                        showConfirmDialog(
                             getString(R.string.error),
-                            getString(R.string.undefined_error)
+                            getString(R.string.undefined_error),
+                            DialogConfirmAction.FINISH
                         )
                     }
 
@@ -190,34 +207,31 @@ class DetailActivity : AppCompatActivity() {
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
-                        showConfirmationDialog(
-                            getString(R.string.stop_tracking_confirm),
-                            getString(R.string.stop_tracking_detail)
-                        ) { _, _ -> productDetailViewModel.deleteProductTracking() }
+                        showConfirmationDialogForResult()
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.DeleteFailed -> {
                         when (event.errorType) {
                             ProductErrorState.NOT_FOUND -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
                                     getString(R.string.product_not_found)
                                 )
                             }
 
                             ProductErrorState.INVALID_REQUEST -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
                                     getString(R.string.invalid_request)
                                 )
                             }
 
                             ProductErrorState.PERMISSION_DENIED -> {
-                                showPermissionDeniedDialog(tokenRepository)
+                                showDialogWithLogout()
                             }
 
                             else -> {
-                                showConfirmationDialog(
+                                showConfirmDialog(
                                     getString(R.string.delete_product_failed),
                                     getString(R.string.undefined_error)
                                 )
@@ -254,7 +268,11 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun goToHomeActivityIfDeepLinked() {
-        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra("directed", false)) {
+        if (intent.data?.getQueryParameter("code") != null || intent.getBooleanExtra(
+                "directed",
+                false
+            )
+        ) {
             val intent = Intent(this@DetailActivity, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -262,31 +280,27 @@ class DetailActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showConfirmationDialog(
-        title: String,
-        message: String,
-        onConfirm: DialogInterface.OnClickListener
-    ) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm), onConfirm)
-            .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
-            .create()
-            .show()
-    }
+    private fun showConfirmationDialogForResult() {
+        val tag = "confirm_dialog_fragment_from_activity"
+        if (supportFragmentManager.findFragmentByTag(tag) != null) return
 
-    private fun showDialogAndExit(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> finish() }
-            .setCancelable(false)
-            .create()
-            .show()
+        val dialogFragment = ConfirmDialogFragment()
+        val bundle = Bundle()
+        bundle.putString("title", getString(R.string.stop_tracking_confirm))
+        bundle.putString("message", getString(R.string.stop_tracking_detail))
+        bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
+        dialogFragment.arguments = bundle
+        dialogFragment.setOnDialogResultListener(this)
+        dialogFragment.show(supportFragmentManager, tag)
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDialogResult(result: Boolean) {
+        if (result) {
+            productDetailViewModel.deleteProductTracking()
+        }
     }
 }

@@ -13,12 +13,16 @@ import app.priceguard.databinding.ActivitySignupBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.signup.SignupViewModel.SignupEvent
 import app.priceguard.ui.signup.SignupViewModel.SignupUIState
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.Behavior.DragCallback
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,15 +30,23 @@ class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
     private val signupViewModel: SignupViewModel by viewModels()
+    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         binding.vm = signupViewModel
         binding.lifecycleOwner = this
+        circularProgressIndicator = getCircularProgressIndicatorDrawable(this@SignupActivity)
         setNavigationButton()
         disableAppBarScroll()
         observeState()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        circularProgressIndicator.stop()
     }
 
     private fun disableAppBarScroll() {
@@ -64,8 +76,6 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun handleSignupEvent(event: SignupEvent) {
-        val circularProgressIndicator = getCircularProgressIndicatorDrawable(this)
-
         when (event) {
             is SignupEvent.SignupStart -> {
                 (binding.btnSignupSignup as MaterialButton).icon = circularProgressIndicator
@@ -79,15 +89,15 @@ class SignupActivity : AppCompatActivity() {
                     }
 
                     SignupEvent.DuplicatedEmail -> {
-                        showDialog(getString(R.string.error), getString(R.string.duplicate_email))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.duplicate_email))
                     }
 
                     SignupEvent.InvalidRequest -> {
-                        showDialog(getString(R.string.error), getString(R.string.invalid_parameter))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.invalid_parameter))
                     }
 
                     SignupEvent.UndefinedError -> {
-                        showDialog(getString(R.string.error), getString(R.string.undefined_error))
+                        showConfirmDialog(getString(R.string.error), getString(R.string.undefined_error))
                     }
 
                     SignupEvent.TokenUpdateError, SignupEvent.FirebaseError -> {
@@ -115,15 +125,6 @@ class SignupActivity : AppCompatActivity() {
         binding.mtSignupTopbar.setNavigationOnClickListener {
             finish()
         }
-    }
-
-    private fun showDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
-            .create()
-            .show()
     }
 
     private fun observeState() {

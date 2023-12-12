@@ -1,4 +1,4 @@
-package app.priceguard.ui.util.ui.drawable
+package app.priceguard.ui.util.drawable
 
 import android.content.Context
 import app.priceguard.R

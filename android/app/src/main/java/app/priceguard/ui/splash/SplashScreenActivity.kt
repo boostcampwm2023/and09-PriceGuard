@@ -13,6 +13,8 @@ import app.priceguard.databinding.ActivitySplashScreenBinding
 import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.lifecycle.repeatOnCreated
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +27,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         observeState()

@@ -10,34 +10,42 @@ import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
 import app.priceguard.ui.signup.SignupActivity
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
-import app.priceguard.ui.util.ui.drawable.getCircularProgressIndicatorDrawable
+import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         with(binding) {
             viewModel = loginViewModel
         }
+        circularProgressIndicator = getCircularProgressIndicatorDrawable(this@LoginActivity)
         initListener()
         collectEvent()
         setContentView(binding.root)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        circularProgressIndicator.stop()
+    }
+
     private fun initListener() {
         with(binding) {
-            btnLoginLogin.setOnClickListener {
-                (binding.btnLoginLogin as MaterialButton).icon =
-                    getCircularProgressIndicatorDrawable(this@LoginActivity)
-            }
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
             }
@@ -49,8 +57,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.event.collect { event ->
                 when (event) {
                     LoginEvent.LoginStart -> {
-                        (binding.btnLoginLogin as MaterialButton).icon =
-                            getCircularProgressIndicatorDrawable(this@LoginActivity)
+                        (binding.btnLoginLogin as MaterialButton).icon = circularProgressIndicator
                     }
 
                     LoginEvent.TokenUpdateError, LoginEvent.FirebaseError -> {
@@ -73,18 +80,24 @@ class LoginActivity : AppCompatActivity() {
     private fun setDialogMessageAndShow(eventType: LoginEvent) {
         when (eventType) {
             LoginEvent.Invalid -> {
-                showDialog(
+                showConfirmDialog(
                     getString(R.string.login_invalid),
                     getString(R.string.login_invalid_message)
                 )
             }
 
             is LoginEvent.LoginFailure -> {
-                showDialog(getString(R.string.login_fail), getString(R.string.login_fail_message))
+                showConfirmDialog(
+                    getString(R.string.login_fail),
+                    getString(R.string.login_fail_message)
+                )
             }
 
             is LoginEvent.UndefinedError -> {
-                showDialog(getString(R.string.login_fail), getString(R.string.undefined_error))
+                showConfirmDialog(
+                    getString(R.string.login_fail),
+                    getString(R.string.undefined_error)
+                )
             }
 
             is LoginEvent.LoginInfoSaved -> {
@@ -93,15 +106,6 @@ class LoginActivity : AppCompatActivity() {
 
             else -> {}
         }
-    }
-
-    private fun showDialog(title: String, message: String) {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.confirm)) { _, _ -> }
-            .create()
-            .show()
     }
 
     private fun gotoSignUp() {

@@ -57,7 +57,8 @@ class ConfirmItemLinkFragment : Fragment() {
                     arguments.getString("productCode") ?: "",
                     arguments.getString("productName") ?: "",
                     arguments.getInt("productPrice"),
-                    true
+                    true,
+                    (arguments.getInt("productPrice") * 0.8).toInt()
                 )
             findNavController().navigate(action)
         }
