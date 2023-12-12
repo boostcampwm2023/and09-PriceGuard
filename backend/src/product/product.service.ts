@@ -130,7 +130,7 @@ export class ProductService {
                 where: { userId: userId },
                 relations: ['product'],
             });
-            this.cacheService.putTrakcingProduct(userId, trackingProductList);
+            this.cacheService.putTrackingProduct(userId, trackingProductList);
         }
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
@@ -249,7 +249,7 @@ export class ProductService {
         if (!newProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
-        const newProductRanck = {
+        const newProductRank = {
             id: newProduct.id,
             productName: newProduct.productName,
             productCode: newProduct.productCode,
@@ -257,7 +257,7 @@ export class ProductService {
             imageUrl: newProduct.imageUrl,
             userCount: userCount,
         };
-        this.cacheService.updateProductRank(currentProduct, newProductRanck);
+        this.cacheService.updateProductRank(currentProduct, newProductRank);
     }
 
     async findTrackingProductByCode(userId: string, productCode: string) {

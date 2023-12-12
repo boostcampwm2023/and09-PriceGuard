@@ -92,7 +92,7 @@ export class CacheService {
         return this.productRankCache.getAll();
     }
 
-    putTrakcingProduct(key: string, value: TrackingProduct[]) {
+    putTrackingProduct(key: string, value: TrackingProduct[]) {
         this.trackingProductCache.put(key, value);
     }
 
