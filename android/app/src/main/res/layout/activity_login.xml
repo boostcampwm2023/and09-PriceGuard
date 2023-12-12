@@ -9,134 +9,157 @@
             type="app.priceguard.ui.login.LoginViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface">
+        android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_vertical_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorSurface">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_vertical_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/gl_vertical_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="16dp" />
 
-        <ImageView
-            android:id="@+id/iv_login_logo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_priceguard_original"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_login_title"
-            app:layout_constraintEnd_toStartOf="@+id/tv_login_title"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_login_title" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/gl_vertical_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="16dp" />
 
-        <TextView
-            android:id="@+id/tv_login_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="@string/app_name"
-            android:textAppearance="?attr/textAppearanceHeadline4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/iv_login_logo"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_login_email"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:layout_marginBottom="16dp"
-            android:hint="@string/e_mail"
-            app:layout_constraintBottom_toTopOf="@id/til_login_password"
-            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/tv_login_title">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_login_email"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ll_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:onTextChanged="@{(content, s, b, c) -> viewModel.setEmail(content.toString())}" />
+                app:layout_constraintEnd_toEndOf="@id/gl_vertical_end"
+                app:layout_constraintStart_toStartOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <ImageView
+                    android:id="@+id/iv_login_logo"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_priceguard_original"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_login_title"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_login_title"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_login_title" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_login_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/password"
-            app:endIconMode="password_toggle"
-            app:layout_constraintBottom_toTopOf="@id/btn_login_login"
-            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@id/til_login_email">
+                <TextView
+                    android:id="@+id/tv_login_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="100dp"
+                    android:maxLines="1"
+                    android:text="@string/app_name"
+                    android:textAppearance="?attr/textAppearanceHeadline4"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/iv_login_logo"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tiet_login_password"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_login_email"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:autofillHints="password"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:onTextChanged="@{(content, s, b, c) -> viewModel.setPassword(content.toString())}" />
+                android:layout_marginTop="100dp"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/e_mail"
+                app:layout_constraintBottom_toTopOf="@id/til_login_password"
+                app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@+id/ll_login">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_login_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
+                    android:imeOptions="actionNext"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.setEmail(content.toString())}" />
 
-        <Button
-            android:id="@+id/btn_login_login"
-            style="@style/Theme.PriceGuard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="@{() -> viewModel.login()}"
-            android:text="@string/login"
-            app:iconGravity="textStart"
-            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/til_login_password" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/tv_not_a_member"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/not_a_member"
-            app:layout_constraintBottom_toTopOf="@+id/btn_login_signup"
-            app:layout_constraintEnd_toEndOf="@+id/btn_login_signup"
-            app:layout_constraintStart_toStartOf="@+id/btn_login_signup" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_login_password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                app:endIconMode="password_toggle"
+                app:layout_constraintBottom_toTopOf="@id/btn_login_login"
+                app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/til_login_email">
 
-        <Button
-            android:id="@+id/btn_login_signup"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="@string/sign_up"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-            app:layout_constraintStart_toEndOf="@+id/gl_vertical_start" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_login_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.setPassword(content.toString())}" />
 
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btn_login_login"
+                style="@style/Theme.PriceGuard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="@{() -> viewModel.login()}"
+                android:text="@string/login"
+                app:iconGravity="textStart"
+                app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@+id/til_login_password" />
+
+            <TextView
+                android:id="@+id/tv_not_a_member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/not_a_member"
+                app:layout_constraintBottom_toTopOf="@+id/btn_login_signup"
+                app:layout_constraintEnd_toEndOf="@+id/btn_login_signup"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="@+id/btn_login_signup"
+                app:layout_constraintTop_toBottomOf="@+id/btn_login_login"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <Button
+                android:id="@+id/btn_login_signup"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/sign_up"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
+                app:layout_constraintStart_toEndOf="@+id/gl_vertical_start" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>
