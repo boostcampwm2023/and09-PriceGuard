@@ -12,8 +12,8 @@ class TrackingCacheNode {
 }
 
 export class TrackingProductCache {
-    maxSize: number;
-    count: number;
+    private maxSize: number;
+    private count: number;
     head: TrackingCacheNode;
     tail: TrackingCacheNode;
     hashMap = new Map<string, TrackingCacheNode>();
@@ -90,6 +90,38 @@ export class TrackingProductCache {
         return nodeList;
     }
 
+    addValue(key: string, value: TrackingProduct) {
+        const node = this.hashMap.get(key);
+        if (node) {
+            node.value.push(value);
+        }
+    }
+
+    deleteValue(key: string, value: TrackingProduct) {
+        const node = this.hashMap.get(key);
+        if (node) {
+            node.value = node.value.filter((product) => {
+                return product.productId !== value.productId;
+            });
+        }
+    }
+
+    updateValue(key: string, value: TrackingProduct) {
+        const node = this.hashMap.get(key);
+        console.log(value.productId);
+        if (node) {
+            node.value.forEach((product, idx) => {
+                if (product.productId === value.productId) {
+                    node.value[idx] = value;
+                    return false;
+                }
+            });
+        }
+    }
+
+    size() {
+        return this.count;
+    }
     clear() {
         this.count = 0;
         this.head.next = this.tail;

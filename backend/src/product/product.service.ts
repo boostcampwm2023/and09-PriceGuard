@@ -12,7 +12,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS, TWENTY_MIN_TO_SEC } from 'src/constants';
+import {
+    MAX_TRACKING_PRODUCT_CACHE,
+    MAX_TRACKING_RANK,
+    NINETY_DAYS,
+    THIRTY_DAYS,
+    TWENTY_MIN_TO_SEC,
+} from 'src/constants';
 import { ProductRankCache } from 'src/utils/rank.cache';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
@@ -24,7 +30,7 @@ const REGEXP_11ST =
 @Injectable()
 export class ProductService {
     private productRankCache = new ProductRankCache(MAX_TRACKING_RANK);
-    private trackingProductCache = new TrackingProductCache(10);
+    private trackingProductCache = new TrackingProductCache(MAX_TRACKING_PRODUCT_CACHE);
     constructor(
         @InjectRepository(TrackingProductRepository)
         private trackingProductRepository: TrackingProductRepository,
@@ -112,13 +118,23 @@ export class ProductService {
             imageUrl: product.imageUrl,
             userCount: userCount,
         };
+        const newTrackingProduct = await this.trackingProductRepository.saveTrackingProduct(
+            userId,
+            product.id,
+            targetPrice,
+        );
+        const trackingProductList = this.trackingProductCache.get(userId);
+        if (trackingProductList) {
+            newTrackingProduct.product = product;
+            this.trackingProductCache.addValue(userId, newTrackingProduct);
+        }
         this.productRankCache.update(newProductRank);
-        await this.trackingProductRepository.saveTrackingProduct(userId, product.id, targetPrice);
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
         let trackingProductList = this.trackingProductCache.get(userId);
         if (!trackingProductList) {
+            console.log(1);
             trackingProductList = await this.trackingProductRepository.find({
                 where: { userId: userId },
                 relations: ['product'],
@@ -203,7 +219,7 @@ export class ProductService {
 
     async deleteProduct(userId: string, productCode: string) {
         const product = await this.findTrackingProductByCode(userId, productCode);
-        const currentProduct = this.productRankCache.get(product.productId)?.value;
+        const currentProduct = this.productRankCache.get(product.productId);
         await this.redis.zincrby('userCount', -1, product.productId);
         if (currentProduct) {
             currentProduct.userCount--;
@@ -213,6 +229,9 @@ export class ProductService {
             } else {
                 this.productRankCache.update(currentProduct);
             }
+        }
+        if (product) {
+            this.trackingProductCache.deleteValue(userId, product);
         }
         await this.trackingProductRepository.remove(product);
     }
@@ -263,6 +282,7 @@ export class ProductService {
         if (!trackingProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
+        trackingProduct.product = existProduct;
         return trackingProduct;
     }
 
@@ -310,6 +330,7 @@ export class ProductService {
         const product = await this.findTrackingProductByCode(userId, productCode);
         product.isAlert = !product.isAlert;
         await this.trackingProductRepository.save(product);
+        this.trackingProductCache.updateValue(userId, product);
     }
 
     async getProductCurrentData(productId: string) {
