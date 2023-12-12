@@ -1,22 +1,12 @@
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
-
-class CacheNode {
-    key: string;
-    value: ProductRankCacheDto;
-    prev: CacheNode;
-    next: CacheNode;
-    constructor(key: string, value: ProductRankCacheDto) {
-        this.key = key;
-        this.value = value;
-    }
-}
+import { CacheNode } from './cache.node';
 
 export class ProductRankCache {
     maxSize: number;
     count: number;
-    head: CacheNode;
-    tail: CacheNode;
-    hashTable = new Map<string, CacheNode>();
+    head: CacheNode<ProductRankCacheDto>;
+    tail: CacheNode<ProductRankCacheDto>;
+    hashMap = new Map<string, CacheNode<ProductRankCacheDto>>();
     constructor(size: number) {
         this.maxSize = size;
         this.head = new CacheNode('head', new ProductRankCacheDto());
@@ -31,11 +21,11 @@ export class ProductRankCache {
         this.add(node);
         if (this.count > this.maxSize) {
             const lowestNode = this.getLowestNode();
-            this.delete(lowestNode);
+            this.remove(lowestNode);
         }
     }
 
-    private add(node: CacheNode) {
+    private add(node: CacheNode<ProductRankCacheDto>) {
         let prev = this.tail.prev;
         while (prev.value.userCount <= node.value.userCount) {
             if (prev.value.userCount === node.value.userCount && prev.value.id > node.value.id) {
@@ -51,7 +41,7 @@ export class ProductRankCache {
         node.next = next;
         node.prev = prev;
         next.prev = node;
-        this.hashTable.set(node.key, node);
+        this.hashMap.set(node.key, node);
         this.count++;
     }
 
@@ -63,11 +53,18 @@ export class ProductRankCache {
         return node;
     }
 
-    delete(node: CacheNode) {
+    delete(key: string) {
+        const node = this.hashMap.get(key);
+        if (node) {
+            this.remove(node);
+        }
+    }
+
+    private remove(node: CacheNode<ProductRankCacheDto>) {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
-        this.hashTable.delete(node.key);
+        this.hashMap.delete(node.key);
         this.count--;
     }
 
@@ -86,9 +83,9 @@ export class ProductRankCache {
     }
 
     update(product: ProductRankCacheDto, newProduct?: ProductRankCacheDto) {
-        const node = this.hashTable.get(product.id);
+        const node = this.hashMap.get(product.id);
         if (node) {
-            this.delete(node);
+            this.remove(node);
         }
         if (newProduct) {
             this.put(newProduct.id, newProduct);
@@ -97,9 +94,9 @@ export class ProductRankCache {
         this.put(product.id, product);
     }
 
-    get(key: string): CacheNode | null {
-        const node = this.hashTable.get(key);
-        return node ? node : null;
+    get(key: string): ProductRankCacheDto | null {
+        const node = this.hashMap.get(key);
+        return node ? node.value : null;
     }
 
     getAll() {
