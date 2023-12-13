@@ -20,6 +20,7 @@ export class TrackingProductCache {
         this.delete(key);
         const node = new CacheNode(key, value);
         this.add(node);
+        this.hashMap.set(key, node);
         if (this.count > this.maxSize) {
             const oldestNode = this.head.next;
             this.remove(oldestNode);
@@ -32,7 +33,6 @@ export class TrackingProductCache {
         node.next = this.tail;
         node.prev = prev;
         this.tail.prev = node;
-        this.hashMap.set(node.key, node);
         this.count++;
     }
 
@@ -40,6 +40,7 @@ export class TrackingProductCache {
         const node = this.hashMap.get(key);
         if (node) {
             this.remove(node);
+            this.hashMap.delete(key);
         }
     }
 
@@ -47,7 +48,6 @@ export class TrackingProductCache {
         const { prev, next } = node;
         prev.next = next;
         next.prev = prev;
-        this.hashMap.delete(node.key);
         this.count--;
     }
 
@@ -67,7 +67,12 @@ export class TrackingProductCache {
 
     get(key: string): TrackingProduct[] | null {
         const node = this.hashMap.get(key);
-        return node ? node.value : null;
+        if (node) {
+            this.remove(node);
+            this.add(node);
+            return node.value;
+        }
+        return null;
     }
 
     getAll() {
@@ -84,6 +89,8 @@ export class TrackingProductCache {
         const node = this.hashMap.get(key);
         if (node) {
             node.value.push(value);
+            this.remove(node);
+            this.add(node);
         }
     }
 
@@ -93,6 +100,8 @@ export class TrackingProductCache {
             node.value = node.value.filter((product) => {
                 return product.productId !== value.productId;
             });
+            this.remove(node);
+            this.add(node);
         }
     }
 
@@ -105,6 +114,8 @@ export class TrackingProductCache {
                     return false;
                 }
             });
+            this.remove(node);
+            this.add(node);
         }
     }
 
