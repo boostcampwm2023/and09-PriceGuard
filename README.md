@@ -1,4 +1,4 @@
-# Price Guard
+# PriceGuard
 <img width="275" alt="priceguard_icon_web" src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/b3fd42cf-f075-4cc7-a263-8195f28ab6ac">
 
 ## 🛡️ 프로젝트 소개
@@ -116,7 +116,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 ## 🏛️ 시스템 아키텍처
 
-![서비스 아이콘 및 활용예시_230421](https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/a0ef03ac-b821-4642-b499-5bd2f32671ea)
+![시스템 아키텍처](https://github.com/boostcampwm2023/and09-PriceGuard/assets/39708676/f7a943cd-5226-43dd-9130-9928f27067c4)
 
 
 ## 👨‍👨‍👦 팀원 소개
