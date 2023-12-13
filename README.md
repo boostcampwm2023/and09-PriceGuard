@@ -28,6 +28,8 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 2. [데이터 캐싱](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Cache-%EC%A0%81%EC%9A%A9%EA%B8%B0)
 3. [DB 쿼리 개선](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
 
+[그래프 라이브러리 구현 및 배포 저장소](https://github.com/Taewan-P/material-android-chart)는 여기서 확인해주세요.
+
 ## ❓ 문제 해결
 
 프로젝트 진행 과정에서 만난 이슈들과 해결 방법에 대해 기술합니다. 아래 링크에서 확인할 수 있습니다.
@@ -38,7 +40,6 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 4. [HTTPS](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
 5. [Navigation 백스택 오류](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
 6. [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
-7. [코루틴 스코프](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/CoroutineScope-launch)
    
 ## 📚 기술 스택
 
