@@ -75,7 +75,7 @@ class PriceGuardFirebaseMessagingService : FirebaseMessagingService() {
         pendingIntent: PendingIntent,
         requestCode: Int
     ) {
-        val channelId = getString(R.string.priceguard_push_alarm_channel)
+        val channelId = getString(R.string.price_notification)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_priceguard_notification)
@@ -92,7 +92,7 @@ class PriceGuardFirebaseMessagingService : FirebaseMessagingService() {
 
         val channel = NotificationChannel(
             channelId,
-            "PriceGuard Channel Title",
+            getString(R.string.priceguard_push_alarm_title),
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)

@@ -133,4 +133,5 @@
     <string name="min_price">0</string>
     <string name="max_price">999999999</string>
     <string name="priceguard_push_alarm_channel">PriceGuard Push Alarm</string>
+    <string name="priceguard_push_alarm_title">PriceGuard Product Price Notification</string>
 </resources>
