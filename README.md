@@ -37,9 +37,8 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 3. [JWT 인증 처리](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
 4. [HTTPS](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
 5. [Navigation 백스택 오류](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
-6. [DB 쿼리 분석 및 성능 개선](https://velog.io/@kdogs/MongoDB에서-쿼리-성능-분석하기)
-7. [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
-8. [코루틴 스코프](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/CoroutineScope-launch)
+6. [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
+7. [코루틴 스코프](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/CoroutineScope-launch)
    
 ## 📚 기술 스택
 
