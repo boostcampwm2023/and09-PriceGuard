@@ -123,14 +123,18 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun updateTargetPriceUI(it: Editable?) {
         if (binding.etTargetPrice.isFocused) {
-            val targetPrice = if (it.toString().matches("^\\d+\$".toRegex())) {
-                it.toString().toFloat()
+            val targetPrice = if (it.toString().matches("^\\d{1,9}$".toRegex())) {
+                it.toString().toInt()
+            } else if (it.toString().isEmpty()) {
+                binding.etTargetPrice.setText(getString(R.string.min_price))
+                0
             } else {
-                0F
+                binding.etTargetPrice.setText(getString(R.string.max_price))
+                999999999
             }
 
-            setTargetPriceViewModel.updateTargetPrice(targetPrice.toInt())
-            binding.updateSlideValueWithPrice(targetPrice)
+            setTargetPriceViewModel.updateTargetPrice(targetPrice)
+            binding.updateSlideValueWithPrice(targetPrice.toFloat())
         }
     }
 
