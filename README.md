@@ -28,7 +28,16 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 2. [데이터 캐싱](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Cache-%EC%A0%81%EC%9A%A9%EA%B8%B0)
 3. [DB 쿼리 개선](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
 
-[그래프 라이브러리 구현 및 배포 저장소](https://github.com/Taewan-P/material-android-chart)는 여기서 확인해주세요.
+그래프 라이브러리 구현 및 배포 저장소는 여기서 확인해주세요.
+
+<a href="https://central.sonatype.com/artifact/app.priceguard/materialchart/overview">
+    <img src="https://img.shields.io/maven-central/v/app.priceguard/materialchart?color=0096FF" />
+</a>
+
+<a href="https://github.com/Taewan-P/material-android-chart/">
+    <img src="https://img.shields.io/badge/materialchart-181717?logo=github&logoColor=FFFFFF" />
+</a>
+
 
 ## ❓ 문제 해결
 
