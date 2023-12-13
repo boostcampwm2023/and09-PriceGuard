@@ -104,7 +104,7 @@ class PriceGuardFirebaseMessagingService : FirebaseMessagingService() {
         private var requestCode = 0
 
         fun getRequestCode(): Int {
-            requestCode = (requestCode + 1) % (Int.MAX_VALUE - 1)
+            requestCode = (requestCode + 1) % 100
             return requestCode
         }
     }
