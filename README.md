@@ -26,7 +26,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 1. [그래프 라이브러리 구현](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EA%B7%B8%EB%9E%98%ED%94%84-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EA%B0%9C%EB%B0%9C-%EA%B8%B0%EB%A1%9D)
 2. [데이터 캐싱](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Cache-%EC%A0%81%EC%9A%A9%EA%B8%B0)
-3. DB 쿼리 개선
+3. [DB 쿼리 개선](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
 
 ## ❓ 문제 해결
 
