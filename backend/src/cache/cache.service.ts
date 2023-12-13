@@ -98,6 +98,10 @@ export class CacheService {
         return this.trackingProductCache.get(key);
     }
 
+    getAllTrackingProduct() {
+        return this.trackingProductCache.getAll();
+    }
+
     addValueTrackingProduct(key: string, value: TrackingProduct) {
         this.trackingProductCache.addValue(key, value);
     }
