@@ -24,7 +24,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 이와 같은 기술적 도전을 해결하는 과정은 아래 링크에서 확인할 수 있습니다.
 
-1. 그래프 라이브러리 구현
+1. [그래프 라이브러리 구현](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/%EA%B7%B8%EB%9E%98%ED%94%84-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EA%B0%9C%EB%B0%9C-%EA%B8%B0%EB%A1%9D)
 2. [데이터 캐싱](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Cache-%EC%A0%81%EC%9A%A9%EA%B8%B0)
 3. DB 쿼리 개선
 
