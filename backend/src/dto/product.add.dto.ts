@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Max } from 'class-validator';
+import { MAX_TARGET_PRICE } from 'src/constants';
 
 export class ProductAddDto {
     @ApiProperty({
@@ -16,6 +17,7 @@ export class ProductAddDto {
         required: true,
     })
     @IsNumber()
+    @Max(MAX_TARGET_PRICE)
     @IsNotEmpty()
     targetPrice: number;
 }
