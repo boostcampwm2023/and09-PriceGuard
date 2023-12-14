@@ -44,7 +44,9 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 프로젝트 진행 과정에서 만난 이슈들과 해결 방법에 대해 기술합니다. 아래 링크에서 확인할 수 있습니다.
 
 **DB 쿼리 개선**
-> (summary)
+> 가격 그래프 데이터는 DB에서 자주 조회되며, 1개월, 3개월 단위로 넓은 범위를 가진 데이터를 불러오기 때문에 양이 많습니다.
+> 
+> 현재 프로젝트 구조에서 데이터 조회 성능을 향상시키기 위해 어떤 노력을 했는지 기록했습니다.
 > 
 > [바로가기](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
 
@@ -56,32 +58,44 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 > [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Memory-Leak)
 
 **RecyclerView 갱신 오류**
-> 프로젝트 진행 중 
+> 알림 토글의 값을 변경하고, 스크롤을 내렸다가 다시 돌아오면 해당 토글의 값이 변경 이전의 값으로 되돌아가는 현상이 발생했습니다.
+> 
+> 어떤 부분이 잘못되었고 어떻게 해결했는지를 다루는 문서입니다.
 > 
 > [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Troubleshooting-%E2%80%90-RecyclerView%EC%9D%98-View%EA%B0%80-%EC%8A%A4%ED%81%AC%EB%A1%A4-%EB%B0%96%EC%9C%BC%EB%A1%9C-%EB%B2%97%EC%96%B4%EB%82%98%EB%A9%B4-%EA%B0%92%EC%9D%B4-%EB%B0%94%EB%80%8C%EB%8A%94-%ED%98%84%EC%83%81)
 
 **JWT 인증 처리**
-> (summary)
+> 프로젝트를 진행하며 사용자 인증을 구현했던 과정에 대해 적어보고자 합니다.
+>
+> JWT 인증 처리를 하면서 했던 고민과 선택 이유를 기록했습니다.
 > 
 > [바로가기](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
 
 **HTTPS**
-> (summary)
+> app 루트 도메인은 모든 연결에 HTTPS를 요구합니다.
+> 
+> Let's Encrypt를 활용해 어떻게 해당 프로젝트에 HTTPS를 적용했는지 기술하였습니다.
 > 
 > [바로가기](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
 
 **DeepLink 지원 및 DeepLink용 웹페이지 구현**
-> (summary)
+> 앱이 깔린 두 사람이 서로 상품 정보를 텍스트로 공유하려면 어떻게 해야될까요?
+>
+> Deeplink 와 Deeplink 이동용 웹페이지의 구현 과정을 소개합니다.
 > 
 > [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Deeplink-%EC%A7%80%EC%9B%90-%EB%B0%8F-Deeplink-%EC%9D%B4%EB%8F%99%EC%9A%A9-%EC%9B%B9%ED%8E%98%EC%9D%B4%EC%A7%80-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
 
 **Navigation 백스택 오류**
-> (summary)
+> Jetpack Navigate에서 발생했던 에러에 대해 소개합니다.
+> 
+> 그리고 해당 에러의 원인과 해결 방법도 소개합니다.
 > 
 > [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
 
 **테마 변경**
-> (summary)
+> 테마 변경 다이얼로그를 만들 때 참고했던 애플리케이션은 Now in Android입니다.
+> 
+> 해당 기능과 똑같은 인터렉션을 구현하려 했으나 잘 되지 않았습니다. 그 이유에 대해 기술합니다.
 > 
 > [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
    
