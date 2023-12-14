@@ -69,6 +69,6 @@ class RegisterItemLinkViewModel
     }
 
     fun updateLink(link: String) {
-        _state.value = state.value.copy(isLinkError = false, isNextReady = true, link = link)
+        _state.value = state.value.copy(isLinkError = false, isNextReady = link.isNotEmpty(), link = link)
     }
 }
