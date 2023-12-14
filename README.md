@@ -126,7 +126,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 ## 🏛️ 시스템 아키텍처
 
-![시스템 아키텍처](https://github.com/boostcampwm2023/and09-PriceGuard/assets/39708676/f7a943cd-5226-43dd-9130-9928f27067c4)
+![system_architecture](https://github.com/boostcampwm2023/and09-PriceGuard/assets/39708676/21b9516b-3c01-49bf-8805-824b92c94500)
 
 
 ## 👨‍👨‍👦 팀원 소개
