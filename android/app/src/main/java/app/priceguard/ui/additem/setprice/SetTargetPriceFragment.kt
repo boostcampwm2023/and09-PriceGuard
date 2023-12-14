@@ -123,14 +123,18 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun updateTargetPriceUI(it: Editable?) {
         if (binding.etTargetPrice.isFocused) {
-            val targetPrice = if (it.toString().matches("^\\d+\$".toRegex())) {
-                it.toString().toFloat()
+            val targetPrice = if (it.toString().matches("^\\d{1,9}$".toRegex())) {
+                it.toString().toInt()
+            } else if (it.toString().isEmpty()) {
+                binding.etTargetPrice.setText(getString(R.string.min_price))
+                0
             } else {
-                0F
+                binding.etTargetPrice.setText(getString(R.string.max_price))
+                999999999
             }
 
-            setTargetPriceViewModel.updateTargetPrice(targetPrice.toInt())
-            binding.updateSlideValueWithPrice(targetPrice)
+            setTargetPriceViewModel.updateTargetPrice(targetPrice)
+            binding.updateSlideValueWithPrice(targetPrice.toFloat())
         }
     }
 
@@ -212,9 +216,8 @@ class SetTargetPriceFragment : Fragment() {
 
     private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(targetPrice: Float) {
         val percent =
-            ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt().roundAtFirstDigit()
-
-        val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT)
+            ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt()
+        val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT).roundAtFirstDigit()
         if (targetPrice > setTargetPriceViewModel.state.value.productPrice) {
             tvTargetPricePercent.text = getString(R.string.over_current_price)
         } else {

@@ -19,8 +19,8 @@ android {
         applicationId = "app.priceguard"
         minSdk = 29
         targetSdk = 34
-        versionCode = 6
-        versionName = "0.3.2"
+        versionCode = 7
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
