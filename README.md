@@ -43,14 +43,47 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 
 프로젝트 진행 과정에서 만난 이슈들과 해결 방법에 대해 기술합니다. 아래 링크에서 확인할 수 있습니다.
 
-1. [DB 쿼리 개선](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
-2. [메모리 누수](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Memory-Leak)
-3. [RecyclerView 갱신 오류](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Troubleshooting-%E2%80%90-RecyclerView%EC%9D%98-View%EA%B0%80-%EC%8A%A4%ED%81%AC%EB%A1%A4-%EB%B0%96%EC%9C%BC%EB%A1%9C-%EB%B2%97%EC%96%B4%EB%82%98%EB%A9%B4-%EA%B0%92%EC%9D%B4-%EB%B0%94%EB%80%8C%EB%8A%94-%ED%98%84%EC%83%81)
-4. [JWT 인증 처리](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
-5. [HTTPS](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
-6. [DeepLink 지원 및 DeepLink용 웹페이지 구현](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Deeplink-%EC%A7%80%EC%9B%90-%EB%B0%8F-Deeplink-%EC%9D%B4%EB%8F%99%EC%9A%A9-%EC%9B%B9%ED%8E%98%EC%9D%B4%EC%A7%80-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
-7. [Navigation 백스택 오류](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
-8. [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
+**DB 쿼리 개선**
+> (summary)
+> 
+> [바로가기](https://velog.io/@kdogs/MongoDB%EC%97%90%EC%84%9C-%EC%BF%BC%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D%ED%95%98%EA%B8%B0)
+
+**메모리 누수**
+> 안드로이드 앱 개발 과정에서 발견된 여러 메모리 누수 상황에 대해 소개합니다.
+> 
+> 어떻게 발견했는지, 왜 발생하는지, 어떻게 해결했는지 확인할 수 있습니다.
+> 
+> [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Memory-Leak)
+
+**RecyclerView 갱신 오류**
+> 프로젝트 진행 중 
+> 
+> [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Troubleshooting-%E2%80%90-RecyclerView%EC%9D%98-View%EA%B0%80-%EC%8A%A4%ED%81%AC%EB%A1%A4-%EB%B0%96%EC%9C%BC%EB%A1%9C-%EB%B2%97%EC%96%B4%EB%82%98%EB%A9%B4-%EA%B0%92%EC%9D%B4-%EB%B0%94%EB%80%8C%EB%8A%94-%ED%98%84%EC%83%81)
+
+**JWT 인증 처리**
+> (summary)
+> 
+> [바로가기](https://velog.io/@mks1103/JWT%EB%A1%9C-%EC%9D%B8%EC%A6%9D-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0)
+
+**HTTPS**
+> (summary)
+> 
+> [바로가기](https://velog.io/@kdogs/HTTPS-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0feat.-Lets-Encrypt)
+
+**DeepLink 지원 및 DeepLink용 웹페이지 구현**
+> (summary)
+> 
+> [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/Deeplink-%EC%A7%80%EC%9B%90-%EB%B0%8F-Deeplink-%EC%9D%B4%EB%8F%99%EC%9A%A9-%EC%9B%B9%ED%8E%98%EC%9D%B4%EC%A7%80-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
+
+**Navigation 백스택 오류**
+> (summary)
+> 
+> [바로가기](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/TroubleShooting-%E2%80%90-Navigation-%EB%B0%B1%EC%8A%A4%ED%83%9D-%EC%98%A4%EB%A5%98)
+
+**테마 변경**
+> (summary)
+> 
+> [테마 변경](https://github.com/boostcampwm2023/and09-PriceGuard/wiki/테마-변경-(compose-vs-xml))
    
 ## 📚 기술 스택
 
