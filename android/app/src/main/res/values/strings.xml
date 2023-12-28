@@ -133,4 +133,7 @@
     <string name="min_price">0</string>
     <string name="max_price">999999999</string>
     <string name="priceguard_push_alarm_title">Product Price Notification</string>
+    <string name="delete_account">회원 탈퇴</string>
+    <string name="delete_account_confirm_title">회원 탈퇴 확인</string>
+    <string name="delete_account_confirm_message">정말로 회원 탈퇴 하시겠습니까?</string>
 </resources>
