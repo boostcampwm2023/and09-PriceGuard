@@ -12,5 +12,6 @@ enum class Setting {
     NOTIFICATION,
     THEME,
     LICENSE,
-    LOGOUT
+    LOGOUT,
+    DELETE_ACCOUNT
 }

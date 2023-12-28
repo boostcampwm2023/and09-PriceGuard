@@ -73,4 +73,20 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
             }
         }
     }
+
+    override suspend fun deleteAccount(): RepositoryResult<Boolean, AuthErrorState> {
+        val response = getApiResult {
+            userAPI.deleteAccount()
+        }
+
+        return when (response) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
 }

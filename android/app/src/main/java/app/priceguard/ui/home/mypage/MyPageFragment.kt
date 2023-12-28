@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -78,7 +79,11 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.LOGOUT -> {
-                                showConfirmationDialogForResult()
+                                showConfirmationDialogForResult(R.string.logout_confirm_title, R.string.logout_confirm_message, Setting.LOGOUT.ordinal)
+                            }
+
+                            Setting.DELETE_ACCOUNT -> {
+                                showConfirmationDialogForResult(R.string.delete_account_confirm_title, R.string.delete_account_confirm_message, Setting.DELETE_ACCOUNT.ordinal)
                             }
                         }
                     }
@@ -107,19 +112,25 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                 Setting.LOGOUT,
                 ContextCompat.getDrawable(requireActivity(), R.drawable.ic_logout),
                 getString(R.string.logout)
+            ),
+            SettingItemInfo(
+                Setting.DELETE_ACCOUNT,
+                ContextCompat.getDrawable(requireActivity(), R.drawable.ic_close_red),
+                getString(R.string.delete_account)
             )
         )
     }
 
-    private fun showConfirmationDialogForResult() {
+    private fun showConfirmationDialogForResult(@StringRes title: Int, @StringRes message: Int, requestCode: Int) {
         val tag = "confirm_dialog_fragment_from_activity"
         if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
-        bundle.putString("title", getString(R.string.logout_confirm_title))
-        bundle.putString("message", getString(R.string.logout_confirm_message))
+        bundle.putString("title", getString(title))
+        bundle.putString("message", getString(message))
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
+        bundle.putInt("requestCode", requestCode)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)
         dialogFragment.show(requireActivity().supportFragmentManager, tag)
@@ -131,9 +142,10 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         requireActivity().finish()
     }
 
-    override fun onDialogResult(result: Boolean) {
-        if (result) {
-            myPageViewModel.logout()
+    override fun onDialogResult(requestCode: Int, result: Boolean) {
+        when (requestCode) {
+            Setting.LOGOUT.ordinal -> myPageViewModel.logout()
+            Setting.DELETE_ACCOUNT.ordinal -> myPageViewModel.deleteAccount()
         }
     }
 
