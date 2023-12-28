@@ -298,7 +298,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onDialogResult(result: Boolean) {
+    override fun onDialogResult(requestCode: Int, result: Boolean) {
         if (result) {
             productDetailViewModel.deleteProductTracking()
         }
