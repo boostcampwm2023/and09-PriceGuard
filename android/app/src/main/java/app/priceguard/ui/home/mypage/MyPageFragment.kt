@@ -79,11 +79,19 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.LOGOUT -> {
-                                showConfirmationDialogForResult(R.string.logout_confirm_title, R.string.logout_confirm_message, Setting.LOGOUT.ordinal)
+                                showConfirmationDialogForResult(
+                                    R.string.logout_confirm_title,
+                                    R.string.logout_confirm_message,
+                                    Setting.LOGOUT.ordinal
+                                )
                             }
 
                             Setting.DELETE_ACCOUNT -> {
-                                showConfirmationDialogForResult(R.string.delete_account_confirm_title, R.string.delete_account_confirm_message, Setting.DELETE_ACCOUNT.ordinal)
+                                showConfirmationDialogForResult(
+                                    R.string.delete_account_confirm_title,
+                                    R.string.delete_account_confirm_message,
+                                    Setting.DELETE_ACCOUNT.ordinal
+                                )
                             }
                         }
                     }
@@ -121,7 +129,11 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         )
     }
 
-    private fun showConfirmationDialogForResult(@StringRes title: Int, @StringRes message: Int, requestCode: Int) {
+    private fun showConfirmationDialogForResult(
+        @StringRes title: Int,
+        @StringRes message: Int,
+        requestCode: Int
+    ) {
         val tag = "confirm_dialog_fragment_from_activity"
         if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 

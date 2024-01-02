@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    val authRepository: AuthRepository,
-    val tokenRepository: TokenRepository
+    private val authRepository: AuthRepository,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     sealed class MyPageEvent {
