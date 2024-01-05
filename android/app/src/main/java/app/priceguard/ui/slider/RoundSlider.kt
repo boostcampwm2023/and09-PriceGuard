@@ -49,14 +49,14 @@ class RoundSlider @JvmOverloads constructor(
         }
 
     // TODO : width와 height로 적정 크기 계산하기 마진도 추가!!
-    var slideBarRadius = 400f
-    var controllerRadius = 40f
-
     var slideBarStrokeWidth = Dp(8F).toPx(context).value
 
     var maxPecentValue = 100F
 
-    var margin = Dp(8F).toPx(context).value
+    var margin = Dp(24F).toPx(context).value
+
+    var slideBarRadius = 0F
+    var controllerRadius = Dp(8F).toPx(context).value
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -75,9 +75,13 @@ class RoundSlider @JvmOverloads constructor(
         if (viewWidthMode == MeasureSpec.EXACTLY && viewHeightMode == MeasureSpec.EXACTLY) {
             // XML에서 뷰의 크기가 특정 값으로 설정된 경우, 그대로 사용한다.
             setMeasuredDimension(viewWidthSize, viewHeightSize)
+            width = viewWidthSize.toFloat()
+            height = viewHeightSize.toFloat()
         } else {
             // wrap_content이거나, 지정되지 않은 경우, 뷰의 크기를 내부에서 지정해주어야 한다
-            setMeasuredDimension(1000, 550)
+            width = 1000F
+            height = width / 2 + margin * 2 + controllerRadius
+            setMeasuredDimension(width.toInt(), height.toInt())
         }
     }
 
@@ -85,15 +89,14 @@ class RoundSlider @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         Log.d("CustomSlider", "onSizeChanged")
 
-        width = getWidth().toFloat()
-        height = getHeight().toFloat() - controllerRadius - margin
-
         slideBarPointX = width / 2
-        slideBarPointY = height
+        slideBarPointY = height - margin - controllerRadius
+
+        slideBarRadius = width / 2 - margin
 
         val rad = 1.8F * (maxPecentValue - sliderValue).toRadian()
-        controllerPointX = width / 2 + cos(rad) * slideBarRadius
-        controllerPointY = height + sin(-rad) * slideBarRadius
+        controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -155,7 +158,7 @@ class RoundSlider @JvmOverloads constructor(
         canvas.drawText(
             textString,
             slideBarPointX - textWidth / 2,
-            slideBarPointY,
+            slideBarPointY - slideBarRadius / 2 + textHeight,
             sliderValuePaint
         )
     }
@@ -169,12 +172,12 @@ class RoundSlider @JvmOverloads constructor(
                     if (event.y > slideBarPointY) {
                         if (state) {
                             if (event.x >= slideBarPointX) {
-                                controllerPointX = width / 2 + slideBarRadius
-                                controllerPointY = height
+                                controllerPointX = slideBarPointX + slideBarRadius
+                                controllerPointY = slideBarPointY
                                 sliderValue = degreeToValue(0F)
                             } else {
-                                controllerPointX = width / 2 - slideBarRadius
-                                controllerPointY = height
+                                controllerPointX = slideBarPointX - slideBarRadius
+                                controllerPointY = slideBarPointY
                                 sliderValue = degreeToValue(180F)
                             }
                             invalidate()
@@ -186,8 +189,8 @@ class RoundSlider @JvmOverloads constructor(
                     state = true
                     val rad = calculateRadToPoint(event.x, event.y)
 
-                    controllerPointX = width / 2 + cos(rad) * slideBarRadius
-                    controllerPointY = height + sin(-rad) * slideBarRadius
+                    controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
+                    controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
 
                     sliderValue = degreeToValue(rad.toDegree())
 
@@ -221,8 +224,8 @@ class RoundSlider @JvmOverloads constructor(
 
     fun setValue(value: Int) {
         Log.d("CustomSlider", "setValue")
-        controllerPointX = width / 2 + cos(value * pi / maxPecentValue) * slideBarRadius
-        controllerPointY = height + sin(-value * pi / maxPecentValue) * slideBarRadius
+        controllerPointX = slideBarPointX + cos(value * pi / maxPecentValue) * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-value * pi / maxPecentValue) * slideBarRadius
         sliderValue = value
         invalidate()
     }
