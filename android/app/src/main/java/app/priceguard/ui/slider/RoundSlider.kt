@@ -48,15 +48,14 @@ class RoundSlider @JvmOverloads constructor(
             }
         }
 
-    // TODO : width와 height로 적정 크기 계산하기 마진도 추가!!
-    var slideBarStrokeWidth = Dp(8F).toPx(context).value
+    private var slideBarStrokeWidth = Dp(8F).toPx(context).value
 
-    var maxPecentValue = 100F
+    private var slideBarRadius = 0F
+    private var controllerRadius = Dp(12F).toPx(context).value
 
-    var margin = Dp(24F).toPx(context).value
+    private var margin = Dp(24F).toPx(context).value
 
-    var slideBarRadius = 0F
-    var controllerRadius = Dp(8F).toPx(context).value
+    private var maxPecentValue = 100F
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -87,7 +86,7 @@ class RoundSlider @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        Log.d("CustomSlider", "onSizeChanged")
+
 
         slideBarPointX = width / 2
         slideBarPointY = height - margin - controllerRadius
@@ -227,6 +226,16 @@ class RoundSlider @JvmOverloads constructor(
         controllerPointX = slideBarPointX + cos(value * pi / maxPecentValue) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-value * pi / maxPecentValue) * slideBarRadius
         sliderValue = value
+        invalidate()
+    }
+
+    fun setSliderStrokeWidth(value: Int) {
+        slideBarStrokeWidth = Dp(value.toFloat()).toPx(context).value
+        invalidate()
+    }
+
+    fun setMaxPercentValue(value: Int) {
+        maxPecentValue = value.toFloat()
         invalidate()
     }
 

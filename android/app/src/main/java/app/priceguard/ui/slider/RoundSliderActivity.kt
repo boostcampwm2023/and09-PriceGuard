@@ -16,7 +16,10 @@ class RoundSliderActivity : AppCompatActivity() {
         binding = ActivityRoundSliderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.roundSlider.setValue(30)
+        binding.roundSlider.setMaxPercentValue(180)
+        binding.roundSlider.setValue(10)
+        binding.roundSlider.setSliderStrokeWidth(4)
+
         binding.roundSlider.setSliderValueChangeListener { value ->
             Log.d("slideValueChange", value.toString())
         }
