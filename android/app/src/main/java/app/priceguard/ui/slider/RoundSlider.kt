@@ -60,6 +60,8 @@ class RoundSlider @JvmOverloads constructor(
     private var startDegree = 270F
     private var endDegree = 300F
 
+    private var textValueSize = Sp(32F)
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         Log.d("CustomSlider", "onMeasure")
@@ -148,7 +150,7 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     private fun drawSlideValueText(canvas: Canvas) {
-        sliderValuePaint.textSize = 88f
+        sliderValuePaint.textSize = textValueSize.toPx(context).value
         val bounds = Rect()
 
         val textString = sliderValue.toString()
