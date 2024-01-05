@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
@@ -41,7 +42,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private var sliderValue = 50
         set(value) {
-            if(field != value){
+            if (field != value) {
                 field = value
                 handleValueChangeEvent(value)
             }
@@ -51,11 +52,11 @@ class RoundSlider @JvmOverloads constructor(
     var slideBarRadius = 400f
     var controllerRadius = 40f
 
-    var slideBarStrokeWidth = 20f
+    var slideBarStrokeWidth = Dp(8F).toPx(context).value
 
     var maxPecentValue = 100F
 
-    var margin = 30f
+    var margin = Dp(8F).toPx(context).value
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -71,10 +72,10 @@ class RoundSlider @JvmOverloads constructor(
 
 
         // 크기 모드에 따라 setMeasuredDimension() 메서드로 뷰의 영역 크기를 설정한다.
-        if(viewWidthMode == MeasureSpec.EXACTLY && viewHeightMode == MeasureSpec.EXACTLY){
+        if (viewWidthMode == MeasureSpec.EXACTLY && viewHeightMode == MeasureSpec.EXACTLY) {
             // XML에서 뷰의 크기가 특정 값으로 설정된 경우, 그대로 사용한다.
             setMeasuredDimension(viewWidthSize, viewHeightSize)
-        }else{
+        } else {
             // wrap_content이거나, 지정되지 않은 경우, 뷰의 크기를 내부에서 지정해주어야 한다
             setMeasuredDimension(1000, 550)
         }
@@ -83,23 +84,24 @@ class RoundSlider @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         Log.d("CustomSlider", "onSizeChanged")
-        
+
         width = getWidth().toFloat()
         height = getHeight().toFloat() - controllerRadius - margin
 
         slideBarPointX = width / 2
         slideBarPointY = height
 
-        val rad = 1.8F*(maxPecentValue-sliderValue).toRadian()
+        val rad = 1.8F * (maxPecentValue - sliderValue).toRadian()
         controllerPointX = width / 2 + cos(rad) * slideBarRadius
         controllerPointY = height + sin(-rad) * slideBarRadius
     }
-    
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         Log.d("CustomSlider", "onDraw")
 
         drawSlideBar(canvas)
+        drawPointSlideBar(canvas)
         drawController(canvas)
         drawSlideValueText(canvas)
     }
@@ -114,6 +116,7 @@ class RoundSlider @JvmOverloads constructor(
     private fun drawSlideBar(canvas: Canvas) {
         slideBarPaint.style = Paint.Style.STROKE
         slideBarPaint.strokeWidth = slideBarStrokeWidth
+        slideBarPaint.color = Color.GRAY
 
         val oval = RectF()
         oval.set(
@@ -126,9 +129,35 @@ class RoundSlider @JvmOverloads constructor(
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
     }
 
+    private fun drawPointSlideBar(canvas: Canvas) {
+        slideBarPaint.color = Color.RED
+
+        val oval = RectF()
+        oval.set(
+            slideBarPointX - slideBarRadius,
+            slideBarPointY - slideBarRadius,
+            slideBarPointX + slideBarRadius,
+            slideBarPointY + slideBarRadius
+        )
+
+        canvas.drawArc(oval, 270F, 30F, false, slideBarPaint)
+    }
+
     private fun drawSlideValueText(canvas: Canvas) {
-        sliderValuePaint.textSize = 48f
-        canvas.drawText(sliderValue.toString(), slideBarPointX, slideBarPointY, sliderValuePaint)
+        sliderValuePaint.textSize = 88f
+        val bounds = Rect()
+
+        val textString = sliderValue.toString()
+        sliderValuePaint.getTextBounds(textString, 0, textString.length, bounds)
+
+        val textWidth = bounds.width()
+        val textHeight = bounds.height()
+        canvas.drawText(
+            textString,
+            slideBarPointX - textWidth / 2,
+            slideBarPointY,
+            sliderValuePaint
+        )
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -138,8 +167,8 @@ class RoundSlider @JvmOverloads constructor(
                     // 터치 좌표 x에 맞게 컨트롤러의 y좌표 설정 (y좌표만 움직이면 controller 이동하지 않음)
 
                     if (event.y > slideBarPointY) {
-                        if(state) {
-                            if(event.x >= slideBarPointX){
+                        if (state) {
+                            if (event.x >= slideBarPointX) {
                                 controllerPointX = width / 2 + slideBarRadius
                                 controllerPointY = height
                                 sliderValue = degreeToValue(0F)
@@ -197,7 +226,6 @@ class RoundSlider @JvmOverloads constructor(
         sliderValue = value
         invalidate()
     }
-
 
 
     private fun handleValueChangeEvent(value: Int) {
