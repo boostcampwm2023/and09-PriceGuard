@@ -57,6 +57,9 @@ class RoundSlider @JvmOverloads constructor(
 
     private var maxPecentValue = 100F
 
+    private var startDegree = 270F
+    private var endDegree = 300F
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         Log.d("CustomSlider", "onMeasure")
@@ -141,8 +144,7 @@ class RoundSlider @JvmOverloads constructor(
             slideBarPointX + slideBarRadius,
             slideBarPointY + slideBarRadius
         )
-
-        canvas.drawArc(oval, 270F, 30F, false, slideBarPaint)
+        canvas.drawArc(oval, startDegree, endDegree - startDegree, false, slideBarPaint)
     }
 
     private fun drawSlideValueText(canvas: Canvas) {
@@ -236,6 +238,12 @@ class RoundSlider @JvmOverloads constructor(
 
     fun setMaxPercentValue(value: Int) {
         maxPecentValue = value.toFloat()
+        invalidate()
+    }
+
+    fun setPointRange(startValue: Int, endValue: Int) {
+        startDegree = (180 / maxPecentValue * startValue) + 180
+        endDegree = (180 / maxPecentValue * endValue) + 180
         invalidate()
     }
 
