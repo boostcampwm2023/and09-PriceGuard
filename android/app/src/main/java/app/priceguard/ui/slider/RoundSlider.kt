@@ -93,7 +93,7 @@ class RoundSlider @JvmOverloads constructor(
 
         slideBarRadius = width / 2 - margin
 
-        val rad = 1.8F * (maxPecentValue - sliderValue).toRadian()
+        val rad = (180 / maxPecentValue * (maxPecentValue - sliderValue)).toRadian()
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
     }
