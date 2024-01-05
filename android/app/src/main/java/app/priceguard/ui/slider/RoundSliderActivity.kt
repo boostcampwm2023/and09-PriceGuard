@@ -1,9 +1,8 @@
 package app.priceguard.ui.slider
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import app.priceguard.R
+import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.databinding.ActivityRoundSliderBinding
 
 class RoundSliderActivity : AppCompatActivity() {

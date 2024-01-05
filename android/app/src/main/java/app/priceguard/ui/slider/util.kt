@@ -29,3 +29,10 @@ fun Sp.toPx(context: Context): Px {
     )
 }
 
+fun Float.toRadian(): Float {
+    return this * Math.PI.toFloat() / 180F
+}
+
+fun Float.toDegree(): Float {
+    return this * 180F / Math.PI.toFloat()
+}

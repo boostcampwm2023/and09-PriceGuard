@@ -64,7 +64,6 @@ class RoundSlider @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        Log.d("CustomSlider", "onMeasure")
 
         // 뷰 크기 모드 체크
         val viewWidthMode = MeasureSpec.getMode(widthMeasureSpec)
@@ -73,7 +72,6 @@ class RoundSlider @JvmOverloads constructor(
         // 뷰 크기 값 체크
         val viewWidthSize = MeasureSpec.getSize(widthMeasureSpec)
         val viewHeightSize = MeasureSpec.getSize(heightMeasureSpec)
-
 
         // 크기 모드에 따라 setMeasuredDimension() 메서드로 뷰의 영역 크기를 설정한다.
         if (viewWidthMode == MeasureSpec.EXACTLY && viewHeightMode == MeasureSpec.EXACTLY) {
@@ -92,7 +90,6 @@ class RoundSlider @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-
         slideBarPointX = width / 2
         slideBarPointY = height - margin - controllerRadius
 
@@ -105,7 +102,6 @@ class RoundSlider @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        Log.d("CustomSlider", "onDraw")
 
         drawSlideBar(canvas)
         drawPointSlideBar(canvas)
@@ -208,14 +204,6 @@ class RoundSlider @JvmOverloads constructor(
         return true
     }
 
-    private fun Float.toRadian(): Float {
-        return this * pi / 180F
-    }
-
-    private fun Float.toDegree(): Float {
-        return this * 180F / pi
-    }
-
     private fun calculateRadToPoint(x: Float, y: Float): Float {
         val arcTan = atan((x - slideBarPointX) / (y - slideBarPointY))
         return (pi / 2) + arcTan
@@ -226,7 +214,6 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     fun setValue(value: Int) {
-        Log.d("CustomSlider", "setValue")
         controllerPointX = slideBarPointX + cos(value * pi / maxPecentValue) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-value * pi / maxPecentValue) * slideBarRadius
         sliderValue = value
@@ -249,12 +236,11 @@ class RoundSlider @JvmOverloads constructor(
         invalidate()
     }
 
+    fun setSliderValueChangeListener(listener: sliderValueChangeListener) {
+        customViewClickListener = listener
+    }
 
     private fun handleValueChangeEvent(value: Int) {
         customViewClickListener?.invoke(value)
-    }
-
-    fun setSliderValueChangeListener(listener: sliderValueChangeListener) {
-        customViewClickListener = listener
     }
 }
