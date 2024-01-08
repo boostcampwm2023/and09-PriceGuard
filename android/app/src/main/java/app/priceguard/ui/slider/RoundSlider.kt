@@ -153,7 +153,6 @@ class RoundSlider @JvmOverloads constructor(
         super.onDraw(canvas)
 
         drawSlideBar(canvas)
-        drawHighlightSlider(canvas)
         drawController(canvas)
         drawSlideValueText(canvas)
     }
@@ -176,6 +175,7 @@ class RoundSlider @JvmOverloads constructor(
         )
 
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
+        drawHighlightSlider(canvas)
         canvas.drawArc(oval, 180F, 180 - rad.toDegree(), false, activeSlideBarPaint)
     }
 
