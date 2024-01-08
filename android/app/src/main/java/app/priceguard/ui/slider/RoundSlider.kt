@@ -57,19 +57,17 @@ class RoundSlider @JvmOverloads constructor(
 
     private var maxPercentValue = 100F
 
-    private var startDegree = 270F
-    private var endDegree = 300F
+    private var startDegree = 0F
+    private var endDegree = 0F
 
     private var textValueSize = Sp(32F)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        // 뷰 크기 모드 체크
         val viewWidthMode = MeasureSpec.getMode(widthMeasureSpec)
         val viewHeightMode = MeasureSpec.getMode(heightMeasureSpec)
 
-        // 뷰 크기 값 체크
         val viewWidthSize = MeasureSpec.getSize(widthMeasureSpec)
         val viewHeightSize = MeasureSpec.getSize(heightMeasureSpec)
 
@@ -121,7 +119,7 @@ class RoundSlider @JvmOverloads constructor(
         super.onDraw(canvas)
 
         drawSlideBar(canvas)
-        drawPointSlideBar(canvas)
+        drawHighlightSlider(canvas)
         drawController(canvas)
         drawSlideValueText(canvas)
     }
@@ -141,7 +139,7 @@ class RoundSlider @JvmOverloads constructor(
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
     }
 
-    private fun drawPointSlideBar(canvas: Canvas) {
+    private fun drawHighlightSlider(canvas: Canvas) {
         slideBarPaint.color = Color.RED
 
         val oval = RectF()
@@ -182,8 +180,6 @@ class RoundSlider @JvmOverloads constructor(
         if (event != null) {
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    // 터치 좌표 x에 맞게 컨트롤러의 y좌표 설정 (y좌표만 움직이면 controller 이동하지 않음)
-
                     if (event.y > slideBarPointY) {
                         if (state) {
                             if (event.x >= slideBarPointX) {
@@ -200,7 +196,6 @@ class RoundSlider @JvmOverloads constructor(
                         }
                         return true
                     }
-
                     state = true
                     val rad = calculateRadToPoint(event.x, event.y)
 
