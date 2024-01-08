@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.atan
@@ -25,6 +26,7 @@ class RoundSlider @JvmOverloads constructor(
     private var height = 0f
 
     private val slideBarPaint = Paint()
+    private val activeSlideBarPaint = Paint()
     private val controllerPaint = Paint()
     private val sliderValuePaint = Paint()
 
@@ -61,6 +63,8 @@ class RoundSlider @JvmOverloads constructor(
     private var endDegree = 0F
 
     private var textValueSize = Sp(32F)
+
+    private var rad = pi
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -110,7 +114,7 @@ class RoundSlider @JvmOverloads constructor(
             height - slideBarMargin * 2
         }
 
-        val rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian()
+        rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian()
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
     }
@@ -129,6 +133,10 @@ class RoundSlider @JvmOverloads constructor(
         slideBarPaint.strokeWidth = slideBarStrokeWidth
         slideBarPaint.color = Color.GRAY
 
+        activeSlideBarPaint.style = Paint.Style.STROKE
+        activeSlideBarPaint.strokeWidth = slideBarStrokeWidth
+        activeSlideBarPaint.color = Color.BLUE
+
         val oval = RectF()
         oval.set(
             slideBarPointX - slideBarRadius,
@@ -136,7 +144,9 @@ class RoundSlider @JvmOverloads constructor(
             slideBarPointX + slideBarRadius,
             slideBarPointY + slideBarRadius
         )
+
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
+        canvas.drawArc(oval, 180F, 180 - rad.toDegree(), false, activeSlideBarPaint)
     }
 
     private fun drawHighlightSlider(canvas: Canvas) {
@@ -197,7 +207,7 @@ class RoundSlider @JvmOverloads constructor(
                         return true
                     }
                     state = true
-                    val rad = calculateRadToPoint(event.x, event.y)
+                    rad = calculateRadToPoint(event.x, event.y)
 
                     controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
                     controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
