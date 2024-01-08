@@ -17,7 +17,7 @@ class RoundSliderActivity : AppCompatActivity() {
 
         binding.roundSlider.setMaxPercentValue(180)
         binding.roundSlider.setValue(10)
-        binding.roundSlider.setPointRange(100, 120)
+        binding.roundSlider.setHighlightRange(100, 120)
 
         binding.roundSlider.setSliderValueChangeListener { value ->
             Log.d("slideValueChange", value.toString())

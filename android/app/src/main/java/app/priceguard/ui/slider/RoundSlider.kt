@@ -287,7 +287,7 @@ class RoundSlider @JvmOverloads constructor(
         invalidate()
     }
 
-    fun setPointRange(startValue: Int, endValue: Int) {
+    fun setHighlightRange(startValue: Int, endValue: Int) {
         startDegree = (180 / maxPercentValue * startValue) + 180
         endDegree = (180 / maxPercentValue * endValue) + 180
         invalidate()
