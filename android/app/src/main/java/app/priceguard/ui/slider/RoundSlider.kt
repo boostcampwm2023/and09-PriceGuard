@@ -7,9 +7,9 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import app.priceguard.R
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.min
@@ -42,7 +42,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private val pi = Math.PI.toFloat()
 
-    private var sliderValue = 50
+    private var sliderValue = 0
         set(value) {
             if (field != value) {
                 field = value
@@ -65,6 +65,36 @@ class RoundSlider @JvmOverloads constructor(
     private var textValueSize = Sp(32F)
 
     private var rad = pi
+
+    private var colorPrimary: Int
+    private var colorOnPrimaryContainer: Int
+    private var colorSurfaceVariant: Int
+
+    init {
+        val typedArray = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.RoundSlider,
+            defStyleAttr,
+            0
+        )
+
+        colorPrimary = typedArray.getColor(
+            R.styleable.RoundSlider_colorPrimary,
+            Color.BLUE
+        )
+
+        colorOnPrimaryContainer = typedArray.getColor(
+            R.styleable.RoundSlider_colorOnPrimaryContainer,
+            Color.BLACK
+        )
+
+        colorSurfaceVariant = typedArray.getColor(
+            R.styleable.RoundSlider_colorSurfaceVariant,
+            Color.GRAY
+        )
+
+        typedArray.recycle()
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -131,11 +161,11 @@ class RoundSlider @JvmOverloads constructor(
     private fun drawSlideBar(canvas: Canvas) {
         slideBarPaint.style = Paint.Style.STROKE
         slideBarPaint.strokeWidth = slideBarStrokeWidth
-        slideBarPaint.color = Color.GRAY
+        slideBarPaint.color = colorSurfaceVariant
 
         activeSlideBarPaint.style = Paint.Style.STROKE
         activeSlideBarPaint.strokeWidth = slideBarStrokeWidth
-        activeSlideBarPaint.color = Color.BLUE
+        activeSlideBarPaint.color = colorPrimary
 
         val oval = RectF()
         oval.set(
@@ -150,7 +180,8 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     private fun drawHighlightSlider(canvas: Canvas) {
-        slideBarPaint.color = Color.RED
+        slideBarPaint.color = Color.parseColor("#FFD7F3") //#FFE3E3
+        slideBarPaint.alpha
 
         val oval = RectF()
         oval.set(
@@ -164,16 +195,17 @@ class RoundSlider @JvmOverloads constructor(
 
     private fun drawController(canvas: Canvas) {
         controllerPaint.style = Paint.Style.FILL
-        controllerPaint.color = Color.BLUE
+        controllerPaint.color = colorPrimary
 
         canvas.drawCircle(controllerPointX, controllerPointY, controllerRadius, controllerPaint)
     }
 
     private fun drawSlideValueText(canvas: Canvas) {
         sliderValuePaint.textSize = textValueSize.toPx(context).value
+        sliderValuePaint.color = colorOnPrimaryContainer
         val bounds = Rect()
 
-        val textString = sliderValue.toString()
+        val textString = "$sliderValue%"
         sliderValuePaint.getTextBounds(textString, 0, textString.length, bounds)
 
         val textWidth = bounds.width()
