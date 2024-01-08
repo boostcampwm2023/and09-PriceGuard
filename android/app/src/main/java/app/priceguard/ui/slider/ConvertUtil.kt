@@ -9,11 +9,6 @@ data class Dp(val value: Float)
 
 data class Sp(val value: Float)
 
-fun Px.toDp(context: Context): Dp {
-    val density = context.resources.displayMetrics.density
-    return Dp(value / density)
-}
-
 fun Dp.toPx(context: Context): Px {
     val density = context.resources.displayMetrics.density
     return Px(value * density)
