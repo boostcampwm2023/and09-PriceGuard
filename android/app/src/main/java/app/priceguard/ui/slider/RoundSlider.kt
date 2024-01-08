@@ -7,11 +7,11 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.atan
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 class RoundSlider @JvmOverloads constructor(
@@ -34,6 +34,10 @@ class RoundSlider @JvmOverloads constructor(
     private var slideBarPointX = 0f
     private var slideBarPointY = 0f
 
+    private var btnRadius = Dp(20F).toPx(context).value
+    private var btnMarginTop = Dp(24F).toPx(context).value
+    private var btnMarginBottom = Dp(12F).toPx(context).value
+
     private var customViewClickListener: sliderValueChangeListener? = null
 
     private var state = false
@@ -53,7 +57,7 @@ class RoundSlider @JvmOverloads constructor(
     private var slideBarRadius = 0F
     private var controllerRadius = Dp(12F).toPx(context).value
 
-    private var margin = Dp(24F).toPx(context).value
+    private var slideBarMargin = Dp(12F).toPx(context).value + controllerRadius
 
     private var maxPecentValue = 100F
 
@@ -73,17 +77,30 @@ class RoundSlider @JvmOverloads constructor(
         val viewWidthSize = MeasureSpec.getSize(widthMeasureSpec)
         val viewHeightSize = MeasureSpec.getSize(heightMeasureSpec)
 
-        // 크기 모드에 따라 setMeasuredDimension() 메서드로 뷰의 영역 크기를 설정한다.
-        if (viewWidthMode == MeasureSpec.EXACTLY && viewHeightMode == MeasureSpec.EXACTLY) {
-            // XML에서 뷰의 크기가 특정 값으로 설정된 경우, 그대로 사용한다.
-            setMeasuredDimension(viewWidthSize, viewHeightSize)
-            width = viewWidthSize.toFloat()
-            height = viewHeightSize.toFloat()
+        width = if (viewWidthMode == MeasureSpec.EXACTLY) {
+            viewWidthSize.toFloat()
+        } else if (viewHeightMode == MeasureSpec.EXACTLY) {
+            (viewHeightSize.toFloat() - controllerRadius - btnRadius * 2 - btnMarginTop) * 2
         } else {
-            // wrap_content이거나, 지정되지 않은 경우, 뷰의 크기를 내부에서 지정해주어야 한다
-            width = 1000F
-            height = width / 2 + margin * 2 + controllerRadius
-            setMeasuredDimension(width.toInt(), height.toInt())
+            700F
+        }
+        width = min(width, viewWidthSize.toFloat())
+
+        height = if (viewHeightMode == MeasureSpec.EXACTLY) {
+            viewHeightSize.toFloat()
+        } else {
+            width / 2 + btnRadius * 2 + btnMarginTop + btnMarginBottom
+        }
+        height = min(height, viewHeightSize.toFloat())
+
+        setMeasuredDimension(width.toInt(), height.toInt())
+
+        // 높이가 필요한 크기보다 클 경우 크기 줄이기 (중앙 정렬을 위함)
+        if (viewHeightMode == MeasureSpec.EXACTLY) {
+            val temp = width / 2 + btnRadius * 2 + btnMarginTop + btnMarginBottom
+            if (height > temp) {
+                height -= (height - temp) / 2
+            }
         }
     }
 
@@ -91,9 +108,13 @@ class RoundSlider @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
 
         slideBarPointX = width / 2
-        slideBarPointY = height - margin - controllerRadius
+        slideBarPointY = height - btnRadius * 2 - btnMarginTop - btnMarginBottom
 
-        slideBarRadius = width / 2 - margin
+        slideBarRadius = if (isHeightEnough()) {
+            width / 2 - slideBarMargin
+        } else {
+            height - btnRadius * 2 - btnMarginTop - slideBarMargin - btnMarginBottom
+        }
 
         val rad = (180 / maxPecentValue * (maxPecentValue - sliderValue)).toRadian()
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
@@ -109,13 +130,6 @@ class RoundSlider @JvmOverloads constructor(
         drawSlideValueText(canvas)
     }
 
-    private fun drawController(canvas: Canvas) {
-        controllerPaint.style = Paint.Style.FILL
-        controllerPaint.color = Color.BLUE
-
-        canvas.drawCircle(controllerPointX, controllerPointY, controllerRadius, controllerPaint)
-    }
-
     private fun drawSlideBar(canvas: Canvas) {
         slideBarPaint.style = Paint.Style.STROKE
         slideBarPaint.strokeWidth = slideBarStrokeWidth
@@ -128,7 +142,6 @@ class RoundSlider @JvmOverloads constructor(
             slideBarPointX + slideBarRadius,
             slideBarPointY + slideBarRadius
         )
-
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
     }
 
@@ -143,6 +156,13 @@ class RoundSlider @JvmOverloads constructor(
             slideBarPointY + slideBarRadius
         )
         canvas.drawArc(oval, startDegree, endDegree - startDegree, false, slideBarPaint)
+    }
+
+    private fun drawController(canvas: Canvas) {
+        controllerPaint.style = Paint.Style.FILL
+        controllerPaint.color = Color.BLUE
+
+        canvas.drawCircle(controllerPointX, controllerPointY, controllerRadius, controllerPaint)
     }
 
     private fun drawSlideValueText(canvas: Canvas) {
@@ -202,6 +222,10 @@ class RoundSlider @JvmOverloads constructor(
             }
         }
         return true
+    }
+
+    private fun isHeightEnough(): Boolean {
+        return height >= width / 2 + btnMarginBottom + btnRadius * 2 + btnMarginTop
     }
 
     private fun calculateRadToPoint(x: Float, y: Float): Float {
