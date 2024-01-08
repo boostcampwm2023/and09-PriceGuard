@@ -180,7 +180,7 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     private fun drawHighlightSlider(canvas: Canvas) {
-        slideBarPaint.color = Color.parseColor("#FFD7F3") //#FFE3E3
+        slideBarPaint.color = Color.parseColor("#FFD7F3")
         slideBarPaint.alpha
 
         val oval = RectF()
