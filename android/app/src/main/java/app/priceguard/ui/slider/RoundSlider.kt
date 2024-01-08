@@ -34,10 +34,6 @@ class RoundSlider @JvmOverloads constructor(
     private var slideBarPointX = 0f
     private var slideBarPointY = 0f
 
-    private var btnRadius = Dp(20F).toPx(context).value
-    private var btnMarginTop = Dp(24F).toPx(context).value
-    private var btnMarginBottom = Dp(12F).toPx(context).value
-
     private var customViewClickListener: sliderValueChangeListener? = null
 
     private var state = false
@@ -59,7 +55,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private var slideBarMargin = Dp(12F).toPx(context).value + controllerRadius
 
-    private var maxPecentValue = 100F
+    private var maxPercentValue = 100F
 
     private var startDegree = 270F
     private var endDegree = 300F
@@ -80,7 +76,7 @@ class RoundSlider @JvmOverloads constructor(
         width = if (viewWidthMode == MeasureSpec.EXACTLY) {
             viewWidthSize.toFloat()
         } else if (viewHeightMode == MeasureSpec.EXACTLY) {
-            (viewHeightSize.toFloat() - controllerRadius - btnRadius * 2 - btnMarginTop) * 2
+            (viewHeightSize.toFloat() - controllerRadius - slideBarMargin) * 2
         } else {
             700F
         }
@@ -89,7 +85,7 @@ class RoundSlider @JvmOverloads constructor(
         height = if (viewHeightMode == MeasureSpec.EXACTLY) {
             viewHeightSize.toFloat()
         } else {
-            width / 2 + btnRadius * 2 + btnMarginTop + btnMarginBottom
+            width / 2 + slideBarMargin
         }
         height = min(height, viewHeightSize.toFloat())
 
@@ -97,7 +93,7 @@ class RoundSlider @JvmOverloads constructor(
 
         // 높이가 필요한 크기보다 클 경우 크기 줄이기 (중앙 정렬을 위함)
         if (viewHeightMode == MeasureSpec.EXACTLY) {
-            val temp = width / 2 + btnRadius * 2 + btnMarginTop + btnMarginBottom
+            val temp = width / 2 + slideBarMargin
             if (height > temp) {
                 height -= (height - temp) / 2
             }
@@ -108,15 +104,15 @@ class RoundSlider @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
 
         slideBarPointX = width / 2
-        slideBarPointY = height - btnRadius * 2 - btnMarginTop - btnMarginBottom
+        slideBarPointY = height - slideBarMargin
 
         slideBarRadius = if (isHeightEnough()) {
             width / 2 - slideBarMargin
         } else {
-            height - btnRadius * 2 - btnMarginTop - slideBarMargin - btnMarginBottom
+            height - slideBarMargin * 2
         }
 
-        val rad = (180 / maxPecentValue * (maxPecentValue - sliderValue)).toRadian()
+        val rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian()
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
     }
@@ -225,7 +221,7 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     private fun isHeightEnough(): Boolean {
-        return height >= width / 2 + btnMarginBottom + btnRadius * 2 + btnMarginTop
+        return height >= width / 2 + slideBarMargin
     }
 
     private fun calculateRadToPoint(x: Float, y: Float): Float {
@@ -234,12 +230,12 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     private fun degreeToValue(degree: Float): Int {
-        return ((180F - degree) / (180F / maxPecentValue)).toInt()
+        return ((180F - degree) / (180F / maxPercentValue)).toInt()
     }
 
     fun setValue(value: Int) {
-        controllerPointX = slideBarPointX + cos(value * pi / maxPecentValue) * slideBarRadius
-        controllerPointY = slideBarPointY + sin(-value * pi / maxPecentValue) * slideBarRadius
+        controllerPointX = slideBarPointX + cos(value * pi / maxPercentValue) * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-value * pi / maxPercentValue) * slideBarRadius
         sliderValue = value
         invalidate()
     }
@@ -250,13 +246,13 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     fun setMaxPercentValue(value: Int) {
-        maxPecentValue = value.toFloat()
+        maxPercentValue = value.toFloat()
         invalidate()
     }
 
     fun setPointRange(startValue: Int, endValue: Int) {
-        startDegree = (180 / maxPecentValue * startValue) + 180
-        endDegree = (180 / maxPecentValue * endValue) + 180
+        startDegree = (180 / maxPercentValue * startValue) + 180
+        endDegree = (180 / maxPercentValue * endValue) + 180
         invalidate()
     }
 
