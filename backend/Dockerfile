@@ -2,13 +2,13 @@ FROM node:lts-alpine
 
 WORKDIR /usr/src/app
 
-COPY ./backend/package*.json ./
+COPY ./package*.json ./
 
 RUN mkdir logs
 
 RUN npm install
 
-COPY ./backend/. .
+COPY . .
 
 RUN npm run build
 
