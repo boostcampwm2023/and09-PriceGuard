@@ -30,13 +30,17 @@ export class CronService {
 
     private isDefined = <T>(x: T | undefined): x is T => x !== undefined;
 
-    @Cron('* */10 * * * *')
+    @Cron('0 */10 * * * *')
     async cyclicPriceChecker() {
         const totalProducts = await this.productRepository.find({ select: { id: true, productCode: true } });
         const recentProductInfo = await Promise.all(
             totalProducts.map(({ productCode, id }) => getProductInfo11st(productCode, id)),
         );
-        const checkProducts = await Promise.all(recentProductInfo.map((data) => this.getUpdatedProduct(data)));
+        const productList = recentProductInfo.map((data) => `product:${data.productId}`);
+        const cacheData = await this.redis.mget(productList); // redis 접근 횟수 줄이기 위한 임시 방편
+        const checkProducts = await Promise.all(
+            cacheData.map((data, index) => this.getUpdatedProduct(recentProductInfo[index], data)),
+        );
         const updatedProducts = checkProducts.filter(this.isDefined);
         if (updatedProducts.length > 0) {
             await this.productPriceModel.insertMany(
@@ -48,9 +52,8 @@ export class CronService {
         }
     }
 
-    async getUpdatedProduct(data: ProductInfoDto) {
+    async getUpdatedProduct(data: ProductInfoDto, cacheData: string | null) {
         const { productId, productPrice, isSoldOut } = data;
-        const cacheData = await this.redis.get(`product:${productId}`);
         const cache = JSON.parse(cacheData as string);
         if (!cache || cache.isSoldOut !== isSoldOut || cache.price !== productPrice) {
             const lowestPrice = cache ? Math.min(cache.lowestPrice, productPrice) : productPrice;
