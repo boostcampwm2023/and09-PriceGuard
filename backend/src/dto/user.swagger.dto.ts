@@ -98,3 +98,29 @@ export class FirebaseTokenSuccess {
     })
     message: string;
 }
+
+export class RemoveSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '회원탈퇴 성공',
+        description: '메시지',
+    })
+    message: string;
+}
+
+export class RemoveFailError {
+    @ApiProperty({
+        example: HttpStatus.BAD_REQUEST,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '회원탈퇴 실패',
+        description: '메시지',
+    })
+    message: string;
+}

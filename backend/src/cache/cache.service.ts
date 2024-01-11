@@ -71,7 +71,7 @@ export class CacheService {
     async initProductRankCache() {
         const rankList = await this.productRepository.getTotalInfoRankingList();
         rankList.forEach((product) => {
-            this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
+            this.productRankCache.update({ ...product, userCount: parseInt(product.userCount) });
         });
     }
 
@@ -116,5 +116,15 @@ export class CacheService {
 
     updateValueTrackingProdcut(key: string, value: TrackingProduct) {
         this.trackingProductCache.updateValue(key, value);
+    }
+
+    async updateByRemoveUser(userId: string) {
+        const trackingList = await this.trackingProductRepository.find({ where: { userId: userId } });
+        const updateRedis = trackingList.map(async (product) => {
+            await this.redis.zincrby('userCount', -1, product.productId);
+        });
+        await Promise.all(updateRedis);
+        await this.trackingProductRepository.delete({ userId: userId });
+        await this.initProductRankCache();
     }
 }

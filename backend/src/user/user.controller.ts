@@ -34,6 +34,8 @@ import {
     LoginFailError,
     LoginSuccess,
     RegisterSuccess,
+    RemoveFailError,
+    RemoveSuccess,
 } from 'src/dto/user.swagger.dto';
 import { FirebaseTokenDto } from 'src/dto/firebase.token.dto';
 import { UnauthorizedRequest } from 'src/dto/product.swagger.dto';
@@ -91,5 +93,16 @@ export class UsersController {
         const { token } = firebaseTokenDto;
         await this.authService.addFirebaseToken(req.user.id, token);
         return { statusCode: HttpStatus.OK, message: 'FCM 토큰 등록 성공' };
+    }
+
+    @ApiOperation({ summary: '회원탈퇴 API', description: '서버에게 회원탈퇴 요청을 보낸다.' })
+    @ApiBody({ type: LoginDto })
+    @ApiOkResponse({ type: RemoveSuccess, description: '회원탈퇴 성공' })
+    @ApiBadRequestResponse({ type: RemoveFailError, description: '회원탈퇴 실패' })
+    @Post('remove')
+    async deleteUser(@Body() loginDto: LoginDto): Promise<RemoveSuccess> {
+        const { email, password } = loginDto;
+        await this.userService.removeUser(email, password);
+        return { statusCode: HttpStatus.OK, message: '회원탈퇴 성공' };
     }
 }

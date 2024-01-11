@@ -7,9 +7,10 @@ import { UsersRepository } from './user.repository';
 import { APP_FILTER } from '@nestjs/core';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { AuthModule } from 'src/auth/auth.module';
+import { ProductModule } from 'src/product/product.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
+    imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule), ProductModule],
     controllers: [UsersController],
     providers: [
         {

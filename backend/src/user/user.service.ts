@@ -4,12 +4,15 @@ import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationException } from '../exceptions/validation.exception';
+import * as bcrypt from 'bcrypt';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(UsersRepository)
         private usersRepository: UsersRepository,
+        private cacheService: CacheService,
     ) {}
 
     async registerUser(userDto: UserDto): Promise<User> {
@@ -33,5 +36,14 @@ export class UsersService {
 
     async getUserById(userId: string): Promise<User | null> {
         return await this.usersRepository.findOne({ where: { id: userId } });
+    }
+
+    async removeUser(email: string, password: string) {
+        const user = await this.usersRepository.findOne({ where: { email } });
+        if (!user || !bcrypt.compareSync(password, user.password)) {
+            throw new ValidationException('회원탈퇴 실패');
+        }
+        await this.cacheService.updateByRemoveUser(user.id);
+        await this.usersRepository.remove(user);
     }
 }
