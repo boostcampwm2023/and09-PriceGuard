@@ -133,4 +133,6 @@
     <string name="min_price">0</string>
     <string name="max_price">999999999</string>
     <string name="priceguard_push_alarm_title">Product Price Notification</string>
+    <string name="notify_target_price">%s원 에 알림을 받고 싶습니다.</string>
+    <string name="set_target_price_dialog_title">목표 가격을 입력해 주세요</string>
 </resources>
