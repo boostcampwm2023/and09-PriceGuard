@@ -47,7 +47,6 @@ export class CacheService {
             .sort('_id')
             .exec();
         const userCountList = await this.trackingProductRepository.getAllUserCount();
-        const rankList = await this.productRepository.getTotalInfoRankingList();
         const initPromise = latestData.map(async (data) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
             const setUserCount = await this.redis.set(
@@ -65,10 +64,15 @@ export class CacheService {
             );
             return Promise.all([setUserCount, zaddUserCount]);
         });
+        await this.initProductRankCache();
+        await Promise.all(initPromise);
+    }
+
+    async initProductRankCache() {
+        const rankList = await this.productRepository.getTotalInfoRankingList();
         rankList.forEach((product) => {
             this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
         });
-        await Promise.all(initPromise);
     }
 
     putProductRank(key: string, value: ProductRankCacheDto) {
