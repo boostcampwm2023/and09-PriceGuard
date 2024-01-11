@@ -14,15 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PriceGuard"
         tools:targetApi="34">
-        <activity
-            android:name=".ui.slider.RoundSliderActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.price_notification"
@@ -30,14 +21,17 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_priceguard_notification" />
-
         <activity
             android:name=".ui.additem.link.LinkHelperWebViewActivity"
             android:exported="false" />
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.intro.IntroActivity"
