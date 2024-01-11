@@ -236,7 +236,7 @@ export class ProductService {
         const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setDate(endDate.getDate() - days);
-        const dataInfo = await this.productPriceModel
+        let dataInfo = await this.productPriceModel
             .find({
                 productId: productId,
                 time: {
@@ -245,6 +245,9 @@ export class ProductService {
                 },
             })
             .exec();
+        if (dataInfo.length === 0) {
+            dataInfo = await this.productPriceModel.find({ productId: productId }).sort({ time: -1 }).limit(1).exec();
+        }
         return dataInfo.map(({ time, price, isSoldOut }) => {
             return { time: new Date(time).getTime(), price, isSoldOut };
         });
