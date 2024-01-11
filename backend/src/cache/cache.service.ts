@@ -47,7 +47,6 @@ export class CacheService {
             .sort('_id')
             .exec();
         const userCountList = await this.trackingProductRepository.getAllUserCount();
-        const rankList = await this.productRepository.getTotalInfoRankingList();
         const initPromise = latestData.map(async (data) => {
             const matchProduct = userCountList.find((product) => product.id === data._id);
             const setUserCount = await this.redis.set(
@@ -65,10 +64,15 @@ export class CacheService {
             );
             return Promise.all([setUserCount, zaddUserCount]);
         });
-        rankList.forEach((product) => {
-            this.productRankCache.put(product.id, { ...product, userCount: parseInt(product.userCount) });
-        });
+        await this.initProductRankCache();
         await Promise.all(initPromise);
+    }
+
+    async initProductRankCache() {
+        const rankList = await this.productRepository.getTotalInfoRankingList();
+        rankList.forEach((product) => {
+            this.productRankCache.update({ ...product, userCount: parseInt(product.userCount) });
+        });
     }
 
     putProductRank(key: string, value: ProductRankCacheDto) {
@@ -112,5 +116,15 @@ export class CacheService {
 
     updateValueTrackingProdcut(key: string, value: TrackingProduct) {
         this.trackingProductCache.updateValue(key, value);
+    }
+
+    async updateByRemoveUser(userId: string) {
+        const trackingList = await this.trackingProductRepository.find({ where: { userId: userId } });
+        const updateRedis = trackingList.map(async (product) => {
+            await this.redis.zincrby('userCount', -1, product.productId);
+        });
+        await Promise.all(updateRedis);
+        await this.trackingProductRepository.delete({ userId: userId });
+        await this.initProductRankCache();
     }
 }

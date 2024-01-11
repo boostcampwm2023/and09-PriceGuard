@@ -26,5 +26,6 @@ import { CacheService } from 'src/cache/cache.service';
         CronService,
         CacheService,
     ],
+    exports: [CacheService],
 })
 export class ProductModule {}
