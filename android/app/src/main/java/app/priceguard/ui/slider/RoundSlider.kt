@@ -221,6 +221,10 @@ class RoundSlider @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
+
                 MotionEvent.ACTION_MOVE -> {
                     if (event.y > slideBarPointY) {
                         if (state) {
@@ -250,6 +254,7 @@ class RoundSlider @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    parent.requestDisallowInterceptTouchEvent(false)
                     state = false
                 }
             }
