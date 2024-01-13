@@ -40,6 +40,8 @@ class RoundSlider @JvmOverloads constructor(
 
     private var state = false
 
+    private var sliderMode = RoundSliderState.ACTIVE
+
     private val pi = Math.PI.toFloat()
 
     private var sliderValue = 0
@@ -69,6 +71,7 @@ class RoundSlider @JvmOverloads constructor(
     private var colorPrimary: Int
     private var colorOnPrimaryContainer: Int
     private var colorSurfaceVariant: Int
+    private var colorError: Int
 
     init {
         val typedArray = context.obtainStyledAttributes(
@@ -91,6 +94,11 @@ class RoundSlider @JvmOverloads constructor(
         colorSurfaceVariant = typedArray.getColor(
             R.styleable.RoundSlider_colorSurfaceVariant,
             Color.GRAY
+        )
+
+        colorError = typedArray.getColor(
+            R.styleable.RoundSlider_colorError,
+            Color.RED
         )
 
         typedArray.recycle()
@@ -164,7 +172,11 @@ class RoundSlider @JvmOverloads constructor(
 
         activeSlideBarPaint.style = Paint.Style.STROKE
         activeSlideBarPaint.strokeWidth = slideBarStrokeWidth
-        activeSlideBarPaint.color = colorPrimary
+        activeSlideBarPaint.color = when(sliderMode) {
+            RoundSliderState.ACTIVE -> colorPrimary
+            RoundSliderState.INACTIVE -> colorSurfaceVariant
+            RoundSliderState.ERROR -> colorError
+        }
 
         val oval = RectF()
         oval.set(
@@ -195,14 +207,22 @@ class RoundSlider @JvmOverloads constructor(
 
     private fun drawController(canvas: Canvas) {
         controllerPaint.style = Paint.Style.FILL
-        controllerPaint.color = colorPrimary
+        controllerPaint.color = when(sliderMode) {
+            RoundSliderState.ACTIVE -> colorPrimary
+            RoundSliderState.INACTIVE -> colorSurfaceVariant
+            RoundSliderState.ERROR -> colorError
+        }
 
         canvas.drawCircle(controllerPointX, controllerPointY, controllerRadius, controllerPaint)
     }
 
     private fun drawSlideValueText(canvas: Canvas) {
         sliderValuePaint.textSize = textValueSize.toPx(context).value
-        sliderValuePaint.color = colorOnPrimaryContainer
+        sliderValuePaint.color = when(sliderMode) {
+            RoundSliderState.ACTIVE -> colorOnPrimaryContainer
+            RoundSliderState.INACTIVE -> colorSurfaceVariant
+            RoundSliderState.ERROR -> colorError
+        }
         val bounds = Rect()
 
         val textString = "$sliderValue%"
@@ -302,6 +322,10 @@ class RoundSlider @JvmOverloads constructor(
 
     fun setSliderValueChangeListener(listener: sliderValueChangeListener) {
         customViewClickListener = listener
+    }
+
+    fun setSliderMode(mode: RoundSliderState) {
+        sliderMode = mode
     }
 
     private fun handleValueChangeEvent(value: Int) {

@@ -14,6 +14,7 @@ import app.priceguard.data.repository.token.TokenRepository
 import app.priceguard.databinding.FragmentSetTargetPriceBinding
 import app.priceguard.ui.additem.setprice.SetTargetPriceViewModel.SetTargetPriceEvent
 import app.priceguard.ui.data.DialogConfirmAction
+import app.priceguard.ui.slider.RoundSliderState
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showDialogWithAction
 import app.priceguard.ui.util.showDialogWithLogout
@@ -111,6 +112,11 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
         repeatOnStarted {
             setTargetPriceViewModel.state.collect { state ->
                 setTargetPriceViewModel.setSliderChangeListenerEnabled(false)
+                if(state.targetPrice > state.productPrice) {
+                    binding.rsTargetPrice.setSliderMode(RoundSliderState.ERROR)
+                } else {
+                    binding.rsTargetPrice.setSliderMode(RoundSliderState.ACTIVE)
+                }
                 setTargetPricePercent(state.productPrice, state.targetPrice)
                 setTargetPriceViewModel.setSliderChangeListenerEnabled(true)
             }

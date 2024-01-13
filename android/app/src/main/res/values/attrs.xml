@@ -4,5 +4,6 @@
         <attr name="colorPrimary" format="color" />
         <attr name="colorOnPrimaryContainer" format="color" />
         <attr name="colorSurfaceVariant" format="color" />
+        <attr name="colorError" format="color" />
     </declare-styleable>
 </resources>
