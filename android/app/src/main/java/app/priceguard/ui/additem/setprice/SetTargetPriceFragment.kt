@@ -1,12 +1,10 @@
 package app.priceguard.ui.additem.setprice
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -19,14 +17,12 @@ import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showDialogWithAction
 import app.priceguard.ui.util.showDialogWithLogout
-import com.google.android.material.slider.Slider
-import com.google.android.material.slider.Slider.OnSliderTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SetTargetPriceFragment : Fragment() {
+class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialogResultListener {
 
     @Inject
     lateinit var tokenRepository: TokenRepository
@@ -53,6 +49,7 @@ class SetTargetPriceFragment : Fragment() {
         setBackPressedCallback()
         binding.initView()
         binding.initListener()
+        initCollector()
         handleEvent()
     }
 
@@ -72,9 +69,9 @@ class SetTargetPriceFragment : Fragment() {
         val productCode = arguments.getString("productCode") ?: ""
         val title = arguments.getString("productTitle") ?: ""
         val price = arguments.getInt("productPrice")
-        var targetPrice = arguments.getInt("productTargetPrice")
+        val targetPrice = arguments.getInt("productTargetPrice")
 
-        setTargetPriceViewModel.updateTargetPrice(targetPrice)
+        setTargetPriceViewModel.setProductInfo(productCode, title, price, targetPrice)
 
         tvSetPriceCurrentPrice.text =
             String.format(
@@ -83,11 +80,6 @@ class SetTargetPriceFragment : Fragment() {
             )
         tvSetPriceCurrentPrice.contentDescription =
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
-
-        setTargetPriceViewModel.setProductInfo(productCode, title, price)
-        etTargetPrice.setText(targetPrice.toString())
-
-        updateSlideValueWithPrice(targetPrice.toFloat())
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -98,58 +90,35 @@ class SetTargetPriceFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
+
         btnConfirmItemNext.setOnClickListener {
             val isAdding = requireArguments().getBoolean("isAdding")
             if (isAdding) setTargetPriceViewModel.addProduct() else setTargetPriceViewModel.patchProduct()
         }
-        slTargetPrice.addOnChangeListener { _, value, _ ->
-            if (!etTargetPrice.isFocused) {
-                setTargetPriceAndPercent(value)
+
+        rsTargetPrice.setSliderValueChangeListener { value ->
+            if (setTargetPriceViewModel.state.value.isEnabledSliderListener) {
+                setTargetPriceViewModel.updateTargetPriceFromPercent(value)
             }
         }
-        slTargetPrice.addOnSliderTouchListener(object : OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {
-                etTargetPrice.clearFocus()
-                setTargetPriceAndPercent(slider.value)
-            }
 
-            override fun onStopTrackingTouch(slider: Slider) {
-            }
-        })
-        etTargetPrice.addTextChangedListener {
-            updateTargetPriceUI(it)
+        tvTargetPriceContent.setOnClickListener {
+            showConfirmationDialogForResult()
         }
     }
 
-    private fun updateTargetPriceUI(it: Editable?) {
-        if (binding.etTargetPrice.isFocused) {
-            val targetPrice = if (it.toString().matches("^\\d{1,9}$".toRegex())) {
-                it.toString().toInt()
-            } else if (it.toString().isEmpty()) {
-                binding.etTargetPrice.setText(getString(R.string.min_price))
-                0
-            } else {
-                binding.etTargetPrice.setText(getString(R.string.max_price))
-                999999999
+    private fun initCollector() {
+        repeatOnStarted {
+            setTargetPriceViewModel.state.collect { state ->
+                setTargetPriceViewModel.setSliderChangeListenerEnabled(false)
+                setTargetPricePercent(state.productPrice, state.targetPrice)
+                setTargetPriceViewModel.setSliderChangeListenerEnabled(true)
             }
-
-            setTargetPriceViewModel.updateTargetPrice(targetPrice)
-            binding.updateSlideValueWithPrice(targetPrice.toFloat())
         }
     }
 
-    private fun Int.roundAtFirstDigit(): Int {
-        return ((this + 5) / 10) * 10
-    }
-
-    private fun FragmentSetTargetPriceBinding.setTargetPriceAndPercent(value: Float) {
-        val targetPrice = ((setTargetPriceViewModel.state.value.productPrice) * value.toInt() / 100)
-        tvTargetPricePercent.text =
-            String.format(getString(R.string.current_price_percent), value.toInt())
-        etTargetPrice.setText(
-            targetPrice.toString()
-        )
-        setTargetPriceViewModel.updateTargetPrice(targetPrice)
+    private fun setTargetPricePercent(productPrice: Int, targetPrice: Int) {
+        binding.rsTargetPrice.setValue(targetPrice * 100 / productPrice)
     }
 
     private fun handleEvent() {
@@ -214,22 +183,17 @@ class SetTargetPriceFragment : Fragment() {
         }
     }
 
-    private fun FragmentSetTargetPriceBinding.updateSlideValueWithPrice(targetPrice: Float) {
-        val percent =
-            ((targetPrice / setTargetPriceViewModel.state.value.productPrice) * MAX_PERCENT).toInt()
-        val pricePercent = percent.coerceIn(MIN_PERCENT, MAX_PERCENT).roundAtFirstDigit()
-        if (targetPrice > setTargetPriceViewModel.state.value.productPrice) {
-            tvTargetPricePercent.text = getString(R.string.over_current_price)
-        } else {
-            tvTargetPricePercent.text =
-                String.format(getString(R.string.current_price_percent), percent)
-        }
-        binding.tvTargetPricePercent.contentDescription = getString(
-            R.string.target_price_percent_and_price,
-            binding.tvTargetPricePercent.text,
-            binding.tvSetPriceCurrentPrice.text
-        )
-        slTargetPrice.value = pricePercent.toFloat()
+    private fun showConfirmationDialogForResult() {
+        val tag = "set_target_price_dialog_fragment_from_fragment"
+        if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
+
+        val dialogFragment = SetTargetPriceDialogFragment()
+        val bundle = Bundle()
+        bundle.putString("title", getString(R.string.set_target_price_dialog_title))
+        bundle.putInt("price", setTargetPriceViewModel.state.value.targetPrice)
+        dialogFragment.setOnDialogResultListener(this)
+        dialogFragment.arguments = bundle
+        dialogFragment.show(requireActivity().supportFragmentManager, tag)
     }
 
     override fun onDestroyView() {
@@ -237,8 +201,7 @@ class SetTargetPriceFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
-        const val MIN_PERCENT = 0
-        const val MAX_PERCENT = 100
+    override fun onDialogResult(result: Int) {
+        setTargetPriceViewModel.updateTargetPrice(result)
     }
 }
