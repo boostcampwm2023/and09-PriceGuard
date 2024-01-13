@@ -152,7 +152,7 @@ class RoundSlider @JvmOverloads constructor(
             height - slideBarMargin * 2
         }
 
-        rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian()
+        rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian().coerceIn(0F, pi)
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
         controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
     }
@@ -296,10 +296,10 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     fun setValue(value: Int) {
-        rad = (180 / maxPercentValue * (maxPercentValue - value)).toRadian()
+        rad = (180 / maxPercentValue * (maxPercentValue - value)).toRadian().coerceIn(0F..pi)
         // cos(rad) = -cos(value * pi / maxPercentValue)
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
-        controllerPointY = slideBarPointY + sin(-value * pi / maxPercentValue) * slideBarRadius
+        controllerPointY = slideBarPointY + sin(rad) * slideBarRadius
         sliderValue = value
         invalidate()
     }
