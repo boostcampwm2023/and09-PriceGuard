@@ -51,8 +51,11 @@ class DeleteAccountActivity : AppCompatActivity() {
             deleteAccountViewModel.event.collect { event ->
                 when (event) {
                     DeleteAccountViewModel.DeleteAccountEvent.Logout -> {
-                        Toast.makeText(this@DeleteAccountActivity,
-                            getString(R.string.success_delete_account), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@DeleteAccountActivity,
+                            getString(R.string.success_delete_account),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         goBackToLoginActivity()
                     }
                     DeleteAccountViewModel.DeleteAccountEvent.WrongPassword -> {
