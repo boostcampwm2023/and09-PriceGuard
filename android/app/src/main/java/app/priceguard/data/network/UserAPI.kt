@@ -1,5 +1,6 @@
 package app.priceguard.data.network
 
+import app.priceguard.data.dto.deleteaccount.DeleteAccountRequest
 import app.priceguard.data.dto.deleteaccount.DeleteAccountResponse
 import app.priceguard.data.dto.firebase.FirebaseTokenUpdateRequest
 import app.priceguard.data.dto.firebase.FirebaseTokenUpdateResponse
@@ -26,8 +27,10 @@ interface UserAPI {
         @Body request: SignupRequest
     ): Response<SignupResponse>
 
-    @DELETE("")
-    suspend fun deleteAccount(): Response<DeleteAccountResponse>
+    @POST("remove")
+    suspend fun deleteAccount(
+        @Body request: DeleteAccountRequest
+    ): Response<DeleteAccountResponse>
 
     @PUT("firebase/token")
     suspend fun updateFirebaseToken(
