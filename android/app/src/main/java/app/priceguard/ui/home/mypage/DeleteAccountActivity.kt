@@ -2,6 +2,7 @@ package app.priceguard.ui.home.mypage
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.R
@@ -49,7 +50,11 @@ class DeleteAccountActivity : AppCompatActivity() {
         repeatOnStarted {
             deleteAccountViewModel.event.collect { event ->
                 when (event) {
-                    DeleteAccountViewModel.DeleteAccountEvent.Logout -> goBackToLoginActivity()
+                    DeleteAccountViewModel.DeleteAccountEvent.Logout -> {
+                        Toast.makeText(this@DeleteAccountActivity,
+                            getString(R.string.success_delete_account), Toast.LENGTH_SHORT).show()
+                        goBackToLoginActivity()
+                    }
                     DeleteAccountViewModel.DeleteAccountEvent.WrongPassword -> {
                         showConfirmDialog(
                             getString(R.string.error_password),
