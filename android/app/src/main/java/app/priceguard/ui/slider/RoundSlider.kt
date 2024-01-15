@@ -172,7 +172,7 @@ class RoundSlider @JvmOverloads constructor(
 
         activeSlideBarPaint.style = Paint.Style.STROKE
         activeSlideBarPaint.strokeWidth = slideBarStrokeWidth
-        activeSlideBarPaint.color = when(sliderMode) {
+        activeSlideBarPaint.color = when (sliderMode) {
             RoundSliderState.ACTIVE -> colorPrimary
             RoundSliderState.INACTIVE -> colorSurfaceVariant
             RoundSliderState.ERROR -> colorError
@@ -207,7 +207,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private fun drawController(canvas: Canvas) {
         controllerPaint.style = Paint.Style.FILL
-        controllerPaint.color = when(sliderMode) {
+        controllerPaint.color = when (sliderMode) {
             RoundSliderState.ACTIVE -> colorPrimary
             RoundSliderState.INACTIVE -> colorSurfaceVariant
             RoundSliderState.ERROR -> colorError
@@ -218,7 +218,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private fun drawSlideValueText(canvas: Canvas) {
         sliderValuePaint.textSize = textValueSize.toPx(context).value
-        sliderValuePaint.color = when(sliderMode) {
+        sliderValuePaint.color = when (sliderMode) {
             RoundSliderState.ACTIVE -> colorOnPrimaryContainer
             RoundSliderState.INACTIVE -> colorSurfaceVariant
             RoundSliderState.ERROR -> colorError
@@ -299,7 +299,7 @@ class RoundSlider @JvmOverloads constructor(
         rad = (180 / maxPercentValue * (maxPercentValue - value)).toRadian().coerceIn(0F..pi)
         // cos(rad) = -cos(value * pi / maxPercentValue)
         controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
-        controllerPointY = slideBarPointY + sin(rad) * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
         sliderValue = value
         invalidate()
     }
