@@ -87,11 +87,9 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.DELETE_ACCOUNT -> {
-                                showConfirmationDialogForResult(
-                                    R.string.delete_account_confirm_title,
-                                    R.string.delete_account_confirm_message,
-                                    Setting.DELETE_ACCOUNT.ordinal
-                                )
+                                val intent = Intent(requireActivity(), DeleteAccountActivity::class.java)
+                                intent.putExtra("email", myPageViewModel.state.value.email)
+                                startActivity(intent)
                             }
                         }
                     }
@@ -157,7 +155,6 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
     override fun onDialogResult(requestCode: Int, result: Boolean) {
         when (requestCode) {
             Setting.LOGOUT.ordinal -> myPageViewModel.logout()
-            Setting.DELETE_ACCOUNT.ordinal -> myPageViewModel.deleteAccount()
         }
     }
 

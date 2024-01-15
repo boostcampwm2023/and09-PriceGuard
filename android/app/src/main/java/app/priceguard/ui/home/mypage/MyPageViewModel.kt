@@ -2,7 +2,6 @@ package app.priceguard.ui.home.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.priceguard.data.repository.auth.AuthRepository
 import app.priceguard.data.repository.token.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,7 +13,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
@@ -52,14 +50,6 @@ class MyPageViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            tokenRepository.clearTokens()
-            _event.emit(MyPageEvent.StartIntroAndExitHome)
-        }
-    }
-
-    fun deleteAccount() {
-        viewModelScope.launch {
-            authRepository.deleteAccount()
             tokenRepository.clearTokens()
             _event.emit(MyPageEvent.StartIntroAndExitHome)
         }
