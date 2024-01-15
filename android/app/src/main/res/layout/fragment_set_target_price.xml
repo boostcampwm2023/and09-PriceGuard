@@ -70,7 +70,7 @@
             <app.priceguard.ui.slider.RoundSlider
                 android:id="@+id/rs_target_price"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="220dp"
                 android:layout_marginTop="36dp"
                 app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
