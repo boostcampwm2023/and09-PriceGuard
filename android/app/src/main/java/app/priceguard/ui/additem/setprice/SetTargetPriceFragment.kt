@@ -81,6 +81,8 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
             )
         tvSetPriceCurrentPrice.contentDescription =
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
+
+        calculatePercentAndSetSliderValue(price, targetPrice)
     }
 
     private fun FragmentSetTargetPriceBinding.initListener() {
@@ -111,20 +113,19 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
     private fun initCollector() {
         repeatOnStarted {
             setTargetPriceViewModel.state.collect { state ->
-                setTargetPriceViewModel.setSliderChangeListenerEnabled(false)
-                if(state.targetPrice > state.productPrice) {
+                if (state.targetPrice > state.productPrice) {
                     binding.rsTargetPrice.setSliderMode(RoundSliderState.ERROR)
                 } else {
                     binding.rsTargetPrice.setSliderMode(RoundSliderState.ACTIVE)
                 }
-                setTargetPricePercent(state.productPrice, state.targetPrice)
-                setTargetPriceViewModel.setSliderChangeListenerEnabled(true)
             }
         }
     }
 
-    private fun setTargetPricePercent(productPrice: Int, targetPrice: Int) {
-        binding.rsTargetPrice.setValue(targetPrice * 100 / productPrice)
+    private fun calculatePercentAndSetSliderValue(productPrice: Int, targetPrice: Int) {
+        setTargetPriceViewModel.setSliderChangeListenerEnabled(false)
+        binding.rsTargetPrice.setValue((targetPrice.toFloat() / productPrice.toFloat() * 100F).toInt())
+        setTargetPriceViewModel.setSliderChangeListenerEnabled(true)
     }
 
     private fun handleEvent() {
@@ -209,5 +210,6 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
 
     override fun onDialogResult(result: Int) {
         setTargetPriceViewModel.updateTargetPrice(result)
+        calculatePercentAndSetSliderValue(setTargetPriceViewModel.state.value.productPrice, result)
     }
 }

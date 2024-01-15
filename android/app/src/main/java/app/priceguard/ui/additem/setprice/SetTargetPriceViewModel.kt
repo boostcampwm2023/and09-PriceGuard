@@ -82,7 +82,9 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     }
 
     fun updateTargetPriceFromPercent(percent: Int) {
-        _state.value = state.value.copy(targetPrice = _state.value.productPrice * percent / 100)
+        _state.value = state.value.copy(
+            targetPrice = (_state.value.productPrice.toFloat() / 100F * percent.toFloat()).toInt()
+        )
     }
 
     fun setProductInfo(productCode: String, name: String, price: Int, targetPrice: Int) {
