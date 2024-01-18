@@ -82,6 +82,8 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
         tvSetPriceCurrentPrice.contentDescription =
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
+        rsTargetPrice.setMaxPercentValue(200)
+
         calculatePercentAndSetSliderValue(price, targetPrice)
     }
 
