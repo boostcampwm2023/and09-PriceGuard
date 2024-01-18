@@ -39,7 +39,7 @@ class RoundSlider @JvmOverloads constructor(
     private var slideBarPointX = 0F
     private var slideBarPointY = 0F
 
-    private var sliderValueStepSize = 10
+    private var sliderValueStepSize = 0
 
     private var customViewClickListener: sliderValueChangeListener? = null
 
@@ -157,8 +157,8 @@ class RoundSlider @JvmOverloads constructor(
             height - slideBarMargin * 2
         }
 
-        currentRad =
-            (180 / maxPercentValue.toDouble() * (maxPercentValue - sliderValue)).toRadian().coerceIn(0.0, pi)
+        currentRad = valueToDegree(sliderValue).toRadian()
+
         controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
         controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
     }
@@ -195,7 +195,13 @@ class RoundSlider @JvmOverloads constructor(
 
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
         drawHighlightSlider(canvas)
-        canvas.drawArc(oval, 180F, 180 - currentRad.toDegree().toFloat(), false, activeSlideBarPaint)
+        canvas.drawArc(
+            oval,
+            180F,
+            180 - currentRad.toDegree().toFloat(),
+            false,
+            activeSlideBarPaint
+        )
     }
 
     private fun drawHighlightSlider(canvas: Canvas) {
@@ -215,10 +221,8 @@ class RoundSlider @JvmOverloads constructor(
     private fun drawAxis(canvas: Canvas) {
         axisCirclePaint.color = colorOnPrimaryContainer
 
-        val step = (180F / (maxPercentValue / sliderValueStepSize)).toInt()
-
-        for (i: Int in step until 180 step (step)) {
-            val rad = i.toRadian()
+        for (i in sliderValueStepSize until maxPercentValue step sliderValueStepSize) {
+            val rad = valueToDegree(i).toRadian()
             val axisPointX = slideBarPointX + cos(rad).toFloat() * slideBarRadius
             val axisPointY = slideBarPointY + sin(-rad).toFloat() * slideBarRadius
 
@@ -269,13 +273,12 @@ class RoundSlider @JvmOverloads constructor(
                 MotionEvent.ACTION_MOVE -> {
                     if (event.y > slideBarPointY) {
                         if (state) {
+                            controllerPointY = slideBarPointY
                             if (event.x >= slideBarPointX) {
                                 controllerPointX = slideBarPointX + slideBarRadius
-                                controllerPointY = slideBarPointY
                                 sliderValue = degreeToValue(0.0)
                             } else {
                                 controllerPointX = slideBarPointX - slideBarRadius
-                                controllerPointY = slideBarPointY
                                 sliderValue = degreeToValue(180.0)
                             }
                             invalidate()
@@ -284,12 +287,14 @@ class RoundSlider @JvmOverloads constructor(
                         return true
                     }
                     state = true
-                    currentRad = findCloseSliderValueRadian(calculateRadToPoint(event.x, event.y))
 
-                    controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
-                    controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
+                    currentRad = calculateRadToPoint(event.x, event.y)
+                    val closeStepValueRad = findCloseStepValueRadian(degreeToValue(currentRad.toDegree()))
 
-                    sliderValue = degreeToValue(currentRad.toDegree())
+                    controllerPointX = slideBarPointX + cos(closeStepValueRad).toFloat() * slideBarRadius
+                    controllerPointY = slideBarPointY + sin(-closeStepValueRad).toFloat() * slideBarRadius
+
+                    sliderValue = degreeToValue(closeStepValueRad.toDegree())
 
                     invalidate()
                 }
@@ -310,10 +315,33 @@ class RoundSlider @JvmOverloads constructor(
         return (pi / 2) + arcTan
     }
 
-    private fun degreeToValue(degree: Double) = (((180F - degree) * maxPercentValue / 180F)).roundToInt()
+    private fun degreeToValue(degree: Double) =
+        (((180F - degree) * maxPercentValue / 180F)).roundToInt()
+
+    private fun valueToDegree(value: Int) = (180 - ((180 * value.toDouble()) / maxPercentValue)).coerceIn(0.0, 180.0)
+
+    private fun findCloseStepValueRadian(currentValue: Int): Double {
+        var minDifference = maxPercentValue
+        var prevDifference = maxPercentValue
+
+        for (value in 0..maxPercentValue step sliderValueStepSize) {
+            val difference = abs(currentValue - value)
+
+            if (difference > prevDifference) {
+                return valueToDegree(value - sliderValueStepSize).toRadian()
+            }
+
+            if (difference < minDifference) {
+                minDifference = difference
+            }
+            prevDifference = difference
+        }
+        return 0.0
+    }
 
     fun setValue(value: Int) {
-        currentRad = (180 / maxPercentValue.toDouble() * (maxPercentValue - value)).toRadian().coerceIn(0.0..pi)
+        currentRad = (180 / maxPercentValue.toDouble() * (maxPercentValue - value)).toRadian()
+            .coerceIn(0.0..pi)
         // cos(rad) = -cos(value * pi / maxPercentValue)
         controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
         controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
@@ -345,30 +373,13 @@ class RoundSlider @JvmOverloads constructor(
         sliderMode = mode
     }
 
-    private fun handleValueChangeEvent(value: Int) {
-        customViewClickListener?.invoke(value)
+    fun setStepSize(step: Int) {
+        if (maxPercentValue.mod(step) != 0) return
+        sliderValueStepSize = step
+        invalidate()
     }
 
-    private fun findCloseSliderValueRadian(radian: Double): Double {
-        val degree = radian.toDegree()
-        if (degree > 180 || degree < 0) return 0.0
-        var minDifference = 180
-        var prevDifference = 180
-
-        val step = (180F / (maxPercentValue / sliderValueStepSize)).toInt()
-
-        for (value: Int in 0..180 step (step)) {
-            val difference = abs(degree.toInt() - value)
-
-            if (difference > prevDifference) {
-                return (value - step).toDouble().toRadian()
-            }
-
-            if (difference < minDifference) {
-                minDifference = difference
-            }
-            prevDifference = difference
-        }
-        return 180.toRadian()
+    private fun handleValueChangeEvent(value: Int) {
+        customViewClickListener?.invoke(value)
     }
 }
