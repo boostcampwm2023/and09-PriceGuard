@@ -31,7 +31,7 @@ class SetTargetPriceDialogFragment : DialogFragment() {
         val title = arguments?.getString("title") ?: ""
         val price = arguments?.getInt("price") ?: 0
 
-        viewModel.updateTargetPrice(price)
+        viewModel.updateTargetPrice(price.toLong())
 
         val dialogBuilder = MaterialAlertDialogBuilder(
             requireActivity(),
@@ -41,7 +41,7 @@ class SetTargetPriceDialogFragment : DialogFragment() {
             setView(view)
             setNegativeButton(R.string.cancel) { _, _ -> dismiss() }
             setPositiveButton(R.string.confirm) { _, _ ->
-                resultListener?.onDialogResult(viewModel.state.value.targetPrice)
+                resultListener?.onDialogResult(viewModel.state.value.targetPrice.toInt())
                 dismiss()
             }
         }
@@ -73,7 +73,7 @@ class SetTargetPriceDialogFragment : DialogFragment() {
             val price = extractAndConvertToInteger(it.toString())
 
             if (viewModel.state.value.isTextChanged) {
-                if (price > 100000000) {
+                if (price > MAX_TARGET_PRICE) {
                     viewModel.updateErrorMessageVisible(true)
                 } else {
                     viewModel.updateErrorMessageVisible(false)
@@ -87,11 +87,11 @@ class SetTargetPriceDialogFragment : DialogFragment() {
         }
     }
 
-    private fun extractAndConvertToInteger(text: String): Int {
+    private fun extractAndConvertToInteger(text: String): Long {
         val digits = text.filter { it.isDigit() }
         var num = digits.toLongOrNull() ?: 0
-        if (num > 999999999) num = 999999999
-        return num.toInt()
+        if (num > MAX_TARGET_PRICE * 10 - 1) num = MAX_TARGET_PRICE * 10 - 1
+        return num
     }
 
     fun setOnDialogResultListener(listener: OnDialogResultListener) {
@@ -100,5 +100,9 @@ class SetTargetPriceDialogFragment : DialogFragment() {
 
     interface OnDialogResultListener {
         fun onDialogResult(result: Int)
+    }
+
+    companion object {
+        const val MAX_TARGET_PRICE = 1_000_000_000L
     }
 }

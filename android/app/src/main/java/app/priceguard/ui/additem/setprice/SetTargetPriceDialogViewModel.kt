@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class SetTargetPriceDialogViewModel : ViewModel() {
 
     data class SetTargetPriceDialogState(
-        val targetPrice: Int = 0,
+        val targetPrice: Long = 0,
         val isTextChanged: Boolean = false,
         val isErrorMessageVisible: Boolean = false
     )
@@ -15,7 +15,7 @@ class SetTargetPriceDialogViewModel : ViewModel() {
     private val _state = MutableStateFlow(SetTargetPriceDialogState())
     val state = _state.asStateFlow()
 
-    fun updateTargetPrice(price: Int) {
+    fun updateTargetPrice(price: Long) {
         _state.value = _state.value.copy(targetPrice = price)
     }
 
