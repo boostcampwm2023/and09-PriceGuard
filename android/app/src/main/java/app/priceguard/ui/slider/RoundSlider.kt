@@ -24,8 +24,8 @@ class RoundSlider @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private var width = 0f
-    private var height = 0f
+    private var width = 0F
+    private var height = 0F
 
     private val slideBarPaint = Paint()
     private val activeSlideBarPaint = Paint()
@@ -33,11 +33,11 @@ class RoundSlider @JvmOverloads constructor(
     private val sliderValuePaint = Paint()
     private val axisCirclePaint = Paint()
 
-    private var controllerPointX = 0f
-    private var controllerPointY = 0f
+    private var controllerPointX = 0F
+    private var controllerPointY = 0F
 
-    private var slideBarPointX = 0f
-    private var slideBarPointY = 0f
+    private var slideBarPointX = 0F
+    private var slideBarPointY = 0F
 
     private var sliderValueStepSize = 10
 
@@ -64,7 +64,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private var slideBarMargin = Dp(12F).toPx(context).value + controllerRadius
 
-    private var maxPercentValue = 100F
+    private var maxPercentValue = 100
 
     private var startDegree = 0F
     private var endDegree = 0F
@@ -327,13 +327,13 @@ class RoundSlider @JvmOverloads constructor(
     }
 
     fun setMaxPercentValue(value: Int) {
-        maxPercentValue = value.toFloat()
+        maxPercentValue = value
         invalidate()
     }
 
     fun setHighlightRange(startValue: Int, endValue: Int) {
-        startDegree = (180 / maxPercentValue * startValue) + 180
-        endDegree = (180 / maxPercentValue * endValue) + 180
+        startDegree = (180F / maxPercentValue * startValue) + 180
+        endDegree = (180F / maxPercentValue * endValue) + 180
         invalidate()
     }
 
