@@ -10,9 +10,11 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import app.priceguard.R
+import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 class RoundSlider @JvmOverloads constructor(
@@ -29,6 +31,7 @@ class RoundSlider @JvmOverloads constructor(
     private val activeSlideBarPaint = Paint()
     private val controllerPaint = Paint()
     private val sliderValuePaint = Paint()
+    private val axisCirclePaint = Paint()
 
     private var controllerPointX = 0f
     private var controllerPointY = 0f
@@ -36,13 +39,15 @@ class RoundSlider @JvmOverloads constructor(
     private var slideBarPointX = 0f
     private var slideBarPointY = 0f
 
+    private var sliderValueStepSize = 10
+
     private var customViewClickListener: sliderValueChangeListener? = null
 
     private var state = false
 
     private var sliderMode = RoundSliderState.ACTIVE
 
-    private val pi = Math.PI.toFloat()
+    private val pi = Math.PI
 
     private var sliderValue = 0
         set(value) {
@@ -66,7 +71,7 @@ class RoundSlider @JvmOverloads constructor(
 
     private var textValueSize = Sp(32F)
 
-    private var rad = pi
+    private var currentRad = pi
 
     private var colorPrimary: Int
     private var colorOnPrimaryContainer: Int
@@ -152,15 +157,17 @@ class RoundSlider @JvmOverloads constructor(
             height - slideBarMargin * 2
         }
 
-        rad = (180 / maxPercentValue * (maxPercentValue - sliderValue)).toRadian().coerceIn(0F, pi)
-        controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
-        controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
+        currentRad =
+            (180 / maxPercentValue.toDouble() * (maxPercentValue - sliderValue)).toRadian().coerceIn(0.0, pi)
+        controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         drawSlideBar(canvas)
+        drawAxis(canvas)
         drawController(canvas)
         drawSlideValueText(canvas)
     }
@@ -188,7 +195,7 @@ class RoundSlider @JvmOverloads constructor(
 
         canvas.drawArc(oval, 180F, 180F, false, slideBarPaint)
         drawHighlightSlider(canvas)
-        canvas.drawArc(oval, 180F, 180 - rad.toDegree(), false, activeSlideBarPaint)
+        canvas.drawArc(oval, 180F, 180 - currentRad.toDegree().toFloat(), false, activeSlideBarPaint)
     }
 
     private fun drawHighlightSlider(canvas: Canvas) {
@@ -203,6 +210,20 @@ class RoundSlider @JvmOverloads constructor(
             slideBarPointY + slideBarRadius
         )
         canvas.drawArc(oval, startDegree, endDegree - startDegree, false, slideBarPaint)
+    }
+
+    private fun drawAxis(canvas: Canvas) {
+        axisCirclePaint.color = colorOnPrimaryContainer
+
+        val step = (180F / (maxPercentValue / sliderValueStepSize)).toInt()
+
+        for (i: Int in step until 180 step (step)) {
+            val rad = i.toRadian()
+            val axisPointX = slideBarPointX + cos(rad).toFloat() * slideBarRadius
+            val axisPointY = slideBarPointY + sin(-rad).toFloat() * slideBarRadius
+
+            canvas.drawCircle(axisPointX, axisPointY, Dp(2F).toPx(context).value, axisCirclePaint)
+        }
     }
 
     private fun drawController(canvas: Canvas) {
@@ -251,11 +272,11 @@ class RoundSlider @JvmOverloads constructor(
                             if (event.x >= slideBarPointX) {
                                 controllerPointX = slideBarPointX + slideBarRadius
                                 controllerPointY = slideBarPointY
-                                sliderValue = degreeToValue(0F)
+                                sliderValue = degreeToValue(0.0)
                             } else {
                                 controllerPointX = slideBarPointX - slideBarRadius
                                 controllerPointY = slideBarPointY
-                                sliderValue = degreeToValue(180F)
+                                sliderValue = degreeToValue(180.0)
                             }
                             invalidate()
                             state = false
@@ -263,12 +284,12 @@ class RoundSlider @JvmOverloads constructor(
                         return true
                     }
                     state = true
-                    rad = calculateRadToPoint(event.x, event.y)
+                    currentRad = findCloseSliderValueRadian(calculateRadToPoint(event.x, event.y))
 
-                    controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
-                    controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
+                    controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
+                    controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
 
-                    sliderValue = degreeToValue(rad.toDegree())
+                    sliderValue = degreeToValue(currentRad.toDegree())
 
                     invalidate()
                 }
@@ -282,24 +303,20 @@ class RoundSlider @JvmOverloads constructor(
         return true
     }
 
-    private fun isHeightEnough(): Boolean {
-        return height >= width / 2 + slideBarMargin
-    }
+    private fun isHeightEnough() = height >= width / 2 + slideBarMargin
 
-    private fun calculateRadToPoint(x: Float, y: Float): Float {
+    private fun calculateRadToPoint(x: Float, y: Float): Double {
         val arcTan = atan((x - slideBarPointX) / (y - slideBarPointY))
         return (pi / 2) + arcTan
     }
 
-    private fun degreeToValue(degree: Float): Int {
-        return ((180F - degree) / (180F / maxPercentValue)).toInt()
-    }
+    private fun degreeToValue(degree: Double) = (((180F - degree) * maxPercentValue / 180F)).roundToInt()
 
     fun setValue(value: Int) {
-        rad = (180 / maxPercentValue * (maxPercentValue - value)).toRadian().coerceIn(0F..pi)
+        currentRad = (180 / maxPercentValue.toDouble() * (maxPercentValue - value)).toRadian().coerceIn(0.0..pi)
         // cos(rad) = -cos(value * pi / maxPercentValue)
-        controllerPointX = slideBarPointX + cos(rad) * slideBarRadius
-        controllerPointY = slideBarPointY + sin(-rad) * slideBarRadius
+        controllerPointX = slideBarPointX + cos(currentRad).toFloat() * slideBarRadius
+        controllerPointY = slideBarPointY + sin(-currentRad).toFloat() * slideBarRadius
         sliderValue = value
         invalidate()
     }
@@ -330,5 +347,28 @@ class RoundSlider @JvmOverloads constructor(
 
     private fun handleValueChangeEvent(value: Int) {
         customViewClickListener?.invoke(value)
+    }
+
+    private fun findCloseSliderValueRadian(radian: Double): Double {
+        val degree = radian.toDegree()
+        if (degree > 180 || degree < 0) return 0.0
+        var minDifference = 180
+        var prevDifference = 180
+
+        val step = (180F / (maxPercentValue / sliderValueStepSize)).toInt()
+
+        for (value: Int in 0..180 step (step)) {
+            val difference = abs(degree.toInt() - value)
+
+            if (difference > prevDifference) {
+                return (value - step).toDouble().toRadian()
+            }
+
+            if (difference < minDifference) {
+                minDifference = difference
+            }
+            prevDifference = difference
+        }
+        return 180.toRadian()
     }
 }
