@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PriceGuard"
         tools:targetApi="34">
-        <activity
-            android:name=".ui.home.mypage.DeleteAccountActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.firebase.messaging.price_notification"
@@ -25,9 +22,6 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_priceguard_notification" />
 
-        <activity
-            android:name=".ui.additem.link.LinkHelperWebViewActivity"
-            android:exported="false" />
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:exported="true">
@@ -81,6 +75,12 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />
+        <activity
+            android:name=".ui.additem.link.LinkHelperWebViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.mypage.DeleteAccountActivity"
+            android:exported="false" />
 
         <service
             android:name=".service.PriceGuardFirebaseMessagingService"
