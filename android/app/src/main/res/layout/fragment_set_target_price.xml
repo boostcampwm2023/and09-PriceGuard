@@ -71,23 +71,45 @@
                 android:id="@+id/rs_target_price"
                 android:layout_width="0dp"
                 android:layout_height="220dp"
-                android:layout_marginTop="36dp"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                android:layout_marginHorizontal="2dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="@id/btn_target_price_increase"
+                app:layout_constraintStart_toStartOf="@id/btn_target_price_decrease"
                 app:layout_constraintTop_toBottomOf="@id/tv_set_price_name" />
+
+            <Button
+                android:id="@+id/btn_target_price_decrease"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                app:icon="@drawable/ic_remove"
+                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                app:layout_constraintTop_toBottomOf="@id/rs_target_price" />
+
+            <Button
+                android:id="@+id/btn_target_price_increase"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                app:icon="@drawable/ic_add"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintTop_toTopOf="@id/btn_target_price_decrease" />
 
             <TextView
                 android:id="@+id/tv_target_price_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:background="#00000000"
+                android:drawableLeft="@drawable/ic_edit"
                 android:gravity="center"
                 android:text="@{@string/notify_target_price(@string/comma_number(viewModel.state.targetPrice))}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                android:drawableLeft="@drawable/ic_edit"
                 app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/rs_target_price" />
+                app:layout_constraintTop_toBottomOf="@id/btn_target_price_decrease" />
 
             <Button
                 android:id="@+id/btn_confirm_item_back"

@@ -82,8 +82,28 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
         tvSetPriceCurrentPrice.contentDescription =
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
-        rsTargetPrice.setMaxPercentValue(200)
-        rsTargetPrice.setStepSize(10)
+        rsTargetPrice.setMaxPercentValue(MAX_PERCENT)
+        rsTargetPrice.setStepSize(STEP_SIZE)
+
+        btnTargetPriceDecrease.setOnClickListener {
+            val sliderValue = if (rsTargetPrice.sliderValue >= STEP_SIZE) {
+                rsTargetPrice.sliderValue - STEP_SIZE
+            } else {
+                0
+            }
+            rsTargetPrice.setValue(sliderValue)
+            setTargetPriceViewModel.updateTargetPriceFromPercent(sliderValue)
+        }
+
+        btnTargetPriceIncrease.setOnClickListener {
+            val sliderValue = if (rsTargetPrice.sliderValue <= MAX_PERCENT - STEP_SIZE) {
+                rsTargetPrice.sliderValue + STEP_SIZE
+            } else {
+                MAX_PERCENT
+            }
+            rsTargetPrice.setValue(sliderValue)
+            setTargetPriceViewModel.updateTargetPriceFromPercent(sliderValue)
+        }
 
         calculatePercentAndSetSliderValue(price, targetPrice)
     }
@@ -214,5 +234,10 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
     override fun onDialogResult(result: Int) {
         setTargetPriceViewModel.updateTargetPrice(result)
         calculatePercentAndSetSliderValue(setTargetPriceViewModel.state.value.productPrice, result)
+    }
+
+    companion object {
+        const val STEP_SIZE = 10
+        const val MAX_PERCENT = 200
     }
 }

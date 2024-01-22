@@ -49,8 +49,8 @@ class RoundSlider @JvmOverloads constructor(
 
     private val pi = Math.PI
 
-    private var sliderValue = 0
-        set(value) {
+    var sliderValue = 0
+        private set(value) {
             if (field != value) {
                 field = value
                 handleValueChangeEvent(value)
@@ -292,7 +292,7 @@ class RoundSlider @JvmOverloads constructor(
                     val closeStepValueRad = findCloseStepValueRadian(degreeToValue(currentRad.toDegree()))
 
                     controllerPointX = slideBarPointX + cos(closeStepValueRad).toFloat() * slideBarRadius
-                    controllerPointY = slideBarPointY + sin(-closeStepValueRad).toFloat() * slideBarRadius
+                    controllerPointY = slideBarPointY - sin(closeStepValueRad).toFloat() * slideBarRadius
 
                     sliderValue = degreeToValue(closeStepValueRad.toDegree())
 
@@ -311,8 +311,8 @@ class RoundSlider @JvmOverloads constructor(
     private fun isHeightEnough() = height >= width / 2 + slideBarMargin
 
     private fun calculateRadToPoint(x: Float, y: Float): Double {
-        val arcTan = atan((x - slideBarPointX) / (y - slideBarPointY))
-        return (pi / 2) + arcTan
+        val arcTanDegree = atan((x - slideBarPointX) / (y - slideBarPointY))
+        return (pi / 2) + arcTanDegree
     }
 
     private fun degreeToValue(degree: Double) =
