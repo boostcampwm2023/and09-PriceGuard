@@ -1,3 +1,3 @@
 package app.priceguard.ui.slider
 
-typealias sliderValueChangeListener = (value: Int) -> Unit
+typealias SliderValueChangeListener = (value: Int) -> Unit
