@@ -9,7 +9,6 @@ import app.priceguard.R
 import app.priceguard.databinding.ActivityDeleteAccountBinding
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.login.LoginActivity
-import app.priceguard.ui.util.OnThrottleClickListener
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.onThrottleClick
 import app.priceguard.ui.util.showConfirmDialog
