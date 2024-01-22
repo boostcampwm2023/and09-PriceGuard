@@ -37,7 +37,7 @@ class MyPageSettingAdapter(
 
                 if (item.id == Setting.DELETE_ACCOUNT) {
                     val typedValue = TypedValue()
-                    binding.root.context.theme.resolveAttribute(R.attr.colorError, typedValue, true)
+                    root.context.theme.resolveAttribute(R.attr.colorError, typedValue, true)
                     tvMyPageItemTitle.setTextColor(typedValue.data)
                 }
             }

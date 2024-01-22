@@ -35,7 +35,7 @@ class ConfirmDialogFragment : DialogFragment() {
                     }
 
                     DialogConfirmAction.CUSTOM -> {
-                        resultListener?.onDialogResult(getRequestCode(), true)
+                        resultListener?.onDialogResult(true)
                     }
 
                     DialogConfirmAction.HOME -> {
@@ -77,10 +77,6 @@ class ConfirmDialogFragment : DialogFragment() {
         requireActivity().finish()
     }
 
-    private fun getRequestCode(): Int {
-        return arguments?.getInt("requestCode") ?: 0
-    }
-
     override fun onStart() {
         super.onStart()
 
@@ -96,6 +92,6 @@ class ConfirmDialogFragment : DialogFragment() {
     }
 
     interface OnDialogResultListener {
-        fun onDialogResult(requestCode: Int, result: Boolean)
+        fun onDialogResult(result: Boolean)
     }
 }
