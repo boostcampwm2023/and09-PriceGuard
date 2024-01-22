@@ -122,7 +122,6 @@
                 android:layout_margin="16dp"
                 android:enabled="@{viewModel.state.deleteEnabled}"
                 android:minHeight="64dp"
-                android:onClick="@{() -> viewModel.deleteAccount()}"
                 android:text="@string/delete_account"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
