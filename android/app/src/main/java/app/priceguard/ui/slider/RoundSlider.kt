@@ -14,8 +14,10 @@ import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.cos
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class RoundSlider @JvmOverloads constructor(
     context: Context,
@@ -76,6 +78,8 @@ class RoundSlider @JvmOverloads constructor(
     private var endDegree = 0F
 
     private var textValueSize = Sp(32F)
+
+    private val touchSizeMargin = Dp(8F).toPx(context).value
 
     // 현재 sliderValue값으로 위치해야하는 컨트롤러 좌표에 대한 라디안 값
     private var currentRad = pi
@@ -286,6 +290,8 @@ class RoundSlider @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
+                    if (!isTouchOnSlideBar(event.x, event.y)) return true
+
                     if (event.y > slideBarPointY) { // 드래그 좌표가 슬라이더를 벗어난 경우 value를 x좌표에 맞게 최소 or 최대 값으로 설정
                         if (isDraggingOnSlider) {
                             isDraggingOnSlider = false
@@ -304,6 +310,18 @@ class RoundSlider @JvmOverloads constructor(
             }
         }
         return true
+    }
+
+    private fun isTouchOnSlideBar(x: Float, y: Float): Boolean {
+        val deltaX = abs(slideBarPointX - x)
+        val deltaY = abs(slideBarPointY - y)
+
+        val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
+
+        val minDistance = slideBarRadius - slideBarStrokeWidth - touchSizeMargin
+        val maxDistance = slideBarRadius + slideBarStrokeWidth + touchSizeMargin
+
+        return distance in minDistance..maxDistance
     }
 
     private fun updateControllerPointWithRadian(rad: Double) {
