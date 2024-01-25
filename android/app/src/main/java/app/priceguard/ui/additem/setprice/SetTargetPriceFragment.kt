@@ -86,21 +86,13 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
         rsTargetPrice.setStepSize(STEP_SIZE)
 
         btnTargetPriceDecrease.setOnClickListener {
-            val sliderValue = if (rsTargetPrice.sliderValue >= STEP_SIZE) {
-                rsTargetPrice.sliderValue - STEP_SIZE
-            } else {
-                0
-            }
+            val sliderValue = (rsTargetPrice.sliderValue - STEP_SIZE).coerceIn(0, MAX_PERCENT)
             rsTargetPrice.setValue(sliderValue)
             setTargetPriceViewModel.updateTargetPriceFromPercent(sliderValue)
         }
 
         btnTargetPriceIncrease.setOnClickListener {
-            val sliderValue = if (rsTargetPrice.sliderValue <= MAX_PERCENT - STEP_SIZE) {
-                rsTargetPrice.sliderValue + STEP_SIZE
-            } else {
-                MAX_PERCENT
-            }
+            val sliderValue = (rsTargetPrice.sliderValue + STEP_SIZE).coerceIn(0, MAX_PERCENT)
             rsTargetPrice.setValue(sliderValue)
             setTargetPriceViewModel.updateTargetPriceFromPercent(sliderValue)
         }

@@ -89,9 +89,7 @@ class SetTargetPriceDialogFragment : DialogFragment() {
 
     private fun extractAndConvertToInteger(text: String): Long {
         val digits = text.filter { it.isDigit() }
-        var num = digits.toLongOrNull() ?: 0
-        if (num > MAX_TARGET_PRICE * 10 - 1) num = MAX_TARGET_PRICE * 10 - 1
-        return num
+        return (digits.toLongOrNull() ?: 0).coerceIn(0, MAX_TARGET_PRICE * 10 - 1)
     }
 
     fun setOnDialogResultListener(listener: OnDialogResultListener) {
