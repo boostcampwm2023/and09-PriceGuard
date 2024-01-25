@@ -9,6 +9,8 @@ import app.priceguard.R
 import app.priceguard.databinding.ActivityDeleteAccountBinding
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.login.LoginActivity
+import app.priceguard.ui.util.SystemNavigationColorState
+import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.onThrottleClick
 import app.priceguard.ui.util.showConfirmDialog
@@ -22,7 +24,7 @@ class DeleteAccountActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        this.applySystemNavigationBarColor(SystemNavigationColorState.SURFACE)
         binding = ActivityDeleteAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
