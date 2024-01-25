@@ -23,9 +23,6 @@
             android:resource="@drawable/ic_priceguard_notification" />
 
         <activity
-            android:name=".ui.additem.link.LinkHelperWebViewActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
@@ -78,6 +75,12 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/Theme.PriceGuard.WithActionBar" />
+        <activity
+            android:name=".ui.additem.link.LinkHelperWebViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.mypage.DeleteAccountActivity"
+            android:exported="false" />
 
         <service
             android:name=".service.PriceGuardFirebaseMessagingService"
@@ -91,7 +94,6 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
-
     </application>
 
 </manifest>

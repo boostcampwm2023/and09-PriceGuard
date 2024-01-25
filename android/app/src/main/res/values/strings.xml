@@ -133,4 +133,15 @@
     <string name="min_price">0</string>
     <string name="max_price">999999999</string>
     <string name="priceguard_push_alarm_title">Product Price Notification</string>
+    <string name="delete_account">회원 탈퇴</string>
+    <string name="delete_account_confirm_title">회원 탈퇴 확인</string>
+    <string name="delete_account_confirm_message">정말로 회원 탈퇴 하시겠습니까?</string>
+    <string name="error_password">비밀번호 오류</string>
+    <string name="wrong_password">입력한 비밀번호가 회원 정보와 맞지 않습니다.</string>
+    <string name="caution_delete_account_title">회원 탈퇴 주의사항 안내</string>
+    <string name="approve_remove_account">주의사항을 확인했으며, 데이터를 삭제하겠습니다.</string>
+    <string name="caution_delete_account_body">- 회원 탈퇴 시, 계정과 관련된 모든 정보가 삭제되며, 복구가 불가능합니다. 이에 따라 저장된 모든 데이터, 설정, 기록 등이 손실됩니다.\n\n- 회원 탈퇴 후에는 애플리케이션의 모든 서비스와 컨텐츠에 접근할 수 없게 됩니다.\n\n- 탈퇴 후에는 계정에 연결된 모든 데이터와 정보를 되돌릴 수 없습니다. 주의깊게 검토한 후 탈퇴를 진행해 주세요
+ \n</string>
+    <string name="delete_account_activity_title">회원 정보를 확인하기 위해\n비밀번호를 입력해 주세요</string>
+    <string name="success_delete_account">정상적으로 회원 탈퇴 되었습니다.</string>
 </resources>

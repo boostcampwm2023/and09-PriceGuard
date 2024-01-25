@@ -1,5 +1,6 @@
 package app.priceguard.ui.home.mypage
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,12 @@ class MyPageSettingAdapter(
             with(binding) {
                 settingItemInfo = item
                 listener = clickListener
+
+                if (item.id == Setting.DELETE_ACCOUNT) {
+                    val typedValue = TypedValue()
+                    root.context.theme.resolveAttribute(com.google.android.material.R.attr.colorError, typedValue, true)
+                    tvMyPageItemTitle.setTextColor(typedValue.data)
+                }
             }
         }
     }
