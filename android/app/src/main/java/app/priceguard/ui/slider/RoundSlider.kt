@@ -293,7 +293,7 @@ class RoundSlider @JvmOverloads constructor(
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if(!isTouchedOnSlideBar) return true
+                    if (!isTouchedOnSlideBar) return true
 
                     if (event.y > slideBarPointY) { // 드래그 좌표가 슬라이더를 벗어난 경우 value를 x좌표에 맞게 최소 or 최대 값으로 설정
                         if (isDraggingOnSlider) {
