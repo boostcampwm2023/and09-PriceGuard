@@ -41,8 +41,7 @@ class DeleteAccountViewModel @Inject constructor(
 
     fun deleteAccount() {
         viewModelScope.launch {
-            val response = authRepository.deleteAccount(_state.value.email, _state.value.password)
-            when (response) {
+            when (val response = authRepository.deleteAccount(_state.value.email, _state.value.password)) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
                         AuthErrorState.INVALID_REQUEST -> {
