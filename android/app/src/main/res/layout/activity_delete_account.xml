@@ -10,124 +10,142 @@
             type="app.priceguard.ui.home.mypage.DeleteAccountViewModel" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:background="?attr/colorSurface"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.home.mypage.DeleteAccountActivity">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/mt_delete_account_topbar"
+                style="@style/Theme.Surface.Toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:navigationContentDescription="@string/go_back"
+                app:navigationIcon="@drawable/ic_back" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.home.mypage.DeleteAccountActivity">
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_vertical_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="16dp" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorSurface"
+                tools:context=".ui.home.mypage.DeleteAccountActivity">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gl_vertical_end"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="16dp" />
-
-            <Button
-                android:id="@+id/btn_delete_account_close"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                app:icon="@drawable/ic_close"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_delete_account_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="96dp"
-                android:text="@string/delete_account_activity_title"
-                android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_delete_account_password"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:hint="@string/password"
-                app:endIconMode="password_toggle"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/tv_delete_account_title">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_delete_account_password"
-                    android:layout_width="match_parent"
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gl_vertical_start"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:autofillHints="password"
-                    android:imeOptions="actionDone"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:maxLength="16"
-                    android:onTextChanged="@{(content, s, b, c) -> viewModel.updatePassWord(content.toString())}" />
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="16dp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gl_vertical_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="16dp" />
 
-            <TextView
-                android:id="@+id/tv_delete_account_message_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="@string/caution_delete_account_title"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/til_delete_account_password" />
+                <TextView
+                    android:id="@+id/tv_delete_account_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/delete_account_activity_title"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_delete_account_message_body"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/caution_delete_account_body"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/tv_delete_account_message_title" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_delete_account_password"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@string/password"
+                    app:endIconMode="password_toggle"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_delete_account_title">
 
-            <CheckBox
-                android:id="@+id/cb_delete_account"
-                android:layout_width="0dp"
-                android:onCheckedChanged="@{(_, isChecked) -> viewModel.updateChecked(isChecked)}"
-                android:layout_height="wrap_content"
-                android:text="@string/approve_remove_account"
-                app:layout_constraintBottom_toTopOf="@id/btn_delete_account"
-                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
-                app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/tv_delete_account_message_body"
-                app:layout_constraintVertical_bias="1.0" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tiet_delete_account_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="password"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:maxLength="16"
+                        android:maxLines="1"
+                        android:onTextChanged="@{(content, s, b, c) -> viewModel.updatePassWord(content.toString())}" />
 
-            <Button
-                android:id="@+id/btn_delete_account"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:enabled="@{viewModel.state.deleteEnabled}"
-                android:minHeight="64dp"
-                android:text="@string/delete_account"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tv_delete_account_message_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/caution_delete_account_title"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toBottomOf="@id/til_delete_account_password" />
 
-    </androidx.core.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/tv_delete_account_message_body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/caution_delete_account_body"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_delete_account_message_title" />
+
+                <CheckBox
+                    android:id="@+id/cb_delete_account"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:onCheckedChanged="@{(_, isChecked) -> viewModel.updateChecked(isChecked)}"
+                    android:text="@string/approve_remove_account"
+                    app:layout_constraintBottom_toTopOf="@id/btn_delete_account"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toBottomOf="@id/tv_delete_account_message_body"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <Button
+                    android:id="@+id/btn_delete_account"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:enabled="@{viewModel.state.deleteEnabled}"
+                    android:minHeight="64dp"
+                    android:text="@string/delete_account"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 </layout>

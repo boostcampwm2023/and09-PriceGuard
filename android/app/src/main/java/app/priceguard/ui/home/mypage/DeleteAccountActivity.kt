@@ -36,7 +36,7 @@ class DeleteAccountActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.btnDeleteAccountClose.setOnClickListener {
+        binding.mtDeleteAccountTopbar.setNavigationOnClickListener {
             finish()
         }
 
