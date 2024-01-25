@@ -81,6 +81,8 @@ class RoundSlider @JvmOverloads constructor(
 
     private val touchSizeMargin = Dp(8F).toPx(context).value
 
+    private var isTouchedOnSlideBar = false
+
     // 현재 sliderValue값으로 위치해야하는 컨트롤러 좌표에 대한 라디안 값
     private var currentRad = pi
         set(value) {
@@ -286,11 +288,12 @@ class RoundSlider @JvmOverloads constructor(
         if (event != null) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    isTouchedOnSlideBar = isTouchOnSlideBar(event.x, event.y)
                     parent.requestDisallowInterceptTouchEvent(true)
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if (!isTouchOnSlideBar(event.x, event.y)) return true
+                    if(!isTouchedOnSlideBar) return true
 
                     if (event.y > slideBarPointY) { // 드래그 좌표가 슬라이더를 벗어난 경우 value를 x좌표에 맞게 최소 or 최대 값으로 설정
                         if (isDraggingOnSlider) {
