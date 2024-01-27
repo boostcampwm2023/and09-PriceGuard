@@ -39,3 +39,10 @@ export const TWO_WEEKS_TO_SEC = 2 * 7 * 24 * 60 * 60;
 export const TWO_MONTHS_TO_SEC = 61 * 24 * 60 * 60;
 export const MAX_TRACKING_PRODUCT_CACHE = parseInt(process.env.MAX_TRACKING_PRODUCT_CACHE || '30');
 export const MAX_TARGET_PRICE = 999999999;
+export const REGEX_SHOP = {
+    '11ST': /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/,
+    NaverSmartStore:
+        /http[s]?:\/\/(?:www\.|m\.)?smartstore\.naver\.com\/(?:[a-zA-Z0-9_-]+)\/products\/([a-zA-Z0-9_-]+)/,
+    NaverBrand: /http[s]?:\/\/(?:www\.|m\.)?brand\.naver\.com\/(?:[a-zA-Z0-9_-]+)\/products\/([a-zA-Z0-9_-]+)/,
+} as const;
+export const BROWSER_VERSION_20 = 20;

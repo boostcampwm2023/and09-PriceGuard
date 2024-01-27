@@ -12,14 +12,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, REGEX_SHOP, THIRTY_DAYS } from 'src/constants';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { CacheService } from 'src/cache/cache.service';
+import { getProductInfoByBrandSmartStore } from 'src/utils/naver.smartstore';
 
-const REGEXP_11ST =
-    /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     constructor(
@@ -35,12 +34,19 @@ export class ProductService {
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
-        const matchList = productUrl.match(REGEXP_11ST);
-        if (!matchList) {
-            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
+        let matchList = null;
+        if ((matchList = productUrl.match(REGEX_SHOP['11ST']))) {
+            const productCode = matchList[1];
+            return await getProductInfo11st(productCode);
         }
-        const productCode = matchList[1];
-        return await getProductInfo11st(productCode);
+        if (
+            (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
+            (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
+        ) {
+            const productCode = matchList[1];
+            return await getProductInfoByBrandSmartStore(productCode);
+        }
+        throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {
