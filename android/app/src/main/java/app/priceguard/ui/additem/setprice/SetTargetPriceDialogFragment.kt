@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import app.priceguard.R
 import app.priceguard.databinding.FragmentTargetPriceDialogBinding
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
+import app.priceguard.ui.util.setTextColorWithEnabled
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class SetTargetPriceDialogFragment : DialogFragment() {
@@ -48,7 +49,10 @@ class SetTargetPriceDialogFragment : DialogFragment() {
                 binding.etTargetPriceDialog.setText(
                     getString(R.string.won, getString(R.string.comma_number, state.targetPrice))
                 )
-                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = !state.isErrorMessageVisible
+                val positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE)
+                positiveButton.isEnabled = !state.isErrorMessageVisible
+                positiveButton.setTextColorWithEnabled()
+
                 viewModel.updateTextChangedEnabled(true)
             }
         }
