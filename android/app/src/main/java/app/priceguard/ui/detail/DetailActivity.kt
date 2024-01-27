@@ -200,10 +200,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.OpenShoppingMall -> {
-                        val redirectUrl =
-                            "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${event.url}"
-                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
-                        startActivity(browserIntent)
+                        launchShopApplication(event.url,event.shop)
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
@@ -245,6 +242,26 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     }
                 }
             }
+        }
+    }
+
+    private fun launchShopApplication(url: String, shop: String) {
+        val redirectUrl: String = when (shop) {
+            "11번가" -> {
+                "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${url}"
+            }
+
+            "네이버" -> {
+                "naversearchapp://inappbrowser?url=${url}&target=new&version=6"
+            }
+
+            else -> return
+        }
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
+            startActivity(browserIntent)
+        } catch (e: Exception) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         }
     }
 

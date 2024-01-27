@@ -46,7 +46,7 @@ class ProductDetailViewModel @Inject constructor(
     )
 
     sealed class ProductDetailEvent {
-        data class OpenShoppingMall(val url: String) : ProductDetailEvent()
+        data class OpenShoppingMall(val url: String, val shop: String) : ProductDetailEvent()
         data object DeleteTracking : ProductDetailEvent()
         data object Logout : ProductDetailEvent()
         data object NotFound : ProductDetailEvent()
@@ -159,8 +159,10 @@ class ProductDetailViewModel @Inject constructor(
 
     fun sendBrowserEvent() {
         viewModelScope.launch {
-            val event = _state.value.shopUrl?.let { ProductDetailEvent.OpenShoppingMall(it) }
-                ?: return@launch
+            val event = _state.value.let {
+                if (it.shopUrl == null || it.shop == null) return@launch
+                ProductDetailEvent.OpenShoppingMall(it.shopUrl, it.shop)
+            }
             _event.emit(event)
         }
     }
