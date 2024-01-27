@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="96dp"
-                android:labelFor="@+id/et_target_price"
+                android:labelFor="@id/rs_target_price"
                 android:text="@string/set_price_title"
                 android:textAppearance="?attr/textAppearanceHeadlineMedium"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
