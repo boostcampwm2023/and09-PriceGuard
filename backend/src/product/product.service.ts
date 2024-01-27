@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
-import { ProductAddDto } from '../dto/product.add.dto';
+import { ProductAddDto, ProductAddDtoV1 } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
@@ -50,11 +50,19 @@ export class ProductService {
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {
-        const { productCode, targetPrice } = productAddDto;
+        const productAddDtoV1 = new ProductAddDtoV1();
+        productAddDtoV1.productCode = productAddDto.productCode;
+        productAddDtoV1.targetPrice = productAddDto.targetPrice;
+        productAddDtoV1.shop = '11번가';
+        await this.addProductV1(userId, productAddDtoV1);
+    }
+
+    async addProductV1(userId: string, productAddDto: ProductAddDtoV1) {
+        const { shop, productCode, targetPrice } = productAddDto;
         const existProduct = await this.productRepository.findOne({
-            where: { productCode: productCode },
+            where: { productCode: productCode, shop: shop },
         });
-        const product = existProduct ?? (await this.firstAddProduct(productCode));
+        const product = existProduct ?? (await this.firstAddProduct(shop, productCode));
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
@@ -259,8 +267,8 @@ export class ProductService {
         });
     }
 
-    async firstAddProduct(productCode: string) {
-        const productInfo = await getProductInfo11st(productCode);
+    async firstAddProduct(shop: string, productCode: string) {
+        const productInfo = await this.getProductInfo(shop, productCode);
         const product = await this.productRepository.saveProduct(productInfo);
         const updatedDataInfo = {
             productId: product.id,
@@ -312,5 +320,15 @@ export class ProductService {
             .exec();
         const { price, lowestPrice } = latestData[0];
         return { price, lowestPrice };
+    }
+
+    private async getProductInfo(shop: string, productCode: string): Promise<ProductInfoDto> {
+        if (shop === '11번가') {
+            return await getProductInfo11st(productCode);
+        }
+        if (shop === 'smartStore') {
+            return await getProductInfoByBrandSmartStore(productCode);
+        }
+        throw new HttpException('존재하지 않는 상품입니다.', HttpStatus.BAD_REQUEST);
     }
 }

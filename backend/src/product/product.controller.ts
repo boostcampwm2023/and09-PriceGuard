@@ -10,10 +10,11 @@ import {
     UseGuards,
     HttpStatus,
     UseFilters,
+    Version,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductUrlDto } from '../dto/product.url.dto';
-import { ProductAddDto } from 'src/dto/product.add.dto';
+import { ProductAddDto, ProductAddDtoV1 } from 'src/dto/product.add.dto';
 import {
     ApiBadRequestResponse,
     ApiBearerAuth,
@@ -92,6 +93,22 @@ export class ProductController {
     @Post()
     async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
         await this.productService.addProduct(req.user.id, productAddDto);
+        return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
+    }
+
+    @ApiOperation({
+        summary: 'smartStore가 추가된 상품 추가 API',
+        description: '11번가와 smartStore의 상품을 추가한다',
+    })
+    @ApiBody({ type: ProductAddDtoV1 })
+    @ApiOkResponse({ type: AddProductSuccess, description: '상품 추가 성공' })
+    @ApiNotFoundResponse({ type: ProductCodeError, description: '상품 추가 실패' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @ApiConflictResponse({ type: AddProductConflict, description: '이미 등록된 상품 존재' })
+    @Post()
+    @Version('1')
+    async addProductV1(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDtoV1) {
+        await this.productService.addProductV1(req.user.id, productAddDto);
         return { statusCode: HttpStatus.OK, message: '상품 추가 성공' };
     }
 
