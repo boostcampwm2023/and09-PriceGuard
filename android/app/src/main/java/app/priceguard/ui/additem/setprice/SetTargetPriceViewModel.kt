@@ -61,6 +61,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     fun patchProduct() {
         viewModelScope.launch {
+            _state.value = state.value.copy(isReady = false)
             val response = productRepository.updateTargetPrice(
                 _state.value.productCode,
                 _state.value.targetPrice
@@ -74,6 +75,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                     _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.errorState))
                 }
             }
+            _state.value = state.value.copy(isReady = true)
         }
     }
 
