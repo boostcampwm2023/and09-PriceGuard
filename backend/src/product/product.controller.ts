@@ -138,21 +138,31 @@ export class ProductController {
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @Get(':productCode')
     async getProductDetails(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
-        const { productName, shop, imageUrl, rank, shopUrl, targetPrice, lowestPrice, price, priceData } =
-            await this.productService.getProductDetails(req.user.id, productCode);
+        const productDetails = await this.productService.getProductDetails(req.user.id, productCode);
         return {
             statusCode: HttpStatus.OK,
             message: '상품 URL 검증 성공',
-            productName,
             productCode,
-            shop,
-            imageUrl,
-            rank,
-            shopUrl,
-            targetPrice,
-            lowestPrice,
-            price,
-            priceData,
+            ...productDetails,
+        };
+    }
+
+    @ApiOperation({ summary: 'smartStore가 추가된 상품 세부 정보 조회 API', description: '상품 세부 정보를 조회한다.' })
+    @ApiOkResponse({ type: ProductDetailsSuccess, description: '상품 세부 정보 조회 성공' })
+    @ApiNotFoundResponse({ type: ProductDetailsNotFound, description: '상품 정보가 존재하지 않습니다.' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @Get(':shop/:productCode')
+    async getProductDetailsV1(
+        @Req() req: Request & { user: User },
+        @Param('shop') shop: string,
+        @Param('productCode') productCode: string,
+    ) {
+        const productDetails = await this.productService.getProductDetailsV1(req.user.id, shop, productCode);
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productCode,
+            ...productDetails,
         };
     }
 

@@ -147,6 +147,16 @@ export class ProductService {
         if (!selectProduct) {
             throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
         }
+        return await this.getProductDetailsV1(userId, '11번가', productCode);
+    }
+
+    async getProductDetailsV1(userId: string, shop: string, productCode: string): Promise<ProductDetailsDto> {
+        const selectProduct = await this.productRepository.findOne({
+            where: { productCode: productCode, shop: shop },
+        });
+        if (!selectProduct) {
+            throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+        }
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
