@@ -24,7 +24,7 @@ export class ProductAddDto {
 
 export class ProductAddDtoV1 {
     @ApiProperty({
-        example: 'smartStore',
+        example: 'SmartStore',
         description: '쇼핑몰 정보',
         required: true,
     })

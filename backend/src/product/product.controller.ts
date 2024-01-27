@@ -97,7 +97,7 @@ export class ProductController {
     }
 
     @ApiOperation({
-        summary: 'smartStore가 추가된 상품 추가 API',
+        summary: 'SmartStore가 추가된 상품 추가 API',
         description: '11번가와 smartStore의 상품을 추가한다',
     })
     @ApiBody({ type: ProductAddDtoV1 })
@@ -147,7 +147,7 @@ export class ProductController {
         };
     }
 
-    @ApiOperation({ summary: 'smartStore가 추가된 상품 세부 정보 조회 API', description: '상품 세부 정보를 조회한다.' })
+    @ApiOperation({ summary: 'SmartStore가 추가된 상품 세부 정보 조회 API', description: '상품 세부 정보를 조회한다.' })
     @ApiOkResponse({ type: ProductDetailsSuccess, description: '상품 세부 정보 조회 성공' })
     @ApiNotFoundResponse({ type: ProductDetailsNotFound, description: '상품 정보가 존재하지 않습니다.' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
@@ -177,7 +177,7 @@ export class ProductController {
         return { statusCode: HttpStatus.OK, message: '목표 가격 수정 성공' };
     }
 
-    @ApiOperation({ summary: 'smartStore가 추가된 상품 목표 가격 수정 API', description: '상품 목표 가격을 수정한다.' })
+    @ApiOperation({ summary: 'SmartStore가 추가된 상품 목표 가격 수정 API', description: '상품 목표 가격을 수정한다.' })
     @ApiOkResponse({ type: UpdateTargetPriceSuccess, description: '상품 목표 가격 수정 성공' })
     @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
@@ -198,7 +198,7 @@ export class ProductController {
         return { statusCode: HttpStatus.OK, message: '추적 상품 삭제 성공' };
     }
 
-    @ApiOperation({ summary: 'smartStore가 추가된 추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
+    @ApiOperation({ summary: 'SmartStore가 추가된 추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
     @ApiOkResponse({ type: DeleteProductSuccess, description: '추적 상품 삭제 성공' })
     @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
@@ -224,7 +224,7 @@ export class ProductController {
     }
 
     @ApiOperation({
-        summary: 'smartStore가 추가된 추적 상품 알림 설정 API',
+        summary: 'SmartStore가 추가된 추적 상품 알림 설정 API',
         description: '추적 상품에 대한 알림을 설정한다.',
     })
     @ApiOkResponse({ type: ToggleAlertSuccess, description: '알림 설정 성공' })
