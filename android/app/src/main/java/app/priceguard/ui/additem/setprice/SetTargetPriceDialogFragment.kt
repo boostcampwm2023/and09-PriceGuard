@@ -2,6 +2,9 @@ package app.priceguard.ui.additem.setprice
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -23,15 +26,7 @@ class SetTargetPriceDialogFragment : DialogFragment() {
         _binding = FragmentTargetPriceDialogBinding.inflate(requireActivity().layoutInflater)
         val view = binding.root
 
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-
-        initListener()
-
         val title = arguments?.getString("title") ?: ""
-        val price = arguments?.getInt("price") ?: 0
-
-        viewModel.updateTargetPrice(price.toLong())
 
         val dialogBuilder = MaterialAlertDialogBuilder(
             requireActivity(),
@@ -59,6 +54,24 @@ class SetTargetPriceDialogFragment : DialogFragment() {
         }
 
         return dialog
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        initListener()
+
+        val price = arguments?.getInt("price") ?: 0
+        viewModel.updateTargetPrice(price.toLong())
+
+        return binding.root
     }
 
     override fun onDestroyView() {

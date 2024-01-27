@@ -197,9 +197,9 @@ class RoundSlider @JvmOverloads constructor(
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     isTouchedOnSlideBar = isTouchOnSlideBar(event.x, event.y)
-                    if(!isTouchedOnSlideBar) {
+                    if (!isTouchedOnSlideBar) {
                         parent.requestDisallowInterceptTouchEvent(false)
-                    } else{
+                    } else {
                         parent.requestDisallowInterceptTouchEvent(true)
                     }
                 }
