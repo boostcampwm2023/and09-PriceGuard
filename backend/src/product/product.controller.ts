@@ -141,7 +141,7 @@ export class ProductController {
         const productDetails = await this.productService.getProductDetails(req.user.id, productCode);
         return {
             statusCode: HttpStatus.OK,
-            message: '상품 URL 검증 성공',
+            message: '상품 상세 정보 조회 성공',
             productCode,
             ...productDetails,
         };
@@ -152,6 +152,7 @@ export class ProductController {
     @ApiNotFoundResponse({ type: ProductDetailsNotFound, description: '상품 정보가 존재하지 않습니다.' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @Get(':shop/:productCode')
+    @Version('1')
     async getProductDetailsV1(
         @Req() req: Request & { user: User },
         @Param('shop') shop: string,
@@ -160,7 +161,7 @@ export class ProductController {
         const productDetails = await this.productService.getProductDetailsV1(req.user.id, shop, productCode);
         return {
             statusCode: HttpStatus.OK,
-            message: '상품 URL 검증 성공',
+            message: '상품 상세 정보 조회 성공',
             productCode,
             ...productDetails,
         };
@@ -176,6 +177,17 @@ export class ProductController {
         return { statusCode: HttpStatus.OK, message: '목표 가격 수정 성공' };
     }
 
+    @ApiOperation({ summary: 'smartStore가 추가된 상품 목표 가격 수정 API', description: '상품 목표 가격을 수정한다.' })
+    @ApiOkResponse({ type: UpdateTargetPriceSuccess, description: '상품 목표 가격 수정 성공' })
+    @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @Patch('/targetPrice')
+    @Version('1')
+    async updateTargetPriceV1(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDtoV1) {
+        await this.productService.updateTargetPriceV1(req.user.id, productAddDto);
+        return { statusCode: HttpStatus.OK, message: '목표 가격 수정 성공' };
+    }
+
     @ApiOperation({ summary: '추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
     @ApiOkResponse({ type: DeleteProductSuccess, description: '추적 상품 삭제 성공' })
     @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
@@ -186,6 +198,21 @@ export class ProductController {
         return { statusCode: HttpStatus.OK, message: '추적 상품 삭제 성공' };
     }
 
+    @ApiOperation({ summary: 'smartStore가 추가된 추적 상품 삭제 API', description: '추적 상품을 삭제한다.' })
+    @ApiOkResponse({ type: DeleteProductSuccess, description: '추적 상품 삭제 성공' })
+    @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @Delete(':shop/:productCode')
+    @Version('1')
+    async deleteProductV1(
+        @Req() req: Request & { user: User },
+        @Param('shop') shop: string,
+        @Param('productCode') productCode: string,
+    ) {
+        await this.productService.deleteProductV1(req.user.id, shop, productCode);
+        return { statusCode: HttpStatus.OK, message: '추적 상품 삭제 성공' };
+    }
+
     @ApiOperation({ summary: '추적 상품 알림 설정 API', description: '추적 상품에 대한 알림을 설정한다.' })
     @ApiOkResponse({ type: ToggleAlertSuccess, description: '알림 설정 성공' })
     @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
@@ -193,6 +220,24 @@ export class ProductController {
     @Patch('/alert/:productCode')
     async toggleAlert(@Req() req: Request & { user: User }, @Param('productCode') productCode: string) {
         await this.productService.toggleProductAlert(req.user.id, productCode);
+        return { statusCode: HttpStatus.OK, message: '알림 설정 성공' };
+    }
+
+    @ApiOperation({
+        summary: 'smartStore가 추가된 추적 상품 알림 설정 API',
+        description: '추적 상품에 대한 알림을 설정한다.',
+    })
+    @ApiOkResponse({ type: ToggleAlertSuccess, description: '알림 설정 성공' })
+    @ApiNotFoundResponse({ type: TrackingProductsNotFound, description: '추적 상품 찾을 수 없음' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @Patch('/alert/:shop/:productCode')
+    @Version('1')
+    async toggleAlertV1(
+        @Req() req: Request & { user: User },
+        @Param('shop') shop: string,
+        @Param('productCode') productCode: string,
+    ) {
+        await this.productService.toggleProductAlertV1(req.user.id, shop, productCode);
         return { statusCode: HttpStatus.OK, message: '알림 설정 성공' };
     }
 }

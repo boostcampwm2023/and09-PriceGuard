@@ -180,7 +180,15 @@ export class ProductService {
     }
 
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
-        const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
+        const productAddDtoV1 = new ProductAddDtoV1();
+        productAddDtoV1.productCode = productAddDto.productCode;
+        productAddDtoV1.targetPrice = productAddDto.targetPrice;
+        productAddDtoV1.shop = '11번가';
+        await this.updateTargetPriceV1(userId, productAddDtoV1);
+    }
+
+    async updateTargetPriceV1(userId: string, productAddDto: ProductAddDtoV1) {
+        const product = await this.findTrackingProductByCode(userId, productAddDto.shop, productAddDto.productCode);
         product.targetPrice = productAddDto.targetPrice;
         product.isFirst = true;
         this.cacheService.updateValueTrackingProdcut(userId, product);
@@ -188,7 +196,11 @@ export class ProductService {
     }
 
     async deleteProduct(userId: string, productCode: string) {
-        const product = await this.findTrackingProductByCode(userId, productCode);
+        await this.deleteProductV1(userId, '11번가', productCode);
+    }
+
+    async deleteProductV1(userId: string, shop: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, shop, productCode);
         const currentProduct = this.cacheService.getProductRank(product.productId);
         await this.redis.zincrby('userCount', -1, product.productId);
         if (currentProduct) {
@@ -239,9 +251,9 @@ export class ProductService {
         this.cacheService.updateProductRank(currentProduct, newProductRank);
     }
 
-    async findTrackingProductByCode(userId: string, productCode: string) {
+    async findTrackingProductByCode(userId: string, shop: string, productCode: string) {
         const existProduct = await this.productRepository.findOne({
-            where: { productCode: productCode },
+            where: { productCode: productCode, shop: shop },
         });
         if (!existProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
@@ -298,7 +310,11 @@ export class ProductService {
     }
 
     async toggleProductAlert(userId: string, productCode: string) {
-        const product = await this.findTrackingProductByCode(userId, productCode);
+        await this.toggleProductAlertV1(userId, '11번가', productCode);
+    }
+
+    async toggleProductAlertV1(userId: string, shop: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, shop, productCode);
         product.isAlert = !product.isAlert;
         await this.trackingProductRepository.save(product);
         this.cacheService.updateValueTrackingProdcut(userId, product);
