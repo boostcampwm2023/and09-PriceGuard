@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundSlider">
+        <attr name="colorPrimary" format="color" />
+        <attr name="colorOnPrimaryContainer" format="color" />
+        <attr name="colorSurfaceVariant" format="color" />
+        <attr name="colorError" format="color" />
+    </declare-styleable>
+</resources>
