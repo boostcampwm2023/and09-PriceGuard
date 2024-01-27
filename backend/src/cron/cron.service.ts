@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
 import { TrackingProductRepository } from '../product/trackingProduct.repository';
 import { ProductRepository } from '../product/product.repository';
-import { getProductInfo11st } from 'src/utils/openapi.11st';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
@@ -14,6 +13,7 @@ import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
+import { getProductInfo } from 'src/utils/product.info';
 
 @Injectable()
 export class CronService {
@@ -32,9 +32,14 @@ export class CronService {
 
     @Cron('0 */10 * * * *')
     async cyclicPriceChecker() {
-        const totalProducts = await this.productRepository.find({ select: { id: true, productCode: true } });
+        const totalProducts = await this.productRepository.find({
+            select: { id: true, productCode: true, shop: true },
+        });
         const recentProductInfo = await Promise.all(
-            totalProducts.map(({ productCode, id }) => getProductInfo11st(productCode, id)),
+            totalProducts.map(async ({ productCode, id, shop }) => {
+                const productInfo = await getProductInfo(shop, productCode);
+                return { ...productInfo, id };
+            }),
         );
         const productList = recentProductInfo.map((data) => `product:${data.productId}`);
         const cacheData = await this.redis.mget(productList); // redis 접근 횟수 줄이기 위한 임시 방편
