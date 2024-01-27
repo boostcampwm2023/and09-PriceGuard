@@ -6,7 +6,6 @@ import { TrackingProductDto } from 'src/dto/product.tracking.dto';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
 import { TrackingProductRepository } from './trackingProduct.repository';
 import { ProductRepository } from './product.repository';
-import { getProductInfo11st } from 'src/utils/openapi.11st';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
@@ -17,7 +16,7 @@ import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { CacheService } from 'src/cache/cache.service';
-import { getProductInfoByBrandSmartStore } from 'src/utils/naver.smartstore';
+import { getProductInfo } from 'src/utils/product.info';
 
 @Injectable()
 export class ProductService {
@@ -37,14 +36,14 @@ export class ProductService {
         let matchList = null;
         if ((matchList = productUrl.match(REGEX_SHOP['11ST']))) {
             const productCode = matchList[1];
-            return await getProductInfo11st(productCode);
+            return await getProductInfo('11번가', productCode);
         }
         if (
             (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
             (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
         ) {
             const productCode = matchList[1];
-            return await getProductInfoByBrandSmartStore(productCode);
+            return await getProductInfo('SmartStore', productCode);
         }
         throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
     }
@@ -290,7 +289,7 @@ export class ProductService {
     }
 
     async firstAddProduct(shop: string, productCode: string) {
-        const productInfo = await this.getProductInfo(shop, productCode);
+        const productInfo = await getProductInfo(shop, productCode);
         const product = await this.productRepository.saveProduct(productInfo);
         const updatedDataInfo = {
             productId: product.id,
@@ -346,15 +345,5 @@ export class ProductService {
             .exec();
         const { price, lowestPrice } = latestData[0];
         return { price, lowestPrice };
-    }
-
-    private async getProductInfo(shop: string, productCode: string): Promise<ProductInfoDto> {
-        if (shop === '11번가') {
-            return await getProductInfo11st(productCode);
-        }
-        if (shop === 'smartStore') {
-            return await getProductInfoByBrandSmartStore(productCode);
-        }
-        throw new HttpException('존재하지 않는 상품입니다.', HttpStatus.BAD_REQUEST);
     }
 }
