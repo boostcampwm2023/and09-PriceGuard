@@ -192,6 +192,67 @@ class RoundSlider @JvmOverloads constructor(
         drawSlideValueText(canvas)
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isTouchedOnSlideBar = isTouchOnSlideBar(event.x, event.y)
+                    parent.requestDisallowInterceptTouchEvent(true)
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    if (!isTouchedOnSlideBar) return true
+
+                    if (event.y > slideBarPointY) { // 드래그 좌표가 슬라이더를 벗어난 경우 value를 x좌표에 맞게 최소 or 최대 값으로 설정
+                        if (isDraggingOnSlider) {
+                            isDraggingOnSlider = false
+                            currentRad = if (event.x >= slideBarPointX) 0.0 else pi
+                        }
+                    } else {
+                        isDraggingOnSlider = true
+                        updateRadianWithTouchPoint(event.x, event.y)
+                    }
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    parent.requestDisallowInterceptTouchEvent(false)
+                    isDraggingOnSlider = false
+                }
+            }
+        }
+        return true
+    }
+
+    fun setValue(value: Int) {
+        currentRad = (180 / maxPercentValue.toDouble() * (maxPercentValue - value)).toRadian()
+        sliderValue = value
+    }
+
+    fun setMaxPercentValue(value: Int) {
+        maxPercentValue = value
+        invalidate()
+    }
+
+    fun setHighlightRange(startValue: Int, endValue: Int) {
+        startDegree = (180F / maxPercentValue * startValue) + 180
+        endDegree = (180F / maxPercentValue * endValue) + 180
+        invalidate()
+    }
+
+    fun setSliderValueChangeListener(listener: SliderValueChangeListener) {
+        sliderValueChangeListener = listener
+    }
+
+    fun setSliderMode(mode: RoundSliderState) {
+        sliderMode = mode
+    }
+
+    fun setStepSize(step: Int) {
+        if (maxPercentValue.mod(step) != 0) return
+        sliderValueStepSize = step
+        invalidate()
+    }
+
     private fun drawSlideBar(canvas: Canvas) {
         slideBarPaint.style = Paint.Style.STROKE
         slideBarPaint.strokeWidth = slideBarStrokeWidth
@@ -284,37 +345,6 @@ class RoundSlider @JvmOverloads constructor(
         )
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null) {
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    isTouchedOnSlideBar = isTouchOnSlideBar(event.x, event.y)
-                    parent.requestDisallowInterceptTouchEvent(true)
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-                    if (!isTouchedOnSlideBar) return true
-
-                    if (event.y > slideBarPointY) { // 드래그 좌표가 슬라이더를 벗어난 경우 value를 x좌표에 맞게 최소 or 최대 값으로 설정
-                        if (isDraggingOnSlider) {
-                            isDraggingOnSlider = false
-                            currentRad = if (event.x >= slideBarPointX) 0.0 else pi
-                        }
-                    } else {
-                        isDraggingOnSlider = true
-                        updateRadianWithTouchPoint(event.x, event.y)
-                    }
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    parent.requestDisallowInterceptTouchEvent(false)
-                    isDraggingOnSlider = false
-                }
-            }
-        }
-        return true
-    }
-
     private fun isTouchOnSlideBar(x: Float, y: Float): Boolean {
         val deltaX = abs(slideBarPointX - x)
         val deltaY = abs(slideBarPointY - y)
@@ -371,41 +401,6 @@ class RoundSlider @JvmOverloads constructor(
             prevDifference = difference
         }
         return 0.0
-    }
-
-    fun setValue(value: Int) {
-        currentRad = (180 / maxPercentValue.toDouble() * (maxPercentValue - value)).toRadian()
-        sliderValue = value
-    }
-
-    fun setSliderStrokeWidth(value: Int) {
-        slideBarStrokeWidth = Dp(value.toFloat()).toPx(context).value
-        invalidate()
-    }
-
-    fun setMaxPercentValue(value: Int) {
-        maxPercentValue = value
-        invalidate()
-    }
-
-    fun setHighlightRange(startValue: Int, endValue: Int) {
-        startDegree = (180F / maxPercentValue * startValue) + 180
-        endDegree = (180F / maxPercentValue * endValue) + 180
-        invalidate()
-    }
-
-    fun setSliderValueChangeListener(listener: SliderValueChangeListener) {
-        sliderValueChangeListener = listener
-    }
-
-    fun setSliderMode(mode: RoundSliderState) {
-        sliderMode = mode
-    }
-
-    fun setStepSize(step: Int) {
-        if (maxPercentValue.mod(step) != 0) return
-        sliderValueStepSize = step
-        invalidate()
     }
 
     private fun handleValueChangeEvent(value: Int) {
