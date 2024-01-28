@@ -11,12 +11,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, REGEX_SHOP, THIRTY_DAYS } from 'src/constants';
+import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { CacheService } from 'src/cache/cache.service';
-import { getProductInfo } from 'src/utils/product.info';
+import { getProductInfo, identifyProductByUrl } from 'src/utils/product.info';
 
 @Injectable()
 export class ProductService {
@@ -33,19 +33,8 @@ export class ProductService {
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
-        let matchList = null;
-        if ((matchList = productUrl.match(REGEX_SHOP['11ST']))) {
-            const productCode = matchList[1];
-            return await getProductInfo('11번가', productCode);
-        }
-        if (
-            (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
-            (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
-        ) {
-            const productCode = matchList[1];
-            return await getProductInfo('SmartStore', productCode);
-        }
-        throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
+        const { shop, productCode } = identifyProductByUrl(productUrl);
+        return await getProductInfo(shop, productCode);
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {

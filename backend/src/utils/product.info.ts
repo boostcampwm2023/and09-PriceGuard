@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
-import { BASE_URL_11ST, BROWSER_VERSION_20, OPEN_API_KEY_11ST } from 'src/constants';
+import { BASE_URL_11ST, BROWSER_VERSION_20, OPEN_API_KEY_11ST, REGEX_SHOP } from 'src/constants';
 import { JSDOM } from 'jsdom';
 import * as convert from 'xml-js';
 import * as iconv from 'iconv-lite';
 import axios from 'axios';
 import * as randomUseragent from 'random-useragent';
+import { ProductIdentifierDto } from 'src/dto/product.identifier';
 
 export async function getProductInfo(shop: string, productCode: string): Promise<ProductInfoDto> {
     if (shop === '11번가') {
@@ -121,4 +122,18 @@ export function createUrl(shop: string, productCode: string) {
     if (shop === 'SmartStore') {
         return `https://smartstore.naver.com/main/products/${productCode}`;
     }
+}
+
+export function identifyProductByUrl(productUrl: string): ProductIdentifierDto {
+    let matchList = null;
+    if ((matchList = productUrl.match(REGEX_SHOP['11ST']))) {
+        return { shop: '11번가', productCode: matchList[1] };
+    }
+    if (
+        (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
+        (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
+    ) {
+        return { shop: 'SmartStore', productCode: matchList[1] };
+    }
+    throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
 }
