@@ -1,12 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductUrlDto } from '../dto/product.url.dto';
-import { ProductAddDto } from '../dto/product.add.dto';
+import { ProductAddDto, ProductAddDtoV1 } from '../dto/product.add.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackingProductDto } from 'src/dto/product.tracking.dto';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
 import { TrackingProductRepository } from './trackingProduct.repository';
 import { ProductRepository } from './product.repository';
-import { getProductInfo11st } from 'src/utils/openapi.11st';
 import { ProductDetailsDto } from 'src/dto/product.details.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
@@ -17,9 +16,8 @@ import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { CacheService } from 'src/cache/cache.service';
+import { getProductInfo, identifyProductByUrl } from 'src/utils/product.info';
 
-const REGEXP_11ST =
-    /http[s]?:\/\/(?:www\.|m\.)?11st\.co\.kr\/products\/(?:ma\/|m\/|pa\/)?([1-9]\d*)(?:\?.*)?(?:\/share)?/;
 @Injectable()
 export class ProductService {
     constructor(
@@ -35,20 +33,24 @@ export class ProductService {
 
     async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
-        const matchList = productUrl.match(REGEXP_11ST);
-        if (!matchList) {
-            throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
-        }
-        const productCode = matchList[1];
-        return await getProductInfo11st(productCode);
+        const { shop, productCode } = identifyProductByUrl(productUrl);
+        return await getProductInfo(shop, productCode);
     }
 
     async addProduct(userId: string, productAddDto: ProductAddDto) {
-        const { productCode, targetPrice } = productAddDto;
+        const productAddDtoV1 = new ProductAddDtoV1();
+        productAddDtoV1.productCode = productAddDto.productCode;
+        productAddDtoV1.targetPrice = productAddDto.targetPrice;
+        productAddDtoV1.shop = '11번가';
+        await this.addProductV1(userId, productAddDtoV1);
+    }
+
+    async addProductV1(userId: string, productAddDto: ProductAddDtoV1) {
+        const { shop, productCode, targetPrice } = productAddDto;
         const existProduct = await this.productRepository.findOne({
-            where: { productCode: productCode },
+            where: { productCode: productCode, shop: shop },
         });
-        const product = existProduct ?? (await this.firstAddProduct(productCode));
+        const product = existProduct ?? (await this.firstAddProduct(shop, productCode));
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { productId: product.id, userId: userId },
         });
@@ -133,6 +135,16 @@ export class ProductService {
         if (!selectProduct) {
             throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
         }
+        return await this.getProductDetailsV1(userId, '11번가', productCode);
+    }
+
+    async getProductDetailsV1(userId: string, shop: string, productCode: string): Promise<ProductDetailsDto> {
+        const selectProduct = await this.productRepository.findOne({
+            where: { productCode: productCode, shop: shop },
+        });
+        if (!selectProduct) {
+            throw new HttpException('상품 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+        }
         const trackingProduct = await this.trackingProductRepository.findOne({
             where: { userId: userId, productId: selectProduct.id },
         });
@@ -156,7 +168,15 @@ export class ProductService {
     }
 
     async updateTargetPrice(userId: string, productAddDto: ProductAddDto) {
-        const product = await this.findTrackingProductByCode(userId, productAddDto.productCode);
+        const productAddDtoV1 = new ProductAddDtoV1();
+        productAddDtoV1.productCode = productAddDto.productCode;
+        productAddDtoV1.targetPrice = productAddDto.targetPrice;
+        productAddDtoV1.shop = '11번가';
+        await this.updateTargetPriceV1(userId, productAddDtoV1);
+    }
+
+    async updateTargetPriceV1(userId: string, productAddDto: ProductAddDtoV1) {
+        const product = await this.findTrackingProductByCode(userId, productAddDto.shop, productAddDto.productCode);
         product.targetPrice = productAddDto.targetPrice;
         product.isFirst = true;
         this.cacheService.updateValueTrackingProdcut(userId, product);
@@ -164,7 +184,11 @@ export class ProductService {
     }
 
     async deleteProduct(userId: string, productCode: string) {
-        const product = await this.findTrackingProductByCode(userId, productCode);
+        await this.deleteProductV1(userId, '11번가', productCode);
+    }
+
+    async deleteProductV1(userId: string, shop: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, shop, productCode);
         const currentProduct = this.cacheService.getProductRank(product.productId);
         await this.redis.zincrby('userCount', -1, product.productId);
         if (currentProduct) {
@@ -215,9 +239,9 @@ export class ProductService {
         this.cacheService.updateProductRank(currentProduct, newProductRank);
     }
 
-    async findTrackingProductByCode(userId: string, productCode: string) {
+    async findTrackingProductByCode(userId: string, shop: string, productCode: string) {
         const existProduct = await this.productRepository.findOne({
-            where: { productCode: productCode },
+            where: { productCode: productCode, shop: shop },
         });
         if (!existProduct) {
             throw new HttpException('상품을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
@@ -253,8 +277,8 @@ export class ProductService {
         });
     }
 
-    async firstAddProduct(productCode: string) {
-        const productInfo = await getProductInfo11st(productCode);
+    async firstAddProduct(shop: string, productCode: string) {
+        const productInfo = await getProductInfo(shop, productCode);
         const product = await this.productRepository.saveProduct(productInfo);
         const updatedDataInfo = {
             productId: product.id,
@@ -274,7 +298,11 @@ export class ProductService {
     }
 
     async toggleProductAlert(userId: string, productCode: string) {
-        const product = await this.findTrackingProductByCode(userId, productCode);
+        await this.toggleProductAlertV1(userId, '11번가', productCode);
+    }
+
+    async toggleProductAlertV1(userId: string, shop: string, productCode: string) {
+        const product = await this.findTrackingProductByCode(userId, shop, productCode);
         product.isAlert = !product.isAlert;
         await this.trackingProductRepository.save(product);
         this.cacheService.updateValueTrackingProdcut(userId, product);
