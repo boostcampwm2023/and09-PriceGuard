@@ -38,7 +38,7 @@ export class CronService {
         const recentProductInfo = await Promise.all(
             totalProducts.map(async ({ productCode, id, shop }) => {
                 const productInfo = await getProductInfo(shop, productCode);
-                return { ...productInfo, id };
+                return { ...productInfo, productId: id };
             }),
         );
         const productList = recentProductInfo.map((data) => `product:${data.productId}`);
