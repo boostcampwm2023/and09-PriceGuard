@@ -70,7 +70,14 @@ class RecommendedProductFragment : Fragment() {
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.recommendedProductList.collect { list ->
-                adapter.submitList(list)
+                if (list.isEmpty()) {
+                    binding.loadingLayoutRecommendedProduct.visibility = View.VISIBLE
+                    binding.rvRecommendedProduct.visibility = View.GONE
+                } else {
+                    binding.loadingLayoutRecommendedProduct.visibility = View.GONE
+                    binding.rvRecommendedProduct.visibility = View.VISIBLE
+                    adapter.submitList(list)
+                }
             }
         }
     }

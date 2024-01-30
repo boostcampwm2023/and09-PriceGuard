@@ -80,7 +80,14 @@ class ProductListFragment : Fragment() {
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.productList.collect { list ->
-                adapter.submitList(list)
+                if (list.isEmpty()) {
+                    binding.loadingLayoutProductList.visibility = View.VISIBLE
+                    binding.rvProductList.visibility = View.GONE
+                } else {
+                    binding.loadingLayoutProductList.visibility = View.GONE
+                    binding.rvProductList.visibility = View.VISIBLE
+                    adapter.submitList(list)
+                }
             }
         }
     }
