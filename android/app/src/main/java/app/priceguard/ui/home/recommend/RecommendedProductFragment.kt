@@ -14,9 +14,12 @@ import app.priceguard.databinding.FragmentRecommendedProductBinding
 import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
+import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showDialogWithAction
 import app.priceguard.ui.util.showDialogWithLogout
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,6 +33,8 @@ class RecommendedProductFragment : Fragment() {
     private val binding get() = _binding!!
     private val recommendedProductViewModel: RecommendedProductViewModel by viewModels()
 
+    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,6 +46,7 @@ class RecommendedProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        circularProgressIndicator = getCircularProgressIndicatorDrawable(view.context, R.style.Theme_PriceGuard_CircularProgressLoading)
         binding.viewModel = recommendedProductViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initSettingAdapter()
@@ -51,6 +57,11 @@ class RecommendedProductFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         recommendedProductViewModel.getRecommendedProductList(false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        circularProgressIndicator.stop()
     }
 
     private fun FragmentRecommendedProductBinding.initSettingAdapter() {
@@ -72,6 +83,7 @@ class RecommendedProductFragment : Fragment() {
             recommendedProductViewModel.recommendedProductList.collect { list ->
                 if (list.isEmpty()) {
                     binding.loadingLayoutRecommendedProduct.visibility = View.VISIBLE
+                    binding.loadingSpinnerRecommendedProduct.setImageDrawable(circularProgressIndicator)
                     binding.rvRecommendedProduct.visibility = View.GONE
                 } else {
                     binding.loadingLayoutRecommendedProduct.visibility = View.GONE
