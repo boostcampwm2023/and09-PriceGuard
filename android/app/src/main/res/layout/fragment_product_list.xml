@@ -73,7 +73,6 @@
                     android:id="@+id/loading_spinner_product_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:accessibilityTraversalAfter="@id/ctl_product_list"
                     android:indeterminate="true"
                     android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -85,6 +84,7 @@
                     android:id="@+id/no_product_product_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:accessibilityTraversalAfter="@id/ctl_product_list"
                     android:text="@string/product_list_no_product"
                     android:textAlignment="center"
                     android:visibility="@{viewModel.state.updated ? View.VISIBLE : View.GONE}"
@@ -92,6 +92,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
