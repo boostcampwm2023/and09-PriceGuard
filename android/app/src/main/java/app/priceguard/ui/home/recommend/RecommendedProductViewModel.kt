@@ -24,14 +24,14 @@ class RecommendedProductViewModel @Inject constructor(
     private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
-    data class State(
+    data class RecommendedProductState(
         val isRefreshing: Boolean = false,
         val isUpdated: Boolean = false,
         val recommendedList: List<RecommendedProductSummary> = listOf()
     )
 
-    private var _state: MutableStateFlow<State> = MutableStateFlow(State())
-    val state: StateFlow<State> = _state.asStateFlow()
+    private var _state: MutableStateFlow<RecommendedProductState> = MutableStateFlow(RecommendedProductState())
+    val state: StateFlow<RecommendedProductState> = _state.asStateFlow()
 
     private var _events = MutableSharedFlow<ProductErrorState>()
     val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
