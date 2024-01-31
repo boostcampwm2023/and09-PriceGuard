@@ -68,6 +68,7 @@
                     android:id="@+id/loading_spinner_product_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:accessibilityTraversalAfter="@id/abl_product_list"
                     android:indeterminate="true"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
