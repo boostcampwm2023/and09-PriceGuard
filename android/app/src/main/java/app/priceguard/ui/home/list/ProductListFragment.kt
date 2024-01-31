@@ -89,15 +89,22 @@ class ProductListFragment : Fragment() {
         val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.userDiffUtil)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
-            productListViewModel.productList.collect { list ->
-                if (list.isEmpty()) {
+            productListViewModel.state.collect { state ->
+                if (state.productList.isEmpty()) {
                     binding.loadingLayoutProductList.visibility = View.VISIBLE
-                    binding.loadingSpinnerProductList.setImageDrawable(circularProgressIndicator)
                     binding.rvProductList.visibility = View.GONE
+                    if (state.isUpdated) {
+                        binding.noProductProductList.visibility = View.VISIBLE
+                        binding.loadingSpinnerProductList.visibility = View.GONE
+                    } else {
+                        binding.noProductProductList.visibility = View.GONE
+                        binding.loadingSpinnerProductList.visibility = View.VISIBLE
+                        binding.loadingSpinnerProductList.setImageDrawable(circularProgressIndicator)
+                    }
                 } else {
                     binding.loadingLayoutProductList.visibility = View.GONE
                     binding.rvProductList.visibility = View.VISIBLE
-                    adapter.submitList(list)
+                    adapter.submitList(state.productList)
                 }
             }
         }

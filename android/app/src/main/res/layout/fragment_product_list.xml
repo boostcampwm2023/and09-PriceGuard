@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:onRefreshListener="@{() -> viewModel.getProductList(true)}"
-        app:refreshing="@{viewModel.isRefreshing}">
+        app:refreshing="@{viewModel.state.refreshing}">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/cl_product_list"
@@ -62,14 +62,26 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/loading_layout_product_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+                android:layout_height="match_parent">
 
                 <ImageView
                     android:id="@+id/loading_spinner_product_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/loading_animation"
                     android:src="@drawable/ic_refresh"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/no_product_product_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/product_list_no_product"
+                    android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
