@@ -40,8 +40,9 @@ class RecommendedProductViewModel @Inject constructor(
         viewModelScope.launch {
             if (isRefresh) {
                 _state.value = _state.value.copy(isRefreshing = true)
+            } else {
+                _state.value = _state.value.copy(isUpdated = false)
             }
-            _state.value = _state.value.copy(isUpdated = false)
             val result = productRepository.getRecommendedProductList()
 
             _state.value = _state.value.copy(isRefreshing = false)
@@ -66,6 +67,7 @@ class RecommendedProductViewModel @Inject constructor(
                     _events.emit(result.errorState)
                 }
             }
+            _state.value = _state.value.copy(isUpdated = true)
         }
     }
 }

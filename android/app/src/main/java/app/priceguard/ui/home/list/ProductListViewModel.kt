@@ -42,8 +42,9 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             if (isRefresh) {
                 _state.value = _state.value.copy(isRefreshing = true)
+            } else {
+                _state.value = _state.value.copy(isUpdated = false)
             }
-            _state.value = _state.value.copy(isUpdated = false)
             val result = productRepository.getProductList()
 
             _state.value = _state.value.copy(isRefreshing = false)
