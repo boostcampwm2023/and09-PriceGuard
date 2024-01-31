@@ -87,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/product_list_no_product"
                     android:textAlignment="center"
-                    android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{viewModel.state.updated ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
