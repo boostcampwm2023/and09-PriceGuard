@@ -17,12 +17,9 @@ import app.priceguard.ui.additem.AddItemActivity
 import app.priceguard.ui.detail.DetailActivity
 import app.priceguard.ui.home.ProductSummaryAdapter
 import app.priceguard.ui.home.ProductSummaryClickListener
-import app.priceguard.ui.util.drawable.getCircularProgressIndicatorDrawable
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.showDialogWithAction
 import app.priceguard.ui.util.showDialogWithLogout
-import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
-import com.google.android.material.progressindicator.IndeterminateDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,7 +34,6 @@ class ProductListFragment : Fragment() {
     private val productListViewModel: ProductListViewModel by viewModels()
 
     private var workRequestSet: MutableSet<String> = mutableSetOf()
-    private lateinit var circularProgressIndicator: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +46,6 @@ class ProductListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        circularProgressIndicator = getCircularProgressIndicatorDrawable(view.context, R.style.Theme_PriceGuard_CircularProgressLoading)
         binding.viewModel = productListViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initSettingAdapter()
@@ -61,11 +56,6 @@ class ProductListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         productListViewModel.getProductList(false)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        circularProgressIndicator.stop()
     }
 
     private fun FragmentProductListBinding.initSettingAdapter() {
@@ -99,7 +89,6 @@ class ProductListFragment : Fragment() {
                     } else {
                         binding.noProductProductList.visibility = View.GONE
                         binding.loadingSpinnerProductList.visibility = View.VISIBLE
-                        binding.loadingSpinnerProductList.setImageDrawable(circularProgressIndicator)
                     }
                 } else {
                     binding.loadingLayoutProductList.visibility = View.GONE
