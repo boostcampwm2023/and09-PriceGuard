@@ -10,6 +10,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import app.priceguard.R
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.graph.ProductChartGridLine
@@ -166,6 +167,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
                 state.targetPrice ?: return@collect
+                state.shop ?: return@collect
                 binding.chGraphDetail.dataset = ProductChartDataset(
                     showXAxis = true,
                     showYAxis = true,
@@ -176,6 +178,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     data = state.chartData,
                     gridLines = getGridLines(state.targetPrice.toFloat())
                 )
+                binding.setShopLogoIcon(state.shop)
             }
         }
         repeatOnStarted {
@@ -247,13 +250,28 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         }
     }
 
+    private fun ActivityDetailBinding.setShopLogoIcon(shop: String) {
+        val iconDrawable = when (shop) {
+            "11번가" -> {
+                getDrawable(this@DetailActivity, R.drawable.ic_11st_logo)
+            }
+
+            "SmartStore", "BrandStore" -> {
+                getDrawable(this@DetailActivity, R.drawable.ic_naver_logo)
+            }
+
+            else -> return
+        }
+        ivDetailShoppingMallIcon.setImageDrawable(iconDrawable)
+    }
+
     private fun launchShopApplication(url: String, shop: String) {
         val redirectUrl: String = when (shop) {
             "11번가" -> {
                 "elevenst://loadurl?domain=m.11st.co.kr&url=$url&appLnkWyCd=02&domain=m.11st.co.kr&trTypeCd=null"
             }
 
-            "네이버" -> {
+            "SmartStore", "BrandStore" -> {
                 "naversearchapp://inappbrowser?url=$url&target=new&version=6"
             }
 

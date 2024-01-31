@@ -4,6 +4,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -51,6 +52,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 setViewType(item)
                 setClickListener(item.productCode)
                 setGraph(item.priceData)
+                setShopLogoIcon(item.brandType)
             }
         }
 
@@ -151,6 +153,15 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 data = data,
                 gridLines = listOf()
             )
+        }
+
+        private fun ItemProductSummaryBinding.setShopLogoIcon(shop: String) {
+            val iconDrawable = when (shop) {
+                "11번가" -> getDrawable(root.context, R.drawable.ic_11st_logo)
+                "SmartStore", "BrandStore" -> getDrawable(root.context, R.drawable.ic_naver_logo)
+                else -> return
+            }
+            ivItemIcon.setImageDrawable(iconDrawable)
         }
     }
 
