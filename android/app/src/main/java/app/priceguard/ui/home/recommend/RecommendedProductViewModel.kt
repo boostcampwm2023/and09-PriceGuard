@@ -24,13 +24,14 @@ class RecommendedProductViewModel @Inject constructor(
     private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
-    private var _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+    data class State(
+        val isRefreshing: Boolean = false,
+        val isUpdated: Boolean = false,
+        val recommendedList: List<RecommendedProductSummary> = listOf()
+    )
 
-    private var _recommendedProductList =
-        MutableStateFlow<List<RecommendedProductSummary>>(listOf())
-    val recommendedProductList: StateFlow<List<RecommendedProductSummary>> =
-        _recommendedProductList.asStateFlow()
+    private var _state: MutableStateFlow<State> = MutableStateFlow(State())
+    val state: StateFlow<State> = _state.asStateFlow()
 
     private var _events = MutableSharedFlow<ProductErrorState>()
     val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
@@ -38,24 +39,27 @@ class RecommendedProductViewModel @Inject constructor(
     fun getRecommendedProductList(isRefresh: Boolean) {
         viewModelScope.launch {
             if (isRefresh) {
-                _isRefreshing.value = true
+                _state.value = _state.value.copy(isRefreshing = true)
             }
-
+            _state.value = _state.value.copy(isUpdated = false)
             val result = productRepository.getRecommendedProductList()
-            _isRefreshing.value = false
+
+            _state.value = _state.value.copy(isRefreshing = false)
 
             when (result) {
                 is RepositoryResult.Success -> {
-                    _recommendedProductList.value = result.data.map { data ->
-                        RecommendedProductSummary(
-                            data.shop,
-                            data.productName,
-                            data.price,
-                            data.productCode,
-                            graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
-                            data.rank
-                        )
-                    }
+                    _state.value = _state.value.copy(
+                        recommendedList = result.data.map { data ->
+                            RecommendedProductSummary(
+                                data.shop,
+                                data.productName,
+                                data.price,
+                                data.productCode,
+                                graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
+                                data.rank
+                            )
+                        }
+                    )
                 }
 
                 is RepositoryResult.Error -> {

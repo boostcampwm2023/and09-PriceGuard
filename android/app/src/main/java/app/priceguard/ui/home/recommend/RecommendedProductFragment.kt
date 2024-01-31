@@ -80,15 +80,22 @@ class RecommendedProductFragment : Fragment() {
         val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.diffUtil)
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
-            recommendedProductViewModel.recommendedProductList.collect { list ->
-                if (list.isEmpty()) {
+            recommendedProductViewModel.state.collect { state ->
+                if (state.recommendedList.isEmpty()) {
                     binding.loadingLayoutRecommendedProduct.visibility = View.VISIBLE
-                    binding.loadingSpinnerRecommendedProduct.setImageDrawable(circularProgressIndicator)
                     binding.rvRecommendedProduct.visibility = View.GONE
+                    if (state.isUpdated) {
+                        binding.noProductRecommendedProduct.visibility = View.VISIBLE
+                        binding.loadingSpinnerRecommendedProduct.visibility = View.GONE
+                    } else {
+                        binding.noProductRecommendedProduct.visibility = View.GONE
+                        binding.loadingSpinnerRecommendedProduct.visibility = View.VISIBLE
+                        binding.loadingSpinnerRecommendedProduct.setImageDrawable(circularProgressIndicator)
+                    }
                 } else {
                     binding.loadingLayoutRecommendedProduct.visibility = View.GONE
                     binding.rvRecommendedProduct.visibility = View.VISIBLE
-                    adapter.submitList(list)
+                    adapter.submitList(state.recommendedList)
                 }
             }
         }
