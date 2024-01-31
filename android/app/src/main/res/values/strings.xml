@@ -147,4 +147,6 @@
  \n</string>
     <string name="delete_account_activity_title">회원 정보를 확인하기 위해\n비밀번호를 입력해 주세요</string>
     <string name="success_delete_account">정상적으로 회원 탈퇴 되었습니다.</string>
+    <string name="product_list_no_product">상품이 없습니다!\n 상품을 추가해주세요.</string>
+    <string name="recommended_product_no_product">추천 상품이 준비중입니다.</string>
 </resources>

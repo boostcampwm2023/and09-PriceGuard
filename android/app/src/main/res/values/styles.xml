@@ -10,6 +10,10 @@
         <item name="indicatorColor">?attr/colorOnPrimary</item>
     </style>
 
+    <style name="Theme.PriceGuard.CircularProgressLoading" parent="Widget.Material3.CircularProgressIndicator.Medium">
+        <item name="indicatorColor">?attr/colorPrimary</item>
+    </style>
+
     <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
         <item name="shapeAppearance">@style/ShapeAppearance.App.MediumComponent</item>
         <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
