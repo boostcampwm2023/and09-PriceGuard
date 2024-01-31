@@ -200,7 +200,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.OpenShoppingMall -> {
-                        launchShopApplication(event.url,event.shop)
+                        launchShopApplication(event.url, event.shop)
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
@@ -248,11 +248,11 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     private fun launchShopApplication(url: String, shop: String) {
         val redirectUrl: String = when (shop) {
             "11번가" -> {
-                "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${url}"
+                "elevenst://loadurl?domain=m.11st.co.kr&url=$url&appLnkWyCd=02&domain=m.11st.co.kr&trTypeCd=null"
             }
 
             "네이버" -> {
-                "naversearchapp://inappbrowser?url=${url}&target=new&version=6"
+                "naversearchapp://inappbrowser?url=$url&target=new&version=6"
             }
 
             else -> return
