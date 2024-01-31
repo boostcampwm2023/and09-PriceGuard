@@ -70,19 +70,7 @@ class RecommendedProductFragment : Fragment() {
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
             recommendedProductViewModel.state.collect { state ->
-                if (state.recommendedList.isEmpty()) {
-                    binding.loadingLayoutRecommendedProduct.visibility = View.VISIBLE
-                    binding.rvRecommendedProduct.visibility = View.GONE
-                    if (state.isUpdated) {
-                        binding.noProductRecommendedProduct.visibility = View.VISIBLE
-                        binding.loadingSpinnerRecommendedProduct.visibility = View.GONE
-                    } else {
-                        binding.noProductRecommendedProduct.visibility = View.GONE
-                        binding.loadingSpinnerRecommendedProduct.visibility = View.VISIBLE
-                    }
-                } else {
-                    binding.loadingLayoutRecommendedProduct.visibility = View.GONE
-                    binding.rvRecommendedProduct.visibility = View.VISIBLE
+                if (state.recommendedList.isNotEmpty()) {
                     adapter.submitList(state.recommendedList)
                 }
             }

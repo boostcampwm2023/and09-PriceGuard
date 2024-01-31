@@ -80,19 +80,7 @@ class ProductListFragment : Fragment() {
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
             productListViewModel.state.collect { state ->
-                if (state.productList.isEmpty()) {
-                    binding.loadingLayoutProductList.visibility = View.VISIBLE
-                    binding.rvProductList.visibility = View.GONE
-                    if (state.isUpdated) {
-                        binding.noProductProductList.visibility = View.VISIBLE
-                        binding.loadingSpinnerProductList.visibility = View.GONE
-                    } else {
-                        binding.noProductProductList.visibility = View.GONE
-                        binding.loadingSpinnerProductList.visibility = View.VISIBLE
-                    }
-                } else {
-                    binding.loadingLayoutProductList.visibility = View.GONE
-                    binding.rvProductList.visibility = View.VISIBLE
+                if (state.productList.isNotEmpty()) {
                     adapter.submitList(state.productList)
                 }
             }

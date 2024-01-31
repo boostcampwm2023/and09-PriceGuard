@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="app.priceguard.ui.home.recommend.RecommendedProductViewModel" />
@@ -56,6 +58,7 @@
                 android:id="@+id/rv_recommended_product"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.recommendedList.empty ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_product_summary" />
@@ -63,7 +66,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/loading_layout_recommended_product"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.recommendedList.empty ? View.VISIBLE : View.GONE}">
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/loading_spinner_recommended_product"
@@ -71,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:accessibilityTraversalAfter="@id/ctl_recommended_product"
                     android:indeterminate="true"
-                    android:visibility="gone"
+                    android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/recommended_product_no_product"
                     android:textAlignment="center"
+                    android:visibility="@{viewModel.state.updated ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

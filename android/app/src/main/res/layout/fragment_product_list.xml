@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="app.priceguard.ui.home.list.ProductListViewModel" />
@@ -56,6 +58,7 @@
                 android:id="@+id/rv_product_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.productList.empty ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_product_summary" />
@@ -63,7 +66,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/loading_layout_product_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.productList.empty ? View.VISIBLE : View.GONE}">
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/loading_spinner_product_list"
@@ -71,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:accessibilityTraversalAfter="@id/ctl_product_list"
                     android:indeterminate="true"
-                    android:visibility="gone"
+                    android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/product_list_no_product"
                     android:textAlignment="center"
+                    android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
