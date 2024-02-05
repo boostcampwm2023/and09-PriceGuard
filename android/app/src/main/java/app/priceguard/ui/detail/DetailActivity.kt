@@ -143,17 +143,8 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         val productShop = intent.getStringExtra("productShop")
         val productCode = intent.getStringExtra("productCode")
         val deepLink = intent.data
+        val productShopFromDeepLink = deepLink?.getQueryParameter("store")
         val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
-        // TODO: 딥링크 shop 추가하기
-
-        if (productCode == null && productCodeFromDeepLink == null) {
-            showConfirmDialog(
-                getString(R.string.error),
-                getString(R.string.invalid_access),
-                DialogConfirmAction.FINISH
-            )
-            return
-        }
 
         if (productShop != null && productCode != null) {
             productDetailViewModel.productShop = productShop
@@ -162,10 +153,19 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             return
         }
 
-        productCodeFromDeepLink?.let { code ->
-            productDetailViewModel.productCode = code
+        if (productShopFromDeepLink != null && productCodeFromDeepLink != null) {
+            productDetailViewModel.productShop = productShopFromDeepLink
+            productDetailViewModel.productCode = productCodeFromDeepLink
             productDetailViewModel.getDetails(false)
+            return
         }
+
+        // 유효하지 않은 경우
+        showConfirmDialog(
+            getString(R.string.error),
+            getString(R.string.invalid_access),
+            DialogConfirmAction.FINISH
+        )
     }
 
     private fun observeEvent() {
