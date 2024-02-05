@@ -4,6 +4,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -49,8 +50,9 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 resetListener()
                 summary = item
                 setViewType(item)
-                setClickListener(item.productCode)
+                setClickListener(item.brandType, item.productCode)
                 setGraph(item.priceData)
+                setShopLogoIcon(item.brandType)
             }
         }
 
@@ -82,7 +84,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
             updateThumbIcon(msProduct.isChecked)
 
             msProduct.setOnCheckedChangeListener { _, isChecked ->
-                productSummaryClickListener.onToggle(item.productCode, isChecked)
+                productSummaryClickListener.onToggle(item.brandType, item.productCode, isChecked)
                 updateThumbIcon(isChecked)
             }
             msProduct.contentDescription =
@@ -134,9 +136,9 @@ class ProductSummaryAdapter<T : ProductSummary>(
             )
         }
 
-        private fun ItemProductSummaryBinding.setClickListener(code: String) {
+        private fun ItemProductSummaryBinding.setClickListener(shop: String, code: String) {
             cvProduct.setOnClickListener {
-                productSummaryClickListener.onClick(code)
+                productSummaryClickListener.onClick(shop, code)
             }
         }
 
@@ -152,6 +154,15 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 gridLines = listOf()
             )
         }
+
+        private fun ItemProductSummaryBinding.setShopLogoIcon(shop: String) {
+            val iconDrawable = when (shop) {
+                "11번가" -> getDrawable(root.context, R.drawable.ic_11st_logo)
+                "SmartStore", "BrandStore" -> getDrawable(root.context, R.drawable.ic_naver_logo)
+                else -> return
+            }
+            ivItemIcon.setImageDrawable(iconDrawable)
+        }
     }
 
     companion object {
@@ -160,6 +171,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 oldItem: ProductSummary.UserProductSummary,
                 newItem: ProductSummary.UserProductSummary
             ) = oldItem.productCode == newItem.productCode &&
+                oldItem.brandType == newItem.brandType &&
                 oldItem.price == newItem.price &&
                 oldItem.discountPercent == newItem.discountPercent &&
                 oldItem.title == newItem.title
@@ -167,7 +179,8 @@ class ProductSummaryAdapter<T : ProductSummary>(
             override fun areItemsTheSame(
                 oldItem: ProductSummary.UserProductSummary,
                 newItem: ProductSummary.UserProductSummary
-            ) = oldItem.productCode == newItem.productCode
+            ) = oldItem.productCode == newItem.productCode &&
+                oldItem.brandType == newItem.brandType
         }
 
         val diffUtil =
@@ -176,7 +189,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                     oldItem == newItem
 
                 override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                    oldItem.productCode == newItem.productCode
+                    oldItem.productCode == newItem.productCode && oldItem.brandType == newItem.brandType
             }
     }
 }

@@ -33,7 +33,7 @@ class ProductListFragment : Fragment() {
     private val binding get() = _binding!!
     private val productListViewModel: ProductListViewModel by viewModels()
 
-    private var workRequestSet: MutableSet<String> = mutableSetOf()
+    private var workRequestSet: MutableSet<Pair<String, String>> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,18 +60,19 @@ class ProductListFragment : Fragment() {
 
     private fun FragmentProductListBinding.initSettingAdapter() {
         val listener = object : ProductSummaryClickListener {
-            override fun onClick(productCode: String) {
+            override fun onClick(productShop: String, productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("productShop", productShop)
                 intent.putExtra("productCode", productCode)
                 startActivity(intent)
             }
 
-            override fun onToggle(productCode: String, checked: Boolean) {
-                productListViewModel.updateProductAlarmToggle(productCode, checked)
-                if (workRequestSet.contains(productCode)) {
-                    workRequestSet.remove(productCode)
+            override fun onToggle(productShop: String, productCode: String, checked: Boolean) {
+                productListViewModel.updateProductAlarmToggle(productShop, productCode, checked)
+                if (workRequestSet.contains(Pair(productShop, productCode))) {
+                    workRequestSet.remove(Pair(productShop, productCode))
                 } else {
-                    workRequestSet.add(productCode)
+                    workRequestSet.add(Pair(productShop, productCode))
                 }
             }
         }
@@ -137,9 +138,9 @@ class ProductListFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        workRequestSet.forEach { productCode ->
+        workRequestSet.forEach { requestData ->
             WorkManager.getInstance(requireContext())
-                .enqueue(UpdateAlarmWorker.createWorkRequest(productCode))
+                .enqueue(UpdateAlarmWorker.createWorkRequest(requestData))
         }
         workRequestSet.clear()
     }

@@ -18,6 +18,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
     ViewModel() {
 
     data class SetTargetPriceState(
+        val productShop: String = "",
         val productCode: String = "",
         val targetPrice: Int = 0,
         val productName: String = "",
@@ -43,6 +44,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         viewModelScope.launch {
             _state.value = state.value.copy(isReady = false)
             val response = productRepository.addProduct(
+                _state.value.productShop,
                 _state.value.productCode,
                 _state.value.targetPrice
             )
@@ -63,6 +65,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         viewModelScope.launch {
             _state.value = state.value.copy(isReady = false)
             val response = productRepository.updateTargetPrice(
+                _state.value.productShop,
                 _state.value.productCode,
                 _state.value.targetPrice
             )
@@ -89,9 +92,10 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         )
     }
 
-    fun setProductInfo(productCode: String, name: String, price: Int, targetPrice: Int) {
+    fun setProductInfo(productShop: String, productCode: String, name: String, price: Int, targetPrice: Int) {
         _state.value =
             state.value.copy(
+                productShop = productShop,
                 productCode = productCode,
                 productName = name,
                 productPrice = price,

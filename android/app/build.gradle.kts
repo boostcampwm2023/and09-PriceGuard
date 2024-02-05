@@ -67,11 +67,11 @@ dependencies {
     // Android
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.activity:activity-ktx:1.8.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 
     // Retrofit, Serialization
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -92,7 +92,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // Navigation
-    val navVersion = "2.7.5"
+    val navVersion = "2.7.6"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
@@ -111,7 +111,7 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.1.0")
 
     // Material chart
-    implementation("app.priceguard:materialchart:0.2.1")
+    implementation("app.priceguard:materialchart:0.2.2")
 }
 
 kapt {

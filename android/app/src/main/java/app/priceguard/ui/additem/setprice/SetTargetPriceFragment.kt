@@ -67,12 +67,13 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
     private fun FragmentSetTargetPriceBinding.initView() {
         val arguments = requireArguments()
 
+        val productShop = arguments.getString("productShop") ?: ""
         val productCode = arguments.getString("productCode") ?: ""
         val title = arguments.getString("productTitle") ?: ""
         val price = arguments.getInt("productPrice")
         val targetPrice = arguments.getInt("productTargetPrice")
 
-        setTargetPriceViewModel.setProductInfo(productCode, title, price, targetPrice)
+        setTargetPriceViewModel.setProductInfo(productShop, productCode, title, price, targetPrice)
 
         tvSetPriceCurrentPrice.text =
             String.format(

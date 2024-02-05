@@ -99,7 +99,7 @@
     <string name="product_image">상품 이미지</string>
     <string name="shopping_mall_logo">쇼핑몰 로고</string>
     <string name="share_product">상품 공유하기</string>
-    <string name="share_link_template">https://share.priceguard.app/11st?code=%1$s</string>
+    <string name="share_link_template">https://share.priceguard.app/%1$s?code=%2$s</string>
     <string name="share_message_template">[PriceGuard]\n이 상품 가격 같이 확인해요!\n\n%1$s</string>
     <string name="price_notification">상품 가격 알림</string>
     <string name="currently_notification_disabled">현재 알림 설정이 비활성화되어 있습니다.</string>
@@ -118,7 +118,7 @@
     <string name="target_price_delta">현재가격은 설정한 목표가격의 %s</string>
     <string name="current_price_info">현재가격 %s</string>
     <string name="current_rank_info">인기 순위 %d위</string>
-    <string name="product_11st">11번가 상품</string>
+    <string name="product_shop">%s 상품</string>
     <string name="my_name_info">내 이름, %s</string>
     <string name="my_email_info">내 E-mail, %s</string>
     <string name="link_confirm_button">링크 확인 버튼</string>
@@ -133,6 +133,7 @@
     <string name="min_price">0</string>
     <string name="max_price">999999999</string>
     <string name="priceguard_push_alarm_title">Product Price Notification</string>
+    <string name="failed_to_open_shop">쇼핑몰 이동이 불가합니다.</string>
     <string name="notify_target_price">%s원에 알림을 받고 싶습니다.</string>
     <string name="set_target_price_dialog_title">목표 가격을 입력해 주세요</string>
     <string name="target_price_error_message_over_100_million">목표 가격은 10억을 초과할 수 없습니다.</string>
