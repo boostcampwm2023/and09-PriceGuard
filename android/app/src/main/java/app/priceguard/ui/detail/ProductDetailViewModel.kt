@@ -82,7 +82,7 @@ class ProductDetailViewModel @Inject constructor(
 
     fun getDetails(isRefresh: Boolean) {
         viewModelScope.launch {
-            if (::productCode.isInitialized.not() && _state.value.shop == null) {
+            if (::productCode.isInitialized.not() && ::productShop.isInitialized.not()) {
                 return@launch
             }
 
