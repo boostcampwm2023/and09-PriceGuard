@@ -171,6 +171,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 oldItem: ProductSummary.UserProductSummary,
                 newItem: ProductSummary.UserProductSummary
             ) = oldItem.productCode == newItem.productCode &&
+                oldItem.brandType == newItem.brandType &&
                 oldItem.price == newItem.price &&
                 oldItem.discountPercent == newItem.discountPercent &&
                 oldItem.title == newItem.title
@@ -178,7 +179,8 @@ class ProductSummaryAdapter<T : ProductSummary>(
             override fun areItemsTheSame(
                 oldItem: ProductSummary.UserProductSummary,
                 newItem: ProductSummary.UserProductSummary
-            ) = oldItem.productCode == newItem.productCode
+            ) = oldItem.productCode == newItem.productCode &&
+                oldItem.brandType == newItem.brandType
         }
 
         val diffUtil =
@@ -187,7 +189,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                     oldItem == newItem
 
                 override fun areItemsTheSame(oldItem: ProductSummary, newItem: ProductSummary) =
-                    oldItem.productCode == newItem.productCode
+                    oldItem.productCode == newItem.productCode && oldItem.brandType == newItem.brandType
             }
     }
 }
