@@ -138,9 +138,9 @@ class ProductListFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        workRequestSet.forEach { productCode ->
+        workRequestSet.forEach { requestData ->
             WorkManager.getInstance(requireContext())
-                .enqueue(UpdateAlarmWorker.createWorkRequest(productCode))
+                .enqueue(UpdateAlarmWorker.createWorkRequest(requestData))
         }
         workRequestSet.clear()
     }
