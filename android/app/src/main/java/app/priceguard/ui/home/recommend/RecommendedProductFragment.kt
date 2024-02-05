@@ -69,8 +69,10 @@ class RecommendedProductFragment : Fragment() {
         val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.diffUtil)
         rvRecommendedProduct.adapter = adapter
         this@RecommendedProductFragment.repeatOnStarted {
-            recommendedProductViewModel.recommendedProductList.collect { list ->
-                adapter.submitList(list)
+            recommendedProductViewModel.state.collect { state ->
+                if (state.recommendedList.isNotEmpty()) {
+                    adapter.submitList(state.recommendedList)
+                }
             }
         }
     }

@@ -79,8 +79,10 @@ class ProductListFragment : Fragment() {
         val adapter = ProductSummaryAdapter(listener, ProductSummaryAdapter.userDiffUtil)
         rvProductList.adapter = adapter
         this@ProductListFragment.repeatOnStarted {
-            productListViewModel.productList.collect { list ->
-                adapter.submitList(list)
+            productListViewModel.state.collect { state ->
+                if (state.productList.isNotEmpty()) {
+                    adapter.submitList(state.productList)
+                }
             }
         }
     }
