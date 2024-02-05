@@ -139,19 +139,20 @@ export class CronService {
     }
 
     private getMessage(product: ProductInfoDto, token: string): Message {
+        const { productPrice, productCode, productName, imageUrl, shop } = product;
         return {
             notification: {
                 title: '목표 가격 이하로 내려갔습니다!',
-                body: `${product.productName}의 현재 가격은 ${product.productPrice}원 입니다.`,
+                body: `${productName}의 현재 가격은 ${productPrice}원 입니다.`,
             },
             data: {
-                shop: product.shop,
-                productCode: product.productCode,
+                shop,
+                productCode,
             },
             android: {
                 notification: {
                     channelId: CHANNEL_ID,
-                    imageUrl: product.imageUrl,
+                    imageUrl,
                 },
             },
             token,
