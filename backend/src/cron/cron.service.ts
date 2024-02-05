@@ -38,7 +38,7 @@ export class CronService {
         const recentProductInfo = await Promise.all(
             totalProducts.map(async ({ productCode, id, shop }) => {
                 const productInfo = await getProductInfo(shop, productCode);
-                return { ...productInfo, id };
+                return { ...productInfo, productId: id };
             }),
         );
         const productList = recentProductInfo.map((data) => `product:${data.productId}`);
@@ -119,21 +119,18 @@ export class CronService {
     }
 
     async findMatchedProducts(trackingList: TrackingProduct[], product: ProductInfoDto) {
-        const { productPrice, productCode, productName, imageUrl } = product;
         const notifications = [];
         const matchedProducts = [];
 
         for (const trackingProduct of trackingList) {
             const { userId, targetPrice, isFirst, isAlert } = trackingProduct;
-            if (!isFirst && targetPrice < productPrice) {
+            if (!isFirst && targetPrice < product.productPrice) {
                 trackingProduct.isFirst = true;
                 await this.trackingProductRepository.save(trackingProduct);
-            } else if (targetPrice >= productPrice && isFirst && isAlert) {
+            } else if (targetPrice >= product.productPrice && isFirst && isAlert) {
                 const firebaseToken = await this.redis.get(`firebaseToken:${userId}`);
                 if (firebaseToken) {
-                    notifications.push(
-                        this.getMessage(productCode, productName, productPrice, imageUrl, firebaseToken),
-                    );
+                    notifications.push(this.getMessage(product, firebaseToken));
                     matchedProducts.push(trackingProduct);
                 }
             }
@@ -141,19 +138,15 @@ export class CronService {
         return { notifications, matchedProducts };
     }
 
-    private getMessage(
-        productCode: string,
-        productName: string,
-        productPrice: number,
-        imageUrl: string,
-        token: string,
-    ): Message {
+    private getMessage(product: ProductInfoDto, token: string): Message {
+        const { productPrice, productCode, productName, imageUrl, shop } = product;
         return {
             notification: {
                 title: '목표 가격 이하로 내려갔습니다!',
                 body: `${productName}의 현재 가격은 ${productPrice}원 입니다.`,
             },
             data: {
+                shop,
                 productCode,
             },
             android: {

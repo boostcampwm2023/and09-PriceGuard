@@ -46,3 +46,5 @@ export const REGEX_SHOP = {
     NaverBrand: /http[s]?:\/\/(?:www\.|m\.)?brand\.naver\.com\/(?:[a-zA-Z0-9_-]+)\/products\/([a-zA-Z0-9_-]+)/,
 } as const;
 export const BROWSER_VERSION_20 = 20;
+export const API_VERSION_NEUTRAL = 0;
+export const API_VERSION_1 = 1;

@@ -31,9 +31,9 @@ export class ProductService {
         private cacheService: CacheService,
     ) {}
 
-    async verifyUrl(productUrlDto: ProductUrlDto): Promise<ProductInfoDto> {
+    async verifyUrl(productUrlDto: ProductUrlDto, apiVersion: number): Promise<ProductInfoDto> {
         const { productUrl } = productUrlDto;
-        const { shop, productCode } = identifyProductByUrl(productUrl);
+        const { shop, productCode } = identifyProductByUrl(productUrl, apiVersion);
         return await getProductInfo(shop, productCode);
     }
 
