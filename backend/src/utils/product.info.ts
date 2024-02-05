@@ -1,6 +1,13 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
-import { BASE_URL_11ST, BROWSER_VERSION_20, OPEN_API_KEY_11ST, REGEX_SHOP } from 'src/constants';
+import {
+    API_VERSION_1,
+    API_VERSION_NEUTRAL,
+    BASE_URL_11ST,
+    BROWSER_VERSION_20,
+    OPEN_API_KEY_11ST,
+    REGEX_SHOP,
+} from 'src/constants';
 import { JSDOM } from 'jsdom';
 import * as convert from 'xml-js';
 import * as iconv from 'iconv-lite';
@@ -124,16 +131,18 @@ export function createUrl(shop: string, productCode: string) {
     }
 }
 
-export function identifyProductByUrl(productUrl: string): ProductIdentifierDto {
+export function identifyProductByUrl(productUrl: string, version: number): ProductIdentifierDto {
     let matchList = null;
-    if ((matchList = productUrl.match(REGEX_SHOP['11ST']))) {
+    if (version === API_VERSION_NEUTRAL && (matchList = productUrl.match(REGEX_SHOP['11ST']))) {
         return { shop: '11번가', productCode: matchList[1] };
     }
-    if (
-        (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
-        (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
-    ) {
-        return { shop: 'SmartStore', productCode: matchList[1] };
+    if (version >= API_VERSION_1) {
+        if (
+            (matchList = productUrl.match(REGEX_SHOP.NaverBrand)) ||
+            (matchList = productUrl.match(REGEX_SHOP.NaverSmartStore))
+        ) {
+            return { shop: 'SmartStore', productCode: matchList[1] };
+        }
     }
     throw new HttpException('URL이 유효하지 않습니다.', HttpStatus.BAD_REQUEST);
 }

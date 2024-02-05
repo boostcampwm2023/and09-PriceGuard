@@ -50,6 +50,7 @@ import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
+import { API_VERSION_1, API_VERSION_NEUTRAL } from 'src/constants';
 
 @ApiBearerAuth()
 @ApiHeader({
@@ -71,8 +72,32 @@ export class ProductController {
     @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
     @Post('/verify')
     async verifyUrl(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
-        const { productName, productCode, productPrice, shop, imageUrl } =
-            await this.productService.verifyUrl(productUrlDto);
+        const { productName, productCode, productPrice, shop, imageUrl } = await this.productService.verifyUrl(
+            productUrlDto,
+            API_VERSION_NEUTRAL,
+        );
+        return {
+            statusCode: HttpStatus.OK,
+            message: '상품 URL 검증 성공',
+            productCode,
+            productName,
+            productPrice,
+            shop,
+            imageUrl,
+        };
+    }
+
+    @ApiOperation({ summary: 'SmartStore가 추가된 상품 URL 검증 API', description: '상품 URL을 검증한다' })
+    @ApiBody({ type: ProductUrlDto })
+    @ApiOkResponse({ type: VerifyUrlSuccess, description: '상품 URL 검증 성공' })
+    @ApiBadRequestResponse({ type: UrlError, description: '유효하지 않은 링크' })
+    @Post('/verify')
+    @Version('1')
+    async verifyUrlV1(@Body() productUrlDto: ProductUrlDto): Promise<VerifyUrlSuccess> {
+        const { productName, productCode, productPrice, shop, imageUrl } = await this.productService.verifyUrl(
+            productUrlDto,
+            API_VERSION_1,
+        );
         return {
             statusCode: HttpStatus.OK,
             message: '상품 URL 검증 성공',
