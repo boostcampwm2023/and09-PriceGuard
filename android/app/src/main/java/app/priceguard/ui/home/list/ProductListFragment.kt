@@ -33,7 +33,7 @@ class ProductListFragment : Fragment() {
     private val binding get() = _binding!!
     private val productListViewModel: ProductListViewModel by viewModels()
 
-    private var workRequestSet: MutableSet<String> = mutableSetOf()
+    private var workRequestSet: MutableSet<Pair<String, String>> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,12 +68,11 @@ class ProductListFragment : Fragment() {
             }
 
             override fun onToggle(productShop: String, productCode: String, checked: Boolean) {
-                // TODO: Shop 적용하기
-                productListViewModel.updateProductAlarmToggle(productCode, checked)
-                if (workRequestSet.contains(productCode)) {
-                    workRequestSet.remove(productCode)
+                productListViewModel.updateProductAlarmToggle(productShop, productCode, checked)
+                if (workRequestSet.contains(Pair(productShop, productCode))) {
+                    workRequestSet.remove(Pair(productShop, productCode))
                 } else {
-                    workRequestSet.add(productCode)
+                    workRequestSet.add(Pair(productShop, productCode))
                 }
             }
         }

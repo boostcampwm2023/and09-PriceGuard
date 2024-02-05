@@ -83,10 +83,10 @@ class ProductListViewModel @Inject constructor(
         )
     }
 
-    fun updateProductAlarmToggle(productCode: String, checked: Boolean) {
+    fun updateProductAlarmToggle(productShop: String, productCode: String, checked: Boolean) {
         _state.value = _state.value.copy(
             productList = state.value.productList.mapIndexed { _, product ->
-                if (product.productCode == productCode) {
+                if (product.productCode == productCode && product.brandType == productShop) {
                     product.copy(isAlarmOn = checked)
                 } else {
                     product
