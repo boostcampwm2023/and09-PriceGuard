@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="app.priceguard.ui.home.list.ProductListViewModel" />
@@ -16,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:onRefreshListener="@{() -> viewModel.getProductList(true)}"
-        app:refreshing="@{viewModel.isRefreshing}">
+        app:refreshing="@{viewModel.state.refreshing}">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/cl_product_list"
@@ -31,6 +33,7 @@
                 android:fitsSystemWindows="true">
 
                 <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/ctl_product_list"
                     style="?attr/collapsingToolbarLayoutMediumStyle"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
@@ -55,9 +58,42 @@
                 android:id="@+id/rv_product_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.productList.empty ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/item_product_summary" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/loading_layout_product_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.state.productList.empty ? View.VISIBLE : View.GONE}">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/loading_spinner_product_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:visibility="@{viewModel.state.updated ? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/no_product_product_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityTraversalAfter="@id/ctl_product_list"
+                    android:text="@string/product_list_no_product"
+                    android:textAlignment="center"
+                    android:visibility="@{viewModel.state.updated ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_product_list"

@@ -1,5 +1,6 @@
 package app.priceguard.data.repository.auth
 
+import app.priceguard.data.dto.deleteaccount.DeleteAccountRequest
 import app.priceguard.data.dto.login.LoginRequest
 import app.priceguard.data.dto.signup.SignupRequest
 import app.priceguard.data.network.UserAPI
@@ -66,6 +67,22 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
                         response.data.refreshToken ?: ""
                     )
                 )
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
+    override suspend fun deleteAccount(email: String, password: String): RepositoryResult<Boolean, AuthErrorState> {
+        val response = getApiResult {
+            userAPI.deleteAccount(DeleteAccountRequest(email, password))
+        }
+
+        return when (response) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {

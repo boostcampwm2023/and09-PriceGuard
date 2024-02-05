@@ -23,6 +23,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         val targetPrice: Int = 0,
         val productName: String = "",
         val productPrice: Int = 0,
+        val isEnabledSliderListener: Boolean = true,
         val isReady: Boolean = true
     )
 
@@ -62,6 +63,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
 
     fun patchProduct() {
         viewModelScope.launch {
+            _state.value = state.value.copy(isReady = false)
             val response = productRepository.updateTargetPrice(
                 _state.value.productShop,
                 _state.value.productCode,
@@ -76,6 +78,7 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
                     _event.emit(SetTargetPriceEvent.FailurePriceUpdate(response.errorState))
                 }
             }
+            _state.value = state.value.copy(isReady = true)
         }
     }
 
@@ -83,13 +86,24 @@ class SetTargetPriceViewModel @Inject constructor(private val productRepository:
         _state.value = state.value.copy(targetPrice = price)
     }
 
-    fun setProductInfo(productShop: String, productCode: String, name: String, price: Int) {
+    fun updateTargetPriceFromPercent(percent: Int) {
+        _state.value = state.value.copy(
+            targetPrice = (_state.value.productPrice.toFloat() / 100F * percent.toFloat()).toInt()
+        )
+    }
+
+    fun setProductInfo(productShop: String, productCode: String, name: String, price: Int, targetPrice: Int) {
         _state.value =
             state.value.copy(
                 productShop = productShop,
                 productCode = productCode,
                 productName = name,
-                productPrice = price
+                productPrice = price,
+                targetPrice = targetPrice
             )
+    }
+
+    fun setSliderChangeListenerEnabled(isEnabled: Boolean) {
+        _state.value = state.value.copy(isEnabledSliderListener = isEnabled)
     }
 }
