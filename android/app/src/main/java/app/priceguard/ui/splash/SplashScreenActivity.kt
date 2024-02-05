@@ -49,7 +49,7 @@ class SplashScreenActivity : AppCompatActivity() {
             splashViewModel.event.collect { event ->
                 when (event) {
                     SplashScreenViewModel.SplashEvent.OpenHome -> {
-                        val productShop = intent.getStringExtra("productShop")
+                        val productShop = intent.getStringExtra("shop")
                         val productCode = intent.getStringExtra("productCode")
                         if (productShop != null && productCode != null) {
                             receivePushAlarm(productShop, productCode)

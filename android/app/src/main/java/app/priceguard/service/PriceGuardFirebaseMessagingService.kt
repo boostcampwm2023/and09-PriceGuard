@@ -33,7 +33,7 @@ class PriceGuardFirebaseMessagingService : FirebaseMessagingService() {
                 it.title ?: return,
                 it.body ?: return,
                 it.imageUrl ?: return,
-                message.data["productShop"] ?: return,
+                message.data["shop"] ?: return,
                 message.data["productCode"] ?: return
             )
         }
