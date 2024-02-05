@@ -291,7 +291,6 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         } catch (e: ActivityNotFoundException) {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: Exception) {
-            Log.e("LaunchShop", "Launch Shop failed: $e")
             showToast(getString(R.string.failed_to_open_shop))
         }
     }
