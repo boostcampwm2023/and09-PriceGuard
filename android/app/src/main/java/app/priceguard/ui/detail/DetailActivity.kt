@@ -117,8 +117,11 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
         binding.btnDetailShare.setOnClickListener {
             binding.btnDetailShare.isEnabled = false
-            val shareLink =
-                getString(R.string.share_link_template, productDetailViewModel.productCode)
+            val shareLink = if (productDetailViewModel.productShop == "11번가") {
+                getString(R.string.share_link_template, "11st", productDetailViewModel.productCode)
+            } else {
+                getString(R.string.share_link_template, "naver", productDetailViewModel.productCode)
+            }
 
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND

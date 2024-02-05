@@ -99,7 +99,7 @@
     <string name="product_image">상품 이미지</string>
     <string name="shopping_mall_logo">쇼핑몰 로고</string>
     <string name="share_product">상품 공유하기</string>
-    <string name="share_link_template">https://share.priceguard.app/11st?code=%1$s</string>
+    <string name="share_link_template">https://share.priceguard.app/%1$s?code=%2$s</string>
     <string name="share_message_template">[PriceGuard]\n이 상품 가격 같이 확인해요!\n\n%1$s</string>
     <string name="price_notification">상품 가격 알림</string>
     <string name="currently_notification_disabled">현재 알림 설정이 비활성화되어 있습니다.</string>
