@@ -33,15 +33,17 @@ class PriceGuardFirebaseMessagingService : FirebaseMessagingService() {
                 it.title ?: return,
                 it.body ?: return,
                 it.imageUrl ?: return,
+                message.data["productShop"] ?: return,
                 message.data["productCode"] ?: return
             )
         }
     }
 
-    private fun sendNotification(title: String, body: String, imageUrl: Uri, data: String) {
+    private fun sendNotification(title: String, body: String, imageUrl: Uri, shop: String, code: String) {
         val intent = Intent(this, DetailActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra("productCode", data)
+        intent.putExtra("productShop", shop)
+        intent.putExtra("productCode", code)
         intent.putExtra("directed", true)
 
         val requestCode = getRequestCode()

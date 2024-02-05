@@ -49,9 +49,10 @@ class SplashScreenActivity : AppCompatActivity() {
             splashViewModel.event.collect { event ->
                 when (event) {
                     SplashScreenViewModel.SplashEvent.OpenHome -> {
+                        val productShop = intent.getStringExtra("productShop")
                         val productCode = intent.getStringExtra("productCode")
-                        if (productCode != null) {
-                            receivePushAlarm()
+                        if (productShop != null && productCode != null) {
+                            receivePushAlarm(productShop, productCode)
                         } else {
                             launchActivityAndExit(
                                 this@SplashScreenActivity,
@@ -77,9 +78,9 @@ class SplashScreenActivity : AppCompatActivity() {
         content.viewTreeObserver.addOnPreDrawListener(onPreDrawListener)
     }
 
-    private fun receivePushAlarm() {
-        val productCode = intent.getStringExtra("productCode") ?: return
+    private fun receivePushAlarm(productShop: String, productCode: String) {
         val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra("productShop", productShop)
         intent.putExtra("productCode", productCode)
         intent.putExtra("directed", true)
         startActivity(intent)
