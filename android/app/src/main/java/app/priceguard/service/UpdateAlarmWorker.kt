@@ -29,7 +29,8 @@ class UpdateAlarmWorker @AssistedInject constructor(
 
     private suspend fun updateAlarm(productCode: String): Result {
         return try {
-            when (productRepository.switchAlert(productCode)) {
+            // TODO: Shop 적용하기
+            when (productRepository.switchAlert("", productCode)) {
                 is RepositoryResult.Error -> {
                     Result.failure()
                 }

@@ -74,6 +74,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     private fun initListener() {
         binding.btnDetailTrack.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productShop", productDetailViewModel.state.value.shop)
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
@@ -83,6 +84,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
         binding.btnDetailEditPrice.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productShop", productDetailViewModel.state.value.shop)
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
@@ -138,9 +140,11 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     }
 
     private fun checkProductCode(intent: Intent) {
+        val productShop = intent.getStringExtra("productShop")
         val productCode = intent.getStringExtra("productCode")
         val deepLink = intent.data
         val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
+        // TODO: 딥링크 shop 추가하기
 
         if (productCode == null && productCodeFromDeepLink == null) {
             showConfirmDialog(
@@ -151,8 +155,9 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
             return
         }
 
-        productCode?.let { code ->
-            productDetailViewModel.productCode = code
+        if (productShop != null && productCode != null) {
+            productDetailViewModel.productShop = productShop
+            productDetailViewModel.productCode = productCode
             productDetailViewModel.getDetails(false)
             return
         }

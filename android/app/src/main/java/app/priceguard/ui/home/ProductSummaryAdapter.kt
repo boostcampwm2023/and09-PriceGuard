@@ -50,7 +50,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
                 resetListener()
                 summary = item
                 setViewType(item)
-                setClickListener(item.productCode)
+                setClickListener(item.brandType, item.productCode)
                 setGraph(item.priceData)
                 setShopLogoIcon(item.brandType)
             }
@@ -84,7 +84,7 @@ class ProductSummaryAdapter<T : ProductSummary>(
             updateThumbIcon(msProduct.isChecked)
 
             msProduct.setOnCheckedChangeListener { _, isChecked ->
-                productSummaryClickListener.onToggle(item.productCode, isChecked)
+                productSummaryClickListener.onToggle(item.brandType, item.productCode, isChecked)
                 updateThumbIcon(isChecked)
             }
             msProduct.contentDescription =
@@ -136,9 +136,9 @@ class ProductSummaryAdapter<T : ProductSummary>(
             )
         }
 
-        private fun ItemProductSummaryBinding.setClickListener(code: String) {
+        private fun ItemProductSummaryBinding.setClickListener(shop: String, code: String) {
             cvProduct.setOnClickListener {
-                productSummaryClickListener.onClick(code)
+                productSummaryClickListener.onClick(shop, code)
             }
         }
 

@@ -21,39 +21,42 @@ import retrofit2.http.Path
 
 interface ProductAPI {
 
-    @POST("verify")
+    @POST("product/verify")
     suspend fun verifyLink(
         @Body productUrl: ProductVerifyRequest
     ): Response<ProductVerifyResponse>
 
-    @POST(".")
+    @POST("v1/product")
     suspend fun addProduct(
         @Body productAddRequest: ProductAddRequest
     ): Response<ProductAddResponse>
 
-    @GET("tracking")
+    @GET("product/tracking")
     suspend fun getProductList(): Response<ProductListResponse>
 
-    @GET("recommend")
+    @GET("product/recommend")
     suspend fun getRecommendedProductList(): Response<RecommendProductResponse>
 
-    @GET("{productCode}")
+    @GET("v1/product/{shop}/{productCode}")
     suspend fun getProductDetail(
+        @Path("shop") shop: String,
         @Path("productCode") productCode: String
     ): Response<ProductResponse>
 
-    @DELETE("{productCode}")
+    @DELETE("v1/product/{shop}/{productCode}")
     suspend fun deleteProduct(
+        @Path("shop") shop: String,
         @Path("productCode") productCode: String
     ): Response<ProductDeleteResponse>
 
-    @PATCH("targetPrice")
+    @PATCH("v1/product/targetPrice")
     suspend fun updateTargetPrice(
         @Body pricePatchRequest: PricePatchRequest
     ): Response<PricePatchResponse>
 
-    @PATCH("alert/{productCode}")
+    @PATCH("v1/product/alert/{shop}/{productCode}")
     suspend fun updateAlert(
+        @Path("shop") shop: String,
         @Path("productCode") productCode: String
     ): Response<AlertUpdateResponse>
 }

@@ -55,6 +55,7 @@ class ProductDetailViewModel @Inject constructor(
         data class DeleteFailed(val errorType: ProductErrorState) : ProductDetailEvent()
     }
 
+    lateinit var productShop: String
     lateinit var productCode: String
     private var productGraphData: List<ProductChartData> = listOf()
 
@@ -67,7 +68,7 @@ class ProductDetailViewModel @Inject constructor(
 
     fun deleteProductTracking() {
         viewModelScope.launch {
-            when (val result = productRepository.deleteProduct(productCode)) {
+            when (val result = productRepository.deleteProduct(productShop, productCode)) {
                 is RepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
@@ -81,7 +82,7 @@ class ProductDetailViewModel @Inject constructor(
 
     fun getDetails(isRefresh: Boolean) {
         viewModelScope.launch {
-            if (::productCode.isInitialized.not()) {
+            if (::productCode.isInitialized.not() && _state.value.shop == null) {
                 return@launch
             }
 
@@ -89,7 +90,7 @@ class ProductDetailViewModel @Inject constructor(
                 _state.value = _state.value.copy(isRefreshing = true)
             }
 
-            val result = productRepository.getProductDetail(productCode)
+            val result = productRepository.getProductDetail(productShop, productCode)
 
             _state.value = _state.value.copy(isRefreshing = false)
 

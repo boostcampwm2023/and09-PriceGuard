@@ -69,6 +69,7 @@ class SetTargetPriceFragment : Fragment() {
     private fun FragmentSetTargetPriceBinding.initView() {
         val arguments = requireArguments()
 
+        val productShop = arguments.getString("productShop") ?: ""
         val productCode = arguments.getString("productCode") ?: ""
         val title = arguments.getString("productTitle") ?: ""
         val price = arguments.getInt("productPrice")
@@ -84,7 +85,7 @@ class SetTargetPriceFragment : Fragment() {
         tvSetPriceCurrentPrice.contentDescription =
             getString(R.string.current_price_info, tvSetPriceCurrentPrice.text)
 
-        setTargetPriceViewModel.setProductInfo(productCode, title, price)
+        setTargetPriceViewModel.setProductInfo(productShop, productCode, title, price)
         etTargetPrice.setText(targetPrice.toString())
 
         updateSlideValueWithPrice(targetPrice.toFloat())

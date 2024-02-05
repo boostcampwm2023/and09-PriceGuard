@@ -105,12 +105,13 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addProduct(
+        shop: String,
         productCode: String,
         targetPrice: Int,
         isRenewed: Boolean
     ): RepositoryResult<ProductAddResult, ProductErrorState> {
         val response = getApiResult {
-            productAPI.addProduct(ProductAddRequest(productCode, targetPrice))
+            productAPI.addProduct(ProductAddRequest(shop, productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -124,7 +125,7 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    addProduct(productCode, targetPrice, true)
+                    addProduct(shop, productCode, targetPrice, true)
                 }
             }
         }
@@ -190,11 +191,12 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProductDetail(
+        shop: String,
         productCode: String,
         isRenewed: Boolean
     ): RepositoryResult<ProductDetailResult, ProductErrorState> {
         val response = getApiResult {
-            productAPI.getProductDetail(productCode)
+            productAPI.getProductDetail(shop, productCode)
         }
         return when (response) {
             is APIResult.Success -> {
@@ -216,36 +218,38 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    getProductDetail(productCode, true)
+                    getProductDetail(shop, productCode, true)
                 }
             }
         }
     }
 
     override suspend fun deleteProduct(
+        shop: String,
         productCode: String,
         isRenewed: Boolean
     ): RepositoryResult<Boolean, ProductErrorState> {
-        return when (val response = getApiResult { productAPI.deleteProduct(productCode) }) {
+        return when (val response = getApiResult { productAPI.deleteProduct(shop, productCode) }) {
             is APIResult.Success -> {
                 RepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    deleteProduct(productCode, true)
+                    deleteProduct(shop, productCode, true)
                 }
             }
         }
     }
 
     override suspend fun updateTargetPrice(
+        shop: String,
         productCode: String,
         targetPrice: Int,
         isRenewed: Boolean
     ): RepositoryResult<PricePatchResult, ProductErrorState> {
         val response = getApiResult {
-            productAPI.updateTargetPrice(PricePatchRequest(productCode, targetPrice))
+            productAPI.updateTargetPrice(PricePatchRequest(shop, productCode, targetPrice))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -259,21 +263,21 @@ class ProductRepositoryImpl @Inject constructor(
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    updateTargetPrice(productCode, targetPrice, true)
+                    updateTargetPrice(shop, productCode, targetPrice, true)
                 }
             }
         }
     }
 
-    override suspend fun switchAlert(productCode: String, isRenewed: Boolean): RepositoryResult<Boolean, ProductErrorState> {
-        return when (val response = getApiResult { productAPI.updateAlert(productCode) }) {
+    override suspend fun switchAlert(shop: String, productCode: String, isRenewed: Boolean): RepositoryResult<Boolean, ProductErrorState> {
+        return when (val response = getApiResult { productAPI.updateAlert(shop, productCode) }) {
             is APIResult.Success -> {
                 RepositoryResult.Success(true)
             }
 
             is APIResult.Error -> {
                 handleError(response.code, isRenewed) {
-                    deleteProduct(productCode, true)
+                    deleteProduct(shop, productCode, true)
                 }
             }
         }

@@ -60,13 +60,15 @@ class ProductListFragment : Fragment() {
 
     private fun FragmentProductListBinding.initSettingAdapter() {
         val listener = object : ProductSummaryClickListener {
-            override fun onClick(productCode: String) {
+            override fun onClick(productShop: String, productCode: String) {
                 val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("productShop", productShop)
                 intent.putExtra("productCode", productCode)
                 startActivity(intent)
             }
 
-            override fun onToggle(productCode: String, checked: Boolean) {
+            override fun onToggle(productShop: String, productCode: String, checked: Boolean) {
+                // TODO: Shop 적용하기
                 productListViewModel.updateProductAlarmToggle(productCode, checked)
                 if (workRequestSet.contains(productCode)) {
                     workRequestSet.remove(productCode)
