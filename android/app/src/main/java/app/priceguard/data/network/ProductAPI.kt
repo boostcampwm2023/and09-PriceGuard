@@ -21,7 +21,7 @@ import retrofit2.http.Path
 
 interface ProductAPI {
 
-    @POST("product/verify")
+    @POST("v1/product/verify")
     suspend fun verifyLink(
         @Body productUrl: ProductVerifyRequest
     ): Response<ProductVerifyResponse>
