@@ -20,6 +20,9 @@ export class User extends BaseEntity {
     @IsNotEmpty()
     password: string;
 
+    @Column({ default: 'tier1', type: 'varchar', length: 36, nullable: false })
+    grade: string;
+
     @OneToMany(() => TrackingProduct, (trackingProduct) => trackingProduct.userId)
     trackingProduct: TrackingProduct[];
 }
