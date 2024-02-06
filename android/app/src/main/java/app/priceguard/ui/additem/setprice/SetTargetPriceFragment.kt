@@ -178,6 +178,14 @@ class SetTargetPriceFragment : Fragment(), SetTargetPriceDialogFragment.OnDialog
                                 showDialogWithLogout()
                             }
 
+                            ProductErrorState.FULL_STORAGE -> {
+                                showDialogWithAction(
+                                    getString(R.string.error_add_product),
+                                    getString(R.string.error_maximum_count_exceeded),
+                                    DialogConfirmAction.HOME
+                                )
+                            }
+
                             else -> {
                                 showDialogWithAction(
                                     getString(R.string.error),

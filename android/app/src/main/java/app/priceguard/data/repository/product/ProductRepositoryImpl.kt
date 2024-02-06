@@ -50,6 +50,10 @@ class ProductRepositoryImpl @Inject constructor(
                 RepositoryResult.Error(ProductErrorState.PERMISSION_DENIED)
             }
 
+            403 -> {
+                RepositoryResult.Error(ProductErrorState.FULL_STORAGE)
+            }
+
             404 -> {
                 RepositoryResult.Error(ProductErrorState.NOT_FOUND)
             }
