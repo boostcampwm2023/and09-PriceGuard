@@ -133,7 +133,7 @@ export function createUrl(shop: string, productCode: string) {
 
 export function identifyProductByUrl(productUrl: string, version: number): ProductIdentifierDto {
     let matchList = null;
-    if (version === API_VERSION_NEUTRAL && (matchList = productUrl.match(REGEX_SHOP['11ST']))) {
+    if (version >= API_VERSION_NEUTRAL && (matchList = productUrl.match(REGEX_SHOP['11ST']))) {
         return { shop: '11번가', productCode: matchList[1] };
     }
     if (version >= API_VERSION_1) {
