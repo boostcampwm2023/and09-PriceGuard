@@ -41,6 +41,7 @@ class ProductDetailViewModel @Inject constructor(
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
+        val isSoldOut: Boolean = false,
         val graphMode: GraphMode = GraphMode.DAY,
         val chartData: List<ProductChartData> = listOf()
     )
@@ -109,6 +110,7 @@ class ProductDetailViewModel @Inject constructor(
                             targetPrice = result.data.targetPrice,
                             lowestPrice = result.data.lowestPrice,
                             price = result.data.price,
+                            isSoldOut = result.data.priceData.last().valid.not(),
                             formattedPrice = formatPrice(result.data.price),
                             formattedTargetPrice = if (result.data.targetPrice < 0) {
                                 "0"
