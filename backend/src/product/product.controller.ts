@@ -20,6 +20,7 @@ import {
     ApiBearerAuth,
     ApiBody,
     ApiConflictResponse,
+    ApiForbiddenResponse,
     ApiGoneResponse,
     ApiHeader,
     ApiNotFoundResponse,
@@ -45,6 +46,7 @@ import {
     ProductDetailsSuccess,
     AddProductSuccess,
     ToggleAlertSuccess,
+    AddProductMaxLimit,
 } from 'src/dto/product.swagger.dto';
 import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -114,6 +116,7 @@ export class ProductController {
     @ApiOkResponse({ type: AddProductSuccess, description: '상품 추가 성공' })
     @ApiNotFoundResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @ApiForbiddenResponse({ type: AddProductMaxLimit, description: '상품 등록 최대 개수 초과' })
     @ApiConflictResponse({ type: AddProductConflict, description: '이미 등록된 상품 존재' })
     @Post()
     async addProduct(@Req() req: Request & { user: User }, @Body() productAddDto: ProductAddDto) {
@@ -129,6 +132,7 @@ export class ProductController {
     @ApiOkResponse({ type: AddProductSuccess, description: '상품 추가 성공' })
     @ApiNotFoundResponse({ type: ProductCodeError, description: '상품 추가 실패' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @ApiForbiddenResponse({ type: AddProductMaxLimit, description: '상품 등록 최대 개수 초과' })
     @ApiConflictResponse({ type: AddProductConflict, description: '이미 등록된 상품 존재' })
     @Post()
     @Version('1')

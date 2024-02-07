@@ -11,12 +11,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProductPrice } from 'src/schema/product.schema';
 import { Model } from 'mongoose';
 import { PriceDataDto } from 'src/dto/price.data.dto';
-import { MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
+import { ADD_PRODUCT_LIMIT, MAX_TRACKING_RANK, NINETY_DAYS, THIRTY_DAYS } from 'src/constants';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { CacheService } from 'src/cache/cache.service';
 import { getProductInfo, identifyProductByUrl } from 'src/utils/product.info';
+import { UsersRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class ProductService {
@@ -25,6 +26,8 @@ export class ProductService {
         private trackingProductRepository: TrackingProductRepository,
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
+        @InjectRepository(UsersRepository)
+        private usersRepository: UsersRepository,
         @InjectModel(ProductPrice.name)
         private productPriceModel: Model<ProductPrice>,
         @InjectRedis() private readonly redis: Redis,
@@ -57,6 +60,7 @@ export class ProductService {
         if (trackingProduct) {
             throw new HttpException('이미 등록된 상품입니다.', HttpStatus.CONFLICT);
         }
+        await this.checkProductLimit(userId);
         const userCount = parseInt(await this.redis.zincrby('userCount', 1, product.id));
         const newProductRank = {
             id: product.id,
@@ -80,14 +84,7 @@ export class ProductService {
     }
 
     async getTrackingList(userId: string): Promise<TrackingProductDto[]> {
-        let trackingProductList = this.cacheService.getTrackingProduct(userId);
-        if (!trackingProductList) {
-            trackingProductList = await this.trackingProductRepository.find({
-                where: { userId: userId },
-                relations: ['product'],
-            });
-            this.cacheService.putTrackingProduct(userId, trackingProductList);
-        }
+        const trackingProductList = await this.getTrackingProduct(userId);
         if (trackingProductList.length === 0) return [];
         const trackingListInfo = trackingProductList.map(async ({ product, targetPrice, isAlert }) => {
             const { id, productName, productCode, shop, imageUrl } = product;
@@ -334,5 +331,29 @@ export class ProductService {
             .exec();
         const { price, lowestPrice } = latestData[0];
         return { price, lowestPrice };
+    }
+
+    private async getTrackingProduct(userId: string) {
+        let trackingProductList = this.cacheService.getTrackingProduct(userId);
+        if (!trackingProductList) {
+            trackingProductList = await this.trackingProductRepository.find({
+                where: { userId: userId },
+                relations: ['product'],
+            });
+            this.cacheService.putTrackingProduct(userId, trackingProductList);
+        }
+        return trackingProductList;
+    }
+
+    private async checkProductLimit(userId: string) {
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new HttpException('사용자 정보가 존재하지 않습니다.', HttpStatus.NOT_FOUND);
+        }
+        const productCount = (await this.getTrackingProduct(userId)).length;
+        const productLimit = ADD_PRODUCT_LIMIT[user.grade];
+        if (productLimit <= productCount) {
+            throw new HttpException('추가할 수 있는 상품 최대 개수를 초과하였습니다.', HttpStatus.FORBIDDEN);
+        }
     }
 }

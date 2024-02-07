@@ -93,6 +93,19 @@ export class AddProductConflict {
     message: string;
 }
 
+export class AddProductMaxLimit {
+    @ApiProperty({
+        example: HttpStatus.FORBIDDEN,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '추가할 수 있는 상품 최대 개수를 초과하였습니다.',
+        description: '메시지',
+    })
+    message: string;
+}
+
 export class RequestError {
     @ApiProperty({
         example: HttpStatus.BAD_REQUEST,

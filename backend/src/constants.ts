@@ -48,3 +48,9 @@ export const REGEX_SHOP = {
 export const BROWSER_VERSION_20 = 20;
 export const API_VERSION_NEUTRAL = 0;
 export const API_VERSION_1 = 1;
+type AddProductLimit = {
+    [key: string]: number;
+};
+export const ADD_PRODUCT_LIMIT: AddProductLimit = {
+    tier1: 3,
+};

@@ -11,10 +11,12 @@ import { ProductPrice, ProductPriceSchema } from 'src/schema/product.schema';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { CronService } from 'src/cron/cron.service';
 import { CacheService } from 'src/cache/cache.service';
+import { UsersRepository } from 'src/user/user.repository';
+import { User } from 'src/entities/user.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([TrackingProduct, Product]),
+        TypeOrmModule.forFeature([TrackingProduct, Product, User]),
         MongooseModule.forFeature([{ name: ProductPrice.name, schema: ProductPriceSchema }]),
     ],
     controllers: [ProductController],
@@ -22,6 +24,7 @@ import { CacheService } from 'src/cache/cache.service';
         ProductService,
         ProductRepository,
         TrackingProductRepository,
+        UsersRepository,
         FirebaseService,
         CronService,
         CacheService,
