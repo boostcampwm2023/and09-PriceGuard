@@ -5,5 +5,6 @@ enum class ProductErrorState {
     INVALID_REQUEST,
     NOT_FOUND,
     EXIST,
+    FULL_STORAGE,
     UNDEFINED_ERROR
 }
