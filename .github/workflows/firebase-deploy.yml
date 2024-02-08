@@ -41,4 +41,4 @@ jobs:
         serviceCredentialsFileContent: ${{ secrets.FIREBASE_APP_DISTRIBUTION }}
         groups: tester
         releaseNotesFile: android/release_notes.txt
-        file: android/app/build/outputs/apk/release/app-release.apk
+        file: android/app/build/outputs/bundle/release/app-release.aab
