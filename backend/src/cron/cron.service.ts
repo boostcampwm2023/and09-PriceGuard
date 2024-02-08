@@ -62,12 +62,10 @@ export class CronService {
         totalProducts.sort((a, b) => a.id.localeCompare(b.id));
         recentProductInfo.sort((a, b) => a.productId.localeCompare(b.productId));
         const infoUpdatedProducts = totalProducts.filter((product, idx) => {
-            if (product.productName !== recentProductInfo[idx].productName) {
-                product.productName = recentProductInfo[idx].productName;
-                return true;
-            }
-            if (product.imageUrl !== recentProductInfo[idx].imageUrl) {
-                product.imageUrl = recentProductInfo[idx].imageUrl;
+            const recentInfo = recentProductInfo[idx];
+            if (product.productName !== recentInfo.productName || product.imageUrl !== recentInfo.imageUrl) {
+                product.productName = recentInfo.productName;
+                product.imageUrl = recentInfo.imageUrl;
                 return true;
             }
         });
