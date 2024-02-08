@@ -129,7 +129,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                   <img src="https://img.shields.io/badge/Firebase%20Cloud%20Messaging-FFA000?logo=firebase&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/Material%20Design-757575?logo=materialdesign&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/Retrofit-3E4348?logo=square&logoColor=FFFFFF">
-                  <img src="https://camo.githubusercontent.com/c71519c505cafc8d4cc686186e518c03d489b6e6038f3fdcd2d57e9c87d308f3/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f436f726f7574696e65732d6633383431633f7374796c653d666f7274686562616765266c6f676f3d4b6f746c696e266c6f676f436f6c6f723d626c756576696f6c6574">
+                  <img src="https://img.shields.io/badge/Coroutines-7F52FF?logo=kotlin&logoColor=FFFFFF">
             </td>
         </tr>
         <tr>
@@ -156,7 +156,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                 <img src="https://img.shields.io/badge/Nginx-014532?logo=Nginx&logoColor=009639&">
                 <img src="https://img.shields.io/badge/Naver Cloud Platform-03C75A?logo=naver&logoColor=ffffff">
                 <img src="https://img.shields.io/badge/Docker-2496ED?logo=Docker&logoColor=white">
-                <img src="https://camo.githubusercontent.com/6841025a5cd57f3ac26ae8b48390b17454c7a553e747ed06e569edd2c47e9b8e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f47697448756220416374696f6e732d3230383846463f7374796c653d666f7274686562616765266c6f676f3d47697448756220416374696f6e73266c6f676f436f6c6f723d626c61636b">
+                <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white">
             </td>
         </tr>
         <tr>
