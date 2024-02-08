@@ -12,7 +12,11 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 또한 앱 내에서 원하는 상품의 가격 변화를 그래프로 표현합니다.
 ```
 
-어플리케이션은 [링크](https://appdistribution.firebase.google.com/pub/i/b299ae01bd67c829)를 통해 받을 수 있습니다.
+어플리케이션은 아래 버튼을 클릭하여 받을 수 있습니다.
+
+<a href='https://play.google.com/store/apps/details?id=app.priceguard&utm_source=github&utm_campaign=gh-readme'>
+   <img width="250px" alt='다운로드하기 Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ko_badge_web_generic.png'/>
+</a>
 
 ## 🥅 기술적 도전
 
