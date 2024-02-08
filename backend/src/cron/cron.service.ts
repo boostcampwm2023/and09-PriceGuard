@@ -53,9 +53,12 @@ export class CronService {
                     return { productId, price: productPrice, isSoldOut };
                 }),
             );
-            await this.pushNotifications(updatedProducts);
+            const notifyingProducts = updatedProducts.filter((product) => !product.isSoldOut);
+            if (notifyingProducts.length > 0) {
+                await this.pushNotifications(notifyingProducts);
+            }
         }
-        // 상품 이름, img 변경 업데이트
+
         totalProducts.sort((a, b) => a.id.localeCompare(b.id));
         recentProductInfo.sort((a, b) => a.productId.localeCompare(b.productId));
         const infoUpdatedProducts = totalProducts.filter((product, idx) => {
@@ -68,8 +71,10 @@ export class CronService {
                 return true;
             }
         });
-        await this.productRepository.save(infoUpdatedProducts);
-        await this.cacheService.updateByPriceChecker(infoUpdatedProducts);
+        if (infoUpdatedProducts.length > 0) {
+            await this.productRepository.save(infoUpdatedProducts);
+            await this.cacheService.updateByPriceChecker(infoUpdatedProducts);
+        }
     }
 
     async getUpdatedProduct(data: ProductInfoDto, cacheData: string | null) {
@@ -89,8 +94,8 @@ export class CronService {
         }
     }
 
-    async pushNotifications(updatedProducts: ProductInfoDto[]) {
-        const { messages, products } = await this.getNotifications(updatedProducts);
+    async pushNotifications(notifyingProducts: ProductInfoDto[]) {
+        const { messages, products } = await this.getNotifications(notifyingProducts);
         if (messages.length === 0) return;
         const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
         const successProducts = products.filter((item, index) => {
