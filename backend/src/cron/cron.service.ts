@@ -14,6 +14,7 @@ import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { getProductInfo } from 'src/utils/product.info';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class CronService {
@@ -26,15 +27,14 @@ export class CronService {
         private productPriceModel: Model<ProductPrice>,
         @InjectRedis() private readonly redis: Redis,
         private readonly firebaseService: FirebaseService,
+        private cacheService: CacheService,
     ) {}
 
     private isDefined = <T>(x: T | undefined): x is T => x !== undefined;
 
     @Cron('0 */10 * * * *')
     async cyclicPriceChecker() {
-        const totalProducts = await this.productRepository.find({
-            select: { id: true, productCode: true, shop: true },
-        });
+        const totalProducts = await this.productRepository.find();
         const recentProductInfo = await Promise.all(
             totalProducts.map(async ({ productCode, id, shop }) => {
                 const productInfo = await getProductInfo(shop, productCode);
@@ -55,6 +55,21 @@ export class CronService {
             );
             await this.pushNotifications(updatedProducts);
         }
+        // 상품 이름, img 변경 업데이트
+        totalProducts.sort((a, b) => a.id.localeCompare(b.id));
+        recentProductInfo.sort((a, b) => a.productId.localeCompare(b.productId));
+        const infoUpdatedProducts = totalProducts.filter((product, idx) => {
+            if (product.productName !== recentProductInfo[idx].productName) {
+                product.productName = recentProductInfo[idx].productName;
+                return true;
+            }
+            if (product.imageUrl !== recentProductInfo[idx].imageUrl) {
+                product.imageUrl = recentProductInfo[idx].imageUrl;
+                return true;
+            }
+        });
+        await this.productRepository.save(infoUpdatedProducts);
+        await this.cacheService.updateByPriceChecker(infoUpdatedProducts);
     }
 
     async getUpdatedProduct(data: ProductInfoDto, cacheData: string | null) {

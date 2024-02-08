@@ -12,6 +12,8 @@ import { ProductRepository } from 'src/product/product.repository';
 import { TrackingProductRepository } from 'src/product/trackingProduct.repository';
 import { ProductRankCacheDto } from 'src/dto/product.rank.cache.dto';
 import { TrackingProduct } from 'src/entities/trackingProduct.entity';
+import { Product } from 'src/entities/product.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CacheService {
@@ -126,5 +128,16 @@ export class CacheService {
         await Promise.all(updateRedis);
         await this.trackingProductRepository.delete({ userId: userId });
         await this.initProductRankCache();
+    }
+
+    async updateByPriceChecker(infoUpdatedProducts: Product[]) {
+        const productIdList = infoUpdatedProducts.map((product) => product.id);
+        const trackingProductList = await this.trackingProductRepository.find({
+            where: { productId: In(productIdList) },
+            relations: ['product'],
+        });
+        trackingProductList.forEach((product) => {
+            this.trackingProductCache.updateValue(product.userId, product);
+        });
     }
 }
