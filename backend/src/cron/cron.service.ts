@@ -14,6 +14,7 @@ import { TrackingProduct } from 'src/entities/trackingProduct.entity';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { getProductInfo } from 'src/utils/product.info';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class CronService {
@@ -26,15 +27,14 @@ export class CronService {
         private productPriceModel: Model<ProductPrice>,
         @InjectRedis() private readonly redis: Redis,
         private readonly firebaseService: FirebaseService,
+        private cacheService: CacheService,
     ) {}
 
     private isDefined = <T>(x: T | undefined): x is T => x !== undefined;
 
     @Cron('0 */10 * * * *')
     async cyclicPriceChecker() {
-        const totalProducts = await this.productRepository.find({
-            select: { id: true, productCode: true, shop: true },
-        });
+        const totalProducts = await this.productRepository.find();
         const recentProductInfo = await Promise.all(
             totalProducts.map(async ({ productCode, id, shop }) => {
                 const productInfo = await getProductInfo(shop, productCode);
@@ -53,7 +53,25 @@ export class CronService {
                     return { productId, price: productPrice, isSoldOut };
                 }),
             );
-            await this.pushNotifications(updatedProducts);
+            const notifyingProducts = updatedProducts.filter((product) => !product.isSoldOut);
+            if (notifyingProducts.length > 0) {
+                await this.pushNotifications(notifyingProducts);
+            }
+        }
+
+        totalProducts.sort((a, b) => a.id.localeCompare(b.id));
+        recentProductInfo.sort((a, b) => a.productId.localeCompare(b.productId));
+        const infoUpdatedProducts = totalProducts.filter((product, idx) => {
+            const recentInfo = recentProductInfo[idx];
+            if (product.productName !== recentInfo.productName || product.imageUrl !== recentInfo.imageUrl) {
+                product.productName = recentInfo.productName;
+                product.imageUrl = recentInfo.imageUrl;
+                return true;
+            }
+        });
+        if (infoUpdatedProducts.length > 0) {
+            await this.productRepository.save(infoUpdatedProducts);
+            await this.cacheService.updateByPriceChecker(infoUpdatedProducts);
         }
     }
 
@@ -74,8 +92,8 @@ export class CronService {
         }
     }
 
-    async pushNotifications(updatedProducts: ProductInfoDto[]) {
-        const { messages, products } = await this.getNotifications(updatedProducts);
+    async pushNotifications(notifyingProducts: ProductInfoDto[]) {
+        const { messages, products } = await this.getNotifications(notifyingProducts);
         if (messages.length === 0) return;
         const { responses } = await this.firebaseService.getMessaging().sendEach(messages);
         const successProducts = products.filter((item, index) => {
