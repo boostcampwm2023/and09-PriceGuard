@@ -71,7 +71,7 @@ export class UsersController {
     @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
     @ApiUnauthorizedResponse({ type: InvalidVerificationCode, description: '인증 코드 불일치' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일로 발급받은 인증 코드가 없거나 만료됨' })
     @Post('register')
     async registerUser(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterSuccess> {
         const user = await this.userService.registerUser(userRegisterDto);
@@ -164,7 +164,7 @@ export class UsersController {
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }
 
-    @ApiOperation({ summary: '인증 test API', description: '사용자가 비밀번호를 변경한다.' })
+    @ApiOperation({ summary: '사용자 비밀번호 변경 API', description: '사용자가 비밀번호를 변경한다.' })
     @ApiHeader({
         name: 'Authorization Bearer Token',
         description: 'verifyToken',

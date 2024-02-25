@@ -61,9 +61,10 @@ export class AuthController {
         return { statusCode: HttpStatus.OK, message: '토큰 재발급 성공', accessToken, refreshToken };
     }
 
-    @ApiOkResponse({ type: VerifyEmailSuccess, description: '이메일 인증 코드 발송 성공' })
+    @ApiOperation({ summary: '이메일 인증 코드 검증', description: '이메일 인증 코드를 검증한다.' })
+    @ApiOkResponse({ type: VerifyEmailSuccess, description: '이메일 인증 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일로 발급받은 코드가 없거나 만료됨' })
     @ApiBody({ type: VerifyEmailDto })
     @Post('/verify/email')
     async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
