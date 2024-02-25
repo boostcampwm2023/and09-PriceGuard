@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS } from 'src/constants';
+import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS, VERIFY_TOKEN_SECRETS } from 'src/constants';
 import { JWTService } from './jwt.service';
 
 @Injectable()
@@ -38,5 +38,23 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refresh') {
         }
         await this.jwtService.validateRefreshToken(payload.id, payload);
         return { id: payload.id };
+    }
+}
+
+@Injectable()
+export class VerifyJwtStrategy extends PassportStrategy(Strategy, 'verify') {
+    constructor() {
+        super({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: true,
+            secretOrKey: VERIFY_TOKEN_SECRETS,
+        });
+    }
+
+    async validate(payload: any) {
+        if (Date.now() >= payload.exp * 1000) {
+            throw new HttpException('토큰이 만료되었습니다.', HttpStatus.GONE);
+        }
+        return { email: payload.email };
     }
 }

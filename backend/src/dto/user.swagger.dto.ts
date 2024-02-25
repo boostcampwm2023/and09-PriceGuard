@@ -202,3 +202,16 @@ export class EmailNotFound {
     })
     message: string;
 }
+
+export class ChangePasswordSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '사용자 비밀번호 변경 성공',
+        description: '메시지',
+    })
+    message: string;
+}

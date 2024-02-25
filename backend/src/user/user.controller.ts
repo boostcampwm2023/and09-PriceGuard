@@ -31,6 +31,7 @@ import {
 } from '@nestjs/swagger';
 import {
     BadRequestError,
+    ChangePasswordSuccess,
     CheckEmailVerificatedSuccess,
     DupEmailError,
     EmailNotFound,
@@ -49,9 +50,10 @@ import { FirebaseTokenDto } from 'src/dto/firebase.token.dto';
 import { RequestError, UnauthorizedRequest } from 'src/dto/product.swagger.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
-import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
+import { ExpiredTokenError, InvalidTokenError } from 'src/dto/auth.swagger.dto';
 import { UserEmailDto } from 'src/dto/user.email.dto';
 import { UserRegisterDto } from 'src/dto/user.register.dto';
+import { UserPasswordDto } from 'src/dto/user.password.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -160,5 +162,22 @@ export class UsersController {
     async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
         await this.userService.sendVerificationEmail(userEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
+    }
+
+    @ApiOperation({ summary: '인증 test API', description: '사용자가 비밀번호를 변경한다.' })
+    @ApiHeader({
+        name: 'Authorization Bearer Token',
+        description: 'verifyToken',
+    })
+    @ApiOkResponse({ type: ChangePasswordSuccess, description: '비밀번호 변경 성공' })
+    @ApiGoneResponse({ type: ExpiredTokenError, description: 'verifyToken 만료' })
+    @ApiUnauthorizedResponse({ type: InvalidTokenError, description: '유효하지 않은 verifyToken' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @Post('/password')
+    @UseGuards(AuthGuard('verify'))
+    async changePassword(@Req() req: Request & { user: User }, @Body() userPasswordDto: UserPasswordDto) {
+        await this.userService.changePassword(req.user.email, userPasswordDto.password);
+        return { statusCode: HttpStatus.OK, message: '비밀번호 변경 성공' };
     }
 }
