@@ -56,10 +56,18 @@ export class UsersService {
         await this.usersRepository.remove(user);
     }
 
-    async sendVerificationEmail(email: string) {
+    async sendRegisterVerificationEmail(email: string) {
         const user = await this.usersRepository.findOne({ where: { email } });
         if (user) {
             throw new HttpException('이메일 중복', HttpStatus.CONFLICT);
+        }
+        await this.mailService.sendVerficationCode(email);
+    }
+
+    async sendVerificationEmail(email: string) {
+        const user = await this.usersRepository.findOne({ where: { email } });
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
         await this.mailService.sendVerficationCode(email);
     }

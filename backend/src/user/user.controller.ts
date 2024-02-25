@@ -117,15 +117,18 @@ export class UsersController {
         return { statusCode: HttpStatus.OK, message: '회원탈퇴 성공' };
     }
 
-    @ApiOperation({ summary: '이메일 인증 코드 발송 요청 API', description: '사용자 이메일로 인증 코드를 발송한다.' })
+    @ApiOperation({
+        summary: '회원가입을 위한 이메일 인증 코드 발송 요청 API',
+        description: '회원가입을 위해 사용자 이메일로 인증 코드를 발송한다.',
+    })
     @ApiBody({ type: UserEmailDto })
     @ApiOkResponse({ type: SendVerificationEmailSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: SendVerificationEmailError, description: '이메일 인증 코드 발송 실패' })
     @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
     @Post('email/register-verification')
-    async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
-        await this.userService.sendVerificationEmail(userEmailDto.email);
+    async sendRegisterVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
+        await this.userService.sendRegisterVerificationEmail(userEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }
 
@@ -135,11 +138,26 @@ export class UsersController {
     })
     @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없습니다.' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
     @ApiBody({ type: UserEmailDto })
     @Get('email/is-verified')
     async checkEmailVarifacted(@Body() userEmailDto: UserEmailDto) {
         const verified = await this.userService.checkEmailVarifacted(userEmailDto.email);
         return { statusCode: HttpStatus.OK, verified, message: '사용자 이메일 인증 여부 조회 성공' };
+    }
+
+    @ApiOperation({
+        summary: '기존 사용자 이메일 인증 코드 발송 요청 API',
+        description: '기존 사용자 이메일로 인증 코드를 발송한다.',
+    })
+    @ApiBody({ type: UserEmailDto })
+    @ApiOkResponse({ type: SendVerificationEmailSuccess, description: '이메일 인증 코드 발송 성공' })
+    @ApiBadRequestResponse({ type: SendVerificationEmailError, description: '이메일 인증 코드 발송 실패' })
+    @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일 찾을 수 없음' })
+    @Post('email/verification')
+    async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
+        await this.userService.sendVerificationEmail(userEmailDto.email);
+        return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }
 }
