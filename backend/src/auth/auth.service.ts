@@ -62,7 +62,10 @@ export class AuthService {
 
     async verifyEmail(email: string, code: string) {
         const verficationCode = await this.redis.get(`verficationCode:${email}`);
-        if (!verficationCode || verficationCode !== code) {
+        if (!verficationCode) {
+            throw new HttpException('해당 이메일을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        if (verficationCode !== code) {
             throw new HttpException('유효하지 않은 인증 코드', HttpStatus.UNAUTHORIZED);
         }
     }

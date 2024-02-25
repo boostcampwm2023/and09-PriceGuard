@@ -69,6 +69,7 @@ export class UsersController {
     @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
     @ApiUnauthorizedResponse({ type: InvalidVerificationCode, description: '인증 코드 불일치' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
     @Post('register')
     async registerUser(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterSuccess> {
         const user = await this.userService.registerUser(userRegisterDto);
@@ -154,7 +155,7 @@ export class UsersController {
     @ApiOkResponse({ type: SendVerificationEmailSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: SendVerificationEmailError, description: '이메일 인증 코드 발송 실패' })
     @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일 찾을 수 없음' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
     @Post('email/verification')
     async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
         await this.userService.sendVerificationEmail(userEmailDto.email);

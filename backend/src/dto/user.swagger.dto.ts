@@ -197,7 +197,7 @@ export class EmailNotFound {
     })
     statusCode: number;
     @ApiProperty({
-        example: '해당 이메일의 사용자를 찾을 수 없습니다.',
+        example: '해당 이메일을 찾을 수 없습니다.',
         description: '메시지',
     })
     message: string;
