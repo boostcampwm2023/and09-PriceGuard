@@ -9,6 +9,7 @@ import {
     Put,
     UseGuards,
     Req,
+    Get,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
@@ -21,6 +22,7 @@ import {
     ApiConflictResponse,
     ApiGoneResponse,
     ApiHeader,
+    ApiNotFoundResponse,
     ApiOkResponse,
     ApiOperation,
     ApiTags,
@@ -29,7 +31,9 @@ import {
 } from '@nestjs/swagger';
 import {
     BadRequestError,
+    CheckEmailVerificatedSuccess,
     DupEmailError,
+    EmailNotFound,
     FirebaseTokenSuccess,
     InvalidVerificationCode,
     LoginFailError,
@@ -42,7 +46,7 @@ import {
     TooManySendEmailError,
 } from 'src/dto/user.swagger.dto';
 import { FirebaseTokenDto } from 'src/dto/firebase.token.dto';
-import { UnauthorizedRequest } from 'src/dto/product.swagger.dto';
+import { RequestError, UnauthorizedRequest } from 'src/dto/product.swagger.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
 import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
@@ -118,9 +122,24 @@ export class UsersController {
     @ApiOkResponse({ type: SendVerificationEmailSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: SendVerificationEmailError, description: '이메일 인증 코드 발송 실패' })
     @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
-    @Post('email')
+    @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
+    @Post('email/register-verification')
     async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
         await this.userService.sendVerificationEmail(userEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
+    }
+
+    @ApiOperation({
+        summary: '사용자 이메일 인증 여부 확인 API',
+        description: '사용자 이메일이 인증되어 있는지 알려준다.',
+    })
+    @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '이메일 인증 코드 발송 성공' })
+    @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없습니다.' })
+    @ApiBody({ type: UserEmailDto })
+    @Get('email/is-verified')
+    async checkEmailVarifacted(@Body() userEmailDto: UserEmailDto) {
+        const verified = await this.userService.checkEmailVarifacted(userEmailDto.email);
+        return { statusCode: HttpStatus.OK, verified, message: '사용자 이메일 인증 여부 조회 성공' };
     }
 }

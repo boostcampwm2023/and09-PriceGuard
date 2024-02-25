@@ -176,3 +176,29 @@ export class InvalidVerificationCode {
     })
     message: string;
 }
+
+export class CheckEmailVerificatedSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '사용자 이메일 인증 여부 조회 성공',
+        description: '메시지',
+    })
+    message: string;
+}
+
+export class EmailNotFound {
+    @ApiProperty({
+        example: HttpStatus.NOT_FOUND,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '해당 이메일의 사용자를 찾을 수 없습니다.',
+        description: '메시지',
+    })
+    message: string;
+}
