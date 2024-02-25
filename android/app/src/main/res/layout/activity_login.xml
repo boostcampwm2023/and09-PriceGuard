@@ -135,6 +135,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/til_login_password" />
 
             <TextView
+                android:id="@+id/tv_find_password"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="비밀번호 찾기"
+                android:textColor="?attr/colorPrimary"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                app:layout_constraintTop_toBottomOf="@id/btn_login_login" />
+
+            <TextView
                 android:id="@+id/tv_not_a_member"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,7 +156,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/btn_login_signup"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="@+id/btn_login_signup"
-                app:layout_constraintTop_toBottomOf="@+id/btn_login_login"
+                app:layout_constraintTop_toBottomOf="@+id/tv_find_password"
                 app:layout_constraintVertical_bias="1.0" />
 
             <Button

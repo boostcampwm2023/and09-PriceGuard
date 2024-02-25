@@ -49,6 +49,9 @@ class LoginActivity : AppCompatActivity() {
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
             }
+            tvFindPassword.setOnClickListener {
+                gotoFindPassword()
+            }
         }
     }
 
@@ -110,6 +113,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun gotoSignUp() {
         startActivity(Intent(this, SignupActivity::class.java))
+    }
+
+    private fun gotoFindPassword() {
+        startActivity(Intent(this, FindPasswordActivity::class.java))
     }
 
     private fun gotoHomeActivity() {
