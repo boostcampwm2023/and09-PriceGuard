@@ -4,7 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
-import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS, TWO_MONTHS_TO_SEC, TWO_WEEKS_TO_SEC } from 'src/constants';
+import {
+    ACCESS_TOKEN_SECRETS,
+    REFRESH_TOKEN_SECRETS,
+    VERIFY_TOKEN_SECRETS,
+    TWO_MONTHS_TO_SEC,
+    TWO_WEEKS_TO_SEC,
+} from 'src/constants';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 
@@ -68,5 +74,10 @@ export class AuthService {
         if (verficationCode !== code) {
             throw new HttpException('유효하지 않은 인증 코드', HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    async getVerifyToken(email: string) {
+        const verifyToken = this.jwtService.sign({ email }, { secret: VERIFY_TOKEN_SECRETS, expiresIn: '5m' });
+        return verifyToken;
     }
 }
