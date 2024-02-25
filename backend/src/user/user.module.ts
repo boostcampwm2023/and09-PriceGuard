@@ -8,6 +8,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProductModule } from 'src/product/product.module';
+import { MailService } from 'src/mail/mail.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule), ProductModule],
@@ -19,6 +20,7 @@ import { ProductModule } from 'src/product/product.module';
         },
         UsersService,
         UsersRepository,
+        MailService,
     ],
     exports: [UsersService],
 })

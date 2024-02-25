@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationException } from '../exceptions/validation.exception';
 import * as bcrypt from 'bcrypt';
 import { CacheService } from 'src/cache/cache.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +14,7 @@ export class UsersService {
         @InjectRepository(UsersRepository)
         private usersRepository: UsersRepository,
         private cacheService: CacheService,
+        private mailService: MailService,
     ) {}
 
     async registerUser(userDto: UserDto): Promise<User> {
@@ -45,5 +47,9 @@ export class UsersService {
         }
         await this.cacheService.updateByRemoveUser(user.id);
         await this.usersRepository.remove(user);
+    }
+
+    async sendVerificationEmail(email: string) {
+        await this.mailService.sendVerficationCode(email);
     }
 }

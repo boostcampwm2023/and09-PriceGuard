@@ -14,6 +14,8 @@ import { MONGODB_URL } from './constants';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfig } from './configs/redis.config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailerConfig } from './configs/mailer.config';
 
 @Module({
     imports: [
@@ -25,6 +27,7 @@ import { RedisConfig } from './configs/redis.config';
         MongooseModule.forRoot(MONGODB_URL),
         ScheduleModule.forRoot(),
         RedisModule.forRoot(RedisConfig),
+        MailerModule.forRoot(MailerConfig),
     ],
     controllers: [AppController],
     providers: [AppService],

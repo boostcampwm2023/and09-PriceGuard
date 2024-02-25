@@ -25,6 +25,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiTags,
+    ApiTooManyRequestsResponse,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
@@ -36,12 +37,16 @@ import {
     RegisterSuccess,
     RemoveFailError,
     RemoveSuccess,
+    SendVerificationEmailError,
+    SendVerificationEmailSuccess,
+    TooManySendEmailError,
 } from 'src/dto/user.swagger.dto';
 import { FirebaseTokenDto } from 'src/dto/firebase.token.dto';
 import { UnauthorizedRequest } from 'src/dto/product.swagger.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
 import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
+import { UserEmailDto } from 'src/dto/user.email.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -104,5 +109,16 @@ export class UsersController {
         const { email, password } = loginDto;
         await this.userService.removeUser(email, password);
         return { statusCode: HttpStatus.OK, message: '회원탈퇴 성공' };
+    }
+
+    @ApiOperation({ summary: '이메일 인증 코드 발송 요청 API', description: '사용자 이메일로 인증 코드를 발송한다.' })
+    @ApiBody({ type: UserEmailDto })
+    @ApiOkResponse({ type: SendVerificationEmailSuccess, description: '이메일 인증 코드 발송 성공' })
+    @ApiBadRequestResponse({ type: SendVerificationEmailError, description: '이메일 인증 코드 발송 실패' })
+    @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
+    @Post('email')
+    async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
+        await this.userService.sendVerificationEmail(userEmailDto.email);
+        return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }
 }
