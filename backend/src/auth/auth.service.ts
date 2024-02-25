@@ -59,4 +59,11 @@ export class AuthService {
             throw new HttpException('Firebase 토큰 등록 실패', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async verifyEmail(email: string, code: string) {
+        const verficationCode = await this.redis.get(`verficationCode:${email}`);
+        if (!verficationCode || verficationCode !== code) {
+            throw new HttpException('유효하지 않은 인증 코드', HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

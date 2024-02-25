@@ -1,5 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDto } from '../dto/user.dto';
+import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +6,9 @@ import { ValidationException } from '../exceptions/validation.exception';
 import * as bcrypt from 'bcrypt';
 import { CacheService } from 'src/cache/cache.service';
 import { MailService } from 'src/mail/mail.service';
+import { AuthService } from 'src/auth/auth.service';
+import { UserRegisterDto } from 'src/dto/user.register.dto';
+import { UserDto } from 'src/dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -15,9 +17,14 @@ export class UsersService {
         private usersRepository: UsersRepository,
         private cacheService: CacheService,
         private mailService: MailService,
+        @Inject(forwardRef(() => AuthService))
+        private authService: AuthService,
     ) {}
 
-    async registerUser(userDto: UserDto): Promise<User> {
+    async registerUser(userRegisterDto: UserRegisterDto): Promise<User> {
+        const { userName, email, password, verificationCode } = userRegisterDto;
+        await this.authService.verifyEmail(email, verificationCode);
+        const userDto: UserDto = { userName, email, password };
         try {
             return await this.usersRepository.createUser(userDto);
         } catch (error) {

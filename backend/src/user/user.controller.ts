@@ -11,7 +11,6 @@ import {
     Req,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
-import { UserDto } from '../dto/user.dto';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../dto/login.dto';
@@ -32,6 +31,7 @@ import {
     BadRequestError,
     DupEmailError,
     FirebaseTokenSuccess,
+    InvalidVerificationCode,
     LoginFailError,
     LoginSuccess,
     RegisterSuccess,
@@ -47,6 +47,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/entities/user.entity';
 import { ExpiredTokenError } from 'src/dto/auth.swagger.dto';
 import { UserEmailDto } from 'src/dto/user.email.dto';
+import { UserRegisterDto } from 'src/dto/user.register.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -59,13 +60,14 @@ export class UsersController {
     ) {}
 
     @ApiOperation({ summary: '회원가입 API', description: '서버에게 회원가입 요청을 보낸다.' })
-    @ApiBody({ type: UserDto })
+    @ApiBody({ type: UserRegisterDto })
     @ApiOkResponse({ type: RegisterSuccess, description: '회원가입 성공' })
     @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
+    @ApiUnauthorizedResponse({ type: InvalidVerificationCode, description: '인증 코드 불일치' })
     @Post('register')
-    async registerUser(@Body() userDto: UserDto): Promise<RegisterSuccess> {
-        const user = await this.userService.registerUser(userDto);
+    async registerUser(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterSuccess> {
+        const user = await this.userService.registerUser(userRegisterDto);
         const accessToken = await this.authService.getAccessToken(user);
         const refreshToken = await this.authService.getRefreshToken(user);
         return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
