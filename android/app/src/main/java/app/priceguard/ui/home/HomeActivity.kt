@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -22,6 +24,10 @@ import app.priceguard.ui.util.openNotificationSettings
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -30,6 +36,8 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
+    private val appUpdateManager = AppUpdateManagerFactory.create(this)
+    private val updateType = AppUpdateType.IMMEDIATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +55,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         checkForGooglePlayServices()
+        checkAppUpdates()
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -124,6 +133,40 @@ class HomeActivity : AppCompatActivity() {
                     // Initial cases
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
+            }
+        }
+    }
+
+    private fun checkAppUpdates() {
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            when (result.resultCode) {
+                RESULT_CANCELED -> {
+                    Toast.makeText(this, getString(R.string.update_cancel_warning), Toast.LENGTH_LONG).show()
+                }
+                com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                    Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        appUpdateInfoTask.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                info.isUpdateTypeAllowed(updateType)
+            ) {
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    activityResultLauncher,
+                    AppUpdateOptions.newBuilder(updateType).build()
+                )
+            }
+
+            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    activityResultLauncher,
+                    AppUpdateOptions.newBuilder(updateType).build()
+                )
             }
         }
     }
