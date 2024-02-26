@@ -112,6 +112,10 @@ dependencies {
 
     // Material chart
     implementation("app.priceguard:materialchart:0.2.2")
+
+    // In app update
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 }
 
 kapt {
