@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     async validateUser(email: string, password: string): Promise<Record<string, string>> {
-        const user = await this.usersService.findOne(email);
+        const user = await this.usersService.findUserByEmail(email);
         if (!user || !bcrypt.compareSync(password, user.password)) {
             throw new ValidationException('로그인 실패');
         }
@@ -47,7 +47,7 @@ export class AuthService {
     }
 
     async refreshJWT(userId: string): Promise<Record<string, string>> {
-        const user = await this.usersService.getUserById(userId);
+        const user = await this.usersService.findUserById(userId);
         if (!user) {
             throw new HttpException('유효하지 않은 refreshToken', HttpStatus.BAD_REQUEST);
         }

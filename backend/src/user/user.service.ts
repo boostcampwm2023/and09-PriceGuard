@@ -38,12 +38,12 @@ export class UsersService {
         }
     }
 
-    async findOne(email: string): Promise<User | null> {
+    async findUserByEmail(email: string): Promise<User | null> {
         const user = await this.usersRepository.findOne({ where: { email } });
         return user;
     }
 
-    async getUserById(userId: string): Promise<User | null> {
+    async findUserById(userId: string): Promise<User | null> {
         return await this.usersRepository.findOne({ where: { id: userId } });
     }
 
@@ -65,30 +65,32 @@ export class UsersService {
     }
 
     async sendVerificationEmail(email: string) {
-        await this.findUserByEmail(email);
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
         await this.mailService.sendVerficationCode(email);
     }
 
     async checkEmailVarifacted(email: string) {
         const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
         if (!user.verified) {
             return false;
         }
         return true;
     }
+
     async changePassword(email: string, password: string) {
         const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new ValidationException('비밀번호 변경 실패');
+        }
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
         user.password = hashedPassword;
         await this.usersRepository.save(user);
-    }
-
-    async findUserByEmail(email: string) {
-        const user = await this.usersRepository.findOne({ where: { email } });
-        if (!user) {
-            throw new HttpException('해당 이메일을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-        }
-        return user;
     }
 }
