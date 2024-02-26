@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString } from 'class-validator';
 
-export class UserDto {
+export class UserRegisterDto {
     @ApiProperty({
         example: 'example123@naver.com',
         description: '사용자 이메일',
@@ -17,6 +17,14 @@ export class UserDto {
     })
     @IsString()
     userName: string;
+
+    @ApiProperty({
+        example: '345123',
+        description: '인증코드',
+        required: true,
+    })
+    @IsString()
+    verificationCode: string;
 
     @ApiProperty({
         example: '1q2w3e4r',

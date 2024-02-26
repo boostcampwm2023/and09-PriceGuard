@@ -23,6 +23,9 @@ export class User extends BaseEntity {
     @Column({ default: 'tier1', type: 'varchar', length: 36, nullable: false })
     grade: string;
 
+    @Column({ default: true, type: 'boolean', nullable: false })
+    verified: boolean;
+
     @OneToMany(() => TrackingProduct, (trackingProduct) => trackingProduct.userId)
     trackingProduct: TrackingProduct[];
 }

@@ -1,11 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDto } from '../dto/user.dto';
+import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ValidationException } from '../exceptions/validation.exception';
 import * as bcrypt from 'bcrypt';
 import { CacheService } from 'src/cache/cache.service';
+import { MailService } from 'src/mail/mail.service';
+import { AuthService } from 'src/auth/auth.service';
+import { UserRegisterDto } from 'src/dto/user.register.dto';
+import { UserDto } from 'src/dto/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,9 +16,15 @@ export class UsersService {
         @InjectRepository(UsersRepository)
         private usersRepository: UsersRepository,
         private cacheService: CacheService,
+        private mailService: MailService,
+        @Inject(forwardRef(() => AuthService))
+        private authService: AuthService,
     ) {}
 
-    async registerUser(userDto: UserDto): Promise<User> {
+    async registerUser(userRegisterDto: UserRegisterDto): Promise<User> {
+        const { userName, email, password, verificationCode } = userRegisterDto;
+        await this.authService.verifyEmail(email, verificationCode);
+        const userDto: UserDto = { userName, email, password };
         try {
             return await this.usersRepository.createUser(userDto);
         } catch (error) {
@@ -29,12 +38,12 @@ export class UsersService {
         }
     }
 
-    async findOne(email: string): Promise<User | null> {
+    async findUserByEmail(email: string): Promise<User | null> {
         const user = await this.usersRepository.findOne({ where: { email } });
         return user;
     }
 
-    async getUserById(userId: string): Promise<User | null> {
+    async findUserById(userId: string): Promise<User | null> {
         return await this.usersRepository.findOne({ where: { id: userId } });
     }
 
@@ -45,5 +54,43 @@ export class UsersService {
         }
         await this.cacheService.updateByRemoveUser(user.id);
         await this.usersRepository.remove(user);
+    }
+
+    async sendRegisterVerificationEmail(email: string) {
+        const user = await this.usersRepository.findOne({ where: { email } });
+        if (user) {
+            throw new HttpException('이메일 중복', HttpStatus.CONFLICT);
+        }
+        await this.mailService.sendVerficationCode(email);
+    }
+
+    async sendVerificationEmail(email: string) {
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        await this.mailService.sendVerficationCode(email);
+    }
+
+    async checkEmailVarifacted(email: string) {
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        if (!user.verified) {
+            return false;
+        }
+        return true;
+    }
+
+    async changePassword(email: string, password: string) {
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new ValidationException('비밀번호 변경 실패');
+        }
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
+        await this.usersRepository.save(user);
     }
 }

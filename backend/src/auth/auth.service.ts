@@ -4,7 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { ValidationException } from 'src/exceptions/validation.exception';
 import { JwtService } from '@nestjs/jwt';
-import { ACCESS_TOKEN_SECRETS, REFRESH_TOKEN_SECRETS, TWO_MONTHS_TO_SEC, TWO_WEEKS_TO_SEC } from 'src/constants';
+import {
+    ACCESS_TOKEN_SECRETS,
+    REFRESH_TOKEN_SECRETS,
+    VERIFY_TOKEN_SECRETS,
+    TWO_MONTHS_TO_SEC,
+    TWO_WEEKS_TO_SEC,
+} from 'src/constants';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 
@@ -30,7 +36,7 @@ export class AuthService {
     }
 
     async validateUser(email: string, password: string): Promise<Record<string, string>> {
-        const user = await this.usersService.findOne(email);
+        const user = await this.usersService.findUserByEmail(email);
         if (!user || !bcrypt.compareSync(password, user.password)) {
             throw new ValidationException('로그인 실패');
         }
@@ -41,7 +47,7 @@ export class AuthService {
     }
 
     async refreshJWT(userId: string): Promise<Record<string, string>> {
-        const user = await this.usersService.getUserById(userId);
+        const user = await this.usersService.findUserById(userId);
         if (!user) {
             throw new HttpException('유효하지 않은 refreshToken', HttpStatus.BAD_REQUEST);
         }
@@ -58,5 +64,20 @@ export class AuthService {
         } catch (e) {
             throw new HttpException('Firebase 토큰 등록 실패', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    async verifyEmail(email: string, code: string) {
+        const verficationCode = await this.redis.get(`verficationCode:${email}`);
+        if (!verficationCode) {
+            throw new HttpException('해당 이메일을 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        if (verficationCode !== code) {
+            throw new HttpException('유효하지 않은 인증 코드', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    async getVerifyToken(email: string) {
+        const verifyToken = this.jwtService.sign({ email }, { secret: VERIFY_TOKEN_SECRETS, expiresIn: '5m' });
+        return verifyToken;
     }
 }

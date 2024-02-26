@@ -62,3 +62,21 @@ export class RefreshJWTSuccess {
     })
     refreshToken: string;
 }
+
+export class VerifyEmailSuccess {
+    @ApiProperty({
+        example: HttpStatus.OK,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '이메일 인증 성공',
+        description: '메시지',
+    })
+    message: string;
+    @ApiProperty({
+        example: 'verify token example',
+        description: 'Verify Token의 만료 기간은 3분이다.',
+    })
+    verifyToken: string;
+}

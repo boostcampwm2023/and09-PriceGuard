@@ -12,6 +12,7 @@ export const DB_NAME = process.env.DB_NAME;
 export const NODE_ENV = process.env.NODE_ENV;
 export const ACCESS_TOKEN_SECRETS = process.env.ACCESS_TOKEN_SECRETS;
 export const REFRESH_TOKEN_SECRETS = process.env.REFRESH_TOKEN_SECRETS;
+export const VERIFY_TOKEN_SECRETS = process.env.VERIFY_TOKEN_SECRETS;
 export const OPEN_API_KEY_11ST = process.env.OPEN_API_KEY_11ST as string;
 export const BASE_URL_11ST = process.env.BASE_URL_11ST as string;
 export const MAX_TRACKING_RANK = parseInt(process.env.MAX_TRACKING_RANK || '50');
@@ -54,3 +55,9 @@ type AddProductLimit = {
 export const ADD_PRODUCT_LIMIT: AddProductLimit = {
     tier1: 3,
 };
+export const MAILER_USER = process.env.MAILER_USER;
+export const MAILER_PW = process.env.MAILER_PW;
+export const MIN_VERFICATION_CODE = 100000;
+export const MAX_VERFICATION_CODE = 999999;
+export const MAX_SENDING_EMAIL = 5;
+export const THREE_MIN_TO_SEC = 3 * 60;
