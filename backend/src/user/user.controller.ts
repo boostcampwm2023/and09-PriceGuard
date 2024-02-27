@@ -139,13 +139,19 @@ export class UsersController {
         summary: '사용자 이메일 인증 여부 확인 API',
         description: '사용자 이메일이 인증되어 있는지 알려준다.',
     })
+    @ApiHeader({
+        name: 'Authorization Bearer Token',
+        description: 'accessToken',
+    })
     @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
-    @ApiBody({ type: UserEmailDto })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일의 사용자를 찾을 수 없음' })
+    @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+    @ApiGoneResponse({ type: ExpiredTokenError, description: 'accessToken 만료' })
+    @UseGuards(AuthGuard('access'))
     @Get('email/is-verified')
-    async checkEmailVarifacted(@Body() userEmailDto: UserEmailDto) {
-        const verified = await this.userService.checkEmailVarifacted(userEmailDto.email);
+    async checkEmailVarifacted(@Req() req: Request & { user: User }) {
+        const verified = await this.userService.checkEmailVarifacted(req.user.email);
         return { statusCode: HttpStatus.OK, verified, message: '사용자 이메일 인증 여부 조회 성공' };
     }
 
