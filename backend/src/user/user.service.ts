@@ -21,10 +21,7 @@ export class UsersService {
         private authService: AuthService,
     ) {}
 
-    async registerUser(userRegisterDto: UserRegisterDto): Promise<User> {
-        const { userName, email, password, verificationCode } = userRegisterDto;
-        await this.authService.verifyEmail(email, verificationCode);
-        const userDto: UserDto = { userName, email, password };
+    async registerUser(userDto: UserDto): Promise<User> {
         try {
             return await this.usersRepository.createUser(userDto);
         } catch (error) {
@@ -36,6 +33,13 @@ export class UsersService {
             }
             throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    async registerUserV1(userRegisterDto: UserRegisterDto): Promise<User> {
+        const { userName, email, password, verificationCode } = userRegisterDto;
+        await this.authService.verifyEmail(email, verificationCode);
+        const userDto: UserDto = { userName, email, password, verified: true };
+        return this.registerUser(userDto);
     }
 
     async findUserByEmail(email: string): Promise<User | null> {
@@ -91,6 +95,15 @@ export class UsersService {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
         user.password = hashedPassword;
+        await this.usersRepository.save(user);
+    }
+
+    async verifyUserByEmail(email: string): Promise<void> {
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        user.verified = true;
         await this.usersRepository.save(user);
     }
 }

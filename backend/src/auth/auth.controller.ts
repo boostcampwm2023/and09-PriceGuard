@@ -69,6 +69,7 @@ export class AuthController {
     @Post('/verify/email')
     async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
         await this.authService.verifyEmail(verifyEmailDto.email, verifyEmailDto.verificationCode);
+        await this.authService.verifyUserByEmail(verifyEmailDto.email);
         const verifyToken = await this.authService.getVerifyToken(verifyEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 인증 성공', verifyToken };
     }

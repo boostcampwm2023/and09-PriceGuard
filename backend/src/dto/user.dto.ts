@@ -25,4 +25,6 @@ export class UserDto {
     })
     @IsString()
     password: string;
+
+    verified?: boolean;
 }

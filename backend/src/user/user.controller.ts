@@ -10,6 +10,7 @@ import {
     UseGuards,
     Req,
     Get,
+    Version,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
@@ -54,6 +55,7 @@ import { ExpiredTokenError, InvalidTokenError } from 'src/dto/auth.swagger.dto';
 import { UserEmailDto } from 'src/dto/user.email.dto';
 import { UserRegisterDto } from 'src/dto/user.register.dto';
 import { UserPasswordDto } from 'src/dto/user.password.dto';
+import { UserDto } from 'src/dto/user.dto';
 
 @ApiTags('사용자 API')
 @Controller('user')
@@ -66,6 +68,19 @@ export class UsersController {
     ) {}
 
     @ApiOperation({ summary: '회원가입 API', description: '서버에게 회원가입 요청을 보낸다.' })
+    @ApiBody({ type: UserDto })
+    @ApiOkResponse({ type: RegisterSuccess, description: '회원가입 성공' })
+    @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
+    @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
+    @Post('register')
+    async registerUser(@Body() userDto: UserDto): Promise<RegisterSuccess> {
+        const user = await this.userService.registerUser(userDto);
+        const accessToken = await this.authService.getAccessToken(user);
+        const refreshToken = await this.authService.getRefreshToken(user);
+        return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
+    }
+
+    @ApiOperation({ summary: '회원가입 API', description: '서버에게 회원가입 요청을 보낸다.' })
     @ApiBody({ type: UserRegisterDto })
     @ApiOkResponse({ type: RegisterSuccess, description: '회원가입 성공' })
     @ApiBadRequestResponse({ type: BadRequestError, description: '유효하지 않은 입력 값' })
@@ -73,8 +88,9 @@ export class UsersController {
     @ApiUnauthorizedResponse({ type: InvalidVerificationCode, description: '인증 코드 불일치' })
     @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일로 발급받은 인증 코드가 없거나 만료됨' })
     @Post('register')
-    async registerUser(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterSuccess> {
-        const user = await this.userService.registerUser(userRegisterDto);
+    @Version('1')
+    async registerUserV1(@Body() userRegisterDto: UserRegisterDto): Promise<RegisterSuccess> {
+        const user = await this.userService.registerUserV1(userRegisterDto);
         const accessToken = await this.authService.getAccessToken(user);
         const refreshToken = await this.authService.getRefreshToken(user);
         return { statusCode: HttpStatus.OK, message: '회원가입 성공', accessToken, refreshToken };
@@ -139,13 +155,19 @@ export class UsersController {
         summary: '사용자 이메일 인증 여부 확인 API',
         description: '사용자 이메일이 인증되어 있는지 알려준다.',
     })
+    @ApiHeader({
+        name: 'Authorization Bearer Token',
+        description: 'accessToken',
+    })
     @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '이메일 인증 코드 발송 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
-    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
-    @ApiBody({ type: UserEmailDto })
+    @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일의 사용자를 찾을 수 없음' })
+    @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })
+    @ApiGoneResponse({ type: ExpiredTokenError, description: 'accessToken 만료' })
+    @UseGuards(AuthGuard('access'))
     @Get('email/is-verified')
-    async checkEmailVarifacted(@Body() userEmailDto: UserEmailDto) {
-        const verified = await this.userService.checkEmailVarifacted(userEmailDto.email);
+    async checkEmailVarifacted(@Req() req: Request & { user: User }) {
+        const verified = await this.userService.checkEmailVarifacted(req.user.email);
         return { statusCode: HttpStatus.OK, verified, message: '사용자 이메일 인증 여부 조회 성공' };
     }
 
