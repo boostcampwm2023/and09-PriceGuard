@@ -93,4 +93,13 @@ export class UsersService {
         user.password = hashedPassword;
         await this.usersRepository.save(user);
     }
+
+    async verifyUserByEmail(email: string): Promise<void> {
+        const user = await this.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+        }
+        user.verified = true;
+        await this.usersRepository.save(user);
+    }
 }

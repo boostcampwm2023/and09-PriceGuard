@@ -76,6 +76,10 @@ export class AuthService {
         }
     }
 
+    async verifyUserByEmail(email: string) {
+        await this.usersService.verifyUserByEmail(email);
+    }
+
     async getVerifyToken(email: string) {
         const verifyToken = this.jwtService.sign({ email }, { secret: VERIFY_TOKEN_SECRETS, expiresIn: '5m' });
         return verifyToken;
