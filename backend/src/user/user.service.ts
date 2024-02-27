@@ -21,10 +21,7 @@ export class UsersService {
         private authService: AuthService,
     ) {}
 
-    async registerUser(userRegisterDto: UserRegisterDto): Promise<User> {
-        const { userName, email, password, verificationCode } = userRegisterDto;
-        await this.authService.verifyEmail(email, verificationCode);
-        const userDto: UserDto = { userName, email, password };
+    async registerUser(userDto: UserDto): Promise<User> {
         try {
             return await this.usersRepository.createUser(userDto);
         } catch (error) {
@@ -36,6 +33,13 @@ export class UsersService {
             }
             throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    async registerUserV1(userRegisterDto: UserRegisterDto): Promise<User> {
+        const { userName, email, password, verificationCode } = userRegisterDto;
+        await this.authService.verifyEmail(email, verificationCode);
+        const userDto: UserDto = { userName, email, password, verified: true };
+        return this.registerUser(userDto);
     }
 
     async findUserByEmail(email: string): Promise<User | null> {
