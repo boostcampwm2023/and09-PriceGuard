@@ -1,9 +1,11 @@
-package app.priceguard.ui.login
+package app.priceguard.ui.login.findpassword
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import app.priceguard.databinding.ActivityFindPasswordBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FindPasswordActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFindPasswordBinding

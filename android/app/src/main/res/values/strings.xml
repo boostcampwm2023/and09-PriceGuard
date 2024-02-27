@@ -152,9 +152,12 @@
     <string name="recommended_product_no_product">추천 상품이 준비중입니다.</string>
     <string name="sold_out">품절</string>
     <string name="error_maximum_count_exceeded">등록 가능한 상품 개수를 초과하였습니다.</string>
-    <string name="email_verification">이메일 인증</string>
     <string name="reset_password">비밀번호 재설정</string>
     <string name="verify_email">이메일 인증</string>
     <string name="verification_number">인증번호</string>
     <string name="verification">인증</string>
+    <string name="match_error_verification_code">인증번호가 일치하지 않습니다</string>
+    <string name="error_verify_email">이메일 인증 실패</string>
+    <string name="error_request_verification_code">인증 요청 실패</string>
+    <string name="sended_verification_code">인증 번호를 전송했습니다.</string>
 </resources>

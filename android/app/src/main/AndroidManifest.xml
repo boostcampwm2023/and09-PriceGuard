@@ -81,7 +81,7 @@
             android:name=".ui.home.mypage.DeleteAccountActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.FindPasswordActivity"
+            android:name=".ui.login.findpassword.FindPasswordActivity"
             android:exported="false" />
 
         <service

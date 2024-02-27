@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="app.priceguard.ui.login.findpassword.EmailVerificationViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -51,9 +54,11 @@
                 android:layout_marginTop="80dp"
                 android:layout_marginEnd="8dp"
                 android:hint="@string/e_mail"
+                app:helperText=" "
                 app:layout_constraintEnd_toStartOf="@id/btn_email_verification_verify"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/tv_email_verification_title">
+                app:layout_constraintTop_toBottomOf="@id/tv_email_verification_title"
+                app:textInputLayoutError="@{(viewModel.state.email.length > 0) ? viewModel.state.matchedEmailRegex ? null : @string/invalid_email : null }">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_email_verification_email"
@@ -62,7 +67,8 @@
                     android:autofillHints="emailAddress"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.updateEmail(content.toString())}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,9 +77,12 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="52dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_round_corner"
+                android:enabled="@{viewModel.state.matchedEmailRegex}"
+                android:onClick="@{()->viewModel.requestVerificationCode()}"
                 android:padding="0dp"
                 android:text="@string/verification"
                 app:layout_constraintBottom_toBottomOf="@id/til_email_verification_email"
@@ -84,9 +93,9 @@
                 android:id="@+id/til_email_verification_num"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:hint="@string/verification_number"
-                app:helperText=" "
+                app:helperText='@{viewModel.state.finishedRequestVerificationCode ? "인증번호 전송 완료" : " "}'
                 app:layout_constraintEnd_toEndOf="@id/btn_email_verification_verify"
                 app:layout_constraintStart_toStartOf="@id/til_email_verification_email"
                 app:layout_constraintTop_toBottomOf="@id/til_email_verification_email">
@@ -97,17 +106,29 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
                     android:inputType="number"
-                    android:maxLines="1" />
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:onTextChanged="@{(content, s, b, c) -> viewModel.updateVerificationCode(content.toString())}" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_email_verification_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/til_email_verification_num"
+                app:layout_constraintEnd_toEndOf="@id/til_email_verification_num"
+                tools:text = "3:00"
+                android:layout_margin="4dp"
+                />
 
             <Button
                 android:id="@+id/btn_email_verification_back"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="80dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
@@ -118,6 +139,8 @@
                 android:id="@+id/btn_email_verification_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="@{viewModel.state.nextEnabled}"
+                android:onClick="@{()->viewModel.verifyEmail()}"
                 android:text="@string/next"
                 app:layout_constraintBottom_toBottomOf="@id/btn_email_verification_back"
                 app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />

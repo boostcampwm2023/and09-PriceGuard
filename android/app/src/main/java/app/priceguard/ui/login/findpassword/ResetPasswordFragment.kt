@@ -1,4 +1,4 @@
-package app.priceguard.ui.login
+package app.priceguard.ui.login.findpassword
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,9 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import app.priceguard.databinding.FragmentResetPasswordBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ResetPasswordFragment : Fragment() {
 
     private var _binding: FragmentResetPasswordBinding? = null
@@ -30,12 +32,16 @@ class ResetPasswordFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        initView()
+    }
+
+    private fun initView() {
         binding.btnResetPasswordBack.setOnClickListener {
             findNavController().navigateUp()
         }
-
-        binding.btnResetPasswordFinish.setOnClickListener {
-            // TODO: 요청 보내기
-        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

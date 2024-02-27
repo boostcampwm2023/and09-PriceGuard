@@ -9,6 +9,7 @@ import app.priceguard.R
 import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
+import app.priceguard.ui.login.findpassword.FindPasswordActivity
 import app.priceguard.ui.signup.SignupActivity
 import app.priceguard.ui.util.SystemNavigationColorState
 import app.priceguard.ui.util.applySystemNavigationBarColor
