@@ -13,7 +13,7 @@ import {
     Version,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
-import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
+import { UserExceptionFilter } from 'src/exceptions/exception.filter';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import {

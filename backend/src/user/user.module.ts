@@ -5,7 +5,7 @@ import { UsersService } from './user.service';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from './user.repository';
 import { APP_FILTER } from '@nestjs/core';
-import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
+import { UserExceptionFilter } from 'src/exceptions/exception.filter';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProductModule } from 'src/product/product.module';
 import { MailService } from 'src/mail/mail.service';
