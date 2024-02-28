@@ -4,6 +4,7 @@ import { createRandomNumber, getSecondsUntilMidnight } from 'src/utils/util';
 import { MAX_SENDING_EMAIL, MAX_VERFICATION_CODE, MIN_VERFICATION_CODE, THREE_MIN_TO_SEC } from 'src/constants';
 import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
+import * as ejs from 'ejs';
 
 @Injectable()
 export class MailService {
@@ -15,10 +16,18 @@ export class MailService {
     async sendVerficationCode(email: string) {
         const count = await this.checkMaxCount(email);
         const code = createRandomNumber(MIN_VERFICATION_CODE, MAX_VERFICATION_CODE);
+        let emailTemplate;
+        ejs.renderFile('./src/mail/mail.verification.ejs', { code }, (err, data) => {
+            if (err) {
+                throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            emailTemplate = data;
+        });
         await this.mailerService.sendMail({
             to: email,
             subject: 'PriceGuard 이메일 인증',
             text: `인증번호는 ${code} 입니다`,
+            html: emailTemplate,
         });
         await this.plusSendingCount(email, count);
         await this.redis.set(`verficationCode:${email}`, code, 'EX', THREE_MIN_TO_SEC);
