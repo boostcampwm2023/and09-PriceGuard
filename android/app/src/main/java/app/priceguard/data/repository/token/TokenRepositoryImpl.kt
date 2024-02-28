@@ -27,9 +27,18 @@ class TokenRepositoryImpl @Inject constructor(
     private fun <T> handleError(
         code: Int?
     ): RepositoryResult<T, TokenErrorState> {
+        Log.d("TokenRepoErrorCode", code.toString())
         return when (code) {
+            400 -> {
+                RepositoryResult.Error(TokenErrorState.INVALID_REQUEST)
+            }
+
             401 -> {
                 RepositoryResult.Error(TokenErrorState.UNAUTHORIZED)
+            }
+
+            404 -> {
+                RepositoryResult.Error(TokenErrorState.NOT_FOUND)
             }
 
             410 -> {

@@ -23,8 +23,24 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
                 RepositoryResult.Error(AuthErrorState.INVALID_REQUEST)
             }
 
+            401 -> {
+                RepositoryResult.Error(AuthErrorState.UNAUTHORIZED)
+            }
+
+            404 -> {
+                RepositoryResult.Error(AuthErrorState.NOT_FOUND)
+            }
+
             409 -> {
                 RepositoryResult.Error(AuthErrorState.DUPLICATED_EMAIL)
+            }
+
+            410 -> {
+                RepositoryResult.Error(AuthErrorState.EXPIRE)
+            }
+
+            429 -> {
+                RepositoryResult.Error(AuthErrorState.OVER_LIMIT)
             }
 
             else -> {
