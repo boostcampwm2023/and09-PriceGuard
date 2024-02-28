@@ -44,7 +44,16 @@ class ResetPasswordFragment : Fragment() {
         }
 
         initView()
+        initCollector()
+    }
 
+    private fun initView() {
+        binding.btnResetPasswordBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun initCollector() {
         viewLifecycleOwner.repeatOnStarted {
             resetPasswordViewModel.event.collect { event ->
                 when (event) {
@@ -72,12 +81,6 @@ class ResetPasswordFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private fun initView() {
-        binding.btnResetPasswordBack.setOnClickListener {
-            findNavController().navigateUp()
         }
     }
 

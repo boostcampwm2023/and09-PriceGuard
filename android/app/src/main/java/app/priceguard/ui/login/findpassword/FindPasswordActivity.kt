@@ -9,6 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FindPasswordActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFindPasswordBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

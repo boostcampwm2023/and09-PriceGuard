@@ -48,7 +48,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_reset_password_content"
+                android:id="@+id/tv_email_verification_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
@@ -67,7 +67,7 @@
                 app:helperText=" "
                 app:layout_constraintEnd_toStartOf="@id/btn_email_verification_verify"
                 app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
-                app:layout_constraintTop_toBottomOf="@id/tv_reset_password_content">
+                app:layout_constraintTop_toBottomOf="@id/tv_email_verification_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tiet_email_verification_email"
