@@ -13,7 +13,7 @@ export class MailService {
         @InjectRedis() private readonly redis: Redis,
     ) {}
 
-    async sendVerficationCode(email: string) {
+    async sendVerificationCode(email: string) {
         const count = await this.checkMaxCount(email);
         const code = createRandomNumber(MIN_VERFICATION_CODE, MAX_VERFICATION_CODE);
         let emailTemplate;
@@ -30,7 +30,7 @@ export class MailService {
             html: emailTemplate,
         });
         await this.plusSendingCount(email, count);
-        await this.redis.set(`verficationCode:${email}`, code, 'EX', THREE_MIN_TO_SEC);
+        await this.redis.set(`verificationCode:${email}`, code, 'EX', THREE_MIN_TO_SEC);
     }
 
     async checkMaxCount(email: string) {
