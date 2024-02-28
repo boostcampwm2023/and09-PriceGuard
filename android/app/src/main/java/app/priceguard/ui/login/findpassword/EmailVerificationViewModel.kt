@@ -26,6 +26,7 @@ class EmailVerificationViewModel @Inject constructor(
         val verificationCode: String = "",
         val verifyToken: String = "",
         val isMatchedEmailRegex: Boolean = false,
+        val isRequestedVerificationCode: Boolean = false,
         val isFinishedRequestVerificationCode: Boolean = false,
         val isNextEnabled: Boolean = false
     )
@@ -33,8 +34,10 @@ class EmailVerificationViewModel @Inject constructor(
     sealed class EmailVerificationEvent {
         data object SuccessVerify : EmailVerificationEvent()
         data object SuccessRequestVerificationCode : EmailVerificationEvent()
-        data object InvalidEmail : EmailVerificationEvent()
+        data object NotFoundEmail : EmailVerificationEvent()
+        data object ExpireToken : EmailVerificationEvent()
         data object WrongVerificationCode : EmailVerificationEvent()
+        data object OverVerificationLimit : EmailVerificationEvent()
         data object UndefinedError : EmailVerificationEvent()
     }
 
@@ -45,16 +48,23 @@ class EmailVerificationViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     fun requestVerificationCode() {
+        _state.value = _state.value.copy(isRequestedVerificationCode = true)
+
         viewModelScope.launch {
             when (val response = authRepository.requestVerificationCode(_state.value.email)) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
-                        AuthErrorState.INVALID_REQUEST -> {
-                            _event.emit(EmailVerificationEvent.InvalidEmail)
+                        AuthErrorState.NOT_FOUND -> {
+                            _event.emit(EmailVerificationEvent.NotFoundEmail)
+                        }
+
+                        AuthErrorState.OVER_LIMIT -> {
+                            _event.emit(EmailVerificationEvent.OverVerificationLimit)
                         }
 
                         else -> _event.emit(EmailVerificationEvent.UndefinedError)
                     }
+                    _state.value = _state.value.copy(isRequestedVerificationCode = false)
                 }
 
                 is RepositoryResult.Success -> {
@@ -74,8 +84,12 @@ class EmailVerificationViewModel @Inject constructor(
             ) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
-                        TokenErrorState.UNAUTHORIZED -> {
+                        TokenErrorState.INVALID_REQUEST -> {
                             _event.emit(EmailVerificationEvent.WrongVerificationCode)
+                        }
+
+                        TokenErrorState.NOT_FOUND -> {
+                            _event.emit(EmailVerificationEvent.ExpireToken)
                         }
 
                         else -> _event.emit(EmailVerificationEvent.UndefinedError)

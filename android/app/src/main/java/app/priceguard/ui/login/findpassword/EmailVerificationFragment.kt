@@ -60,13 +60,14 @@ class EmailVerificationFragment : Fragment() {
                             getString(R.string.sended_verification_code),
                             Toast.LENGTH_LONG
                         ).show()
+                        startTimer(180)
                     }
 
                     EmailVerificationEvent.SuccessVerify -> {
                         goToResetPassword()
                     }
 
-                    EmailVerificationEvent.InvalidEmail -> {
+                    EmailVerificationEvent.NotFoundEmail -> {
                         showDialogWithAction(
                             getString(R.string.error_request_verification_code),
                             getString(R.string.invalid_email)
@@ -80,10 +81,24 @@ class EmailVerificationFragment : Fragment() {
                         )
                     }
 
+                    EmailVerificationEvent.OverVerificationLimit -> {
+                        showDialogWithAction(
+                            getString(R.string.error_request_verification_code),
+                            getString(R.string.request_verification_code_limit_max_5)
+                        )
+                    }
+
                     EmailVerificationEvent.UndefinedError -> {
                         showDialogWithAction(
                             getString(R.string.error),
                             getString(R.string.undefined_error)
+                        )
+                    }
+
+                    EmailVerificationEvent.ExpireToken -> {
+                        showDialogWithAction(
+                            getString(R.string.error_verify_email),
+                            getString(R.string.expire_verification_code)
                         )
                     }
                 }
@@ -91,6 +106,7 @@ class EmailVerificationFragment : Fragment() {
         }
     }
 
+    private fun startTimer(totalTimeInSeconds: Int) {
     private fun goToResetPassword() {
         val action =
             EmailVerificationFragmentDirections.actionEmailVerificationFragmentToResetPasswordFragment(

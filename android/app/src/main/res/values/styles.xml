@@ -52,4 +52,8 @@
     <style name="Theme.Surface.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="android:background">?attr/colorSurface</item>
     </style>
+
+    <style name="Widget.Material3.Button.TonalButton.Round">
+        <item name="cornerRadius">4dp</item>
+    </style>
 </resources>
