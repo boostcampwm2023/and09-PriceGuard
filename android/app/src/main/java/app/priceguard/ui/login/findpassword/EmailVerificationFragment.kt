@@ -1,6 +1,7 @@
 package app.priceguard.ui.login.findpassword
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.safeNavigate
 import app.priceguard.ui.util.showDialogWithAction
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class EmailVerificationFragment : Fragment() {
@@ -107,6 +109,22 @@ class EmailVerificationFragment : Fragment() {
     }
 
     private fun startTimer(totalTimeInSeconds: Int) {
+        val countDownTimer = object : CountDownTimer((totalTimeInSeconds * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val timeLeft = millisUntilFinished / 1000
+                val minutes = TimeUnit.SECONDS.toMinutes(timeLeft)
+                val seconds = timeLeft - TimeUnit.MINUTES.toSeconds(minutes)
+
+                emailVerificationViewModel.updateTimer(String.format("%02d:%02d", minutes, seconds))
+            }
+
+            override fun onFinish() {
+                emailVerificationViewModel.updateTimer("0")
+            }
+        }
+        countDownTimer.start()
+    }
+
     private fun goToResetPassword() {
         val action =
             EmailVerificationFragmentDirections.actionEmailVerificationFragmentToResetPasswordFragment(

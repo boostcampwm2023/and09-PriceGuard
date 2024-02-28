@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="@string/verification_number"
-                app:helperText='@{viewModel.state.finishedRequestVerificationCode ? "인증번호 전송 완료" : " "}'
+                app:helperText='@{viewModel.state.finishedRequestVerificationCode ? viewModel.state.expirationTime == "0" ? @string/expired : @string/finish_send_verification_code(viewModel.state.expirationTime) : " "}'
                 app:layout_constraintEnd_toEndOf="@id/btn_email_verification_verify"
                 app:layout_constraintStart_toStartOf="@id/til_email_verification_email"
                 app:layout_constraintTop_toBottomOf="@id/til_email_verification_email">

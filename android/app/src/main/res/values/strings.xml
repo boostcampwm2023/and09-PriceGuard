@@ -165,6 +165,8 @@
     <string name="reset_password_content">새로운 비밀번호로 재설정해 주세요.</string>
     <string name="find_password_title_1">비밀번호 찾기 (1/2)</string>
     <string name="find_password_title_2">비밀번호 찾기 (2/2)</string>
+    <string name="finish_send_verification_code">인증번호 전송 완료 %s</string>
+    <string name="expired">만료됨</string>
     <string name="request_verification_code_limit_max_5">인증번호는 하루 최대 5번까지 전송 가능합니다.</string>
     <string name="success_reset_password_retry_login">비밀번호가 재설정되었습니다.\n다시 로그인해 주세요</string>
     <string name="finish_find_password">비밀번호 찾기 완료</string>

@@ -25,6 +25,7 @@ class EmailVerificationViewModel @Inject constructor(
         val email: String = "",
         val verificationCode: String = "",
         val verifyToken: String = "",
+        val expirationTime: String = "",
         val isMatchedEmailRegex: Boolean = false,
         val isRequestedVerificationCode: Boolean = false,
         val isFinishedRequestVerificationCode: Boolean = false,
@@ -116,6 +117,10 @@ class EmailVerificationViewModel @Inject constructor(
             verificationCode = verificationCode
         )
         checkNextEnabled()
+    }
+
+    fun updateTimer(timeString: String) {
+        _state.value = _state.value.copy(expirationTime = timeString)
     }
 
     private fun checkEmailRegex(email: String) {
