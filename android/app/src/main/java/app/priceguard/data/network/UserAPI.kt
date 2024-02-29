@@ -48,7 +48,7 @@ interface UserAPI {
 
     @POST("password")
     suspend fun resetPassword(
-        @Header("token") token: String,
+        @Header("Authorization") token: String,
         @Body resetPasswordRequest: ResetPasswordRequest
     ): Response<ResetPasswordResponse>
 }

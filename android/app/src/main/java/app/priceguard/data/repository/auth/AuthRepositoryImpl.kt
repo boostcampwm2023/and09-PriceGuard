@@ -136,7 +136,7 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
     ): RepositoryResult<Boolean, AuthErrorState> {
         return when (
             val response =
-                getApiResult { userAPI.resetPassword(verifyToken, ResetPasswordRequest(password)) }
+                getApiResult { userAPI.resetPassword("Bearer $verifyToken", ResetPasswordRequest(password)) }
         ) {
             is APIResult.Success -> {
                 RepositoryResult.Success(true)
