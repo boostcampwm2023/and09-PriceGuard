@@ -85,7 +85,7 @@ class EmailVerificationViewModel @Inject constructor(
             ) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
-                        TokenErrorState.INVALID_REQUEST -> {
+                        TokenErrorState.UNAUTHORIZED -> {
                             _event.emit(EmailVerificationEvent.WrongVerificationCode)
                         }
 

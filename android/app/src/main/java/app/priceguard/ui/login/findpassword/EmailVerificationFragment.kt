@@ -128,7 +128,7 @@ class EmailVerificationFragment : Fragment() {
     private fun goToResetPassword() {
         val action =
             EmailVerificationFragmentDirections.actionEmailVerificationFragmentToResetPasswordFragment(
-                passwordToken = emailVerificationViewModel.state.value.verifyToken
+                verifyToken = emailVerificationViewModel.state.value.verifyToken
             )
         findNavController().safeNavigate(action)
     }
