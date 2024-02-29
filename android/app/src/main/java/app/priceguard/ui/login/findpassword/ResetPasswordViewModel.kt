@@ -73,6 +73,10 @@ class ResetPasswordViewModel @Inject constructor(
         checkMatchPassword()
     }
 
+    fun updateVerifyToken(token: String) {
+        _state.value = _state.value.copy(verifyToken = token)
+    }
+
     private fun checkPasswordRegex(password: String) {
         val passwordPattern =
             """^(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*\d)(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[a-z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[A-Z])(?=[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]*[!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/])[A-Za-z\d!@#$%^&*()_+={};:'"~`,.?<>|\-\[\]\\/]{8,16}$""".toRegex()

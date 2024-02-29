@@ -42,9 +42,9 @@ class ResetPasswordFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
-
         initView()
         initCollector()
+        setVerifyToken()
     }
 
     private fun initView() {
@@ -82,6 +82,12 @@ class ResetPasswordFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setVerifyToken() {
+        val arguments = requireArguments()
+        val verifyToken = arguments.getString("verifyToken")?: ""
+        resetPasswordViewModel.updateVerifyToken(verifyToken)
     }
 
     override fun onDestroyView() {
