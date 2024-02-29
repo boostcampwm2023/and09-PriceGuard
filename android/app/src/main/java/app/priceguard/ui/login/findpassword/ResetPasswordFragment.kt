@@ -86,7 +86,7 @@ class ResetPasswordFragment : Fragment() {
 
     private fun setVerifyToken() {
         val arguments = requireArguments()
-        val verifyToken = arguments.getString("verifyToken")?: ""
+        val verifyToken = arguments.getString("verifyToken") ?: ""
         resetPasswordViewModel.updateVerifyToken(verifyToken)
     }
 
