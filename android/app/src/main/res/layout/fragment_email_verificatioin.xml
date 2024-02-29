@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:enabled="@{viewModel.state.nextEnabled}"
-                android:onClick="@{()->viewModel.verifyEmail()}"
+                onThrottleClick="@{()->viewModel.verifyEmail()}"
                 android:text="@string/next"
                 app:layout_constraintBottom_toBottomOf="@id/btn_email_verification_back"
                 app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />
