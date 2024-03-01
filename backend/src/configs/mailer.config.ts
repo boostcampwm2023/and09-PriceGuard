@@ -1,9 +1,9 @@
 import { MailerOptions } from '@nestjs-modules/mailer';
-import { MAILER_PW, MAILER_USER } from 'src/constants';
+import { MAILER_HOST, MAILER_PW, MAILER_USER } from 'src/constants';
 
 export const MailerConfig: MailerOptions = {
     transport: {
-        host: 'smtp.gmail.com',
+        host: MAILER_HOST,
         prot: 587,
         secure: false,
         auth: {
