@@ -171,4 +171,6 @@
     <string name="success_reset_password_retry_login">비밀번호가 재설정되었습니다.\n다시 로그인해 주세요</string>
     <string name="finish_find_password">비밀번호 찾기 완료</string>
     <string name="expire_verification_code">인증번호가 만료되었습니다.</string>
+    <string name="find_password">비밀번호 찾기</string>
+    <string name="re_send">재전송</string>
 </resources>
