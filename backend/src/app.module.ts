@@ -16,6 +16,7 @@ import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfig } from './configs/redis.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailerConfig } from './configs/mailer.config';
+import { ImagesModule } from './images/images.module';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { MailerConfig } from './configs/mailer.config';
         ScheduleModule.forRoot(),
         RedisModule.forRoot(RedisConfig),
         MailerModule.forRoot(MailerConfig),
+        ImagesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
