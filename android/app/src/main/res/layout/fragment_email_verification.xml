@@ -85,17 +85,16 @@
             <Button
                 android:id="@+id/btn_email_verification_verify"
                 style="@style/Widget.Material3.Button.TonalButton.Round"
+                onThrottleClick="@{viewModel::requestVerificationCode}"
                 android:layout_width="52dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:enabled="@{viewModel.state.requestedVerificationCode ? false : viewModel.state.matchedEmailRegex}"
-                android:onClick="@{()->viewModel.requestVerificationCode()}"
                 android:padding="0dp"
                 android:text="@{viewModel.state.expirationTime == @string/expired ? @string/re_send : viewModel.state.requestedVerificationCode ? @string/re_send : @string/verification}"
                 app:layout_constraintBottom_toBottomOf="@id/til_email_verification_email"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
                 app:layout_constraintTop_toTopOf="@id/til_email_verification_email" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -135,10 +134,10 @@
 
             <Button
                 android:id="@+id/btn_email_verification_next"
+                onThrottleClick="@{viewModel::verifyEmail}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:enabled="@{viewModel.state.nextEnabled}"
-                onThrottleClick="@{()->viewModel.verifyEmail()}"
                 android:text="@string/next"
                 app:layout_constraintBottom_toBottomOf="@id/btn_email_verification_back"
                 app:layout_constraintEnd_toStartOf="@id/gl_vertical_end" />
