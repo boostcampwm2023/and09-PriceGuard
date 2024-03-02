@@ -115,11 +115,14 @@ class EmailVerificationFragment : Fragment() {
                 val minutes = TimeUnit.SECONDS.toMinutes(timeLeft)
                 val seconds = timeLeft - TimeUnit.MINUTES.toSeconds(minutes)
 
-                emailVerificationViewModel.updateTimer(String.format("%02d:%02d", minutes, seconds))
+                emailVerificationViewModel.updateTimer(
+                    getString(R.string.finish_send_verification_code, String.format("%02d:%02d", minutes, seconds))
+                )
             }
 
             override fun onFinish() {
-                emailVerificationViewModel.updateTimer("0")
+                emailVerificationViewModel.updateTimer(getString(R.string.expired))
+                emailVerificationViewModel.updateRetryVerificationCodeEnabled(true)
             }
         }
         countDownTimer.start()

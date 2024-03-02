@@ -91,6 +91,7 @@ class EmailVerificationViewModel @Inject constructor(
 
                         TokenErrorState.NOT_FOUND -> {
                             _event.emit(EmailVerificationEvent.ExpireToken)
+                            checkNextEnabled()
                         }
 
                         else -> _event.emit(EmailVerificationEvent.UndefinedError)
@@ -121,6 +122,12 @@ class EmailVerificationViewModel @Inject constructor(
 
     fun updateTimer(timeString: String) {
         _state.value = _state.value.copy(expirationTime = timeString)
+    }
+
+    fun updateRetryVerificationCodeEnabled(enabled: Boolean) {
+        _state.value = _state.value.copy(
+            isRequestedVerificationCode = !enabled
+        )
     }
 
     private fun checkEmailRegex(email: String) {
