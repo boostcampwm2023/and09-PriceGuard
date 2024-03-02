@@ -93,7 +93,7 @@
                 android:enabled="@{viewModel.state.requestedVerificationCode ? false : viewModel.state.matchedEmailRegex}"
                 android:onClick="@{()->viewModel.requestVerificationCode()}"
                 android:padding="0dp"
-                android:text="@string/verification"
+                android:text="@{viewModel.state.expirationTime == @string/expired ? @string/re_send : viewModel.state.requestedVerificationCode ? @string/re_send : @string/verification}"
                 app:layout_constraintBottom_toBottomOf="@id/til_email_verification_email"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/til_email_verification_email" />
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="@string/verification_number"
-                app:helperText='@{viewModel.state.finishedRequestVerificationCode ? viewModel.state.expirationTime == "0" ? @string/expired : @string/finish_send_verification_code(viewModel.state.expirationTime) : " "}'
+                app:helperText='@{viewModel.state.finishedRequestVerificationCode ? viewModel.state.expirationTime : " "}'
                 app:layout_constraintEnd_toEndOf="@id/btn_email_verification_verify"
                 app:layout_constraintStart_toStartOf="@id/til_email_verification_email"
                 app:layout_constraintTop_toBottomOf="@id/til_email_verification_email">

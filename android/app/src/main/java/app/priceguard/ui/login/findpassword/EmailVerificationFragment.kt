@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.priceguard.R
-import app.priceguard.databinding.FragmentEmailVerificatioinBinding
+import app.priceguard.databinding.FragmentEmailVerificationBinding
 import app.priceguard.ui.login.findpassword.EmailVerificationViewModel.EmailVerificationEvent
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.safeNavigate
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class EmailVerificationFragment : Fragment() {
 
-    private var _binding: FragmentEmailVerificatioinBinding? = null
+    private var _binding: FragmentEmailVerificationBinding? = null
     private val binding get() = _binding!!
 
     private val emailVerificationViewModel: EmailVerificationViewModel by viewModels()
@@ -31,7 +31,7 @@ class EmailVerificationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEmailVerificatioinBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentEmailVerificationBinding.inflate(layoutInflater, container, false)
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = emailVerificationViewModel
