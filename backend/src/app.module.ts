@@ -31,7 +31,11 @@ import { join } from 'path';
         RedisModule.forRoot(RedisConfig),
         MailerModule.forRoot(MailerConfig),
         ServeStaticModule.forRoot({
+            serveRoot: '/static',
             rootPath: join(__dirname, '..', 'static'),
+            serveStaticOptions: {
+                fallthrough: false,
+            },
         }),
     ],
     controllers: [AppController],
