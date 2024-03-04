@@ -23,13 +23,16 @@ import app.priceguard.service.UpdateTokenWorker
 import app.priceguard.ui.util.SystemNavigationColorState
 import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.openNotificationSettings
+import app.priceguard.ui.util.showConfirmDialog
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -40,8 +43,17 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
     private lateinit var appUpdateManager: AppUpdateManager
-    private val updateType = AppUpdateType.IMMEDIATE
     private lateinit var activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private val updateListener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
+        }
+
+        if (state.installStatus() == InstallStatus.FAILED) {
+            Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG)
+                .show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +67,12 @@ class HomeActivity : AppCompatActivity() {
         checkForGooglePlayServices()
         setBottomNavigationBar()
         askNotificationPermission()
+        checkAppUpdates()
     }
 
     override fun onResume() {
         super.onResume()
         checkForGooglePlayServices()
-        checkAppUpdates()
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -71,6 +83,11 @@ class HomeActivity : AppCompatActivity() {
         } else {
             showNotificationOffSnackbar()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateManager.unregisterListener(updateListener)
     }
 
     private fun enqueueWorker() {
@@ -148,11 +165,7 @@ class HomeActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
                 when (result.resultCode) {
                     RESULT_CANCELED -> {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.update_cancel_warning),
-                            Toast.LENGTH_LONG
-                        ).show()
+                        showConfirmDialog(getString(R.string.warning), getString(R.string.update_cancel_warning))
                     }
 
                     com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
@@ -161,6 +174,7 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
             }
+        appUpdateManager.registerListener(updateListener)
     }
 
     private fun checkAppUpdates() {
@@ -168,12 +182,12 @@ class HomeActivity : AppCompatActivity() {
 
         appUpdateInfoTask.addOnSuccessListener { info ->
             if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                info.isUpdateTypeAllowed(updateType)
+                info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
             ) {
                 appUpdateManager.startUpdateFlowForResult(
                     info,
                     activityResultLauncher,
-                    AppUpdateOptions.newBuilder(updateType).build()
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
                 )
             }
 
@@ -181,7 +195,7 @@ class HomeActivity : AppCompatActivity() {
                 appUpdateManager.startUpdateFlowForResult(
                     info,
                     activityResultLauncher,
-                    AppUpdateOptions.newBuilder(updateType).build()
+                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
                 )
             }
         }
