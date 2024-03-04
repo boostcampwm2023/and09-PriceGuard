@@ -43,7 +43,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
     private lateinit var appUpdateManager: AppUpdateManager
-    private lateinit var activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var flexibleAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var immediateAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
     private val updateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             appUpdateManager.completeUpdate()
@@ -161,7 +162,20 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
-        activityResultLauncher =
+        flexibleAppUpdateResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+                when (result.resultCode) {
+                    RESULT_CANCELED -> {
+                        showConfirmDialog(getString(R.string.warning), getString(R.string.update_cancel_warning))
+                    }
+
+                    com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                        Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+        immediateAppUpdateResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
                 when (result.resultCode) {
                     RESULT_CANCELED -> {
@@ -186,17 +200,36 @@ class HomeActivity : AppCompatActivity() {
             ) {
                 appUpdateManager.startUpdateFlowForResult(
                     info,
-                    activityResultLauncher,
+                    flexibleAppUpdateResultLauncher,
                     AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
                 )
             }
 
-            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) &&
+                info.updatePriority() >= 3
+            ) {
                 appUpdateManager.startUpdateFlowForResult(
                     info,
-                    activityResultLauncher,
-                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+                    immediateAppUpdateResultLauncher,
+                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
                 )
+            }
+
+            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                if (info.updatePriority() >= 3) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        immediateAppUpdateResultLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    )
+                } else {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        flexibleAppUpdateResultLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+                    )
+                }
             }
         }
     }
