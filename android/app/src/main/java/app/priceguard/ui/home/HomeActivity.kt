@@ -20,10 +20,12 @@ import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
 import app.priceguard.service.UpdateTokenWorker
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.util.SystemNavigationColorState
 import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.openNotificationSettings
 import app.priceguard.ui.util.showConfirmDialog
+import app.priceguard.ui.util.showDialogWithAction
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -179,12 +181,11 @@ class HomeActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
                 when (result.resultCode) {
                     RESULT_CANCELED -> {
-                        showConfirmDialog(getString(R.string.warning), getString(R.string.update_cancel_warning))
+                        showDialogWithAction(getString(R.string.warning), getString(R.string.update_cancel_warning), DialogConfirmAction.FINISH)
                     }
 
                     com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
-                        Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG)
-                            .show()
+                        showDialogWithAction(getString(R.string.error), getString(R.string.update_failed), DialogConfirmAction.FINISH)
                     }
                 }
             }
