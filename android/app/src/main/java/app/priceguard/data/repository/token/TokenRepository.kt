@@ -2,6 +2,7 @@ package app.priceguard.data.repository.token
 
 import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.ui.data.UserDataResult
+import app.priceguard.ui.data.VerifyEmailResult
 
 interface TokenRepository {
     suspend fun storeTokens(accessToken: String, refreshToken: String)
@@ -12,4 +13,5 @@ interface TokenRepository {
     suspend fun getUserData(): UserDataResult
     suspend fun renewTokens(refreshToken: String): RepositoryResult<Boolean, TokenErrorState>
     suspend fun clearTokens()
+    suspend fun verifyEmail(email: String, verificationCode: String): RepositoryResult<VerifyEmailResult, TokenErrorState>
 }
