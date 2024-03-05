@@ -194,43 +194,19 @@ class HomeActivity : AppCompatActivity() {
 
     private fun checkAppUpdates() {
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        var appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+        var activityResultLauncher = flexibleAppUpdateResultLauncher
 
         appUpdateInfoTask.addOnSuccessListener { info ->
-            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
-            ) {
-                appUpdateManager.startUpdateFlowForResult(
-                    info,
-                    flexibleAppUpdateResultLauncher,
-                    AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
-                )
-            }
-
-            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) &&
-                info.updatePriority() >= 3
-            ) {
-                appUpdateManager.startUpdateFlowForResult(
-                    info,
-                    immediateAppUpdateResultLauncher,
-                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-                )
-            }
-
-            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                if (info.updatePriority() >= 3) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        info,
-                        immediateAppUpdateResultLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-                    )
-                } else {
-                    appUpdateManager.startUpdateFlowForResult(
-                        info,
-                        flexibleAppUpdateResultLauncher,
-                        AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
-                    )
+            when (info.updateAvailability()) {
+                UpdateAvailability.UPDATE_AVAILABLE, UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
+                    if (info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) && info.updatePriority() >= 3) {
+                        activityResultLauncher = immediateAppUpdateResultLauncher
+                        appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    }
+                    appUpdateManager.startUpdateFlowForResult(info, activityResultLauncher, appUpdateOptions)
                 }
+                else -> {}
             }
         }
     }
