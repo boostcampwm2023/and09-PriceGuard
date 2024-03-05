@@ -152,7 +152,7 @@
     <string name="recommended_product_no_product">추천 상품이 준비중입니다.</string>
     <string name="sold_out">품절</string>
     <string name="error_maximum_count_exceeded">등록 가능한 상품 개수를 초과하였습니다.</string>
-    <string name="update_cancel_warning">업데이트 미적용시 앱 사용에 지장이 생길 수 있습니다.</string>
+    <string name="update_cancel_warning">업데이트 미적용 시 앱 사용에 지장이 생길 수 있습니다.</string>
     <string name="update_failed">업데이트에 실패하였습니다. 다시 시도해 주세요.</string>
     <string name="warning">경고</string>
     <string name="must_update">필수 업데이트 미적용 시 앱 사용이 불가능 합니다.</string>
