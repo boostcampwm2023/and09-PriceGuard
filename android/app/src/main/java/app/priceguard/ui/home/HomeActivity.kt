@@ -181,7 +181,7 @@ class HomeActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
                 when (result.resultCode) {
                     RESULT_CANCELED -> {
-                        showDialogWithAction(getString(R.string.warning), getString(R.string.update_cancel_warning), DialogConfirmAction.FINISH)
+                        showDialogWithAction(getString(R.string.warning), getString(R.string.must_update), DialogConfirmAction.FINISH)
                     }
 
                     com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
