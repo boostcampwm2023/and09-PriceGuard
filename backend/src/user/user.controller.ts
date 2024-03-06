@@ -13,7 +13,7 @@ import {
     Version,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
-import { UserExceptionFilter } from 'src/exceptions/exception.fillter';
+import { UserExceptionFilter } from 'src/exceptions/exception.filter';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import {
@@ -146,7 +146,7 @@ export class UsersController {
     @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
     @ApiConflictResponse({ type: DupEmailError, description: '이메일 중복' })
     @Post('email/register-verification')
-    async sendRegisterVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
+    async sendRegisterVerificationEmail(@Body() userEmailDto: UserEmailDto) {
         await this.userService.sendRegisterVerificationEmail(userEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }
@@ -166,8 +166,8 @@ export class UsersController {
     @ApiGoneResponse({ type: ExpiredTokenError, description: 'accessToken 만료' })
     @UseGuards(AuthGuard('access'))
     @Get('email/is-verified')
-    async checkEmailVarifacted(@Req() req: Request & { user: User }) {
-        const verified = await this.userService.checkEmailVarifacted(req.user.email);
+    async checkEmailVerified(@Req() req: Request & { user: User }) {
+        const verified = await this.userService.checkEmailVerified(req.user.email);
         return { statusCode: HttpStatus.OK, verified, message: '사용자 이메일 인증 여부 조회 성공' };
     }
 
@@ -181,7 +181,7 @@ export class UsersController {
     @ApiTooManyRequestsResponse({ type: TooManySendEmailError, description: '이메일 발송 하루 최대 횟수 초과' })
     @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일을 찾을 수 없음' })
     @Post('email/verification')
-    async sendVeryficationEmail(@Body() userEmailDto: UserEmailDto) {
+    async sendVerificationEmail(@Body() userEmailDto: UserEmailDto) {
         await this.userService.sendVerificationEmail(userEmailDto.email);
         return { statusCode: HttpStatus.OK, message: '이메일 전송 성공' };
     }

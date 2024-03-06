@@ -65,7 +65,7 @@ export class UsersService {
         if (user) {
             throw new HttpException('이메일 중복', HttpStatus.CONFLICT);
         }
-        await this.mailService.sendVerficationCode(email);
+        await this.mailService.sendVerificationCode(email);
     }
 
     async sendVerificationEmail(email: string) {
@@ -73,10 +73,10 @@ export class UsersService {
         if (!user) {
             throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
         }
-        await this.mailService.sendVerficationCode(email);
+        await this.mailService.sendVerificationCode(email);
     }
 
-    async checkEmailVarifacted(email: string) {
+    async checkEmailVerified(email: string) {
         const user = await this.findUserByEmail(email);
         if (!user) {
             throw new HttpException('해당 이메일의 사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);

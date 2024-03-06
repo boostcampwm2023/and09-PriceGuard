@@ -19,6 +19,9 @@ export class UserExceptionFilter implements ExceptionFilter {
             this.setResponse(response, exception.getStatus(), exception.getMessage());
             return;
         }
+        if (exception.getStatus() === HttpStatus.INTERNAL_SERVER_ERROR) {
+            exception.message = 'Internal server error';
+        }
         this.setResponse(response, exception.getStatus(), exception.message);
     }
 

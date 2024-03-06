@@ -16,6 +16,8 @@ import { RedisModule } from '@songkeys/nestjs-redis';
 import { RedisConfig } from './configs/redis.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailerConfig } from './configs/mailer.config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -28,6 +30,13 @@ import { MailerConfig } from './configs/mailer.config';
         ScheduleModule.forRoot(),
         RedisModule.forRoot(RedisConfig),
         MailerModule.forRoot(MailerConfig),
+        ServeStaticModule.forRoot({
+            serveRoot: '/static',
+            rootPath: join(__dirname, '..', 'static'),
+            serveStaticOptions: {
+                fallthrough: false,
+            },
+        }),
     ],
     controllers: [AppController],
     providers: [AppService],

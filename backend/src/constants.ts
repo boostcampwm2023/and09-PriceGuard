@@ -55,6 +55,7 @@ type AddProductLimit = {
 export const ADD_PRODUCT_LIMIT: AddProductLimit = {
     tier1: 3,
 };
+export const MAILER_HOST = process.env.MAILER_HOST;
 export const MAILER_USER = process.env.MAILER_USER;
 export const MAILER_PW = process.env.MAILER_PW;
 export const MIN_VERFICATION_CODE = 100000;

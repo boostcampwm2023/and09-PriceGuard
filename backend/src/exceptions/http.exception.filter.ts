@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Inject } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -10,6 +10,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         this.logger.error(exception.message);
+        if (exception.getStatus() === HttpStatus.INTERNAL_SERVER_ERROR) {
+            exception.message = 'Internal server error';
+        }
         response.status(exception.getStatus()).json({
             statusCode: exception.getStatus(),
             message: exception.message,
