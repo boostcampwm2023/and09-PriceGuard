@@ -2,25 +2,30 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification</title>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
 </head>
 
 <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
-  <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-    <h2 style="text-align: center; gap: 10px; text-justify: auto; color: #333;">
-        <img class="w-8"
-            alt="priceguard logo"
-            src="https://api.priceguard.app/static/logo.png"
-            width="32" />
-        <div>PriceGuard 인증 번호 </div>
-    </h2>
-    <h1 style="text-align: center; font-size: 36px; color: #007bff; margin: 0;"> <%= code %> </h1>
-    <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">PriceGuard 계정 본인 확인 메일입니다.</p>
-    <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">이 코드는 보안을 위해 <strong>3분 동안 유효합니다.</strong> 코드를 공유하지 마세요.</p>
-    <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">만약 인증번호를 요청하지 않으셨다면, 이메일을 무시하십시오</p>
-  </div>
+    <div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;"> 
+        PriceGuard 계정 본인 확인 메일입니다. 클릭하여 인증번호를 확인해 주세요. &emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp&emsp
+    </div>
+    <table  style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <tbody>
+            <tr>
+                <h2 style="text-align: center; gap: 10px; text-justify: auto; color: #333;">
+                    <img class="w-8"
+                        alt="priceguard logo"
+                        src="https://api.priceguard.app/static/logo.png"
+                        width="32" />
+                    <p>PriceGuard 인증 번호 </p>
+                </h2>
+                <h1 style="text-align: center; font-size: 36px; color: #007bff; margin: 0;"> <%= code %> </h1>
+                <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">PriceGuard 계정 본인 확인 메일입니다.</p>
+                <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">이 코드는 보안을 위해 <strong>3분 동안 유효합니다.</strong> 코드를 공유하지 마세요.</p>
+                <p style="font-size: 18px; text-align: center; color: #1a202c; margin-top: 20px;">만약 인증번호를 요청하지 않으셨다면, 이메일을 무시하십시오</p>
+            </tr>
+        </tbody>
+    </table >
 </body>
-
 </html>
