@@ -11,4 +11,8 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): RepositoryResult<LoginResult, AuthErrorState>
 
     suspend fun deleteAccount(email: String, password: String): RepositoryResult<Boolean, AuthErrorState>
+
+    suspend fun requestVerificationCode(email: String): RepositoryResult<Boolean, AuthErrorState>
+
+    suspend fun resetPassword(password: String, verifyToken: String): RepositoryResult<Boolean, AuthErrorState>
 }

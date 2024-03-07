@@ -100,7 +100,7 @@ class SignupViewModel @Inject constructor(
                                 SignupEvent.DuplicatedEmail
                             }
 
-                            AuthErrorState.UNDEFINED_ERROR -> {
+                            else -> {
                                 SignupEvent.UndefinedError
                             }
                         }

@@ -7,8 +7,12 @@ import app.priceguard.data.dto.firebase.FirebaseTokenUpdateResponse
 import app.priceguard.data.dto.isverified.IsEmailVerifiedResponse
 import app.priceguard.data.dto.login.LoginRequest
 import app.priceguard.data.dto.login.LoginResponse
+import app.priceguard.data.dto.password.ResetPasswordRequest
+import app.priceguard.data.dto.password.ResetPasswordResponse
 import app.priceguard.data.dto.signup.SignupRequest
 import app.priceguard.data.dto.signup.SignupResponse
+import app.priceguard.data.dto.verifyemail.RequestVerificationCodeRequest
+import app.priceguard.data.dto.verifyemail.RequestVerificationCodeResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -43,4 +47,15 @@ interface UserAPI {
     suspend fun updateIsEmailVerified(
         @Header("Authorization") accessToken: String
     ): Response<IsEmailVerifiedResponse>
+
+    @POST("email/verification")
+    suspend fun requestVerificationCode(
+        @Body requestVerificationCodeRequest: RequestVerificationCodeRequest
+    ): Response<RequestVerificationCodeResponse>
+
+    @POST("password")
+    suspend fun resetPassword(
+        @Header("Authorization") token: String,
+        @Body resetPasswordRequest: ResetPasswordRequest
+    ): Response<ResetPasswordResponse>
 }
