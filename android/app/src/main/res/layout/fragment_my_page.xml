@@ -107,9 +107,27 @@
                             app:autoSizeTextType="uniform"
                             app:layout_constrainedWidth="true"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/btn_my_page_is_email_verified"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
+
+                        <Button
+                            android:id="@+id/btn_my_page_is_email_verified"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+
+                            android:backgroundTint="@{viewModel.state.isEmailVerified ? @color/verifiedContainer : @color/unverifiedContainer}"
+                            android:enabled="@{!viewModel.state.isEmailVerified}"
+                            android:onClick="@{() -> viewModel.startVerifyEmail()}"
+                            android:text="@{viewModel.state.isEmailVerified ? @string/verified : @string/unverified}"
+                            android:textColor="@{viewModel.state.isEmailVerified ? @color/verified : @color/unverified}"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_my_page_email"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/tv_my_page_email"
+                            app:layout_constraintTop_toTopOf="@id/tv_my_page_email" />
+
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

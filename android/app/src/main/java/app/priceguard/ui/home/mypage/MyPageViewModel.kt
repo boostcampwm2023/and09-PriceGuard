@@ -18,12 +18,14 @@ class MyPageViewModel @Inject constructor(
 
     sealed class MyPageEvent {
         data object StartIntroAndExitHome : MyPageEvent()
+        data object StartVerifyEmail : MyPageEvent()
     }
 
     data class MyPageInfo(
         val name: String,
         val email: String,
-        val firstName: String
+        val firstName: String,
+        val isEmailVerified: Boolean? = true
     )
 
     private val _state = MutableStateFlow(MyPageInfo("", "", ""))
@@ -36,6 +38,25 @@ class MyPageViewModel @Inject constructor(
         setInfo()
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            tokenRepository.clearTokens()
+            _event.emit(MyPageEvent.StartIntroAndExitHome)
+        }
+    }
+
+    fun getIsEmailVerified() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isEmailVerified = tokenRepository.getIsEmailVerified())
+        }
+    }
+
+    fun startVerifyEmail() {
+        viewModelScope.launch {
+            _event.emit(MyPageEvent.StartVerifyEmail)
+        }
+    }
+
     private fun setInfo() {
         viewModelScope.launch {
             val userData = tokenRepository.getUserData()
@@ -45,13 +66,6 @@ class MyPageViewModel @Inject constructor(
                     userData.email,
                     getFirstName(userData.name)
                 )
-        }
-    }
-
-    fun logout() {
-        viewModelScope.launch {
-            tokenRepository.clearTokens()
-            _event.emit(MyPageEvent.StartIntroAndExitHome)
         }
     }
 

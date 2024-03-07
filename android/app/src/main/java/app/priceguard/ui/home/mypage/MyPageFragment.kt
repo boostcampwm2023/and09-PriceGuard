@@ -48,14 +48,20 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         super.onViewCreated(view, savedInstanceState)
 
         initSettingAdapter()
+        myPageViewModel.getIsEmailVerified()
 
         repeatOnStarted {
             myPageViewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
+                    is MyPageEvent.StartVerifyEmail -> goToEmailVerification()
+                }
                 }
             }
         }
+
+    private fun goToEmailVerification() {
+        // 이메일 인증 화면 이동
     }
 
     private fun initSettingAdapter() {
