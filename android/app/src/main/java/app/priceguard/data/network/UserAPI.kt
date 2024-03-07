@@ -4,12 +4,14 @@ import app.priceguard.data.dto.deleteaccount.DeleteAccountRequest
 import app.priceguard.data.dto.deleteaccount.DeleteAccountResponse
 import app.priceguard.data.dto.firebase.FirebaseTokenUpdateRequest
 import app.priceguard.data.dto.firebase.FirebaseTokenUpdateResponse
+import app.priceguard.data.dto.isverified.IsEmailVerifiedResponse
 import app.priceguard.data.dto.login.LoginRequest
 import app.priceguard.data.dto.login.LoginResponse
 import app.priceguard.data.dto.signup.SignupRequest
 import app.priceguard.data.dto.signup.SignupResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -36,4 +38,9 @@ interface UserAPI {
         @Header("Authorization") authToken: String,
         @Body request: FirebaseTokenUpdateRequest
     ): Response<FirebaseTokenUpdateResponse>
+
+    @GET("email/is-verified")
+    suspend fun updateIsEmailVerified(
+        @Header("Authorization") accessToken: String
+    ): Response<IsEmailVerifiedResponse>
 }

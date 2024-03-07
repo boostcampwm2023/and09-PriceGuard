@@ -108,4 +108,27 @@ class TokenRepositoryImpl @Inject constructor(
         Firebase.messaging.deleteToken()
         tokenDataSource.clearTokens()
     }
+
+    override suspend fun updateIsEmailVerified(): RepositoryResult<Boolean, TokenErrorState> {
+        return when (
+            val response =
+                getApiResult { userAPI.updateIsEmailVerified("Bearer ${getAccessToken()}") }
+        ) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
+    override suspend fun storeEmailVerified(isVerified: Boolean) {
+        tokenDataSource.saveEmailVerified(isVerified)
+    }
+
+    override suspend fun getIsEmailVerified(): Boolean? {
+        return tokenDataSource.getIsEmailVerified()
+    }
 }
