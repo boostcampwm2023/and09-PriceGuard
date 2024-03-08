@@ -184,6 +184,11 @@ export class CheckEmailVerificatedSuccess {
     })
     statusCode: number;
     @ApiProperty({
+        example: 'true',
+        description: '사용자 이메일 인증 여부',
+    })
+    verified: boolean;
+    @ApiProperty({
         example: '사용자 이메일 인증 여부 조회 성공',
         description: '메시지',
     })
