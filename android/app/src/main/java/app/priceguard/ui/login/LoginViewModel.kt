@@ -88,7 +88,6 @@ class LoginViewModel @Inject constructor(
                     setLoginFinished(true)
                     saveTokens(result.data.accessToken, result.data.refreshToken)
                     updateFirebaseToken(result.data.accessToken, firebaseToken)
-                    updateIsEmailVerified()
                     sendLoginEvent(LoginEvent.LoginInfoSaved)
                 }
 
@@ -110,19 +109,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateIsEmailVerified() {
-        val response = tokenRepository.updateIsEmailVerified()
-
-        when (response) {
-            is RepositoryResult.Error -> {
-                saveEmailVerified(false)
-            }
-            is RepositoryResult.Success -> {
-                saveEmailVerified(true)
-            }
-        }
-    }
-
     private suspend fun updateFirebaseToken(accessToken: String, firebaseToken: String?) {
         if (firebaseToken != null) {
             when (tokenRepository.updateFirebaseToken(accessToken, firebaseToken)) {
@@ -138,10 +124,6 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun saveTokens(accessToken: String, refreshToken: String) {
         tokenRepository.storeTokens(accessToken, refreshToken)
-    }
-
-    private suspend fun saveEmailVerified(isVerified: Boolean) {
-        tokenRepository.storeEmailVerified(isVerified)
     }
 
     private suspend fun sendLoginEvent(event: LoginEvent) {
