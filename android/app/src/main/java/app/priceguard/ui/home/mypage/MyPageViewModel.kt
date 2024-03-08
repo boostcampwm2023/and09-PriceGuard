@@ -25,7 +25,7 @@ class MyPageViewModel @Inject constructor(
         val name: String,
         val email: String,
         val firstName: String,
-        val isEmailVerified: Boolean? = true
+        val isEmailVerified: Boolean = false
     )
 
     private val _state = MutableStateFlow(MyPageInfo("", "", ""))
@@ -36,6 +36,7 @@ class MyPageViewModel @Inject constructor(
 
     init {
         setInfo()
+        getIsEmailVerified()
     }
 
     fun logout() {
@@ -47,7 +48,7 @@ class MyPageViewModel @Inject constructor(
 
     fun getIsEmailVerified() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isEmailVerified = tokenRepository.getIsEmailVerified())
+            _state.value = _state.value.copy(isEmailVerified = tokenRepository.getIsEmailVerified() ?: false)
         }
     }
 

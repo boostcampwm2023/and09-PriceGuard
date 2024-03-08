@@ -125,7 +125,7 @@ class TokenRepositoryImpl @Inject constructor(
                 getApiResult { userAPI.updateIsEmailVerified("Bearer ${getAccessToken()}") }
         ) {
             is APIResult.Success -> {
-                RepositoryResult.Success(true)
+                RepositoryResult.Success(response.data.verified ?: false)
             }
 
             is APIResult.Error -> {
