@@ -168,8 +168,8 @@
     <string name="match_error_verification_code">인증번호가 일치하지 않습니다</string>
     <string name="error_verify_email">이메일 인증 실패</string>
     <string name="error_request_verification_code">인증 요청 실패</string>
-    <string name="sended_verification_code">인증 번호를 전송했습니다.</string>
-    <string name="verrify_email_content">비밀번호 찾기 위해\n이메일을 인증해 주세요.</string>
+    <string name="sent_verification_code">인증 번호를 전송했습니다.</string>
+    <string name="verify_email_content_find_password">비밀번호 찾기 위해\n이메일을 인증해 주세요.</string>
     <string name="reset_password_content">새로운 비밀번호로 재설정해 주세요.</string>
     <string name="find_password_title_1">비밀번호 찾기 (1/2)</string>
     <string name="find_password_title_2">비밀번호 찾기 (2/2)</string>
@@ -181,4 +181,6 @@
     <string name="expire_verification_code">인증번호가 만료되었습니다.</string>
     <string name="find_password">비밀번호 찾기</string>
     <string name="re_send">재전송</string>
+    <string name="succes_email_verification">이메일 인증을 완료했습니다.</string>
+    <string name="verify_email_content">이메일 인증을 완료해 주세요.</string>
 </resources>

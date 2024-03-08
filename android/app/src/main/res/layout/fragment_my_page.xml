@@ -114,10 +114,10 @@
 
                         <Button
                             android:id="@+id/btn_my_page_is_email_verified"
+                            style="@style/Widget.Material3.Button.ZeroPadding_Round"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
-
                             android:backgroundTint="@{viewModel.state.isEmailVerified ? @color/verifiedContainer : @color/unverifiedContainer}"
                             android:enabled="@{!viewModel.state.isEmailVerified}"
                             android:onClick="@{() -> viewModel.startVerifyEmail()}"

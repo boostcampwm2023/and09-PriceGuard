@@ -16,6 +16,7 @@ import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.login.findpassword.FindPasswordActivity
 import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.openNotificationSettings
@@ -48,7 +49,6 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         super.onViewCreated(view, savedInstanceState)
 
         initSettingAdapter()
-        myPageViewModel.getIsEmailVerified()
 
         repeatOnStarted {
             myPageViewModel.event.collect { event ->
@@ -56,12 +56,13 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
                     is MyPageEvent.StartVerifyEmail -> goToEmailVerification()
                 }
-                }
             }
         }
+    }
 
-    private fun goToEmailVerification() {
-        // 이메일 인증 화면 이동
+    override fun onStart() {
+        super.onStart()
+        myPageViewModel.getIsEmailVerified()
     }
 
     private fun initSettingAdapter() {
@@ -87,8 +88,7 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             Setting.LOGOUT -> {
                                 showConfirmationDialogForResult(
                                     R.string.logout_confirm_title,
-                                    R.string.logout_confirm_message,
-                                    Setting.LOGOUT.ordinal
+                                    R.string.logout_confirm_message
                                 )
                             }
 
@@ -134,10 +134,15 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
         )
     }
 
+    private fun goToEmailVerification() {
+        val intent = Intent(requireActivity(), FindPasswordActivity::class.java)
+        intent.putExtra("isFindPassword", false)
+        startActivity(intent)
+    }
+
     private fun showConfirmationDialogForResult(
         @StringRes title: Int,
-        @StringRes message: Int,
-        requestCode: Int
+        @StringRes message: Int
     ) {
         val tag = "confirm_dialog_fragment_from_activity"
         if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return

@@ -29,11 +29,12 @@ class EmailVerificationViewModel @Inject constructor(
         val isMatchedEmailRegex: Boolean = false,
         val isRequestedVerificationCode: Boolean = false,
         val isFinishedRequestVerificationCode: Boolean = false,
-        val isNextEnabled: Boolean = false
+        val isNextEnabled: Boolean = false,
+        val isFindPassword: Boolean = true
     )
 
     sealed class EmailVerificationEvent {
-        data object SuccessVerify : EmailVerificationEvent()
+        data class SuccessVerify(val isFindPassword: Boolean) : EmailVerificationEvent()
         data object SuccessRequestVerificationCode : EmailVerificationEvent()
         data object NotFoundEmail : EmailVerificationEvent()
         data object ExpireToken : EmailVerificationEvent()
@@ -99,8 +100,9 @@ class EmailVerificationViewModel @Inject constructor(
                 }
 
                 is RepositoryResult.Success -> {
+                    tokenRepository.storeEmailVerified(true)
                     _state.value = _state.value.copy(verifyToken = response.data.verifyToken)
-                    _event.emit(EmailVerificationEvent.SuccessVerify)
+                    _event.emit(EmailVerificationEvent.SuccessVerify(_state.value.isFindPassword))
                 }
             }
         }
@@ -127,6 +129,12 @@ class EmailVerificationViewModel @Inject constructor(
     fun updateRetryVerificationCodeEnabled(enabled: Boolean) {
         _state.value = _state.value.copy(
             isRequestedVerificationCode = !enabled
+        )
+    }
+
+    fun updateType(isFindPassword: Boolean) {
+        _state.value = _state.value.copy(
+            isFindPassword = isFindPassword
         )
     }
 
