@@ -159,7 +159,7 @@ export class UsersController {
         name: 'Authorization Bearer Token',
         description: 'accessToken',
     })
-    @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '이메일 인증 코드 발송 성공' })
+    @ApiOkResponse({ type: CheckEmailVerificatedSuccess, description: '사용자 이메일 인증 여부 확인 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
     @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일의 사용자를 찾을 수 없음' })
     @ApiUnauthorizedResponse({ type: UnauthorizedRequest, description: '승인되지 않은 요청' })

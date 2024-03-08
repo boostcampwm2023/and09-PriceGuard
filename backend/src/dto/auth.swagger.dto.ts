@@ -80,3 +80,16 @@ export class VerifyEmailSuccess {
     })
     verifyToken: string;
 }
+
+export class InvalidCodeError {
+    @ApiProperty({
+        example: HttpStatus.UNAUTHORIZED,
+        description: 'Http 상태 코드',
+    })
+    statusCode: number;
+    @ApiProperty({
+        example: '유효하지 않은 인증 코드.',
+        description: '메시지',
+    })
+    message: string;
+}

@@ -14,6 +14,7 @@ import { HttpExceptionFilter } from 'src/exceptions/http.exception.filter';
 import {
     AuthSuccess,
     ExpiredTokenError,
+    InvalidCodeError,
     InvalidTokenError,
     RefreshJWTSuccess,
     VerifyEmailSuccess,
@@ -64,6 +65,7 @@ export class AuthController {
     @ApiOperation({ summary: '이메일 인증 코드 검증', description: '이메일 인증 코드를 검증한다.' })
     @ApiOkResponse({ type: VerifyEmailSuccess, description: '이메일 인증 성공' })
     @ApiBadRequestResponse({ type: RequestError, description: '잘못된 요청입니다.' })
+    @ApiUnauthorizedResponse({ type: InvalidCodeError, description: '유효하지 않은 인증코드' })
     @ApiNotFoundResponse({ type: EmailNotFound, description: '해당 이메일로 발급받은 코드가 없거나 만료됨' })
     @ApiBody({ type: VerifyEmailDto })
     @Post('/verify/email')
