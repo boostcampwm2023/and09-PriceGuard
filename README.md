@@ -158,7 +158,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                 <img src="https://img.shields.io/badge/Firebase%20App%20Distribution-FFA000?logo=firebase&logoColor=FFFFFF">
                 <img src="https://img.shields.io/badge/Sonatype-1B1C30?logo=sonatype&logoColor=FFFFFF">
                 <img src="https://img.shields.io/badge/Nginx-014532?logo=Nginx&logoColor=009639&">
-                <img src="https://img.shields.io/badge/Naver Cloud Platform-03C75A?logo=naver&logoColor=ffffff">
+                <img src="https://img.shields.io/badge/Oracle Cloud-F80000?logo=oracle&logoColor=ffffff">
                 <img src="https://img.shields.io/badge/Docker-2496ED?logo=Docker&logoColor=white">
                 <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white">
             </td>
