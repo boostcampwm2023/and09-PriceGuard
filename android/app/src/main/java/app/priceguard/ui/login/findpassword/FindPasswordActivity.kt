@@ -23,7 +23,6 @@ class FindPasswordActivity : AppCompatActivity() {
 
         val bundle = Bundle()
         bundle.putBoolean("isFindPassword", isFindPassword)
-        Log.d("isFindPassword1", isFindPassword.toString())
 
         val navController = binding.fcvFindPassword.getFragment<NavHostFragment>().navController
         navController.setGraph(R.navigation.nav_graph_find_password, bundle)
