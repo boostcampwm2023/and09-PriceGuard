@@ -1,7 +1,6 @@
 package app.priceguard.ui.login.findpassword
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import app.priceguard.R
