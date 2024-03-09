@@ -101,6 +101,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@{@string/my_email_info(viewModel.state.email)}"
+                            android:ellipsize="end"
                             android:maxLines="1"
                             android:text="@{viewModel.state.email}"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
