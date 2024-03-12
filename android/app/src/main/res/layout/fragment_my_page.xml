@@ -118,16 +118,16 @@
                             style="@style/Widget.Material3.Button.ZeroPadding_Round"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="4dp"
                             android:backgroundTint="@{viewModel.state.isEmailVerified ? @color/verifiedContainer : @color/unverifiedContainer}"
                             android:enabled="@{!viewModel.state.isEmailVerified}"
                             android:onClick="@{() -> viewModel.startVerifyEmail()}"
                             android:text="@{viewModel.state.isEmailVerified ? @string/verified : @string/unverified}"
                             android:textColor="@{viewModel.state.isEmailVerified ? @color/verified : @color/unverified}"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_my_page_email"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/tv_my_page_email"
-                            app:layout_constraintTop_toTopOf="@id/tv_my_page_email" />
+                            app:layout_constraintStart_toEndOf="@id/tv_my_page_email" />
 
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
