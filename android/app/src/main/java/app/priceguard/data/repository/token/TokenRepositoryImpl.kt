@@ -119,6 +119,21 @@ class TokenRepositoryImpl @Inject constructor(
         tokenDataSource.clearTokens()
     }
 
+    override suspend fun updateIsEmailVerified(): RepositoryResult<Boolean, TokenErrorState> {
+        return when (
+            val response =
+                getApiResult { userAPI.updateIsEmailVerified("Bearer ${getAccessToken()}") }
+        ) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(response.data.verified ?: false)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
     override suspend fun verifyEmail(
         email: String,
         verificationCode: String
@@ -140,5 +155,13 @@ class TokenRepositoryImpl @Inject constructor(
                 handleError(response.code)
             }
         }
+    }
+
+    override suspend fun storeEmailVerified(isVerified: Boolean) {
+        tokenDataSource.saveEmailVerified(isVerified)
+    }
+
+    override suspend fun getIsEmailVerified(): Boolean? {
+        return tokenDataSource.getIsEmailVerified()
     }
 }

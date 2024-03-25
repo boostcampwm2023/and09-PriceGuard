@@ -21,6 +21,11 @@ class EmailVerificationViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    enum class EmailVerificationType {
+        REGISTER_VERIFICATION,
+        VERIFICATION
+    }
+
     data class EmailVerificationState(
         val email: String = "",
         val verificationCode: String = "",
@@ -29,15 +34,17 @@ class EmailVerificationViewModel @Inject constructor(
         val isMatchedEmailRegex: Boolean = false,
         val isRequestedVerificationCode: Boolean = false,
         val isFinishedRequestVerificationCode: Boolean = false,
-        val isNextEnabled: Boolean = false
+        val isNextEnabled: Boolean = false,
+        val isFindPassword: Boolean = true
     )
 
     sealed class EmailVerificationEvent {
-        data object SuccessVerify : EmailVerificationEvent()
+        data class SuccessVerify(val isFindPassword: Boolean) : EmailVerificationEvent()
         data object SuccessRequestVerificationCode : EmailVerificationEvent()
         data object NotFoundEmail : EmailVerificationEvent()
         data object ExpireToken : EmailVerificationEvent()
         data object WrongVerificationCode : EmailVerificationEvent()
+        data object DuplicatedEmail : EmailVerificationEvent()
         data object OverVerificationLimit : EmailVerificationEvent()
         data object UndefinedError : EmailVerificationEvent()
     }
@@ -48,15 +55,24 @@ class EmailVerificationViewModel @Inject constructor(
     private val _event = MutableSharedFlow<EmailVerificationEvent>()
     val event = _event.asSharedFlow()
 
-    fun requestVerificationCode() {
+    fun requestVerificationCode(type: EmailVerificationType) {
         _state.value = _state.value.copy(isRequestedVerificationCode = true)
 
         viewModelScope.launch {
-            when (val response = authRepository.requestVerificationCode(_state.value.email)) {
+            val response = if (type == EmailVerificationType.VERIFICATION) {
+                authRepository.requestVerificationCode(_state.value.email)
+            } else {
+                authRepository.requestRegisterVerificationCode(_state.value.email)
+            }
+            when (response) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
                         AuthErrorState.NOT_FOUND -> {
                             _event.emit(EmailVerificationEvent.NotFoundEmail)
+                        }
+
+                        AuthErrorState.DUPLICATED_EMAIL -> {
+                            _event.emit(EmailVerificationEvent.DuplicatedEmail)
                         }
 
                         AuthErrorState.OVER_LIMIT -> {
@@ -99,8 +115,9 @@ class EmailVerificationViewModel @Inject constructor(
                 }
 
                 is RepositoryResult.Success -> {
+                    tokenRepository.storeEmailVerified(true)
                     _state.value = _state.value.copy(verifyToken = response.data.verifyToken)
-                    _event.emit(EmailVerificationEvent.SuccessVerify)
+                    _event.emit(EmailVerificationEvent.SuccessVerify(_state.value.isFindPassword))
                 }
             }
         }
@@ -127,6 +144,12 @@ class EmailVerificationViewModel @Inject constructor(
     fun updateRetryVerificationCodeEnabled(enabled: Boolean) {
         _state.value = _state.value.copy(
             isRequestedVerificationCode = !enabled
+        )
+    }
+
+    fun updateType(isFindPassword: Boolean) {
+        _state.value = _state.value.copy(
+            isFindPassword = isFindPassword
         )
     }
 

@@ -63,4 +63,8 @@
     <color name="md_theme_dark_surfaceVariant">#45464F</color>
     <color name="md_theme_dark_onSurfaceVariant">#C5C6D0</color>
     <color name="md_theme_dark_onPrimaryFixedVariant">#003FA4</color>
+    <color name="unverifiedContainer">#FF9595</color>
+    <color name="verifiedContainer">#95FFAC</color>
+    <color name="unverified">#540500</color>
+    <color name="verified">#00541D</color>
 </resources>
