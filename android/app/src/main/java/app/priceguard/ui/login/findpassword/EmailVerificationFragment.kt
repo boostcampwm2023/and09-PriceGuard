@@ -51,7 +51,11 @@ class EmailVerificationFragment : Fragment() {
         if (isFindPassword != null) {
             emailVerificationViewModel.updateType(isFindPassword)
         } else {
-            Toast.makeText(requireActivity(), getString(R.string.undefined_error), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireActivity(),
+                getString(R.string.undefined_error),
+                Toast.LENGTH_LONG
+            ).show()
             requireActivity().finish()
         }
 
@@ -89,7 +93,7 @@ class EmailVerificationFragment : Fragment() {
                     EmailVerificationEvent.NotFoundEmail -> {
                         showDialogWithAction(
                             getString(R.string.error_request_verification_code),
-                            getString(R.string.invalid_email)
+                            getString(R.string.not_found_email)
                         )
                     }
 
@@ -107,17 +111,17 @@ class EmailVerificationFragment : Fragment() {
                         )
                     }
 
-                    EmailVerificationEvent.UndefinedError -> {
-                        showDialogWithAction(
-                            getString(R.string.error),
-                            getString(R.string.undefined_error)
-                        )
-                    }
-
                     EmailVerificationEvent.ExpireToken -> {
                         showDialogWithAction(
                             getString(R.string.error_verify_email),
                             getString(R.string.expire_verification_code)
+                        )
+                    }
+
+                    else -> {
+                        showDialogWithAction(
+                            getString(R.string.error),
+                            getString(R.string.undefined_error)
                         )
                     }
                 }
@@ -133,7 +137,10 @@ class EmailVerificationFragment : Fragment() {
                 val seconds = timeLeft - TimeUnit.MINUTES.toSeconds(minutes)
 
                 emailVerificationViewModel.updateTimer(
-                    getString(R.string.finish_send_verification_code, String.format("%02d:%02d", minutes, seconds))
+                    getString(
+                        R.string.finish_send_verification_code,
+                        String.format("%02d:%02d", minutes, seconds)
+                    )
                 )
             }
 

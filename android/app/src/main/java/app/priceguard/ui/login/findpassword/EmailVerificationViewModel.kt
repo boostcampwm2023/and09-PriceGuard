@@ -21,6 +21,11 @@ class EmailVerificationViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    enum class EmailVerificationType {
+        REGISTER_VERIFICATION,
+        VERIFICATION
+    }
+
     data class EmailVerificationState(
         val email: String = "",
         val verificationCode: String = "",
@@ -39,6 +44,7 @@ class EmailVerificationViewModel @Inject constructor(
         data object NotFoundEmail : EmailVerificationEvent()
         data object ExpireToken : EmailVerificationEvent()
         data object WrongVerificationCode : EmailVerificationEvent()
+        data object DuplicatedEmail : EmailVerificationEvent()
         data object OverVerificationLimit : EmailVerificationEvent()
         data object UndefinedError : EmailVerificationEvent()
     }
@@ -49,15 +55,24 @@ class EmailVerificationViewModel @Inject constructor(
     private val _event = MutableSharedFlow<EmailVerificationEvent>()
     val event = _event.asSharedFlow()
 
-    fun requestVerificationCode() {
+    fun requestVerificationCode(type: EmailVerificationType) {
         _state.value = _state.value.copy(isRequestedVerificationCode = true)
 
         viewModelScope.launch {
-            when (val response = authRepository.requestVerificationCode(_state.value.email)) {
+            val response = if (type == EmailVerificationType.VERIFICATION) {
+                authRepository.requestVerificationCode(_state.value.email)
+            } else {
+                authRepository.requestRegisterVerificationCode(_state.value.email)
+            }
+            when (response) {
                 is RepositoryResult.Error -> {
                     when (response.errorState) {
                         AuthErrorState.NOT_FOUND -> {
                             _event.emit(EmailVerificationEvent.NotFoundEmail)
+                        }
+
+                        AuthErrorState.DUPLICATED_EMAIL -> {
+                            _event.emit(EmailVerificationEvent.DuplicatedEmail)
                         }
 
                         AuthErrorState.OVER_LIMIT -> {

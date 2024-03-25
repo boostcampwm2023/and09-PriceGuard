@@ -183,4 +183,6 @@
     <string name="re_send">재전송</string>
     <string name="succes_email_verification">이메일 인증을 완료했습니다.</string>
     <string name="verify_email_content">이메일 인증을 완료해 주세요.</string>
+    <string name="error_email">이메일 오류</string>
+    <string name="not_found_email">등록되지 않은 이메일입니다.</string>
 </resources>
