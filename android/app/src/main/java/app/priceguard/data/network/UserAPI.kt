@@ -22,38 +22,43 @@ import retrofit2.http.PUT
 
 interface UserAPI {
 
-    @POST("login")
+    @POST("user/login")
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
 
-    @POST("register")
+    @POST("v1/user/register")
     suspend fun register(
         @Body request: SignupRequest
     ): Response<SignupResponse>
 
-    @POST("remove")
+    @POST("user/remove")
     suspend fun deleteAccount(
         @Body request: DeleteAccountRequest
     ): Response<DeleteAccountResponse>
 
-    @PUT("firebase/token")
+    @PUT("user/firebase/token")
     suspend fun updateFirebaseToken(
         @Header("Authorization") authToken: String,
         @Body request: FirebaseTokenUpdateRequest
     ): Response<FirebaseTokenUpdateResponse>
 
-    @GET("email/is-verified")
+    @GET("user/email/is-verified")
     suspend fun updateIsEmailVerified(
         @Header("Authorization") accessToken: String
     ): Response<IsEmailVerifiedResponse>
 
-    @POST("email/verification")
+    @POST("user/email/verification")
     suspend fun requestVerificationCode(
         @Body requestVerificationCodeRequest: RequestVerificationCodeRequest
     ): Response<RequestVerificationCodeResponse>
 
-    @POST("password")
+    @POST("user/email/register-verification")
+    suspend fun requestRegisterVerificationCode(
+        @Body requestVerificationCodeRequest: RequestVerificationCodeRequest
+    ): Response<RequestVerificationCodeResponse>
+
+    @POST("user/password")
     suspend fun resetPassword(
         @Header("Authorization") token: String,
         @Body resetPasswordRequest: ResetPasswordRequest
