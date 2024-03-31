@@ -13,7 +13,7 @@ interface TokenRepository {
     suspend fun getUserData(): UserDataResult
     suspend fun renewTokens(refreshToken: String): RepositoryResult<Boolean, TokenErrorState>
     suspend fun clearTokens()
-    suspend fun updateIsEmailVerified(): RepositoryResult<Boolean, TokenErrorState>
+    suspend fun updateIsEmailVerified()
     suspend fun storeEmailVerified(isVerified: Boolean)
     suspend fun getIsEmailVerified(): Boolean?
     suspend fun verifyEmail(email: String, verificationCode: String): RepositoryResult<VerifyEmailResult, TokenErrorState>

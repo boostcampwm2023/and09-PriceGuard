@@ -10,7 +10,6 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -46,8 +45,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
 
-    private val homeViewModel: HomeViewModel by viewModels()
-
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var flexibleAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
     private lateinit var immediateAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
@@ -76,7 +73,6 @@ class HomeActivity : AppCompatActivity() {
         setBottomNavigationBar()
         askNotificationPermission()
         checkAppUpdates()
-        homeViewModel.updateIsEmailVerified()
     }
 
     override fun onResume() {
