@@ -3,12 +3,14 @@ package app.priceguard.data.repository.token
 import android.util.Log
 import app.priceguard.data.datastore.TokenDataSource
 import app.priceguard.data.dto.firebase.FirebaseTokenUpdateRequest
+import app.priceguard.data.dto.verifyemail.VerifyEmailRequest
 import app.priceguard.data.network.AuthAPI
 import app.priceguard.data.network.UserAPI
 import app.priceguard.data.repository.APIResult
 import app.priceguard.data.repository.RepositoryResult
 import app.priceguard.data.repository.getApiResult
 import app.priceguard.ui.data.UserDataResult
+import app.priceguard.ui.data.VerifyEmailResult
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.messaging
@@ -26,8 +28,16 @@ class TokenRepositoryImpl @Inject constructor(
         code: Int?
     ): RepositoryResult<T, TokenErrorState> {
         return when (code) {
+            400 -> {
+                RepositoryResult.Error(TokenErrorState.INVALID_REQUEST)
+            }
+
             401 -> {
                 RepositoryResult.Error(TokenErrorState.UNAUTHORIZED)
+            }
+
+            404 -> {
+                RepositoryResult.Error(TokenErrorState.NOT_FOUND)
             }
 
             410 -> {
@@ -107,5 +117,57 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun clearTokens() {
         Firebase.messaging.deleteToken()
         tokenDataSource.clearTokens()
+    }
+
+    override suspend fun updateIsEmailVerified() {
+        when (
+            val response =
+                getApiResult { userAPI.updateIsEmailVerified("Bearer ${getAccessToken()}") }
+        ) {
+            is APIResult.Success -> {
+                storeEmailVerified(response.data.verified ?: false)
+                RepositoryResult.Success(response.data.verified ?: false)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
+    override suspend fun verifyEmail(
+        email: String,
+        verificationCode: String
+    ): RepositoryResult<VerifyEmailResult, TokenErrorState> {
+        val response = getApiResult {
+            authAPI.verifyEmail(VerifyEmailRequest(email, verificationCode))
+        }
+
+        return when (response) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(
+                    VerifyEmailResult(
+                        response.data.verifyToken ?: ""
+                    )
+                )
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
+    override suspend fun storeEmailVerified(isVerified: Boolean) {
+        tokenDataSource.saveEmailVerified(isVerified)
+    }
+
+    override suspend fun getIsEmailVerified(): Boolean? {
+        var isEmailVerified = tokenDataSource.getIsEmailVerified()
+        if (isEmailVerified == null) {
+            updateIsEmailVerified()
+            isEmailVerified = tokenDataSource.getIsEmailVerified()
+        }
+        return isEmailVerified
     }
 }

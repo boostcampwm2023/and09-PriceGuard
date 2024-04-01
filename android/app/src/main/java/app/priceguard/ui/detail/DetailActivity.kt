@@ -1,5 +1,6 @@
 package app.priceguard.ui.detail
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import app.priceguard.R
 import app.priceguard.data.graph.ProductChartDataset
 import app.priceguard.data.graph.ProductChartGridLine
@@ -71,6 +73,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     private fun initListener() {
         binding.btnDetailTrack.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productShop", productDetailViewModel.state.value.shop)
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
@@ -80,6 +83,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
         binding.btnDetailEditPrice.setOnClickListener {
             val intent = Intent(this, AddItemActivity::class.java)
+            intent.putExtra("productShop", productDetailViewModel.state.value.shop)
             intent.putExtra("productCode", productDetailViewModel.productCode)
             intent.putExtra("productTitle", productDetailViewModel.state.value.productName)
             intent.putExtra("productPrice", productDetailViewModel.state.value.price)
@@ -112,8 +116,11 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
 
         binding.btnDetailShare.setOnClickListener {
             binding.btnDetailShare.isEnabled = false
-            val shareLink =
-                getString(R.string.share_link_template, productDetailViewModel.productCode)
+            val shareLink = if (productDetailViewModel.productShop == "11번가") {
+                getString(R.string.share_link_template, "11st", productDetailViewModel.productCode)
+            } else {
+                getString(R.string.share_link_template, "naver", productDetailViewModel.productCode)
+            }
 
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -135,35 +142,39 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
     }
 
     private fun checkProductCode(intent: Intent) {
+        val productShop = intent.getStringExtra("productShop")
         val productCode = intent.getStringExtra("productCode")
         val deepLink = intent.data
+        val productShopFromDeepLink = deepLink?.getQueryParameter("store")
         val productCodeFromDeepLink = deepLink?.getQueryParameter("code")
 
-        if (productCode == null && productCodeFromDeepLink == null) {
-            showConfirmDialog(
-                getString(R.string.error),
-                getString(R.string.invalid_access),
-                DialogConfirmAction.FINISH
-            )
-            return
-        }
-
-        productCode?.let { code ->
-            productDetailViewModel.productCode = code
+        if (productShop != null && productCode != null) {
+            productDetailViewModel.productShop = productShop
+            productDetailViewModel.productCode = productCode
             productDetailViewModel.getDetails(false)
             return
         }
 
-        productCodeFromDeepLink?.let { code ->
-            productDetailViewModel.productCode = code
+        if (productShopFromDeepLink != null && productCodeFromDeepLink != null) {
+            productDetailViewModel.productShop = productShopFromDeepLink
+            productDetailViewModel.productCode = productCodeFromDeepLink
             productDetailViewModel.getDetails(false)
+            return
         }
+
+        // 유효하지 않은 경우
+        showConfirmDialog(
+            getString(R.string.error),
+            getString(R.string.invalid_access),
+            DialogConfirmAction.FINISH
+        )
     }
 
     private fun observeEvent() {
         repeatOnStarted {
             productDetailViewModel.state.collect { state ->
                 state.targetPrice ?: return@collect
+                state.shop ?: return@collect
                 binding.chGraphDetail.dataset = ProductChartDataset(
                     showXAxis = true,
                     showYAxis = true,
@@ -174,6 +185,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     data = state.chartData,
                     gridLines = getGridLines(state.targetPrice.toFloat())
                 )
+                binding.setShopLogoIcon(state.shop)
             }
         }
         repeatOnStarted {
@@ -200,10 +212,7 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     }
 
                     is ProductDetailViewModel.ProductDetailEvent.OpenShoppingMall -> {
-                        val redirectUrl =
-                            "https://11stapp.11st.co.kr/?domain=m.11st.co.kr&appLnkWyCd=02&goUrl=${event.url}"
-                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
-                        startActivity(browserIntent)
+                        launchShopApplication(event.url, event.shop)
                     }
 
                     ProductDetailViewModel.ProductDetailEvent.DeleteTracking -> {
@@ -245,6 +254,43 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
                     }
                 }
             }
+        }
+    }
+
+    private fun ActivityDetailBinding.setShopLogoIcon(shop: String) {
+        val iconDrawable = when (shop) {
+            "11번가" -> {
+                getDrawable(this@DetailActivity, R.drawable.ic_11st_logo)
+            }
+
+            "SmartStore", "BrandStore" -> {
+                getDrawable(this@DetailActivity, R.drawable.ic_naver_logo)
+            }
+
+            else -> return
+        }
+        ivDetailShoppingMallIcon.setImageDrawable(iconDrawable)
+    }
+
+    private fun launchShopApplication(url: String, shop: String) {
+        val redirectUrl: String = when (shop) {
+            "11번가" -> {
+                "elevenst://loadurl?domain=m.11st.co.kr&url=$url&appLnkWyCd=02&domain=m.11st.co.kr&trTypeCd=null"
+            }
+
+            "SmartStore", "BrandStore" -> {
+                "naversearchapp://inappbrowser?url=$url&target=new&version=6"
+            }
+
+            else -> return
+        }
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
+            startActivity(browserIntent)
+        } catch (e: ActivityNotFoundException) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (e: Exception) {
+            showToast(getString(R.string.failed_to_open_shop))
         }
     }
 

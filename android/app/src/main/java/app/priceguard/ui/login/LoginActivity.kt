@@ -9,6 +9,7 @@ import app.priceguard.R
 import app.priceguard.databinding.ActivityLoginBinding
 import app.priceguard.ui.home.HomeActivity
 import app.priceguard.ui.login.LoginViewModel.LoginEvent
+import app.priceguard.ui.login.findpassword.FindPasswordActivity
 import app.priceguard.ui.signup.SignupActivity
 import app.priceguard.ui.util.SystemNavigationColorState
 import app.priceguard.ui.util.applySystemNavigationBarColor
@@ -48,6 +49,9 @@ class LoginActivity : AppCompatActivity() {
         with(binding) {
             btnLoginSignup.setOnClickListener {
                 gotoSignUp()
+            }
+            tvFindPassword.setOnClickListener {
+                gotoFindPassword()
             }
         }
     }
@@ -110,6 +114,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun gotoSignUp() {
         startActivity(Intent(this, SignupActivity::class.java))
+    }
+
+    private fun gotoFindPassword() {
+        startActivity(Intent(this, FindPasswordActivity::class.java))
     }
 
     private fun gotoHomeActivity() {

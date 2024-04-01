@@ -4,9 +4,15 @@
 
     <data>
 
+        <import type="app.priceguard.ui.login.findpassword.EmailVerificationViewModel.EmailVerificationType" />
+
         <variable
             name="vm"
             type="app.priceguard.ui.signup.SignupViewModel" />
+
+        <variable
+            name="verificationViewModel"
+            type="app.priceguard.ui.login.findpassword.EmailVerificationViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -98,28 +104,71 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_signup_email"
+                    textInputLayoutError="@{(verificationViewModel.state.email.length > 0) ? verificationViewModel.state.matchedEmailRegex ? null : @string/invalid_email_pattern : null }"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
                     android:hint="@string/e_mail"
                     app:helperText=" "
-                    app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
-                    app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
-                    app:layout_constraintTop_toBottomOf="@+id/til_signup_name">
+                    app:layout_constraintEnd_toStartOf="@id/btn_signup_verify"
+                    app:layout_constraintStart_toEndOf="@id/gl_vertical_start"
+                    app:layout_constraintTop_toBottomOf="@id/til_signup_name">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tiet_signup_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:afterTextChanged="@{(content) -> vm.updateEmail(content.toString())}"
                         android:autofillHints="emailAddress"
-                        android:enabled="@{!vm.state.signupStarted}"
+                        android:enabled="@{!verificationViewModel.state.requestedVerificationCode}"
+                        android:imeOptions="actionNext"
                         android:inputType="textEmailAddress"
-                        android:onTextChanged="@{(content, s, b, c) -> vm.updateEmail(content.toString())}" />
+                        android:maxLines="1"
+                        android:onTextChanged="@{(content, s, b, c) -> verificationViewModel.updateEmail(content.toString())}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btn_signup_verify"
+                    style="@style/Widget.Material3.Button.TonalButton.Round"
+                    onThrottleClick="@{() -> verificationViewModel.requestVerificationCode(EmailVerificationType.REGISTER_VERIFICATION)}"
+                    android:layout_width="52dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="16dp"
+                    android:enabled="@{verificationViewModel.state.requestedVerificationCode ? false : verificationViewModel.state.matchedEmailRegex}"
+                    android:padding="0dp"
+                    android:text="@{verificationViewModel.state.expirationTime == @string/expired ? @string/re_send : verificationViewModel.state.requestedVerificationCode ? @string/re_send : @string/verification}"
+                    app:layout_constraintBottom_toBottomOf="@id/til_signup_email"
+                    app:layout_constraintEnd_toStartOf="@id/gl_vertical_end"
+                    app:layout_constraintTop_toTopOf="@id/til_signup_email" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_signup_num"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:hint="@string/verification_number"
+                    app:helperText='@{verificationViewModel.state.finishedRequestVerificationCode ? verificationViewModel.state.expirationTime : " "}'
+                    app:layout_constraintEnd_toEndOf="@id/btn_signup_verify"
+                    app:layout_constraintStart_toStartOf="@id/til_signup_email"
+                    app:layout_constraintTop_toBottomOf="@id/til_signup_email">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tiet_signup_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:maxLines="1"
+                        android:onTextChanged="@{(content, s, b, c) -> verificationViewModel.updateVerificationCode(content.toString())}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_signup_password"
+                    textInputLayoutError="@{vm.state.password.length() > 0 ? vm.state.isPasswordError ? @string/invalid_password : null : null}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -128,7 +177,7 @@
                     app:helperText=" "
                     app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"
                     app:layout_constraintStart_toEndOf="@+id/gl_vertical_start"
-                    app:layout_constraintTop_toBottomOf="@+id/til_signup_email">
+                    app:layout_constraintTop_toBottomOf="@+id/til_signup_num">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tiet_signup_password"
@@ -143,6 +192,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_signup_retype_password"
+                    textInputLayoutError="@{vm.state.retypePassword.length()>0 ? vm.state.isRetypePasswordError ? @string/password_mismatch : null : null}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -170,8 +220,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="36dp"
-                    android:enabled="@{vm.state.signupReady}"
-                    android:onClick="@{() -> vm.signup()}"
+                    android:enabled="@{vm.state.signupReady ? verificationViewModel.state.nextEnabled : false}"
+                    android:onClick="@{() -> vm.signup(verificationViewModel.state.verificationCode)}"
                     android:text="@string/register"
                     app:iconGravity="textStart"
                     app:layout_constraintEnd_toStartOf="@+id/gl_vertical_end"

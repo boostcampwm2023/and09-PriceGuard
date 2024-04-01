@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +16,7 @@ import app.priceguard.databinding.FragmentMyPageBinding
 import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.home.mypage.MyPageViewModel.MyPageEvent
 import app.priceguard.ui.intro.IntroActivity
+import app.priceguard.ui.login.findpassword.FindPasswordActivity
 import app.priceguard.ui.util.ConfirmDialogFragment
 import app.priceguard.ui.util.lifecycle.repeatOnStarted
 import app.priceguard.ui.util.openNotificationSettings
@@ -52,9 +54,15 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
             myPageViewModel.event.collect { event ->
                 when (event) {
                     is MyPageEvent.StartIntroAndExitHome -> startIntroAndExitHome()
+                    is MyPageEvent.StartVerifyEmail -> goToEmailVerification()
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        myPageViewModel.getIsEmailVerified()
     }
 
     private fun initSettingAdapter() {
@@ -78,7 +86,17 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                             }
 
                             Setting.LOGOUT -> {
-                                showConfirmationDialogForResult()
+                                showConfirmationDialogForResult(
+                                    R.string.logout_confirm_title,
+                                    R.string.logout_confirm_message
+                                )
+                            }
+
+                            Setting.DELETE_ACCOUNT -> {
+                                val intent =
+                                    Intent(requireActivity(), DeleteAccountActivity::class.java)
+                                intent.putExtra("email", myPageViewModel.state.value.email)
+                                startActivity(intent)
                             }
                         }
                     }
@@ -107,18 +125,32 @@ class MyPageFragment : Fragment(), ConfirmDialogFragment.OnDialogResultListener 
                 Setting.LOGOUT,
                 ContextCompat.getDrawable(requireActivity(), R.drawable.ic_logout),
                 getString(R.string.logout)
+            ),
+            SettingItemInfo(
+                Setting.DELETE_ACCOUNT,
+                ContextCompat.getDrawable(requireActivity(), R.drawable.ic_close_red),
+                getString(R.string.delete_account)
             )
         )
     }
 
-    private fun showConfirmationDialogForResult() {
+    private fun goToEmailVerification() {
+        val intent = Intent(requireActivity(), FindPasswordActivity::class.java)
+        intent.putExtra("isFindPassword", false)
+        startActivity(intent)
+    }
+
+    private fun showConfirmationDialogForResult(
+        @StringRes title: Int,
+        @StringRes message: Int
+    ) {
         val tag = "confirm_dialog_fragment_from_activity"
         if (requireActivity().supportFragmentManager.findFragmentByTag(tag) != null) return
 
         val dialogFragment = ConfirmDialogFragment()
         val bundle = Bundle()
-        bundle.putString("title", getString(R.string.logout_confirm_title))
-        bundle.putString("message", getString(R.string.logout_confirm_message))
+        bundle.putString("title", getString(title))
+        bundle.putString("message", getString(message))
         bundle.putString("actionString", DialogConfirmAction.CUSTOM.name)
         dialogFragment.arguments = bundle
         dialogFragment.setOnDialogResultListener(this)

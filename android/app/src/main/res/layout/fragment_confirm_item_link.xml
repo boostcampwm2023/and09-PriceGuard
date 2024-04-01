@@ -97,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="36dp"
-                    android:contentDescription="@string/product_11st"
+                    android:contentDescription="@{@string/product_shop(viewModel.state.brand)}"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="@id/tv_confirm_item_brand"
                     app:layout_constraintTop_toBottomOf="@id/tv_confirm_item_brand" />
