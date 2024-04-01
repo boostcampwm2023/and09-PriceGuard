@@ -25,7 +25,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideUserAPI(): UserAPI = Retrofit.Builder()
-        .baseUrl("${BASE_URL}/user/")
+        .baseUrl("${BASE_URL}/")
         .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
         .build()
         .create(UserAPI::class.java)
@@ -46,7 +46,7 @@ object NetworkModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("${BASE_URL}/product/")
+            .baseUrl("${BASE_URL}/")
             .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
             .client(interceptorClient)
             .build()

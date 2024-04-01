@@ -41,12 +41,13 @@ class ProductDetailViewModel @Inject constructor(
         val formattedPrice: String = "",
         val formattedTargetPrice: String = "",
         val formattedLowestPrice: String = "",
+        val isSoldOut: Boolean = false,
         val graphMode: GraphMode = GraphMode.DAY,
         val chartData: List<ProductChartData> = listOf()
     )
 
     sealed class ProductDetailEvent {
-        data class OpenShoppingMall(val url: String) : ProductDetailEvent()
+        data class OpenShoppingMall(val url: String, val shop: String) : ProductDetailEvent()
         data object DeleteTracking : ProductDetailEvent()
         data object Logout : ProductDetailEvent()
         data object NotFound : ProductDetailEvent()
@@ -55,6 +56,7 @@ class ProductDetailViewModel @Inject constructor(
         data class DeleteFailed(val errorType: ProductErrorState) : ProductDetailEvent()
     }
 
+    lateinit var productShop: String
     lateinit var productCode: String
     private var productGraphData: List<ProductChartData> = listOf()
 
@@ -67,7 +69,7 @@ class ProductDetailViewModel @Inject constructor(
 
     fun deleteProductTracking() {
         viewModelScope.launch {
-            when (val result = productRepository.deleteProduct(productCode)) {
+            when (val result = productRepository.deleteProduct(productShop, productCode)) {
                 is RepositoryResult.Success -> {
                     _event.emit(ProductDetailEvent.DeleteSuccess)
                 }
@@ -81,7 +83,7 @@ class ProductDetailViewModel @Inject constructor(
 
     fun getDetails(isRefresh: Boolean) {
         viewModelScope.launch {
-            if (::productCode.isInitialized.not()) {
+            if (::productCode.isInitialized.not() && ::productShop.isInitialized.not()) {
                 return@launch
             }
 
@@ -89,7 +91,7 @@ class ProductDetailViewModel @Inject constructor(
                 _state.value = _state.value.copy(isRefreshing = true)
             }
 
-            val result = productRepository.getProductDetail(productCode)
+            val result = productRepository.getProductDetail(productShop, productCode)
 
             _state.value = _state.value.copy(isRefreshing = false)
 
@@ -108,6 +110,7 @@ class ProductDetailViewModel @Inject constructor(
                             targetPrice = result.data.targetPrice,
                             lowestPrice = result.data.lowestPrice,
                             price = result.data.price,
+                            isSoldOut = result.data.priceData.last().valid.not(),
                             formattedPrice = formatPrice(result.data.price),
                             formattedTargetPrice = if (result.data.targetPrice < 0) {
                                 "0"
@@ -159,8 +162,10 @@ class ProductDetailViewModel @Inject constructor(
 
     fun sendBrowserEvent() {
         viewModelScope.launch {
-            val event = _state.value.shopUrl?.let { ProductDetailEvent.OpenShoppingMall(it) }
-                ?: return@launch
+            val event = _state.value.let {
+                if (it.shopUrl == null || it.shop == null) return@launch
+                ProductDetailEvent.OpenShoppingMall(it.shopUrl, it.shop)
+            }
             _event.emit(event)
         }
     }

@@ -34,13 +34,15 @@ class AddItemActivity : AppCompatActivity() {
                 bundle.putString("link", data)
                 navController.navigate(R.id.registerItemLinkFragment, bundle)
             }
-        } else if (intent.hasExtra("productCode") &&
+        } else if (intent.hasExtra("productShop") &&
+            intent.hasExtra("productCode") &&
             intent.hasExtra("productTitle") &&
             intent.hasExtra("productPrice") &&
             intent.hasExtra("isAdding")
         ) {
             val action =
                 RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToSetTargetPriceFragment(
+                    intent.getStringExtra("productShop") ?: "",
                     intent.getStringExtra("productCode") ?: "",
                     intent.getStringExtra("productTitle") ?: "",
                     intent.getIntExtra("productPrice", 0),

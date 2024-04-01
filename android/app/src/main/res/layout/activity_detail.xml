@@ -85,7 +85,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="24dp"
                             android:contentDescription="@string/shopping_mall_logo"
-                            android:src="@drawable/ic_11st_logo"
                             app:layout_constraintStart_toEndOf="@+id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/iv_detail_product" />
 
@@ -122,8 +121,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:contentDescription="@{@string/current_price_info(@string/price(viewModel.state.formattedPrice))}"
-                            android:text="@{@string/price(viewModel.state.formattedPrice)}"
+                            android:contentDescription="@{viewModel.state.isSoldOut ? @string/sold_out : @string/current_price_info(@string/price(viewModel.state.formattedPrice))}"
+                            android:text="@{viewModel.state.isSoldOut ? @string/sold_out : @string/price(viewModel.state.formattedPrice)}"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             app:layout_constraintStart_toEndOf="@id/gl_vertical_start_nested"
                             app:layout_constraintTop_toBottomOf="@id/tv_detail_product_name"

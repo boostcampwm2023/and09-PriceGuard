@@ -26,11 +26,14 @@ class ProductListViewModel @Inject constructor(
     private val graphDataConverter: GraphDataConverter
 ) : ViewModel() {
 
-    private var _isRefreshing: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+    data class ProductListState(
+        val isRefreshing: Boolean = false,
+        val isUpdated: Boolean = false,
+        val productList: List<UserProductSummary> = listOf()
+    )
 
-    private var _productList = MutableStateFlow<List<UserProductSummary>>(listOf())
-    val productList: StateFlow<List<UserProductSummary>> = _productList.asStateFlow()
+    private var _state: MutableStateFlow<ProductListState> = MutableStateFlow(ProductListState())
+    val state: StateFlow<ProductListState> = _state.asStateFlow()
 
     private var _events = MutableSharedFlow<ProductErrorState>()
     val events: SharedFlow<ProductErrorState> = _events.asSharedFlow()
@@ -38,12 +41,13 @@ class ProductListViewModel @Inject constructor(
     fun getProductList(isRefresh: Boolean) {
         viewModelScope.launch {
             if (isRefresh) {
-                _isRefreshing.value = true
+                _state.value = _state.value.copy(isRefreshing = true)
+            } else {
+                _state.value = _state.value.copy(isUpdated = false)
             }
-
             val result = productRepository.getProductList()
 
-            _isRefreshing.value = false
+            _state.value = _state.value.copy(isRefreshing = false)
 
             when (result) {
                 is RepositoryResult.Success -> {
@@ -54,36 +58,41 @@ class ProductListViewModel @Inject constructor(
                     _events.emit(result.errorState)
                 }
             }
+            _state.value = _state.value.copy(isUpdated = true)
         }
     }
 
     private fun updateProductList(refresh: Boolean, fetched: List<ProductData>) {
         val productMap = mutableMapOf<String, Boolean>()
-        _productList.value.forEach { product ->
+        state.value.productList.forEach { product ->
             productMap[product.productCode] = product.isAlarmOn
         }
 
-        _productList.value = fetched.map { data ->
-            UserProductSummary(
-                data.shop,
-                data.productName,
-                data.price,
-                data.productCode,
-                graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
-                calculateDiscountRate(data.targetPrice, data.price),
-                if (refresh) productMap[data.productCode] ?: data.isAlert else data.isAlert
-            )
-        }
+        _state.value = _state.value.copy(
+            productList = fetched.map { data ->
+                UserProductSummary(
+                    data.shop,
+                    data.productName,
+                    data.price,
+                    data.productCode,
+                    graphDataConverter.packWithEdgeData(data.priceData, GraphMode.WEEK),
+                    calculateDiscountRate(data.targetPrice, data.price),
+                    if (refresh) productMap[data.productCode] ?: data.isAlert else data.isAlert
+                )
+            }
+        )
     }
 
-    fun updateProductAlarmToggle(productCode: String, checked: Boolean) {
-        _productList.value = productList.value.mapIndexed { _, product ->
-            if (product.productCode == productCode) {
-                product.copy(isAlarmOn = checked)
-            } else {
-                product
+    fun updateProductAlarmToggle(productShop: String, productCode: String, checked: Boolean) {
+        _state.value = _state.value.copy(
+            productList = state.value.productList.mapIndexed { _, product ->
+                if (product.productCode == productCode && product.brandType == productShop) {
+                    product.copy(isAlarmOn = checked)
+                } else {
+                    product
+                }
             }
-        }
+        )
     }
 
     private fun calculateDiscountRate(targetPrice: Int, price: Int): Float {
