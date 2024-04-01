@@ -31,7 +31,7 @@ jobs:
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: ./gradlew bundleRelease
         working-directory: ./android
 
       - name: Upload to Firebase App Distribution
