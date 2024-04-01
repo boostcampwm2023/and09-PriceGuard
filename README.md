@@ -12,7 +12,11 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 또한 앱 내에서 원하는 상품의 가격 변화를 그래프로 표현합니다.
 ```
 
-어플리케이션은 [링크](https://appdistribution.firebase.google.com/pub/i/b299ae01bd67c829)를 통해 받을 수 있습니다.
+어플리케이션은 아래 버튼을 클릭하여 받을 수 있습니다.
+
+<a href='https://play.google.com/store/apps/details?id=app.priceguard&utm_source=github&utm_campaign=gh-readme'>
+   <img width="250px" alt='다운로드하기 Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ko_badge_web_generic.png'/>
+</a>
 
 ## 🥅 기술적 도전
 
@@ -129,7 +133,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                   <img src="https://img.shields.io/badge/Firebase%20Cloud%20Messaging-FFA000?logo=firebase&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/Material%20Design-757575?logo=materialdesign&logoColor=FFFFFF">
                   <img src="https://img.shields.io/badge/Retrofit-3E4348?logo=square&logoColor=FFFFFF">
-                  <img src="https://camo.githubusercontent.com/c71519c505cafc8d4cc686186e518c03d489b6e6038f3fdcd2d57e9c87d308f3/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f436f726f7574696e65732d6633383431633f7374796c653d666f7274686562616765266c6f676f3d4b6f746c696e266c6f676f436f6c6f723d626c756576696f6c6574">
+                  <img src="https://img.shields.io/badge/Coroutines-7F52FF?logo=kotlin&logoColor=FFFFFF">
             </td>
         </tr>
         <tr>
@@ -154,9 +158,9 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
                 <img src="https://img.shields.io/badge/Firebase%20App%20Distribution-FFA000?logo=firebase&logoColor=FFFFFF">
                 <img src="https://img.shields.io/badge/Sonatype-1B1C30?logo=sonatype&logoColor=FFFFFF">
                 <img src="https://img.shields.io/badge/Nginx-014532?logo=Nginx&logoColor=009639&">
-                <img src="https://img.shields.io/badge/Naver Cloud Platform-03C75A?logo=naver&logoColor=ffffff">
+                <img src="https://img.shields.io/badge/Oracle Cloud-F80000?logo=oracle&logoColor=ffffff">
                 <img src="https://img.shields.io/badge/Docker-2496ED?logo=Docker&logoColor=white">
-                <img src="https://camo.githubusercontent.com/6841025a5cd57f3ac26ae8b48390b17454c7a553e747ed06e569edd2c47e9b8e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f47697448756220416374696f6e732d3230383846463f7374796c653d666f7274686562616765266c6f676f3d47697448756220416374696f6e73266c6f676f436f6c6f723d626c61636b">
+                <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white">
             </td>
         </tr>
         <tr>
@@ -215,7 +219,7 @@ PriceGuard는 국내 상거래 사이트들의 상품 가격을 추적합니다.
 ## 📺︎ 작동 화면
 | 로그인/회원가입 | 상품 추천/상품 상세 | 상품 추가 / 마이페이지 | 알람 확인 |
 | ----------- | --------------- | ----------------- | ------- |
-|<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/5508d8e1-f0ad-44d8-9278-70e9e41b5df0" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/27e4d667-0ffb-4be9-ae22-fae9cab068e9" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/7c418d77-eca0-437c-b220-22ad89fdc76d" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/4a111411-46b6-4f86-b750-5827948d246b" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/e6d89da9-cb39-49f2-b0ee-073aa666a695" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/f7778bae-e10c-4459-98d6-a74bbc686efa" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/37584805/a43b64c9-2b6b-431c-8fbb-a93d8560f605" width="200"/> |
+|<img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/f5c9cbab-c274-48b3-af62-76c74cf3a24e" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/cc932b39-9a82-4790-afc9-75d942b07c2f" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/1632223d-62b4-410d-8ebd-619fdc10afe5" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/edd8efc4-ec57-480e-b14e-ee1ce410f095" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/78a6263e-f589-4fe3-be9d-5867c7602c47" width="200" height="400"/> <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/a8007a7f-b7bb-4181-a125-4ab0aceb0362" width="200" height="400"/> | <img src="https://github.com/boostcampwm2023/and09-PriceGuard/assets/83055885/ccdfb93e-ed85-4b57-9b87-e16e34f5fd96" width="200"/> |
 
 ## :memo: 기술 문서
 - [Feature List](https://docs.google.com/spreadsheets/d/1e1Z9YpHPZxcBZN2XBPeoaz88hDby6WG5jmMz8xjqMrU/edit#gid=1955813262)

@@ -98,6 +98,7 @@ class RegisterItemLinkFragment : Fragment() {
                     is RegisterItemLinkViewModel.RegisterLinkEvent.SuccessVerification -> {
                         val action =
                             RegisterItemLinkFragmentDirections.actionRegisterItemLinkFragmentToConfirmItemLinkFragment(
+                                event.product.shop,
                                 event.product.productCode,
                                 event.product.productPrice,
                                 event.product.shop,

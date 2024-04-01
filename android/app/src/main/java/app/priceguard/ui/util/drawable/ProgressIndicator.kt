@@ -5,12 +5,12 @@ import app.priceguard.R
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
 
-fun getCircularProgressIndicatorDrawable(context: Context): IndeterminateDrawable<CircularProgressIndicatorSpec> {
+fun getCircularProgressIndicatorDrawable(context: Context, style: Int = R.style.Theme_PriceGuard_CircularProgressIndicator): IndeterminateDrawable<CircularProgressIndicatorSpec> {
     val spec = CircularProgressIndicatorSpec(
         context,
         null,
         0,
-        R.style.Theme_PriceGuard_CircularProgressIndicator
+        style
     )
 
     return IndeterminateDrawable.createCircularDrawable(context, spec)

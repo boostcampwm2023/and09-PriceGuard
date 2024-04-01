@@ -22,14 +22,15 @@ class UpdateAlarmWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        val inputData = inputData.getString(ARGUMENT_KEY) ?: return Result.failure()
+        val productShop = inputData.getString(PRODUCT_SHOP) ?: return Result.failure()
+        val productCode = inputData.getString(PRODUCT_CODE) ?: return Result.failure()
 
-        return updateAlarm(inputData)
+        return updateAlarm(productShop, productCode)
     }
 
-    private suspend fun updateAlarm(productCode: String): Result {
+    private suspend fun updateAlarm(productShop: String, productCode: String): Result {
         return try {
-            when (productRepository.switchAlert(productCode)) {
+            when (productRepository.switchAlert(productShop, productCode)) {
                 is RepositoryResult.Error -> {
                     Result.failure()
                 }
@@ -45,9 +46,14 @@ class UpdateAlarmWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val ARGUMENT_KEY = "productCode"
-        fun createWorkRequest(inputString: String): OneTimeWorkRequest {
-            val inputData = Data.Builder().putString(ARGUMENT_KEY, inputString).build()
+        const val PRODUCT_CODE = "productCode"
+        const val PRODUCT_SHOP = "productShop"
+
+        fun createWorkRequest(inputString: Pair<String, String>): OneTimeWorkRequest {
+            val inputData = Data.Builder()
+                .putString(PRODUCT_SHOP, inputString.first)
+                .putString(PRODUCT_CODE, inputString.second)
+                .build()
             val constraints = Constraints.Builder().build()
             return OneTimeWorkRequestBuilder<UpdateAlarmWorker>()
                 .setInputData(inputData)

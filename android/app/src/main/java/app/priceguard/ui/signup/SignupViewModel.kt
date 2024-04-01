@@ -55,10 +55,10 @@ class SignupViewModel @Inject constructor(
     private val _state: MutableStateFlow<SignupUIState> = MutableStateFlow(SignupUIState())
     val state: StateFlow<SignupUIState> = _state.asStateFlow()
 
-    private val _eventFlow: MutableSharedFlow<SignupEvent> = MutableSharedFlow(replay = 0)
+    private val _eventFlow: MutableSharedFlow<SignupEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<SignupEvent> = _eventFlow.asSharedFlow()
 
-    fun signup() {
+    fun signup(verificationCode: String) {
         if (_state.value.isSignupStarted || _state.value.isSignupFinished) {
             Log.d("Signup", "Signup already requested. Skipping")
             return
@@ -70,7 +70,7 @@ class SignupViewModel @Inject constructor(
             Log.d("ViewModel", "Event Start Sent")
 
             val result =
-                authRepository.signUp(_state.value.email, _state.value.name, _state.value.password)
+                authRepository.signUp(_state.value.email, _state.value.name, _state.value.password, verificationCode)
 
             when (result) {
                 is RepositoryResult.Success -> {
@@ -100,7 +100,7 @@ class SignupViewModel @Inject constructor(
                                 SignupEvent.DuplicatedEmail
                             }
 
-                            AuthErrorState.UNDEFINED_ERROR -> {
+                            else -> {
                                 SignupEvent.UndefinedError
                             }
                         }

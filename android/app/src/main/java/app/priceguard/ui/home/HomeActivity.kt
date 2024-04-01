@@ -5,6 +5,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,12 +20,22 @@ import androidx.work.WorkManager
 import app.priceguard.R
 import app.priceguard.databinding.ActivityHomeBinding
 import app.priceguard.service.UpdateTokenWorker
+import app.priceguard.ui.data.DialogConfirmAction
 import app.priceguard.ui.util.SystemNavigationColorState
 import app.priceguard.ui.util.applySystemNavigationBarColor
 import app.priceguard.ui.util.openNotificationSettings
+import app.priceguard.ui.util.showConfirmDialog
+import app.priceguard.ui.util.showDialogWithAction
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -31,17 +45,34 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
 
+    private lateinit var appUpdateManager: AppUpdateManager
+    private lateinit var flexibleAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var immediateAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+
+    private val updateListener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            appUpdateManager.completeUpdate()
+        }
+
+        if (state.installStatus() == InstallStatus.FAILED) {
+            Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG)
+                .show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.applySystemNavigationBarColor(SystemNavigationColorState.BOTTOM_NAVIGATION)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupAppUpdate()
         enqueueWorker()
         initSnackBar()
         checkForGooglePlayServices()
         setBottomNavigationBar()
         askNotificationPermission()
+        checkAppUpdates()
     }
 
     override fun onResume() {
@@ -57,6 +88,11 @@ class HomeActivity : AppCompatActivity() {
         } else {
             showNotificationOffSnackbar()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateManager.unregisterListener(updateListener)
     }
 
     private fun enqueueWorker() {
@@ -124,6 +160,55 @@ class HomeActivity : AppCompatActivity() {
                     // Initial cases
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
+            }
+        }
+    }
+
+    private fun setupAppUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        flexibleAppUpdateResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+                when (result.resultCode) {
+                    RESULT_CANCELED -> {
+                        showConfirmDialog(getString(R.string.warning), getString(R.string.update_cancel_warning))
+                    }
+
+                    com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                        Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+        immediateAppUpdateResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+                when (result.resultCode) {
+                    RESULT_CANCELED -> {
+                        showDialogWithAction(getString(R.string.warning), getString(R.string.must_update), DialogConfirmAction.FINISH)
+                    }
+
+                    com.google.android.play.core.install.model.ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                        showDialogWithAction(getString(R.string.error), getString(R.string.update_failed), DialogConfirmAction.FINISH)
+                    }
+                }
+            }
+        appUpdateManager.registerListener(updateListener)
+    }
+
+    private fun checkAppUpdates() {
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        var appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
+        var activityResultLauncher = flexibleAppUpdateResultLauncher
+
+        appUpdateInfoTask.addOnSuccessListener { info ->
+            when (info.updateAvailability()) {
+                UpdateAvailability.UPDATE_AVAILABLE, UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
+                    if (info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) && info.updatePriority() >= 3) {
+                        activityResultLauncher = immediateAppUpdateResultLauncher
+                        appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    }
+                    appUpdateManager.startUpdateFlowForResult(info, activityResultLauncher, appUpdateOptions)
+                }
+                else -> {}
             }
         }
     }

@@ -12,17 +12,17 @@ interface ProductRepository {
 
     suspend fun verifyLink(productUrl: String, isRenewed: Boolean = false): RepositoryResult<ProductVerifyResult, ProductErrorState>
 
-    suspend fun addProduct(productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<ProductAddResult, ProductErrorState>
+    suspend fun addProduct(shop: String, productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<ProductAddResult, ProductErrorState>
 
     suspend fun getProductList(isRenewed: Boolean = false): RepositoryResult<List<ProductData>, ProductErrorState>
 
     suspend fun getRecommendedProductList(isRenewed: Boolean = false): RepositoryResult<List<RecommendProductData>, ProductErrorState>
 
-    suspend fun getProductDetail(productCode: String, isRenewed: Boolean = false): RepositoryResult<ProductDetailResult, ProductErrorState>
+    suspend fun getProductDetail(shop: String, productCode: String, isRenewed: Boolean = false): RepositoryResult<ProductDetailResult, ProductErrorState>
 
-    suspend fun deleteProduct(productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
+    suspend fun deleteProduct(shop: String, productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
 
-    suspend fun updateTargetPrice(productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<PricePatchResult, ProductErrorState>
+    suspend fun updateTargetPrice(shop: String, productCode: String, targetPrice: Int, isRenewed: Boolean = false): RepositoryResult<PricePatchResult, ProductErrorState>
 
-    suspend fun switchAlert(productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
+    suspend fun switchAlert(shop: String, productCode: String, isRenewed: Boolean = false): RepositoryResult<Boolean, ProductErrorState>
 }

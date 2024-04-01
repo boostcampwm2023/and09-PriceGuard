@@ -1,7 +1,7 @@
 package app.priceguard.ui.home
 
 interface ProductSummaryClickListener {
-    fun onClick(productCode: String)
+    fun onClick(productShop: String, productCode: String)
 
-    fun onToggle(productCode: String, checked: Boolean)
+    fun onToggle(productShop: String, productCode: String, checked: Boolean)
 }

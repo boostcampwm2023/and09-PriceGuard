@@ -54,6 +54,7 @@ class ConfirmItemLinkFragment : Fragment() {
         btnConfirmItemNext.setOnClickListener {
             val action =
                 ConfirmItemLinkFragmentDirections.actionConfirmItemLinkFragmentToSetTargetPriceFragment(
+                    arguments.getString("productShop") ?: "",
                     arguments.getString("productCode") ?: "",
                     arguments.getString("productName") ?: "",
                     arguments.getInt("productPrice"),
