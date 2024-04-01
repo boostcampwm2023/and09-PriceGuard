@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
 
         <variable
             name="viewModel"
@@ -101,15 +102,35 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:contentDescription="@{@string/my_email_info(viewModel.state.email)}"
+                            android:ellipsize="end"
                             android:maxLines="1"
                             android:text="@{viewModel.state.email}"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             app:autoSizeTextType="uniform"
                             app:layout_constrainedWidth="true"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/btn_my_page_is_email_verified"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="@id/tv_my_page_name"
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tv_my_page_name" />
+
+                        <Button
+                            android:id="@+id/btn_my_page_is_email_verified"
+                            style="@style/Widget.Material3.Button.ZeroPadding_Round"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="4dp"
+                            android:visibility="@{viewModel.state.isEmailVerified() == null ? View.GONE : View.VISIBLE}"
+                            android:backgroundTint="@{viewModel.state.isEmailVerified ? @color/verifiedContainer : @color/unverifiedContainer}"
+                            android:enabled="@{!viewModel.state.isEmailVerified}"
+                            android:onClick="@{() -> viewModel.startVerifyEmail()}"
+                            android:text="@{viewModel.state.isEmailVerified ? @string/verified : @string/unverified}"
+                            android:textColor="@{viewModel.state.isEmailVerified ? @color/verified : @color/unverified}"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/tv_my_page_email" />
+
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

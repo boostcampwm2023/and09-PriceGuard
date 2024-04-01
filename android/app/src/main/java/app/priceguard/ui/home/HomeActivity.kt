@@ -44,9 +44,11 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var snackbar: Snackbar
+
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var flexibleAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
     private lateinit var immediateAppUpdateResultLauncher: ActivityResultLauncher<IntentSenderRequest>
+
     private val updateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             appUpdateManager.completeUpdate()

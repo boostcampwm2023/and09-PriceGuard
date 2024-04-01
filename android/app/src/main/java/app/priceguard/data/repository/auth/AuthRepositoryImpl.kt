@@ -52,10 +52,11 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
     override suspend fun signUp(
         email: String,
         userName: String,
-        password: String
+        password: String,
+        verificationCode: String
     ): RepositoryResult<SignupResult, AuthErrorState> {
         val response = getApiResult {
-            userAPI.register(SignupRequest(email, userName, password))
+            userAPI.register(SignupRequest(email, userName, verificationCode, password))
         }
         return when (response) {
             is APIResult.Success -> {
@@ -130,13 +131,37 @@ class AuthRepositoryImpl @Inject constructor(private val userAPI: UserAPI) : Aut
         }
     }
 
+    override suspend fun requestRegisterVerificationCode(email: String): RepositoryResult<Boolean, AuthErrorState> {
+        return when (
+            val response =
+                getApiResult {
+                    userAPI.requestRegisterVerificationCode(
+                        RequestVerificationCodeRequest(email)
+                    )
+                }
+        ) {
+            is APIResult.Success -> {
+                RepositoryResult.Success(true)
+            }
+
+            is APIResult.Error -> {
+                handleError(response.code)
+            }
+        }
+    }
+
     override suspend fun resetPassword(
         password: String,
         verifyToken: String
     ): RepositoryResult<Boolean, AuthErrorState> {
         return when (
             val response =
-                getApiResult { userAPI.resetPassword("Bearer $verifyToken", ResetPasswordRequest(password)) }
+                getApiResult {
+                    userAPI.resetPassword(
+                        "Bearer $verifyToken",
+                        ResetPasswordRequest(password)
+                    )
+                }
         ) {
             is APIResult.Success -> {
                 RepositoryResult.Success(true)

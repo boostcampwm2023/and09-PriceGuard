@@ -153,6 +153,10 @@
     <string name="recommended_product_no_product">추천 상품이 준비중입니다.</string>
     <string name="sold_out">품절</string>
     <string name="error_maximum_count_exceeded">등록 가능한 상품 개수를 초과하였습니다.</string>
+    <string name="error_get_is_email_verified">인증 정보를 가져오는데 실패하였습니다.</string>
+    <string name="verified">인증됨</string>
+    <string name="unverified">미인증</string>
+    <string name="unverified_email">이메일 인증이 필요한 계정입니다.</string>
     <string name="update_cancel_warning">업데이트 미적용 시 앱 사용에 지장이 생길 수 있습니다.</string>
     <string name="update_failed">업데이트에 실패하였습니다. 다시 시도해 주세요.</string>
     <string name="warning">경고</string>
@@ -164,8 +168,8 @@
     <string name="match_error_verification_code">인증번호가 일치하지 않습니다</string>
     <string name="error_verify_email">이메일 인증 실패</string>
     <string name="error_request_verification_code">인증 요청 실패</string>
-    <string name="sended_verification_code">인증 번호를 전송했습니다.</string>
-    <string name="verrify_email_content">비밀번호 찾기 위해\n이메일을 인증해 주세요.</string>
+    <string name="sent_verification_code">인증 번호를 전송했습니다.</string>
+    <string name="verify_email_content_find_password">비밀번호 찾기 위해\n이메일을 인증해 주세요.</string>
     <string name="reset_password_content">새로운 비밀번호로 재설정해 주세요.</string>
     <string name="find_password_title_1">비밀번호 찾기 (1/2)</string>
     <string name="find_password_title_2">비밀번호 찾기 (2/2)</string>
@@ -177,4 +181,8 @@
     <string name="expire_verification_code">인증번호가 만료되었습니다.</string>
     <string name="find_password">비밀번호 찾기</string>
     <string name="re_send">재전송</string>
+    <string name="succes_email_verification">이메일 인증을 완료했습니다.</string>
+    <string name="verify_email_content">이메일 인증을 완료해 주세요.</string>
+    <string name="error_email">이메일 오류</string>
+    <string name="not_found_email">등록되지 않은 이메일입니다.</string>
 </resources>
