@@ -10,7 +10,4 @@ export const TypeOrmConfig: TypeOrmModuleOptions = {
     database: DB_NAME,
     entities: ['dist/**/*.entity{.ts,.js}'],
     synchronize: NODE_ENV === 'dev',
-    ssl: {
-        rejectUnauthorized: NODE_ENV === 'prod',
-    },
 };
