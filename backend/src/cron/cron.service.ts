@@ -35,12 +35,23 @@ export class CronService {
     @Cron('0 */10 * * * *')
     async cyclicPriceChecker() {
         const totalProducts = await this.productRepository.find();
-        const recentProductInfo = await Promise.all(
-            totalProducts.map(async ({ productCode, id, shop }) => {
+        const recentProductInfoPromises = totalProducts.map(async ({ productCode, id, shop }) => {
+            try {
                 const productInfo = await getProductInfo(shop, productCode);
                 return { ...productInfo, productId: id };
-            }),
-        );
+            } catch (error) {
+                return null;
+            }
+        });
+        const recentProductInfoResults = await Promise.allSettled(recentProductInfoPromises);
+        // 성공한 Promise만 필터링하여 처리
+        const recentProductInfo = recentProductInfoResults.flatMap((result) => {
+            if (result.status === 'fulfilled' && result.value) {
+                return result.value;
+            } else {
+                return [];
+            }
+        });
         const productList = recentProductInfo.map((data) => `product:${data.productId}`);
         const cacheData = await this.redis.mget(productList); // redis 접근 횟수 줄이기 위한 임시 방편
         const checkProducts = await Promise.all(
