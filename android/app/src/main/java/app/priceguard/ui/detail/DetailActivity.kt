@@ -134,11 +134,9 @@ class DetailActivity : AppCompatActivity(), ConfirmDialogFragment.OnDialogResult
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent != null) {
-            checkProductCode(intent)
-        }
+        checkProductCode(intent)
     }
 
     private fun checkProductCode(intent: Intent) {
