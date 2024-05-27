@@ -15,6 +15,7 @@ import Redis from 'ioredis';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import { getProductInfo } from 'src/utils/product.info';
 import { CacheService } from 'src/cache/cache.service';
+import { RecentProductInfoMap } from 'src/types/product';
 
 @Injectable()
 export class CronService {
@@ -70,10 +71,18 @@ export class CronService {
             }
         }
 
+        const recentProductInfoMap: RecentProductInfoMap = recentProductInfo.reduce((map, product) => {
+            map[product.productId] = { productName: product.productName, imageUrl: product.imageUrl };
+            return map;
+        }, {} as RecentProductInfoMap);
+
         totalProducts.sort((a, b) => a.id.localeCompare(b.id));
-        recentProductInfo.sort((a, b) => a.productId.localeCompare(b.productId));
-        const infoUpdatedProducts = totalProducts.filter((product, idx) => {
-            const recentInfo = recentProductInfo[idx];
+        const infoUpdatedProducts = totalProducts.filter((product) => {
+            const recentInfo = recentProductInfoMap[product.id];
+            if (recentInfo === undefined) {
+                console.log('fail', product.productCode);
+                return false;
+            }
             if (product.productName !== recentInfo.productName || product.imageUrl !== recentInfo.imageUrl) {
                 product.productName = recentInfo.productName;
                 product.imageUrl = recentInfo.imageUrl;

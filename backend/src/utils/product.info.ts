@@ -1,19 +1,12 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ProductInfoDto } from 'src/dto/product.info.dto';
-import {
-    API_VERSION_1,
-    API_VERSION_NEUTRAL,
-    BASE_URL_11ST,
-    BROWSER_VERSION_20,
-    OPEN_API_KEY_11ST,
-    REGEX_SHOP,
-} from 'src/constants';
+import { API_VERSION_1, API_VERSION_NEUTRAL, BASE_URL_11ST, OPEN_API_KEY_11ST, REGEX_SHOP } from 'src/constants';
 import { JSDOM } from 'jsdom';
 import * as convert from 'xml-js';
 import * as iconv from 'iconv-lite';
 import axios from 'axios';
-import * as randomUseragent from 'random-useragent';
 import { ProductIdentifierDto } from 'src/dto/product.identifier';
+import { getRandomUserAgent } from './util';
 
 export async function getProductInfo(shop: string, productCode: string): Promise<ProductInfoDto> {
     if (shop === '11번가') {
@@ -66,9 +59,7 @@ async function getProductInfo11st(productCode: string): Promise<ProductInfoDto> 
 }
 
 async function getProductInfoByBrandSmartStore(productCode: string): Promise<ProductInfoDto> {
-    const userAgent = randomUseragent.getRandom(function (ua) {
-        return parseFloat(ua.browserVersion) >= BROWSER_VERSION_20;
-    });
+    const userAgent = getRandomUserAgent();
     const instance = axios.create();
     const smartstoreURL = `https://smartstore.naver.com/main/products/${productCode}`;
     instance.interceptors.request.use((req: any) => {
